@@ -1,0 +1,133 @@
+{
+  "packages": [
+    {
+      "maintainer": "Heltec Automation(TM)", 
+      "help": {
+        "online": "http://heltec.cn"
+      }, 
+      "websiteURL": "https://github.com/Heltec-Aaron-Lee/CubeCell", 
+      "platforms": [
+      {
+          "category": "CubeCell", 
+          "name": "CubeCell Dev-boards", 
+          "url": "http://119.23.153.38/download/CubeCell-0.0.1.zip", 
+          "checksum": "SHA-256:eadce33ffba2c50c68cd661800961f3afe3a45da14441a02383abe468d53f322", 
+          "help": {
+            "online": ""
+          }, 
+          "version": "0.0.1", 
+          "architecture": "CubeCell", 
+          "archiveFileName": "CubeCell-0.0.1.zip", 
+          "boards": [
+            {"name": "CubeCell-Board"}, 
+            {"name": "CubeCell-Cupsule"}, 
+            {"name": "CubeCell-Module"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "CubeCell", 
+              "version": "8-2019-q3", 
+              "name": "gcc-arm-none-eabi"
+            }, 
+            {
+              "packager": "CubeCell", 
+              "version": "0.0.1", 
+              "name": "CubeCellelftool"
+            }, 
+            {
+              "packager": "CubeCell", 
+              "version": "0.0.1", 
+              "name": "CubeCellflash"
+            }
+          ], 
+          "size": "1159168"
+        }
+      ], 
+      "tools": [ 
+        {
+          "version": "0.0.1", 
+          "name": "CubeCellelftool", 
+          "systems": [
+            {
+              "url": "http://119.23.153.38/download/CubeCellelftool-0.0.1-windows.zip", 
+              "checksum": "SHA-256:5deffed88f98ccee3ad525552f61c47d3677807777d9db7e26806d89c77810d5", 
+              "host": "i686-mingw32", 
+              "archiveFileName": "CubeCellelftool-0.0.1-windows.zip", 
+              "size": "5947392"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/CubeCellelftool-0.0.1-macos.tar.gz", 
+              "checksum": "SHA-256:a721a52f5692489dd49195f54e8e99eebac55b26dba6c354e1e6eb6518f62282", 
+              "host": "x86_64-apple-darwin", 
+              "archiveFileName": "CubeCellelftool-0.0.1-macos.tar.gz", 
+              "size": "9457664"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/CubeCellelftool-0.0.1-linux.tar.gz", 
+              "checksum": "SHA-256:a50699eb3b4ab43899a3da55e5bcec00cfc1b3979495e7bddf1ef8da8d8c3079", 
+              "host": "x86_64-pc-linux-gnu", 
+              "archiveFileName": "CubeCellelftool-0.0.1-linux.tar.gz", 
+              "size": "9949184"
+            }
+          ]
+        }, 
+        {
+          "version": "0.0.1", 
+          "name": "CubeCellflash", 
+          "systems": [
+            {
+              "url": "http://119.23.153.38/download/CubeCellflash-0.0.1-windows.zip", 
+              "checksum": "SHA-256:8e6da70ca70097db40971333a0222930c40c7a1da3fd3b5264b08aa7cbb906a1", 
+              "host": "i686-mingw32", 
+              "archiveFileName": "CubeCellflash-0.0.1-windows.zip", 
+              "size": "6139904"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/CubeCellflash-0.0.1-macos.tar.gz", 
+              "checksum": "SHA-256:0e2afe8fe9829923a147f6be182909964e6469695da98491f2a4d141c39b14c7", 
+              "host": "x86_64-apple-darwin", 
+              "archiveFileName": "CubeCellflash-0.0.1-macos.tar.gz", 
+              "size": "9920512"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/CubeCellflash-0.0.1-linux.tar.gz", 
+              "checksum": "SHA-256:ea61a2f8059d43e037102c5532576e8721234d577704e64ee8252fcbcd14f924", 
+              "host": "x86_64-pc-linux-gnu", 
+              "archiveFileName": "CubeCellflash-0.0.1-linux.tar.gz", 
+              "size": "10706944"
+            }
+          ]
+        }, 
+        {
+          "version": "8-2019-q3", 
+          "name": "gcc-arm-none-eabi", 
+          "systems": [
+            {
+              "url": "http://119.23.153.38/download/gcc-arm-none-eabi-8-2019-q3-update-win32.zip", 
+              "checksum": "SHA-256:67faf63af878ce35b377657a5ddcbce3fdeeaec2ee4147fb57da2841e4ad7560", 
+              "host": "i686-mingw32", 
+              "archiveFileName": "gcc-arm-none-eabi-8-2019-q3-update-win32.zip", 
+              "size": "92114944"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/gcc-arm-none-eabi-8-2019-q3-update-macos.tar.gz", 
+              "checksum": "SHA-256:26e7cca13d397c21002d5946c93135b81d827eda2c9081e9701c3de56f6adbab", 
+              "host": "x86_64-apple-darwin", 
+              "archiveFileName": "gcc-arm-none-eabi-8-2019-q3-update-macos.tar.gz", 
+              "size": "123871232"
+            }, 
+            {
+              "url": "http://119.23.153.38/download/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.gz", 
+              "checksum": "SHA-256:276e58f03ab31405ea8bc5d6b0792fa40bec2a2bf049b354a3ee152764b472a9", 
+              "host": "x86_64-pc-linux-gnu", 
+              "archiveFileName": "gcc-arm-none-eabi-8-2019-q3-update-linux.tar.gz", 
+              "size": "123871232"
+            }
+          ]
+        }
+      ], 
+      "email": "support@heltec.cn", 
+      "name": "CubeCell"
+    }
+  ]
+}
