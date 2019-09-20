@@ -29,8 +29,8 @@ Installation instructions for Debian / Ubuntu OS
 
 ```bash
   cd /Applications/Arduino_*/Contents/java/
-  mkdir -p hardware && \
-  cd hardware && \
+  mkdir -p hardware/CubeCell && \
+  cd hardware/CubeCell && \
   git clone https://github.com/HelTecAutomation/ASR650x-Arduino.git && \
   cd ASR650x-Arduino && \
   git submodule update --init --recursive && \
