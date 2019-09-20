@@ -4,7 +4,7 @@ English | [简体中文](#简体中文)
 
 This project was provided by Heltec Automation Technology.
 
-- This project aims to provide Ariduino's convenient development environment and routine library for ASR650x series chips, which is convenient for users to quickly deploy and develop ASR650x series chips.
+- This project aims to provide Arduino convenient development environment and routine library for ASR650x series chips, which is convenient for users to quickly deploy and develop ASR650x series chips.
 
 ## Instructions
 
@@ -12,12 +12,15 @@ The currently supported ASR650x chip product models are:
 
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](xxxx), [CubeCell-Module](xxxx), [CubeCell-Cupsule](xxxx) |
+| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cupsule](xxxx) |
 
 &nbsp;
 
 ## Installation Instructions
 
+First, make sure you have the latest Arduino IDE installed on your computer. If not installed, please refer to this document:
+[https://docs.heltec.cn/#/en/user_manual/how_to_install_git_and_arduino](https://docs.heltec.cn/#/en/user_manual/how_to_install_git_and_arduino)
+We recommend installing Arduino version 1.8.5. Arduino over 1.8.5 version may cause unknown bugs.
 - **Using Arduino IDE Boards Manager (preferred)**
   
   - [Install ASR650x form Boards Manager](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
@@ -27,8 +30,7 @@ The currently supported ASR650x chip product models are:
   + [Instructions for Windows](InstallGuide/windows.md)
   + [Instructions for Mac](InstallGuide/mac.md)
   + [Instructions for Debian/Ubuntu Linux](InstallGuide/debian_ubuntu.md)
-  + [Instructions for Fedora](InstallGuide/fedora.md)
-  + [Instructions for openSUSE](InstallGuide/opensuse.md)
+
   
   
   - Read reference install guide document：[Installation Instructions](xxx)
@@ -58,7 +60,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 本项目由Heltec Automation 惠利特自动化科技有限公司公司提供。
 
-* 本项目旨在为ASR650x系列芯片提供Ariduino便利的开发环境与例程库，方便用户完成对ASR650x系列芯片的快速部署与开发。
+* 本项目旨在为ASR650x系列芯片提供Arduino便利的开发环境与例程库，方便用户完成对ASR650x系列芯片的快速部署与开发。
 
 
 ## 说明
@@ -66,23 +68,21 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](xxxx), [CubeCell-Module](xxxx), [CubeCell-Cupsule](xxxx) |
-|         |                                                              |
+| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cupsule](xxxx) |
 
 
 
 ## 安装指南
 
 首先，确保你的电脑上已经安装了最新的Arduino IDE。如果没有安装，请参考这篇文档：[https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino](https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino)
-
+我们建议安装Arduino 1.8.5版本，超过1.8.5版本的Arduino可能会导致未知bug。
 - **通过Arduino IDE的库管理器安装**
   - [安装基于ASR650x芯片的开发环境](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
 - **通过Git从源码进行安装**
   - [Windows操作系统 -- 安装方法](InstallGuide/windows.md)
   - [MacOS操作系统 -- 安装方法](InstallGuide/mac.md)
-  - [Linux操作系统(opensuse) -- 安装方法](InstallGuide/opensuse.md)
   - [Linux操作系统(debian,ubuntu) -- 安装方法](InstallGuide/debian_ubuntu.md)
-  - [Linux操作系统(fedora) -- 安装方法](InstallGuide/fedora.md)
+
 
 - 更多安装方法，还可以参考这里：[https://heltec.org/zh/asr650x_install/](xxx)
 

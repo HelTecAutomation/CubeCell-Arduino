@@ -5,8 +5,8 @@ Installation instructions for Mac OS
 - Open Terminal and execute the following command (copy->paste and hit enter one by one):
 
   ```bash
-  mkdir -p ~/Documents/Arduino/hardware
-  cd ~/Documents/Arduino/hardware
+  mkdir -p ~/Documents/Arduino/hardware/CubeCell
+  cd ~/Documents/Arduino/hardware/CubeCell
   git clone https://github.com/HelTecAutomation/ASR650x-Arduino.git
   cd ASR650x-Arduino
   git submodule update --init --recursive

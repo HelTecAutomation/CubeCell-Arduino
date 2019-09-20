@@ -10,8 +10,8 @@ Installation instructions for Debian / Ubuntu OS
   wget https://bootstrap.pypa.io/get-pip.py && \
   sudo python get-pip.py && \
   sudo pip install pyserial && \
-  mkdir -p ~/Arduino/hardware && \
-  cd ~/Arduino/hardware && \
+  mkdir -p ~/Arduino/hardware/CubeCell && \
+  cd ~/Arduino/hardware/CubeCell && \
   git clone https://github.com/HelTecAutomation/ASR650x-Arduino.git && \
   cd ASR650x-Arduino && \
   git submodule update --init --recursive && \
