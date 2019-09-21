@@ -2,9 +2,15 @@
 
 English | [简体中文](#简体中文)
 
-This project was provided by Heltec Automation Technology.
+This project makes ASR650x (ASR6501, ASR6502) series fully support Arduino®. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
 
-- This project aims to provide Arduino convenient development environment and routine library for ASR650x series chips, which is convenient for users to quickly deploy and develop ASR650x series chips.
+Based on the ASR650x series of chips, we have done a lot of migration and development, made it perfectly support **Arduino®**, can run the LoRaWAN protocol stably, and can easily connect lithium batteries and solar panels… This is the CubeCell series.
+
+Cube — Means modular design and easy assembly;
+
+Cell —  Is the product positioning, as a unit of the IoT series, working like a cell.
+
+&nbsp;
 
 ## Instructions
 
@@ -18,30 +24,30 @@ The currently supported ASR650x chip product models are:
 
 ## Installation Instructions
 
-First, make sure you have the latest Arduino IDE installed on your computer. If not installed, please refer to this document:
-[https://docs.heltec.cn/#/en/user_manual/how_to_install_git_and_arduino](https://docs.heltec.cn/#/en/user_manual/how_to_install_git_and_arduino)
-We recommend installing Arduino version 1.8.5. Arduino over 1.8.5 version may cause unknown bugs.
-- **Using Arduino IDE Boards Manager (preferred)**
+*For Mac OS® system, we recommend installing Arduino version 1.8.5. Arduino over 1.8.5 version may cause unknown bugs.*
+
+Make sure you have the latest Arduino IDE installed on your computer. If not installed, please refer to this documents:
+
+- [How to Install Git and Arduino](https://docs.heltec.cn/#/en/user_manual/how_to_install_git_and_arduino)
+- [Establish Serial Connection](https://docs.heltec.cn/#/en/user_manual/establish_serial_connection)
+
+&nbsp;
+
+- **Via Arduino IDE Boards Manager (Recommend)**
+  - [Install ASR650x-Arduino via Aruino Boards Manager](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
   
-  - [Install ASR650x form Boards Manager](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
-  
-- **Using Git with the development repository**
-  
+- **Use Git with the development repository**
   + [Instructions for Windows](InstallGuide/windows.md)
   + [Instructions for Mac](InstallGuide/mac.md)
   + [Instructions for Debian/Ubuntu Linux](InstallGuide/debian_ubuntu.md)
 
-  
-  
-  - Read reference install guide document：[Installation Instructions](xxx)
+&nbsp;
 
-## Decoding exceptions
+Linux may have serial port can't link problem, please refer to this page:[https://playground.arduino.cc/Linux/All/#Permission](https://playground.arduino.cc/Linux/All/#Permission)
 
-You can use [EspExceptionDecoder](https://github.com/me-no-dev/EspExceptionDecoder) to get meaningful call trace.
+&nbsp;
 
 ## Issue/Bug report template
-How to serial port can not link, please refer to: [https://playground.arduino.cc/Linux/All/#Permission](https://playground.arduino.cc/Linux/All/#Permission)
-
 Before reporting an issue, make sure you've searched for similar one that was already created. Also make sure to go through all the issues labelled as [for reference](https://github.com/HelTecAutomation/ASR650x-Arduino/issues).
 
 Also you can talk in our forum: [http://community.heltec.cn/](http://community.heltec.cn/)
