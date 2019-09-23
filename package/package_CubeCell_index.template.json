@@ -5,13 +5,13 @@
       "help": {
         "online": "http://heltec.cn"
       }, 
-      "websiteURL": "https://github.com/Heltec-Aaron-Lee/CubeCell", 
+      "websiteURL": "https://github.com/HelTecAutomation/ASR650x-Arduino", 
       "platforms": [
       {
           "category": "CubeCell", 
           "name": "CubeCell Dev-boards", 
-          "url": "http://119.23.153.38/download/CubeCell-0.0.1.zip", 
-          "checksum": "SHA-256:eadce33ffba2c50c68cd661800961f3afe3a45da14441a02383abe468d53f322", 
+          "url": "https://github.com/HelTecAutomation/ASR650x-Arduino/archive/0.0.1.zip", 
+          "checksum": "SHA-256:19cf63ab95d8b640194764028bc483cbb021904c9aa55a8f68a5b792ea19e164", 
           "help": {
             "online": ""
           }, 
@@ -40,7 +40,7 @@
               "name": "CubeCellflash"
             }
           ], 
-          "size": "1159168"
+          "size": "7094272"
         }
       ], 
       "tools": [ 
@@ -111,14 +111,14 @@
             }, 
             {
               "url": "http://119.23.153.38/download/gcc-arm-none-eabi-8-2019-q3-update-macos.tar.gz", 
-              "checksum": "SHA-256:26e7cca13d397c21002d5946c93135b81d827eda2c9081e9701c3de56f6adbab", 
+              "checksum": "SHA-256:c3a4e7efcfb11fb11c898bf535a4a91597979abf0dc3bf22a03e411ac6cd2af7", 
               "host": "x86_64-apple-darwin", 
               "archiveFileName": "gcc-arm-none-eabi-8-2019-q3-update-macos.tar.gz", 
               "size": "123871232"
             }, 
             {
               "url": "http://119.23.153.38/download/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.gz", 
-              "checksum": "SHA-256:276e58f03ab31405ea8bc5d6b0792fa40bec2a2bf049b354a3ee152764b472a9", 
+              "checksum": "SHA-256:9f8305d416d8d64d7f888c3de562cee2e8c73ade375f57867c640882236fa82e", 
               "host": "x86_64-pc-linux-gnu", 
               "archiveFileName": "gcc-arm-none-eabi-8-2019-q3-update-linux.tar.gz", 
               "size": "123871232"

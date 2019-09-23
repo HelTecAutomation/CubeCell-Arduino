@@ -1,33 +1,3 @@
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
- * Copyright (c) 2018 by Fabrice Weinberg
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * ThingPulse invests considerable time and money to develop these open source libraries.
- * Please support us by buying our products (and not the clones) from
- * https://thingpulse.com
- *
- */
-
 #ifndef SSD1306Wire_h
 #define SSD1306Wire_h
 
@@ -40,30 +10,26 @@ class SSD1306Wire : public OLEDDisplay {
       uint8_t             _address;
       uint8_t             _sda;
       uint8_t             _scl;
-      uint8_t             _rst;
       bool                _doI2cAutoInit = false;
 
   public:
-    SSD1306Wire(uint8_t _address, uint8_t _sda, uint8_t _scl, uint8_t _rst, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+    SSD1306Wire(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
       setGeometry(g);
 
       this->_address = _address;
       this->_sda = _sda;
       this->_scl = _scl;
-      this->_rst = _rst;
     }
 
-
     bool connect() {
-		Wire.begin(this->_sda, this->_scl);
-		// Let's use ~700khz if ESP8266 is in 160Mhz mode
-		return true;
+      Wire.begin(this->_sda, this->_scl);
+      return true;
     }
 
     void display(void) {
-		initI2cIfNeccesary();
-		const int x_offset = (128 - this->width()) / 2;
-		#ifdef OLEDDISPLAY_DOUBLE_BUFFER
+      initI2cIfNeccesary();
+      const int x_offset = (128 - this->width()) / 2;
+      #ifdef OLEDDISPLAY_DOUBLE_BUFFER
         uint8_t minBoundY = UINT8_MAX;
         uint8_t maxBoundY = 0;
 
@@ -84,7 +50,7 @@ class SSD1306Wire : public OLEDDisplay {
            }
            buffer_back[pos] = buffer[pos];
          }
-//         yield();
+         //yield();
         }
 
         // If the minBoundY wasn't updated
@@ -116,7 +82,7 @@ class SSD1306Wire : public OLEDDisplay {
               k = 0;
             }
           }
-//          yield();
+          //yield();
         }
 
         if (k != 0) {
@@ -130,7 +96,6 @@ class SSD1306Wire : public OLEDDisplay {
 
         sendCommand(PAGEADDR);
         sendCommand(0x0);
-        sendCommand((this->height() / 8) - 1);
 
         if (geometry == GEOMETRY_128_64) {
           sendCommand(0x7);
@@ -156,6 +121,9 @@ class SSD1306Wire : public OLEDDisplay {
     }
 
   private:
+	int getBufferOffset(void) {
+		return 0;
+	}
     inline void sendCommand(uint8_t command) __attribute__((always_inline)){
       initI2cIfNeccesary();
       Wire.beginTransmission(_address);
@@ -166,12 +134,10 @@ class SSD1306Wire : public OLEDDisplay {
 
     void initI2cIfNeccesary() {
       if (_doI2cAutoInit) {
-        Wire.begin(this->_sda, this->_scl);
+      	Wire.begin(this->_sda, this->_scl);
       }
     }
 
 };
-
-//SSD1306Wire display;
 
 #endif

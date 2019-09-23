@@ -1,37 +1,40 @@
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
- * Copyright (c) 2018 by Fabrice Weinberg
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * ThingPulse invests considerable time and money to develop these open source libraries.
- * Please support us by buying our products (and not the clones) from
- * https://thingpulse.com
- *
- */
-
 #include "OLEDDisplayUi.h"
+
+void LoadingDrawDefault(OLEDDisplay *display, LoadingStage* stage, uint8_t progress) {
+      display->setTextAlignment(TEXT_ALIGN_CENTER);
+      display->setFont(ArialMT_Plain_10);
+      display->drawString(64, 18, stage->process);
+      display->drawProgressBar(4, 32, 120, 8, progress);
+};
+
 
 OLEDDisplayUi::OLEDDisplayUi(OLEDDisplay *display) {
   this->display = display;
+	
+  indicatorPosition = BOTTOM;
+  indicatorDirection = LEFT_RIGHT;
+  activeSymbol = ANIMATION_activeSymbol;
+  inactiveSymbol = ANIMATION_inactiveSymbol;
+  frameAnimationDirection   = SLIDE_RIGHT;
+  lastTransitionDirection = 1;
+  ticksPerFrame = 151; // ~ 5000ms at 30 FPS
+  ticksPerTransition = 15;  // ~  500ms at 30 FPS
+  frameCount = 0;
+  nextFrameNumber = -1;
+  overlayCount = 0;
+  indicatorDrawState = 1;
+  loadingDrawFunction = LoadingDrawDefault;
+  updateInterval = 33;
+  state.lastUpdate = 0;
+  state.ticksSinceLastStateSwitch = 0;
+  state.frameState = FIXED;
+  state.currentFrame = 0;
+  state.frameTransitionDirection = 1;
+  state.isIndicatorDrawen = true;
+  state.manuelControll = false;
+  state.userData = NULL;
+  shouldDrawIndicators = true;
+  autoTransition = true;
 }
 
 void OLEDDisplayUi::init() {
@@ -192,18 +195,18 @@ OLEDDisplayUiState* OLEDDisplayUi::getUiState(){
   return &this->state;
 }
 
-
-int8_t OLEDDisplayUi::update(){
+int16_t OLEDDisplayUi::update(){
   unsigned long frameStart = millis();
-  int8_t timeBudget = this->updateInterval - (frameStart - this->state.lastUpdate);
+  int16_t timeBudget = this->updateInterval - (frameStart - this->state.lastUpdate);
   if ( timeBudget <= 0) {
     // Implement frame skipping to ensure time budget is keept
-    if (this->autoTransition && this->state.lastUpdate != 0) this->state.ticksSinceLastStateSwitch += ceil(0-(timeBudget / this->updateInterval));
+    if (this->autoTransition && this->state.lastUpdate != 0) this->state.ticksSinceLastStateSwitch += ceil((double)-timeBudget / (double)this->updateInterval);
 
     this->state.lastUpdate = frameStart;
     this->tick();
   }
   return this->updateInterval - (millis() - frameStart);
+
 }
 
 
@@ -258,7 +261,7 @@ void OLEDDisplayUi::drawFrame(){
        int16_t x = 0, y = 0, x1 = 0, y1 = 0;
        switch(this->frameAnimationDirection){
         case SLIDE_LEFT:
-          x = 0-(this->display->width() * progress);
+          x = -this->display->width() * progress;
           y = 0;
           x1 = x + this->display->width();
           y1 = 0;
@@ -271,7 +274,7 @@ void OLEDDisplayUi::drawFrame(){
           break;
         case SLIDE_UP:
           x = 0;
-          y = 0-(this->display->height() * progress);
+          y = -this->display->height() * progress;
           x1 = 0;
           y1 = y + this->display->height();
           break;
@@ -378,7 +381,7 @@ void OLEDDisplayUi::drawIndicator() {
     uint16_t x = 0,y = 0;
 
 
-    for (byte i = 0; i < this->frameCount; i++) {
+    for (uint8_t i = 0; i < this->frameCount; i++) {
 
       switch (this->indicatorPosition){
         case TOP:

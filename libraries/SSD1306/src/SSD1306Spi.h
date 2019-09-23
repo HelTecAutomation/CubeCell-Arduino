@@ -1,33 +1,3 @@
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2018 by ThingPulse, Daniel Eichhorn
- * Copyright (c) 2018 by Fabrice Weinberg
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- * ThingPulse invests considerable time and money to develop these open source libraries.
- * Please support us by buying our products (and not the clones) from
- * https://thingpulse.com
- *
- */
-
 #ifndef SSD1306Spi_h
 #define SSD1306Spi_h
 
@@ -94,7 +64,7 @@ class SSD1306Spi : public OLEDDisplay {
           }
           buffer_back[pos] = buffer[pos];
         }
-       // yield();
+        //yield();
        }
 
        // If the minBoundY wasn't updated
@@ -117,7 +87,7 @@ class SSD1306Spi : public OLEDDisplay {
          for (x = minBoundX; x <= maxBoundX; x++) {
            SPI.transfer(buffer[x + y * displayWidth]);
          }
-        // yield();
+         //yield();
        }
        digitalWrite(_cs, HIGH);
      #else
@@ -140,7 +110,7 @@ class SSD1306Spi : public OLEDDisplay {
         digitalWrite(_cs, LOW);
         for (uint16_t i=0; i<displayBufferSize; i++) {
           SPI.transfer(buffer[i]);
-          yield();
+          //yield();
         }
         digitalWrite(_cs, HIGH);
      #endif
