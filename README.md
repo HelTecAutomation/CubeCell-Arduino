@@ -34,7 +34,7 @@ Make sure you have the latest Arduino IDE installed on your computer. If not ins
 &nbsp;
 
 - **Via Arduino IDE Boards Manager (Recommend)**
-  - [Install ASR650x-Arduino via Aruino Boards Manager](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
+  - [Install ASR650x-Arduino(CubeCell) via Aruino Boards Manager](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
   
 - **Use Git with the development repository**
   + [Instructions for Windows](InstallGuide/windows.md)
