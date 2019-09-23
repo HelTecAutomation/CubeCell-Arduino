@@ -41,13 +41,12 @@
             }
           ], 
           "size": "7094272"
-        }
-      "platforms": [
-      {
+        },
+        {
           "category": "CubeCell", 
           "name": "CubeCell Dev-boards", 
           "url": "https://github.com/HelTecAutomation/ASR650x-Arduino/archive/0.0.2.zip", 
-          "checksum": "SHA-256:19cf63ab95d8b640194764028bc483cbb021904c9aa55a8f68a5b792ea19e164", 
+          "checksum": "SHA-256:8dba4bdb616478b05f5e7bb0d286a078c05252cf78335696f3c088062f557115", 
           "help": {
             "online": ""
           }, 
@@ -76,9 +75,9 @@
               "name": "CubeCellflash"
             }
           ], 
-          "size": "7094272"
+          "size": "8757248"
         }
-      ], 
+      ],
       "tools": [ 
         {
           "version": "0.0.1", 
