@@ -17,3 +17,12 @@ Installation instructions for Debian / Ubuntu OS
   
 - Restart Arduino IDE
 
+- If program can't be upload, and show message:
+
+
+ ```bash
+ PermissionError: [Errno 13] Permission denied: '/dev/ttyUSB0'
+ ```
+
+- the page http://playground.arduino.cc/Linux/All#Permission may be helpful.
+
