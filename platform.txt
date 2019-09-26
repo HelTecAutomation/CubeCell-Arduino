@@ -70,8 +70,8 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" -Wl,--start-group
 
 recipe.objcopy.hex.pattern={tools.CubeCellelftool.cmd} "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.project_name}.cyacd" 
 
-recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
-recipe.size.regex=\.text\s+([0-9]+).*
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.hex"
+recipe.size.regex=Total\s+([0-9]+).*
 
 tools.CubeCellflash.upload.protocol=
 tools.CubeCellflash.upload.params.verbose=
