@@ -2133,12 +2133,6 @@ typedef enum eLoRaMacRegion_t {
      * North american band on 915MHz with a maximum of 16 channels
      */
     LORAMAC_REGION_US915_HYBRID,
-
-    /*!
-     * Chinese band on 470MHz (Alibaba)
-     * Uplink = Downlink
-     */
-    LORAMAC_REGION_CN470A,
 } LoRaMacRegion_t;
 
 /*!

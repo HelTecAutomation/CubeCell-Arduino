@@ -108,15 +108,15 @@ void loop()
 		{
 			PrepareTxFrame( AppPort );
 			LoRaWAN.Send();
-			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
 			DeviceState = DEVICE_STATE_CYCLE;
 			break;
 		}
 		case DEVICE_STATE_CYCLE:
 		{
 			// Schedule next packet transmission
-			DeviceState = DEVICE_STATE_SLEEP;
+			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
 			LoRaWAN.Cycle(TxDutyCycleTime);
+			DeviceState = DEVICE_STATE_SLEEP;
 			break;
 		}
 		case DEVICE_STATE_SLEEP:

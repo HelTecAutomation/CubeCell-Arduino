@@ -33,7 +33,7 @@ uint8_t AppData[LORAWAN_APP_DATA_MAX_SIZE];
 /*!
  * Defines the application data transmission duty cycle
  */
-uint32_t TxDutyCycleTime;
+uint32_t TxDutyCycleTime ;
 
 /*!
  * Timer to handle the application data transmission duty cycle
@@ -41,10 +41,16 @@ uint32_t TxDutyCycleTime;
 static TimerEvent_t TxNextPacketTimer;
 
 /*!
- * PassthroughMode mode enable/disable. don't modify it. 
- * when use PassthroughMode, set it true in app.ino , Reference the example LoRaWan_PASSMODE.ino 
+ * PassthroughMode mode enable/disable. don't modify it here. 
+ * when use PassthroughMode, set it true in app.ino , Reference the example PassthroughMode.ino 
  */
 bool PassthroughMode = false;
+
+/*!
+ * when use PassthroughMode, Mode_LoraWan to set use lora or lorawan mode . don't modify it here. 
+ * it is used to set mode lora/lorawan in PassthroughMode.
+ */
+bool Mode_LoraWan = true;
 
 /*!
  * Indicates if a new packet can be sent
@@ -52,7 +58,8 @@ bool PassthroughMode = false;
 static bool NextTx = true;
 
 
-enum eDeviceState DeviceState;
+enum eDeviceState_LoraWan DeviceState;
+
 
 /*!
  * \brief   Prepares the payload of the frame

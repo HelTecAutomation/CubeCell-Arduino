@@ -9,6 +9,27 @@
 extern "C" {
 #endif
 
+/*!
+ * Device states
+ */
+enum eDeviceState_LoraWan
+{
+    DEVICE_STATE_INIT,
+    DEVICE_STATE_JOIN,
+    DEVICE_STATE_SEND,
+    DEVICE_STATE_CYCLE,
+    DEVICE_STATE_SLEEP
+};
+
+enum eDeviceState_Lora
+{
+    LORA_INIT,
+    LORA_SEND,
+    LORA_RECEIVE,
+    MCU_SLEEP,
+};
+
+
 void Enable_AT(void);
 void getDevParam(void);
 void printDevParam(void);

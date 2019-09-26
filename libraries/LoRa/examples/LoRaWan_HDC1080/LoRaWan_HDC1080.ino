@@ -1,9 +1,7 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include <Wire.h>
-#include <BH1750.h>
-
-
+#include "HDC1080.h"
 
 #ifndef ACTIVE_REGION
 #define ACTIVE_REGION LORAMAC_REGION_CN470
@@ -28,15 +26,15 @@ DeviceClass_t  CLASS=CLASS_MODE;
 #endif
 
 /*
-   set to 1 the enable AT mode
-   set to 0 the disable support AT mode
-*/
+ * set to 1 the enable AT mode
+ * set to 0 the disable support AT mode
+ */
 #define  AT_SUPPORT  1
 
 /*!
-   When set to true the application uses the Over-the-Air activation procedure
-   When set to false the application uses the Personalization activation procedure
-*/
+ * When set to true the application uses the Over-the-Air activation procedure
+ * When set to false the application uses the Personalization activation procedure
+ */
 bool OVER_THE_AIR_ACTIVATION = true;
 
 /* LoRaWAN Adaptive Data Rate */
@@ -73,6 +71,7 @@ uint8_t AppPort = 2;
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t APP_TX_DUTYCYCLE = 15000;
 
+
 /*  get the BatteryVoltage in mV. */
 static uint16_t GetBatteryVoltage(void)
 {
@@ -83,37 +82,50 @@ static uint16_t GetBatteryVoltage(void)
 	return volt;
 }
 
-/* Prepares the payload of the frame */
-BH1750 lightMeter;
+/*!
+ * \brief   Prepares the payload of the frame
+ */
+HDC1080 hdc1080;
 static void PrepareTxFrame( uint8_t port )
 {
-	pinMode(Vext, OUTPUT);
-	digitalWrite(Vext, LOW);
-	lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2);
-	float lux = lightMeter.readLightLevel();
-	lightMeter.end();
-	digitalWrite(Vext, HIGH);
-	uint16_t BatteryVoltage = GetBatteryVoltage();
-	
-	unsigned char *puc;
-	puc = (unsigned char *)(&lux);
-	AppDataSize = 6;//AppDataSize max value is 64
-	AppData[0] = puc[0];
-	AppData[1] = puc[1];
-	AppData[2] = puc[2];
-	AppData[3] = puc[3];
-	AppData[4] = (uint8_t)(BatteryVoltage>>8);
-	AppData[5] = (uint8_t)BatteryVoltage;
-	
-	Serial.print("Light: ");
-	Serial.print(lux);
-	Serial.print(" lx,");Serial.print("BatteryVoltage:");
-	Serial.println(BatteryVoltage);
+    pinMode(Vext,OUTPUT);
+    digitalWrite(Vext,LOW);
+    hdc1080.begin(0x40);
+    float Temperature = (float)(hdc1080.readTemperature());
+    float Humidity = (float)(hdc1080.readHumidity());
+    hdc1080.end();
+    digitalWrite(Vext,HIGH);
+    uint16_t BatteryVoltage = GetBatteryVoltage();
+    unsigned char *puc;
+
+    puc = (unsigned char *)(&Temperature);
+    AppDataSize = 10;//AppDataSize max value is 64
+    AppData[0] = puc[0];
+    AppData[1] = puc[1];
+    AppData[2] = puc[2];
+    AppData[3] = puc[3];
+
+    puc = (unsigned char *)(&Humidity);
+    AppData[4] = puc[0];
+    AppData[5] = puc[1];
+    AppData[6] = puc[2];
+    AppData[7] = puc[3];
+
+    AppData[8] = (uint8_t)(BatteryVoltage>>8);
+    AppData[9] = (uint8_t)BatteryVoltage;
+
+    Serial.print("T=");
+    Serial.print(Temperature);
+    Serial.print("C, RH=");
+    Serial.print(Humidity);
+    Serial.print("%,");
+    Serial.print("BatteryVoltage:");
+    Serial.println(BatteryVoltage);
 }
 
 
 void setup() {
-    BoardInitMcu();
+    BoardInitMcu( );
     Serial.begin(115200);
     DeviceState = DEVICE_STATE_INIT;
 }
@@ -143,15 +155,15 @@ void loop()
 		{
 			PrepareTxFrame( AppPort );
 			LoRaWAN.Send();
-			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
 			DeviceState = DEVICE_STATE_CYCLE;
 			break;
 		}
 		case DEVICE_STATE_CYCLE:
 		{
 			// Schedule next packet transmission
-			DeviceState = DEVICE_STATE_SLEEP;
+			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
 			LoRaWAN.Cycle(TxDutyCycleTime);
+			DeviceState = DEVICE_STATE_SLEEP;
 			break;
 		}
 		case DEVICE_STATE_SLEEP:

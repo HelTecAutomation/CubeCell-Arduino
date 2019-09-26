@@ -31,25 +31,15 @@ extern DeviceClass_t  CLASS;
 extern uint8_t AppPort;
 extern bool PassthroughMode;
 extern uint8_t ConfirmedNbTrials;
+extern bool Mode_LoraWan;
+
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
  * value in [ms].
  */
 #define APP_TX_DUTYCYCLE_RND                        1000
 
-/*!
- * Device states
- */
-enum eDeviceState
-{
-    DEVICE_STATE_INIT,
-    DEVICE_STATE_JOIN,
-    DEVICE_STATE_SEND,
-    DEVICE_STATE_CYCLE,
-    DEVICE_STATE_SLEEP
-};
-
-extern enum eDeviceState DeviceState;
+extern enum eDeviceState_LoraWan DeviceState;
 
 class LoRaWanClass{
 public:
@@ -59,6 +49,8 @@ public:
   void Cycle(uint32_t dutycycle);
   void Sleep();
 };
+
+
 extern "C" bool SendFrame( void );
 extern "C" void RGB_ON(uint32_t color,uint32_t time);
 extern "C" void RGB_OFF(void);
