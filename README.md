@@ -2,7 +2,7 @@
 
 English | [简体中文](#简体中文)
 
-This project makes ASR650x (ASR6501, ASR6502) series fully support Arduino®. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
+This project makes ASR650x (ASR6501, ASR6502) series fully Arduino-Compatible. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
 
 Based on the ASR650x series of chips, we have done a lot of migration and development, made it perfectly support **Arduino®**, can run the LoRaWAN protocol stably, and can easily connect lithium batteries and solar panels… This is the CubeCell series.
 
@@ -23,8 +23,6 @@ The currently supported ASR650x chip product models are:
 &nbsp;
 
 ## Installation Instructions
-
-*For Mac OS® system, we recommend installing Arduino version 1.8.5. Arduino over 1.8.5 version may cause unknown bugs.*
 
 Make sure you have the latest Arduino IDE installed on your computer. If not installed, please refer to this documents:
 
@@ -81,7 +79,6 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 ## 安装指南
 
 首先，确保你的电脑上已经安装了最新的Arduino IDE。如果没有安装，请参考这篇文档：[https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino](https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino)
-我们建议安装Arduino 1.8.5版本，超过1.8.5版本的Arduino可能会导致未知bug。
 - **通过Arduino IDE的库管理器安装**
   - [安装基于ASR650x芯片的开发环境](https://docs.heltec.cn/#/en/user_manual/how_to_install_ASR650x_Arduino)
 - **通过Git从源码进行安装**
