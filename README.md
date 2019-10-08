@@ -62,7 +62,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 &nbsp;
 ## 简体中文
 
-本项目由Heltec Automation 惠利特自动化科技有限公司公司提供。
+本项目由成都惠利特自动化科技有限公司开发。
 
 * 本项目旨在为ASR650x系列芯片提供Arduino便利的开发环境与例程库，方便用户完成对ASR650x系列芯片的快速部署与开发。
 
@@ -86,11 +86,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
   - [MacOS操作系统 -- 安装方法](InstallGuide/mac.md)
   - [Linux操作系统(debian,ubuntu) -- 安装方法](InstallGuide/debian_ubuntu.md)
 
-
-- 更多安装方法，还可以参考这里：[https://heltec.org/zh/asr650x_install/](xxx)
-
-## 编码规则
-可以参考这篇文章来了解Arduino的插件和编码规则：[EspExceptionDecoder](xxx).
+&nbsp;
 
 ## 问题讨论 & BUG报告
 
