@@ -11,7 +11,8 @@ boolean BMP085::begin(uint8_t mode) {
 
   Wire.begin();
 
-  if (read8(0xD0) != 0x55) return false;
+  //if (read8(0xD0) != 0x55) return false;
+  if (read8(0xD0) != 0x58) return false;
 
   /* read calibration data */
   ac1 = read16(BMP085_CAL_AC1);
