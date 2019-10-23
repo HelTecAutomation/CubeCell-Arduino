@@ -68,7 +68,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 
 ## 说明
-目前所支持的ASR650x芯片产品型号有：
+产品型号列表：
 
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |

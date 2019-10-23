@@ -1,0 +1,7 @@
+.git
+platform.txt
+tools/CubeCellelftool
+tools/dist
+tools/CubeCellflash
+tools/gcc-arm-none-eabi
+.DS_Store
