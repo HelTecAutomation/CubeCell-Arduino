@@ -84,16 +84,18 @@ static uint16_t GetBatteryVoltage(void)
 }
 
 /* Prepares the payload of the frame */
-//BMP085 bmp;
+BMP085 bmp;
 static void PrepareTxFrame( uint8_t port )
 {
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
-//  bmp.begin();
-  float lux = 0.00;//bmp.readTemperature();
-//  bmp.readPressure();
-//  bmp.readAltitude();
-//  bmp.readSealevelPressure();
+  
+  bmp.begin();
+  float temperature = bmp.readTemperature();
+  float pressure = bmp.readPressure();
+  float altitude = bmp.readAltitude();
+  float sealevelpressure = bmp.readSealevelPressure();
+  
   // you can get a more precise measurement of altitude
   // if you know the current sea level pressure which will
   // vary with weather and such. If it is 1015 millibars
@@ -101,23 +103,40 @@ static void PrepareTxFrame( uint8_t port )
   //    Serial.print("Real altitude = ");
   //    Serial.print(bmp.readAltitude(101500));
   //    Serial.println(" meters");
-//  Wire.end();
+  Wire.end();
+  
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();
   
   unsigned char *puc;
-  puc = (unsigned char *)(&lux);
-  AppDataSize = 6;//AppDataSize max value is 64
+  puc = (unsigned char *)(&temperature);
+  AppDataSize = 14;//AppDataSize max value is 64
   AppData[0] = puc[0];
   AppData[1] = puc[1];
   AppData[2] = puc[2];
   AppData[3] = puc[3];
-  AppData[4] = (uint8_t)(BatteryVoltage>>8);
-  AppData[5] = (uint8_t)BatteryVoltage;
   
-  Serial.print("Light: ");
-  Serial.print(lux);
-  Serial.print(" lx,");Serial.print("BatteryVoltage:");
+  puc = (unsigned char *)(&pressure);
+  AppData[4] = puc[0];
+  AppData[5] = puc[1];
+  AppData[6] = puc[2];
+  AppData[7] = puc[3];
+  
+  puc = (unsigned char *)(&altitude);
+  AppData[8] = puc[0];
+  AppData[9] = puc[1];
+  AppData[10] = puc[2];
+  AppData[11] = puc[3];
+  
+  AppData[12] = (uint8_t)(BatteryVoltage>>8);
+  AppData[13] = (uint8_t)BatteryVoltage;
+  
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" C, Pressure: ");
+  Serial.print(pressure);
+  Serial.print("Pa, ");
+  Serial.print("BatteryVoltage:");
   Serial.println(BatteryVoltage);
 }
 
