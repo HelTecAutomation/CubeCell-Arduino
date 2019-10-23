@@ -17,6 +17,8 @@
  *  K.Townsend (Adafruit Industries)
  *
  *  BSD license, all text above must be included in any redistribution
+ * 
+ * modified to work with the HelTec CubeCell Series
  */
 #ifndef __BMP280_H__
 #define __BMP280_H__
@@ -85,7 +87,7 @@ typedef struct {
 /**
  * Driver for the Adafruit BMP280 barometric pressure sensor.
  */
-class Adafruit_BMP280 {
+class BMP280 {
 public:
   /** Oversampling rate for the sensor. */
   enum sensor_sampling {
@@ -149,7 +151,7 @@ public:
     STANDBY_MS_4000 = 0x07
   };
 
-  Adafruit_BMP280(TwoWire *theWire = &Wire);
+  BMP280(TwoWire *theWire = &Wire);
 //  Adafruit_BMP280(int8_t cspin, SPIClass *theSPI = &SPI);
 //  Adafruit_BMP280(int8_t cspin, int8_t mosipin, int8_t misopin, int8_t sckpin);
 

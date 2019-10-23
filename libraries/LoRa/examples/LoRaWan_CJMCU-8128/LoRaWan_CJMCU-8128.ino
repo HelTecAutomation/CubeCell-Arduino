@@ -2,7 +2,7 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-#include <Adafruit_BMP280.h>
+#include <BMP280.h>
 #include "HDC1080.h"
 //#include <BH1750.h>
 #include <CCS811.h>
@@ -106,7 +106,7 @@ static uint16_t GetBatteryVoltage(void)
 HDC1080 hdc1080;
 //BH1750 lightMeter;
 CCS811 ccs;
-Adafruit_BMP280 bmp;
+BMP280 bmp;
 //ClosedCube_BME680 bme680;
 
 
@@ -143,11 +143,11 @@ static void PrepareTxFrame( uint8_t port )
   if (!bmp.begin()) {
     Serial.println("Failed to start BMx!");
   }
-  bmp.setSampling(Adafruit_BMP280::MODE_NORMAL,     /* Operating Mode. */
-                  Adafruit_BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                  Adafruit_BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                  Adafruit_BMP280::FILTER_X16,      /* Filtering. */
-                  Adafruit_BMP280::STANDBY_MS_500); /* Standby time. */
+  bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  BMP280::FILTER_X16,      /* Filtering. */
+                  BMP280::STANDBY_MS_500); /* Standby time. */
   bmp.readTemperature();
   Pressure = bmp.readPressure()/100.0;
 

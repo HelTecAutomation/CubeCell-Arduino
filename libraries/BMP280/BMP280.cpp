@@ -1,5 +1,5 @@
 /*!
- *  @file Adafruit_BMP280.cpp
+ *  @file BMP280.cpp
  *
  *  This is a library for the BMP280 orientation sensor
  *
@@ -17,9 +17,11 @@
  *  K.Townsend (Adafruit Industries)
  *
  *  BSD license, all text above must be included in any redistribution
+ *
+ * modified to work with the HelTec CubeCell Series
  */
 
-#include "Adafruit_BMP280.h"
+#include "BMP280.h"
 #include "Arduino.h"
 #include <Wire.h>
 
@@ -28,7 +30,7 @@
  * @param  *theWire
  *         optional wire
  */
-Adafruit_BMP280::Adafruit_BMP280(TwoWire *theWire)
+BMP280::BMP280(TwoWire *theWire)
     : _cs(-1), _mosi(-1), _miso(-1), _sck(-1) {
   _wire = theWire;
 }
@@ -68,7 +70,7 @@ Adafruit_BMP280::Adafruit_BMP280(TwoWire *theWire)
  *         The expected chip ID (used to validate connection).
  *  @return True if the init was successful, otherwise false.
  */
-bool Adafruit_BMP280::begin(uint8_t addr, uint8_t chipid) {
+bool BMP280::begin(uint8_t addr, uint8_t chipid) {
   _i2caddr = addr;
 
   if (_cs == -1) {
@@ -112,7 +114,7 @@ bool Adafruit_BMP280::begin(uint8_t addr, uint8_t chipid) {
  * @param duration
  *        The sampling duration.
  */
-void Adafruit_BMP280::setSampling(sensor_mode mode,
+void BMP280::setSampling(sensor_mode mode,
                                   sensor_sampling tempSampling,
                                   sensor_sampling pressSampling,
                                   sensor_filter filter,
@@ -151,7 +153,7 @@ void Adafruit_BMP280::setSampling(sensor_mode mode,
     @brief  Writes an 8 bit value over I2C/SPI
 */
 /**************************************************************************/
-void Adafruit_BMP280::write8(byte reg, byte value) {
+void BMP280::write8(byte reg, byte value) {
   if (_cs == -1) {
     _wire->beginTransmission((uint8_t)_i2caddr);
     _wire->write((uint8_t)reg);
@@ -175,7 +177,7 @@ void Adafruit_BMP280::write8(byte reg, byte value) {
  *          selected register
  *  @return value from selected register
  */
-uint8_t Adafruit_BMP280::read8(byte reg) {
+uint8_t BMP280::read8(byte reg) {
   uint8_t value;
 
   if (_cs == -1) {
@@ -201,7 +203,7 @@ uint8_t Adafruit_BMP280::read8(byte reg) {
 /*!
  *  @brief  Reads a 16 bit value over I2C/SPI
  */
-uint16_t Adafruit_BMP280::read16(byte reg) {
+uint16_t BMP280::read16(byte reg) {
   uint16_t value;
 
   if (_cs == -1) {
@@ -225,7 +227,7 @@ uint16_t Adafruit_BMP280::read16(byte reg) {
   return value;
 }
 
-uint16_t Adafruit_BMP280::read16_LE(byte reg) {
+uint16_t BMP280::read16_LE(byte reg) {
   uint16_t temp = read16(reg);
   return (temp >> 8) | (temp << 8);
 }
@@ -233,16 +235,16 @@ uint16_t Adafruit_BMP280::read16_LE(byte reg) {
 /*!
  *   @brief  Reads a signed 16 bit value over I2C/SPI
  */
-int16_t Adafruit_BMP280::readS16(byte reg) { return (int16_t)read16(reg); }
+int16_t BMP280::readS16(byte reg) { return (int16_t)read16(reg); }
 
-int16_t Adafruit_BMP280::readS16_LE(byte reg) {
+int16_t BMP280::readS16_LE(byte reg) {
   return (int16_t)read16_LE(reg);
 }
 
 /*!
  *  @brief  Reads a 24 bit value over I2C/SPI
  */
-uint32_t Adafruit_BMP280::read24(byte reg) {
+uint32_t BMP280::read24(byte reg) {
   uint32_t value;
 
   if (_cs == -1) {
@@ -280,7 +282,7 @@ uint32_t Adafruit_BMP280::read24(byte reg) {
 /*!
  *  @brief  Reads the factory-set coefficients
  */
-void Adafruit_BMP280::readCoefficients() {
+void BMP280::readCoefficients() {
   _bmp280_calib.dig_T1 = read16_LE(BMP280_REGISTER_DIG_T1);
   _bmp280_calib.dig_T2 = readS16_LE(BMP280_REGISTER_DIG_T2);
   _bmp280_calib.dig_T3 = readS16_LE(BMP280_REGISTER_DIG_T3);
@@ -300,7 +302,7 @@ void Adafruit_BMP280::readCoefficients() {
  * Reads the temperature from the device.
  * @return The temperature in degress celcius.
  */
-float Adafruit_BMP280::readTemperature() {
+float BMP280::readTemperature() {
   int32_t var1, var2;
 
   int32_t adc_T = read24(BMP280_REGISTER_TEMPDATA);
@@ -326,7 +328,7 @@ float Adafruit_BMP280::readTemperature() {
  * Reads the barometric pressure from the device.
  * @return Barometric pressure in hPa.
  */
-float Adafruit_BMP280::readPressure() {
+float BMP280::readPressure() {
   int64_t var1, var2, p;
 
   // Must be done first to get the t_fine variable set up
@@ -363,7 +365,7 @@ float Adafruit_BMP280::readPressure() {
  *        The current hPa at sea level.
  * @return The approximate altitude above sea level in meters.
  */
-float Adafruit_BMP280::readAltitude(float seaLevelhPa) {
+float BMP280::readAltitude(float seaLevelhPa) {
   float altitude;
 
   float pressure = readPressure(); // in Si units for Pascal
@@ -381,7 +383,7 @@ float Adafruit_BMP280::readAltitude(float seaLevelhPa) {
  * @param  atmospheric   Atmospheric pressure in hPa
  * @return The approximate pressure
  */
-float Adafruit_BMP280::seaLevelForAltitude(float altitude, float atmospheric) {
+float BMP280::seaLevelForAltitude(float altitude, float atmospheric) {
   // Equation taken from BMP180 datasheet (page 17):
   // http://www.adafruit.com/datasheets/BST-BMP180-DS000-09.pdf
 
@@ -396,7 +398,7 @@ float Adafruit_BMP280::seaLevelForAltitude(float altitude, float atmospheric) {
  *  !!!todo!!!
  */
 /*
-void Adafruit_BMP280::takeForcedMeasurement()
+void BMP280::takeForcedMeasurement()
 {
     // If we are in forced mode, the BME sensor goes back to sleep after each
     // measurement and we need to set it to forced mode once at this point, so

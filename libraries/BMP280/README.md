@@ -14,6 +14,8 @@ Adafruit invests time and resources providing this open source code.  Please sup
 
 Written by Kevin (KTOWN) Townsend for Adafruit Industries.
 
+modified to work with the HelTec CubeCell Series
+
 <!-- START COMPATIBILITY TABLE -->
 
 ## Compatibility
