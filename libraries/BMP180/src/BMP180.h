@@ -6,7 +6,7 @@
 
 #define BMP085_DEBUG 0
 
-#define BMP085_I2CADDR 0x76
+#define BMP085_I2CADDR 0x77
 
 #define BMP085_ULTRALOWPOWER 0
 #define BMP085_STANDARD      1
@@ -25,8 +25,8 @@
 #define BMP085_CAL_MD            0xBE  // R   Calibration data (16 bits)
 
 #define BMP085_CONTROL           0xF4 
-#define BMP085_TEMPDATA          0xFA
-#define BMP085_PRESSUREDATA      0xF7
+#define BMP085_TEMPDATA          0xF6
+#define BMP085_PRESSUREDATA      0xF6
 #define BMP085_READTEMPCMD          0x2E
 #define BMP085_READPRESSURECMD            0x34
 
