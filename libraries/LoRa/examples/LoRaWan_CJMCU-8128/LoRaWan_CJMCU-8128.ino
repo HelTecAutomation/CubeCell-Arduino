@@ -130,19 +130,15 @@ static void PrepareTxFrame( uint8_t port )
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
 
-  if (!ccs.begin()) {
-    Serial.println("Failed to start CCS811!");
-  } else {
-    delay(5000);
-  }
+  ccs.begin();
+  ccs.setDriveMode(CCS811_DRIVE_MODE_1SEC);
+  delay(5000);
   while(!ccs.available());
   ccs.readData();
   co2 = ccs.geteCO2();
   tvoc = ccs.getTVOC();
 
-  if (!bmp.begin()) {
-    Serial.println("Failed to start BMx!");
-  }
+  bmp.begin();
   bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
                   BMP280::SAMPLING_X2,     /* Temp. oversampling */
                   BMP280::SAMPLING_X16,    /* Pressure oversampling */
