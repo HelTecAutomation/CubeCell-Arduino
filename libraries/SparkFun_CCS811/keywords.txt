@@ -1,0 +1,63 @@
+########################################################
+# Syntax Coloring Map for SparkFun CCS811 Library      #
+########################################################
+# Class
+###################################################################
+
+CCS811Core	KEYWORD1
+CCS811	KEYWORD1
+
+###################################################################
+# Methods and Functions
+###################################################################
+
+beginCore	KEYWORD2
+readRegister	KEYWORD2
+multiReadRegister	KEYWORD2
+writeRegister	KEYWORD2
+multiWriteRegister	KEYWORD2
+begin	KEYWORD2
+readAlgorithmResults	KEYWORD2
+checkForStatusError	KEYWORD2
+dataAvailable	KEYWORD2
+appValid	KEYWORD2
+getErrorRegister	KEYWORD2
+getBaseline	KEYWORD2
+setBaseline	KEYWORD2
+enableInterrupts	KEYWORD2
+disableInterrupts	KEYWORD2
+setDriveMode	KEYWORD2
+setEnvironmentalData	KEYWORD2
+setRefResistance	KEYWORD2
+readNTC	KEYWORD2
+getTVOC	KEYWORD2
+getCO2	KEYWORD2
+getResistance	KEYWORD2
+getTemperature	KEYWORD2
+status	KEYWORD2
+
+###################################################################
+# Constants
+###################################################################
+
+CSS811_STATUS	LITERAL1
+CSS811_MEAS_MODE	LITERAL1
+CSS811_ALG_RESULT_DATA	LITERAL1
+CSS811_RAW_DATA	LITERAL1
+CSS811_ENV_DATA	LITERAL1
+CSS811_NTC	LITERAL1
+CSS811_THRESHOLDS	LITERAL1
+CSS811_BASELINE	LITERAL1
+CSS811_HW_ID	LITERAL1
+CSS811_HW_VERSION	LITERAL1
+CSS811_FW_BOOT_VERSION	LITERAL1
+CSS811_FW_APP_VERSION	LITERAL1
+CSS811_ERROR_ID	LITERAL1
+CSS811_APP_START	LITERAL1
+CSS811_SW_RESET	LITERAL1
+SENSOR_SUCCESS	LITERAL1
+SENSOR_ID_ERROR	LITERAL1
+SENSOR_I2C_ERROR	LITERAL1
+SENSOR_INTERNAL_ERROR	LITERAL1
+SENSOR_GENERIC_ERROR	LITERAL1
+
