@@ -22,8 +22,6 @@
  */
 
 #include "BMP280.h"
-#include "Arduino.h"
-#include <Wire.h>
 
 /*!
  * @brief  BMP280 constructor using i2c
