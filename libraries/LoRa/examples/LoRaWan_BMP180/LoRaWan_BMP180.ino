@@ -89,13 +89,13 @@ static void PrepareTxFrame( uint8_t port )
 {
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
-  
+
   bmp.begin();
   float temperature = bmp.readTemperature();
-  float pressure = bmp.readPressure();
+  float pressure = bmp.readPressure()/100;
   float altitude = bmp.readAltitude();
   float sealevelpressure = bmp.readSealevelPressure();
-  
+
   // you can get a more precise measurement of altitude
   // if you know the current sea level pressure which will
   // vary with weather and such. If it is 1015 millibars
@@ -104,7 +104,7 @@ static void PrepareTxFrame( uint8_t port )
   //    Serial.print(bmp.readAltitude(101500));
   //    Serial.println(" meters");
   Wire.end();
-  
+
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();
   
