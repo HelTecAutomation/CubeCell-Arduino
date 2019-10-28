@@ -8,7 +8,6 @@
 #include <CCS811.h>
 //#include "ClosedCube_BME680.h"
 
-
 #ifndef ACTIVE_REGION
 #define ACTIVE_REGION LORAMAC_REGION_EU868
 #endif
@@ -85,9 +84,17 @@ uint8_t ConfirmedNbTrials = 8;
 uint8_t AppPort = 2;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 60000;
+uint32_t APP_TX_DUTYCYCLE = 600000;
 
-float Temperature, Humidity, Pressure, co2, tvoc;
+float Temperature, Humidity, Pressure, lux, co2, tvoc;
+int count;
+int maxtry = 50;
+
+HDC1080 hdc1080;
+//BH1750 lightMeter;
+CCS811 ccs;
+BMP280 bmp;
+//ClosedCube_BME680 bme680;
 
 /*  get the BatteryVoltage in mV. */
 static uint16_t GetBatteryVoltage(void)
@@ -102,13 +109,6 @@ static uint16_t GetBatteryVoltage(void)
 /*!
    \brief   Prepares the payload of the frame
 */
-
-HDC1080 hdc1080;
-//BH1750 lightMeter;
-CCS811 ccs;
-BMP280 bmp;
-//ClosedCube_BME680 bme680;
-
 
 //ClosedCube_BME680_Status readAndPrintStatus() {
 //  ClosedCube_BME680_Status status = bme680.readStatus();
@@ -129,51 +129,85 @@ static void PrepareTxFrame( uint8_t port )
 {
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
+  delay(500);
 
+  count = 0;
   ccs.begin();
-  ccs.setDriveMode(CCS811_DRIVE_MODE_1SEC);
-  delay(5000);
-  while(!ccs.available());
-  ccs.readData();
-  co2 = ccs.geteCO2();
-  tvoc = ccs.getTVOC();
-
   bmp.begin();
+  delay(100);
   bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
                   BMP280::SAMPLING_X2,     /* Temp. oversampling */
                   BMP280::SAMPLING_X16,    /* Pressure oversampling */
                   BMP280::FILTER_X16,      /* Filtering. */
                   BMP280::STANDBY_MS_500); /* Standby time. */
-  bmp.readTemperature();
-  Pressure = bmp.readPressure()/100.0;
-
   hdc1080.begin(0x40);
+   
+  delay(5000);
+  while (!ccs.available());
+  ccs.readData();
+  co2 = ccs.geteCO2();
+  tvoc = ccs.getTVOC();
+  while (co2 > 65500.0 && count < maxtry) {
+    ccs.readData();
+    co2 = ccs.geteCO2();
+    tvoc = ccs.getTVOC();
+    count++;
+    delay(500);
+  }
+  if (co2 > 65500.0) {
+    co2 = 0.0;
+    tvoc = 0.0;
+  }
+
+  count = 0;
+  float temp = bmp.readTemperature();
+  Pressure = bmp.readPressure() / 100.0;
+  while (Pressure > 1190.0 && count < maxtry) {
+     Pressure = bmp.readPressure() / 100.0;
+     count++;
+     delay(500);
+  }
+  if (Pressure > 1190.0) {
+    Pressure = 0;
+  }
+
+  count = 0;
   Temperature = (float)(hdc1080.readTemperature());
   Humidity = (float)(hdc1080.readHumidity());
+  while (Temperature > 120.0 && count < maxtry) {
+    Temperature = (float)(hdc1080.readTemperature());
+    Humidity = (float)(hdc1080.readHumidity());
+    count++;
+    delay(500);
+  }
+  if (Temperature > 120.0) {
+    Temperature = 0.0;
+    Humidity = 0.0;
+  }
   hdc1080.end();
 
-//  bme680.init(0x77); // I2C address: 0x76 or 0x77
-//  bme680.reset();
-//  bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
-//  bme680.setIIRFilter(BME680_FILTER_3);
-//  bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds 
-//  delay(5000);
-//  ClosedCube_BME680_Status status = readAndPrintStatus();
-//  if (status.newDataFlag) {
-//    Temperature = bme680.readTemperature();
-//    Pressure = bme680.readPressure();
-//    Humidity = bme680.readHumidity();   
-//    tvoc = bme680.readGasResistance();
-//    co2 = 0.0;
-//  }
-
-//  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
-//    Serial.print("Failed to start BH2750!");
-//  }
-//  float lux = lightMeter.readLightLevel();
-//  lightMeter.end();
-  float lux = 0.0;
+  //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
+  //    Serial.print("Failed to start BH2750!");
+  //  }
+  //  float lux = lightMeter.readLightLevel();
+  //  lightMeter.end();
+  lux = 0.0;
   
+  //  bme680.init(0x77); // I2C address: 0x76 or 0x77
+  //  bme680.reset();
+  //  bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
+  //  bme680.setIIRFilter(BME680_FILTER_3);
+  //  bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds
+  //  delay(5000);
+  //  ClosedCube_BME680_Status status = readAndPrintStatus();
+  //  if (status.newDataFlag) {
+  //    Temperature = bme680.readTemperature();
+  //    Pressure = bme680.readPressure();
+  //    Humidity = bme680.readHumidity();
+  //    tvoc = bme680.readGasResistance();
+  //    co2 = 0.0;
+  //  }
+
   Wire.end();
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();

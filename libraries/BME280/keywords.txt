@@ -1,0 +1,23 @@
+  
+#######################################
+# Syntax Coloring Map For 
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+init	KEYWORD2
+getTemperature	KEYWORD2
+getPressure	KEYWORD2
+getHumidity	KEYWORD2
+calcAltitude	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
