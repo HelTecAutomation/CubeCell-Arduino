@@ -86,6 +86,7 @@ uint8_t AppPort = 2;
 uint32_t APP_TX_DUTYCYCLE = 600000;
 
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
+uint16_t baseline;
 int count;
 int maxtry = 50;
 
@@ -142,6 +143,7 @@ static void PrepareTxFrame( uint8_t port )
   count = 0;
   ccs.begin();
   delay(5000);
+  baseline = ccs.getBaseline();
   while (!ccs.available());
   ccs.readData();
   //ccs.readAlgorithmResults();
@@ -259,7 +261,9 @@ static void PrepareTxFrame( uint8_t port )
   Serial.print(co2);
   Serial.print(" ppm, TVOC=");
   Serial.print(tvoc);
-  Serial.print(" ppb, BatteryVoltage:");
+  Serial.print(" ppb, Baseline: ");
+  Serial.print(baseline);
+  Serial.print(", BatteryVoltage:");
   Serial.println(BatteryVoltage);
   //    Serial.print("PayLoad=");
   //    for (int xx=0; xx < AppDataSize; xx++) {
