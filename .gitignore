@@ -1,5 +1,5 @@
 .git
-platform.txt
+./platform.txt
 tools/CubeCellelftool
 tools/dist
 tools/CubeCellflash
