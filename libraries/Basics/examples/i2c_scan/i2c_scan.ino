@@ -1,20 +1,13 @@
-/* Heltec Automation I2C scanner example (also it's a basic example how to use I2C1)
+/* Heltec Automation I2C scanner example
  *
- * ESP32 have two I2C (I2C0 and I2C1) bus
- *
- * OLED is connected to I2C0, so if scan with Wire (I2C0), the return address should be 0x3C.
- *
- * If you need scan other device address in I2C1...
- *    - Comment all Wire.***() codes;
- *
- * I2C scan example and I2C1
+ * ASR650x I2C device address scan.
  *
  * HelTec AutoMation, Chengdu, China
  * 成都惠利特自动化科技有限公司
  * www.heltec.org
  *
  * this project also realess in GitHub:
- * https://github.com/HelTecAutomation/Heltec_ESP32
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
  * */
 
 #include "Arduino.h"
@@ -23,9 +16,10 @@
 void setup()
 {
   Serial.begin(115200);
-  Wire.begin();     
   pinMode(Vext,OUTPUT);
   digitalWrite(Vext,LOW);//set vext to high
+  
+  Wire.begin();
 }
 
 void loop()
