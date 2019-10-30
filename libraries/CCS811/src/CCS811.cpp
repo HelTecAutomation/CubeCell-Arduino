@@ -277,14 +277,12 @@ uint16_t CCS811::getBaseline( void )
 	this->read(CCS811_BASELINE, data, 2);
 	
 	unsigned int baseline = ((uint16_t)data[0] << 8) | data[1];
-	if (!checkError())
-	{
-		return 0;
-	}
-	else
-	{
+	//if (!checkError())
+	//{
+	//	return 0;
+	//}	else {
 		return (baseline);
-	}
+	//}
 }
 
 void CCS811::setBaseline( uint16_t input )
