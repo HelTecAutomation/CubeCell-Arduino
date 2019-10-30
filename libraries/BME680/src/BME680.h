@@ -29,10 +29,11 @@ THE SOFTWARE.
 */
 
 
-#ifndef _CLOSEDCUBE_BME680_h
+#ifndef _BME680_h
+#define _BME680_h
 
-#define _CLOSEDCUBE_BME680_h
-#include <Arduino.h>
+#include "Arduino.h"
+#include <Wire.h>
 
 #define BME680_REG_CTRL_GAS		0x71
 #define BME680_REG_CTRL_HUM		0x72

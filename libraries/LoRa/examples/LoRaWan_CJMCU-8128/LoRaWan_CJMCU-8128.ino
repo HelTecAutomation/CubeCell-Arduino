@@ -6,7 +6,6 @@
 #include "HDC1080.h"
 //#include <BH1750.h>
 #include <CCS811.h>
-//#include "ClosedCube_BME680.h"
 
 #ifndef ACTIVE_REGION
 #define ACTIVE_REGION LORAMAC_REGION_EU868
@@ -92,9 +91,11 @@ int maxtry = 50;
 
 HDC1080 hdc1080;
 //BH1750 lightMeter;
+//CCS811 ccs(CCS811_ADDR);
 CCS811 ccs;
 BMP280 bmp;
 //ClosedCube_BME680 bme680;
+//BME280 bme280;
 
 /*  get the BatteryVoltage in mV. */
 static uint16_t GetBatteryVoltage(void)
@@ -110,21 +111,6 @@ static uint16_t GetBatteryVoltage(void)
    \brief   Prepares the payload of the frame
 */
 
-//ClosedCube_BME680_Status readAndPrintStatus() {
-//  ClosedCube_BME680_Status status = bme680.readStatus();
-//  Serial.print("status: (");
-//  Serial.print(status.newDataFlag);
-//  Serial.print(",");
-//  Serial.print(status.measuringStatusFlag);
-//  Serial.print(",");
-//  Serial.print(status.gasMeasuringStatusFlag);
-//  Serial.print(",");
-//  Serial.print(status.gasMeasurementIndex);
-//  Serial.println(") (newDataFlag,StatusFlag,GasFlag,GasIndex)");
-//  return status;
-//}
-
-
 static void PrepareTxFrame( uint8_t port )
 {
   pinMode(Vext, OUTPUT);
@@ -132,59 +118,82 @@ static void PrepareTxFrame( uint8_t port )
   delay(500);
 
   count = 0;
-  ccs.begin();
-  bmp.begin();
-  delay(100);
-  bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
-                  BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                  BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                  BMP280::FILTER_X16,      /* Filtering. */
-                  BMP280::STANDBY_MS_500); /* Standby time. */
   hdc1080.begin(0x40);
-   
-  delay(5000);
-  while (!ccs.available());
-  ccs.readData();
-  co2 = ccs.geteCO2();
-  tvoc = ccs.getTVOC();
-  while (co2 > 65500.0 && count < maxtry) {
-    ccs.readData();
-    co2 = ccs.geteCO2();
-    tvoc = ccs.getTVOC();
-    count++;
-    delay(500);
-  }
-  if (co2 > 65500.0) {
-    co2 = 0.0;
-    tvoc = 0.0;
-  }
-
-  count = 0;
-  float temp = bmp.readTemperature();
-  Pressure = bmp.readPressure() / 100.0;
-  while (Pressure > 1190.0 && count < maxtry) {
-     Pressure = bmp.readPressure() / 100.0;
-     count++;
-     delay(500);
-  }
-  if (Pressure > 1190.0) {
-    Pressure = 0;
-  }
-
-  count = 0;
+  delay(500);
   Temperature = (float)(hdc1080.readTemperature());
   Humidity = (float)(hdc1080.readHumidity());
+  Wire.end();
   while (Temperature > 120.0 && count < maxtry) {
+    hdc1080.begin(0x40);
+    delay(500);
     Temperature = (float)(hdc1080.readTemperature());
     Humidity = (float)(hdc1080.readHumidity());
+    Wire.end();
     count++;
     delay(500);
   }
   if (Temperature > 120.0) {
     Temperature = 0.0;
     Humidity = 0.0;
+    Serial.println("HDC ERROR");
   }
   hdc1080.end();
+
+  count = 0;
+  ccs.begin();
+  delay(5000);
+  while (!ccs.available());
+  ccs.readData();
+  //ccs.readAlgorithmResults();
+  co2 = ccs.geteCO2();
+  //co2 = ccs.getCO2();
+  tvoc = ccs.getTVOC();
+  Wire.end();
+  while (co2 > 65500.0 && count < maxtry) {
+    ccs.begin();
+    delay(1000);
+    while (!ccs.available());
+    ccs.readData();
+    co2 = ccs.geteCO2();
+    //co2 = ccs.getCO2();
+    tvoc = ccs.getTVOC();
+    Wire.end();
+    count++;
+  }
+  if (co2 > 65500.0) {
+    co2 = 0.0;
+    tvoc = 0.0;
+    Serial.println("CCS ERROR");
+  }
+
+  count = 0;
+  bmp.begin();
+  delay(500);
+  bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
+                  BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                  BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                  BMP280::FILTER_X16,      /* Filtering. */
+                  BMP280::STANDBY_MS_500); /* Standby time. */
+  float temp = bmp.readTemperature();
+  Pressure = (float)bmp.readPressure() / 100.0;
+  Wire.end();
+  while (Pressure > 1190.0 && count < maxtry) {
+    bmp.begin();
+    delay(500);
+    bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
+                    BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                    BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                    BMP280::FILTER_X16,      /* Filtering. */
+                    BMP280::STANDBY_MS_500); /* Standby time. */
+    Pressure = (float)bmp.readPressure() / 100.0;
+    Wire.end();
+    count++;
+    delay(500);
+  }
+  if (Pressure > 1190.0) {
+    Pressure = 0;
+    Serial.println("BMP ERROR");
+  }
 
   //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
   //    Serial.print("Failed to start BH2750!");
@@ -192,21 +201,6 @@ static void PrepareTxFrame( uint8_t port )
   //  float lux = lightMeter.readLightLevel();
   //  lightMeter.end();
   lux = 0.0;
-  
-  //  bme680.init(0x77); // I2C address: 0x76 or 0x77
-  //  bme680.reset();
-  //  bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
-  //  bme680.setIIRFilter(BME680_FILTER_3);
-  //  bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds
-  //  delay(5000);
-  //  ClosedCube_BME680_Status status = readAndPrintStatus();
-  //  if (status.newDataFlag) {
-  //    Temperature = bme680.readTemperature();
-  //    Pressure = bme680.readPressure();
-  //    Humidity = bme680.readHumidity();
-  //    tvoc = bme680.readGasResistance();
-  //    co2 = 0.0;
-  //  }
 
   Wire.end();
   digitalWrite(Vext, HIGH);
