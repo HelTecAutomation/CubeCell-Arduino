@@ -6,6 +6,7 @@
 #include "HDC1080.h"
 //#include <BH1750.h>
 #include <CCS811.h>
+#include <hal/soc/flash.h>
 
 #ifndef ACTIVE_REGION
 #define ACTIVE_REGION LORAMAC_REGION_EU868
@@ -142,14 +143,26 @@ static void PrepareTxFrame( uint8_t port )
 
   count = 0;
   ccs.begin();
+  delay(1000);
+
+//  uint8_t basetemp;
+//  if (FLASH_read_at(0x0, baseline, 2)) {
+//    baseline = basetemp;
+//    Serial.print("Read BaseLine: ");
+//    Serial.println(baseline);
+  baseline = 13440;
+  ccs.setBaseline(baseline);
+//  }
   delay(5000);
-  baseline = ccs.getBaseline();
+
   while (!ccs.available());
   ccs.readData();
-  //ccs.readAlgorithmResults();
   co2 = ccs.geteCO2();
-  //co2 = ccs.getCO2();
   tvoc = ccs.getTVOC();
+
+  baseline = ccs.getBaseline();
+//  FLASH_Update(0x0, baseline, 2);
+
   Wire.end();
   while (co2 > 65500.0 && count < maxtry) {
     ccs.begin();
