@@ -17,7 +17,8 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(Vext,OUTPUT);
-  digitalWrite(Vext,LOW);//set vext to high
+  digitalWrite(Vext,LOW);//set vext output
+  delay(100);
   
   Wire.begin();
 }
