@@ -3,7 +3,7 @@
  * ASR650x I2C device address scan.
  *
  * HelTec AutoMation, Chengdu, China
- * 成都惠利特自动化科技有限公司
+ * 鎴愰兘鎯犲埄鐗硅嚜鍔ㄥ寲绉戞妧鏈夐檺鍏徃
  * www.heltec.org
  *
  * this project also realess in GitHub:

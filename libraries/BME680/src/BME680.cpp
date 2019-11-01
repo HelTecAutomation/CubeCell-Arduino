@@ -28,15 +28,12 @@ THE SOFTWARE.
 
 */
 
-
-#include <Wire.h>
 #include "BME680.h"
 
 
 
 BME680::BME680() {
 }
-
 
 void BME680::init(uint8_t address) {
 	_address = address;
@@ -283,7 +280,7 @@ uint8_t BME680::readByte(uint8_t cmd) {
 	Wire.beginTransmission(_address);
 	Wire.write(cmd);
 	Wire.endTransmission();
-
+    delay(9);
 	Wire.requestFrom(_address, (uint8_t)1);
 	return Wire.read();
 }
