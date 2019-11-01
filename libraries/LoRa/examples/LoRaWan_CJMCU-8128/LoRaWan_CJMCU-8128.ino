@@ -44,7 +44,7 @@ DeviceClass_t  CLASS = CLASS_MODE;
    set to 1 the enable AT mode
    set to 0 the disable support AT mode
 */
-#define  AT_SUPPORT  1
+#define  AT_SUPPORT  0
 
 /*!
    When set to true the application uses the Over-the-Air activation procedure
@@ -84,7 +84,7 @@ uint8_t ConfirmedNbTrials = 8;
 uint8_t AppPort = 2;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 600000;
+uint32_t APP_TX_DUTYCYCLE = 900000;
 
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
 uint16_t baseline;
@@ -278,11 +278,6 @@ static void PrepareTxFrame( uint8_t port )
   Serial.print(baseline);
   Serial.print(", BatteryVoltage:");
   Serial.println(BatteryVoltage);
-  //    Serial.print("PayLoad=");
-  //    for (int xx=0; xx < AppDataSize; xx++) {
-  //      Serial.print(AppData[xx]);
-  //    }
-  //    Serial.println("");
 }
 
 
