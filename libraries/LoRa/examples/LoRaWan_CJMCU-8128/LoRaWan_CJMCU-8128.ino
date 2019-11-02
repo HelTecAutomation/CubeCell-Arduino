@@ -16,16 +16,6 @@
 #define CLASS_MODE CLASS_A
 #endif
 
-
-//HI
-//AT+DevEui=002307E701EEDF8E
-//AT+AppKey=21DD2980450EA8D5297AB29A90291262
-//AT+AppEui=70B3D57ED0023C84
-//AT+DutyCycle=900000 //15 Minuten
-//AT+DutyCycle=60000  // 1 Minute
-//AT+RESET=1
-
-
 DeviceClass_t  CLASS = CLASS_MODE;
 
 /*
