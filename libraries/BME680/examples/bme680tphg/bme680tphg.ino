@@ -19,11 +19,11 @@ void setup()
 {
 	Wire.begin();
 
-	Serial.begin(9600);
+	Serial.begin(115200);
 	Serial.println("ClosedCube BME680 ([T]empeature,[P]ressure,[H]umidity,[G]as) Arduino Test");
 
 	pinMode(Vext,OUTPUT);
-  	digitalWrite(Vext,LOW);
+  digitalWrite(Vext,LOW);
 	delay(500);
 
 	bme680.init(0x77); // I2C address: 0x76 or 0x77
@@ -86,4 +86,3 @@ BME680_Status readAndPrintStatus() {
 	Serial.println(") (newDataFlag,StatusFlag,GasFlag,GasIndex)");
 	return status;
 }
-
