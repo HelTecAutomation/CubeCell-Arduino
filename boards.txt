@@ -1,5 +1,9 @@
 menu.LORAWAN_REGION=LORAWAN_REGION
-menu.LORAWAN_MODE=LORAWAN_MODE
+menu.LORAWAN_CLASS=LORAWAN_CLASS
+menu.LORAWAN_NETMODE=LORAWAN_NETMODE
+menu.LORAWAN_ADR=LORAWAN_ADR
+menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
+menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
 menu.LORAWAN_RGB=LORAWAN_RGB
 ##############################################################
 
@@ -34,12 +38,32 @@ CubeCell-Board.menu.LORAWAN_REGION.915US.build.band=REGION_US915
 CubeCell-Board.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
 CubeCell-Board.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
 
-CubeCell-Board.menu.LORAWAN_MODE.0=CLASS_A
-CubeCell-Board.menu.LORAWAN_MODE.0.build.LORAWAN_MODE=CLASS_A
-##CubeCell-Board.menu.LORAWAN_MODE.1=CLASS_B
-##CubeCell-Board.menu.LORAWAN_MODE.1.build.LORAWAN_MODE=CLASS_B
-CubeCell-Board.menu.LORAWAN_MODE.2=CLASS_C
-CubeCell-Board.menu.LORAWAN_MODE.2.build.LORAWAN_MODE=CLASS_C
+CubeCell-Board.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-Board.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-Board.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-Board.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-Board.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-Board.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+
+CubeCell-Board.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-Board.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-Board.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-Board.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+
+CubeCell-Board.menu.LORAWAN_ADR.0=ON
+CubeCell-Board.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-Board.menu.LORAWAN_ADR.1=OFF
+CubeCell-Board.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-Board.menu.LORAWAN_Net_Reserve.0=ON
+CubeCell-Board.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
+CubeCell-Board.menu.LORAWAN_Net_Reserve.1=OFF
+CubeCell-Board.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
 CubeCell-Board.menu.LORAWAN_RGB.1=ACTIVE
 CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
@@ -78,17 +102,37 @@ CubeCell-Capsule.menu.LORAWAN_REGION.915US.build.band=REGION_US915
 CubeCell-Capsule.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
 CubeCell-Capsule.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
 
-CubeCell-Capsule.menu.LORAWAN_MODE.0=CLASS_A
-CubeCell-Capsule.menu.LORAWAN_MODE.0.build.LORAWAN_MODE=CLASS_A
-##CubeCell-Capsule.menu.LORAWAN_MODE.1=CLASS_B
-##CubeCell-Capsule.menu.LORAWAN_MODE.1.build.LORAWAN_MODE=CLASS_B
-CubeCell-Capsule.menu.LORAWAN_MODE.2=CLASS_C
-CubeCell-Capsule.menu.LORAWAN_MODE.2.build.LORAWAN_MODE=CLASS_C
+CubeCell-Capsule.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-Capsule.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-Capsule.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-Capsule.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-Capsule.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-Capsule.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
 
-CubeCell-Capsule.menu.LORAWAN_RGB.1=ACTIVE
-CubeCell-Capsule.menu.LORAWAN_RGB.1.build.RGB=1
-CubeCell-Capsule.menu.LORAWAN_RGB.0=DEACTIVE
-CubeCell-Capsule.menu.LORAWAN_RGB.0.build.RGB=0
+CubeCell-Capsule.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-Capsule.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-Capsule.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-Capsule.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+
+CubeCell-Capsule.menu.LORAWAN_ADR.0=ON
+CubeCell-Capsule.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-Capsule.menu.LORAWAN_ADR.1=OFF
+CubeCell-Capsule.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0=ON
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1=OFF
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+
+CubeCell-Board.menu.LORAWAN_RGB.1=ACTIVE
+CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
+CubeCell-Board.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-Board.menu.LORAWAN_RGB.0.build.RGB=0
 
 ##############################################################
 
@@ -123,12 +167,32 @@ CubeCell-Module.menu.LORAWAN_REGION.915US.build.band=REGION_US915
 CubeCell-Module.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
 CubeCell-Module.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
 
-CubeCell-Module.menu.LORAWAN_MODE.0=CLASS_A
-CubeCell-Module.menu.LORAWAN_MODE.0.build.LORAWAN_MODE=CLASS_A
-##CubeCell-Module.menu.LORAWAN_MODE.1=CLASS_B
-##CubeCell-Module.menu.LORAWAN_MODE.1.build.LORAWAN_MODE=CLASS_B
-CubeCell-Module.menu.LORAWAN_MODE.2=CLASS_C
-CubeCell-Module.menu.LORAWAN_MODE.2.build.LORAWAN_MODE=CLASS_C
+CubeCell-Module.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-Module.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-Capsule.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-Capsule.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-Module.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-Module.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+
+CubeCell-Module.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-Module.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-Module.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-Module.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+
+CubeCell-Module.menu.LORAWAN_ADR.0=ON
+CubeCell-Module.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-Module.menu.LORAWAN_ADR.1=OFF
+CubeCell-Module.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-Module.menu.LORAWAN_Net_Reserve.0=ON
+CubeCell-Module.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
+CubeCell-Module.menu.LORAWAN_Net_Reserve.1=OFF
+CubeCell-Module.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+
+CubeCell-Module.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-Module.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-Module.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-Module.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
 CubeCell-Module.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Module.menu.LORAWAN_RGB.0.build.RGB=0

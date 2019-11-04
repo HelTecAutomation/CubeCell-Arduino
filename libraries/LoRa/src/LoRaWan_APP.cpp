@@ -52,6 +52,7 @@ bool PassthroughMode = false;
  */
 bool Mode_LoraWan = true;
 
+
 /*!
  * Indicates if a new packet can be sent
  */
@@ -212,6 +213,16 @@ void RGB_OFF(void)
 	digitalWrite(Vext,HIGH);
 }
 #endif
+
+/*  get the BatteryVoltage in mV. */
+uint16_t GetBatteryVoltage(void)
+{
+	pinMode(ADC_CTL,OUTPUT);
+	digitalWrite(ADC_CTL,LOW);
+	uint16_t volt=analogRead(ADC)*2;
+	digitalWrite(ADC_CTL,HIGH);
+	return volt;
+}
 
 /*!
  * \brief   MCPS-Indication event function
@@ -401,6 +412,7 @@ void LoRaWanClass::Init(DeviceClass_t CLASS,LoRaMacRegion_t REGION)
 	LoRaMacCallback.GetBatteryLevel = BoardGetBatteryLevel;
 	LoRaMacCallback.GetTemperatureLevel = NULL;
 	LoRaMacInitialization( &LoRaMacPrimitive, &LoRaMacCallback,REGION);
+	TimerStop( &TxNextPacketTimer );
 	TimerInit( &TxNextPacketTimer, OnTxNextPacketTimerEvent );
 
 	mibReq.Type = MIB_ADR;
@@ -417,19 +429,21 @@ void LoRaWanClass::Init(DeviceClass_t CLASS,LoRaMacRegion_t REGION)
 	DeviceState = DEVICE_STATE_JOIN;
 }
 
-void LoRaWanClass::Join()
-{
-	printf("joining...");
-	if( OVER_THE_AIR_ACTIVATION != 0 )
-	{
-		MlmeReq_t mlmeReq;
+extern "C" void GetNetInfo(void);
 
+
+void LoRaWanClass::Join()
+{	
+	if( OVER_THE_AIR_ACTIVATION )
+	{
+		Serial.println("joining...");
+		MlmeReq_t mlmeReq;
+		
 		mlmeReq.Type = MLME_JOIN;
 
 		mlmeReq.Req.Join.DevEui = DevEui;
 		mlmeReq.Req.Join.AppEui = AppEui;
 		mlmeReq.Req.Join.AppKey = AppKey;
-
 		if( LoRaMacMlmeRequest( &mlmeReq ) == LORAMAC_STATUS_OK )
 		{
 			DeviceState = DEVICE_STATE_SLEEP;
@@ -462,7 +476,7 @@ void LoRaWanClass::Join()
 		mibReq.Type = MIB_NETWORK_JOINED;
 		mibReq.Param.IsNetworkJoined = true;
 		LoRaMacMibSetRequestConfirm( &mibReq );
-
+		
 		DeviceState = DEVICE_STATE_SEND;
 	}
 }
@@ -499,7 +513,7 @@ void LoRaWanClass::Send()
 
 void LoRaWanClass::Cycle(uint32_t dutycycle)
 {
-	TimerSetValue( &TxNextPacketTimer, TxDutyCycleTime );
+	TimerSetValue( &TxNextPacketTimer, dutycycle );
 	TimerStart( &TxNextPacketTimer );
 }
 
@@ -509,5 +523,56 @@ void LoRaWanClass::Sleep()
 	// Process Radio IRQ
 	Radio.IrqProcess( );
 }
+
+void LoRaWanClass::Ifskipjoin()
+{
+//if saved net info is OK in lorawan mode, skip join.
+	if(CheckNetInfo()&&Mode_LoraWan){
+		Serial.println();
+		if(PassthroughMode==false)
+		{
+			Serial.println("Wait 3s for user key to rejoin network");
+			uint16_t i=0;
+			pinMode(GPIO7,INPUT);
+			while(i<=3000)
+			{
+				if(digitalRead(GPIO7)==LOW)//if user key down, rejoin network;
+				{
+					NetInfoDisable();
+					pinMode(GPIO7,OUTPUT);
+					digitalWrite(GPIO7,HIGH);
+					return;
+				}
+				delay(1);
+				i++;
+			}
+			pinMode(GPIO7,OUTPUT);
+			digitalWrite(GPIO7,HIGH);
+		}
+#if(AT_SUPPORT)
+		getDevParam();
+#endif
+
+		Init(CLASS,REGION);
+		GetNetInfo();
+		if(PassthroughMode==false){
+			Serial.println("User key not detected,Use reserved Net");
+		}
+		else{
+			Serial.println("Use reserved Net");
+		}
+		if(PassthroughMode==false)
+		{
+			int32_t temp=randr(0,APP_TX_DUTYCYCLE);
+			Serial.println();
+			Serial.printf("Next packet send %d ms later(random time from 0 to APP_TX_DUTYCYCLE)\r\n",temp);
+			Serial.println();
+			Cycle(temp);//send packet in a random time to avoid network congestion.
+		}
+		DeviceState = DEVICE_STATE_SLEEP;
+	}
+}
+
+
 LoRaWanClass LoRaWAN;
 

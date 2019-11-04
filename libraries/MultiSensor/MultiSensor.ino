@@ -1,9 +1,18 @@
 /* Heltec Automation I2C scanner example
  *
- * ASR650x I2C device address scan.
+ * Function:
+ * 1. ASR650x I2C device address scan, via I2C address to recognisse sensor;
+ * 2. Multi sensor basic initial and test;
+ * 
+ * Now support with following sensors:
+ * 0x23 -- BH1750 light sensor
+ * 0x77 -- BMP180 Barometer sensor
+ * 0x40 -- HDC1080 temperature and humidity sensor
+ * 0x68 -- MPU9250 9-axis sensor
+ * 0x5A -- CCS811 Air quality sensor
  *
  * HelTec AutoMation, Chengdu, China
- * �ɶ��������Զ����Ƽ����޹�˾
+ * 成都惠利特自动化科技有限公司
  * www.heltec.org
  *
  * this project also realess in GitHub:
@@ -16,11 +25,13 @@
 #include <BMP180.h>
 #include "HDC1080.h"
 #include <MPU9250.h>
+#include <CCS811.h>
 
 BH1750 lightMeter;
 BMP085 bmp;
 HDC1080 hdc1080;
 MPU9250 mySensor;
+CCS811 ccs;
 
 byte address;
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
@@ -33,7 +44,7 @@ void I2C_Scan()
   Serial.println("Scanning...");
 
   nDevices = 0;
-//  digitalWrite(GPIO0,LOW);
+
   for(address = 1; address < 127; address++ )
   {
     Wire.beginTransmission(address);
@@ -57,11 +68,13 @@ void I2C_Scan()
       Serial.println(address,HEX);
     }
   }
-  if (nDevices == 0)
-    Serial.println("No I2C devices found\n");
-  else
-    Serial.println("done\n");
-//  digitalWrite(GPIO0,HIGH);
+  if(nDevices == 0)
+  {
+    Serial.println("I2C devices check again\n");
+    pinMode(GPIO0,OUTPUT);
+    digitalWrite(GPIO0,LOW);//set GPIO0 to enable CCS811
+    I2C_Scan();
+  }
 }
 
 void printSerialNumber() {
@@ -77,8 +90,6 @@ void setup()
   Serial.begin(115200);
   pinMode(Vext,OUTPUT);
   digitalWrite(Vext,LOW);//set vext to high
-//  pinMode(GPIO0,OUTPUT);
-//  digitalWrite(GPIO0,LOW);//set GPIO0 to enable CCS811
 
   Wire.begin();
 
@@ -107,7 +118,7 @@ void setup()
       break;
     }
 
-    case 64: //HDC1080 temperature and humidity sensor
+    case 64: //0x40 -- HDC1080 temperature and humidity sensor
     {
       hdc1080.begin(0x40);
       Serial.print("Manufacturer ID=0x");
@@ -130,6 +141,17 @@ void setup()
 
       break;
     }
+      case 90: //0x5A --CCS811
+      {
+         Serial.begin(115200);
+         Serial.println("CCS811 test");
+         if(!ccs.begin())
+         {
+          Serial.println("Failed to start sensor! Please check your wiring.");
+          while(1);
+        }
+        break;
+    }
   }
 }
 
@@ -147,7 +169,7 @@ void loop()
       break;
     }
 
-    case 119: //0x77 -- BMP180 Barometer
+    case 119: //0x77 -- BMP180 Barometer sensor
     {
       Serial.print("Temperature = ");
       Serial.print(bmp.readTemperature());
@@ -195,7 +217,8 @@ void loop()
       Serial.println("Cannot read sensorId");
       }
 
-      if (mySensor.accelUpdate() == 0) {
+      if (mySensor.accelUpdate() == 0)
+      {
       aX = mySensor.accelX();
       aY = mySensor.accelY();
       aZ = mySensor.accelZ();
@@ -237,6 +260,31 @@ void loop()
 
       break;
     }
-  }
+    case 90: //0x5a -- CCS811 Air quality sensor
+      {
+      digitalWrite(GPIO0,LOW);//set GPIO0 to enable CCS811
+
+        if(ccs.available()){
+          if(!ccs.readData()){
+            Serial.print("CO2: ");
+            Serial.print(ccs.geteCO2());
+            Serial.println(" ppm");
+            Serial.print("TVOC:");
+            Serial.print(ccs.getTVOC());
+            Serial.println(" ppb");
+            Serial.print("millis:");
+
+            Serial.println(millis());
+         }
+          else{
+            Serial.println("ERROR!");
+            while(1);
+         }
+       }
+        break;
+      }
+    }
+
+  digitalWrite(GPIO0,HIGH);//turn off GPIO0 2S
   delay(2000);
 }

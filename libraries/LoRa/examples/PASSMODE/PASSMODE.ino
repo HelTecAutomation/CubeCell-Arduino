@@ -2,37 +2,25 @@
 #include "LoRa_APP.h"
 #include "Arduino.h"
 
-
-#ifndef ACTIVE_REGION
-#define ACTIVE_REGION LORAMAC_REGION_CN470
-#endif
-
-#ifndef CLASS_MODE
-#define CLASS_MODE CLASS_A
-#endif
-
-DeviceClass_t  CLASS=CLASS_MODE;
-
 /*
- * set LoraWan_RGB to 1,the RGB active in loraWan
+ * set LoraWan_RGB to Active,the RGB active in loraWan
  * RGB red means sending;
  * RGB purple means joined done;
  * RGB blue means RxWindow1;
  * RGB yellow means RxWindow2;
  * RGB green means received done;
  */
-#ifndef LoraWan_RGB
-#define LoraWan_RGB 0
-#endif
 
-/*!
- * When set to true the application uses the Over-the-Air activation procedure
- * When set to false the application uses the Personalization activation procedure
- */
-bool OVER_THE_AIR_ACTIVATION = true;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = true;
+/*LoraWan Class*/
+DeviceClass_t  CLASS=LORAWAN_CLASS;
+/*OTAA or ABP*/
+bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+/*ADR enable*/
+bool LORAWAN_ADR_ON = LORAWAN_ADR;
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool KeepNet = LORAWAN_Net_Reserve;
+/*LoraWan REGION*/
+LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
@@ -84,6 +72,7 @@ void setup() {
 	getDevParam();
 	printDevParam();
 	DeviceState = DEVICE_STATE_SLEEP;
+  LoRaWAN.Ifskipjoin();
 	DeviceState_lora = LORA_INIT;
 }
 

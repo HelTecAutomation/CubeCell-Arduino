@@ -36,6 +36,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include "debug.h"
 #include "LoRaMacTest.h"
 #include "LoRaMacConfirmQueue.h"
+#include "AT_Command.h"
 
 #ifdef CONFIG_LORA_VERIFY
 extern bool g_lora_debug;
@@ -95,7 +96,7 @@ static uint8_t *LoRaMacAppEui;
 /*!
  * AES encryption/decryption cipher application key
  */
-static uint8_t *LoRaMacAppKey;
+uint8_t *LoRaMacAppKey;
 
 /*!
  * AES encryption/decryption cipher network session key
@@ -117,7 +118,7 @@ static uint8_t LoRaMacAppSKey[] = {
  * Device nonce is a random value extracted by issuing a sequence of RSSI
  * measurements
  */
-static uint16_t LoRaMacDevNonce;
+uint16_t LoRaMacDevNonce;
 
 /*!
  * Network ID ( 3 bytes )
@@ -168,13 +169,13 @@ static uint8_t LoRaMacRxPayload[LORAMAC_PHY_MAXPAYLOAD];
  * LoRaMAC frame counter. Each time a packet is sent the counter is incremented.
  * Only the 16 LSB bits are sent
  */
-static uint32_t UpLinkCounter = 0;
+uint32_t UpLinkCounter = 0;
 
 /*!
  * LoRaMAC frame counter. Each time a packet is received the counter is incremented.
  * Only the 16 LSB bits are received
  */
-static uint32_t DownLinkCounter = 0;
+uint32_t DownLinkCounter = 0;
 
 /*!
  * IsPacketCounterFixed enables the MIC field tests by fixing the
@@ -447,7 +448,7 @@ static void PrepareRxDoneAbort( void );
 /*!
  * \brief Function to be executed on Radio Rx Done event
  */
-static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
+void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 
 /*!
  * \brief Function executed on Radio Tx Timeout event
@@ -792,8 +793,9 @@ static void PrepareRxDoneAbort( void )
     TimerStart( &MacStateCheckTimer );
 }
 
-static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
+void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
+	uint8_t * temp = payload;
     LoRaMacHeader_t macHdr;
     LoRaMacFrameCtrl_t fCtrl;
     ApplyCFListParams_t applyCFList;
@@ -873,7 +875,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
     }
 
     macHdr.Value = payload[pktHeaderLen++];
-
     switch ( macHdr.Bits.MType ) {
         case FRAME_TYPE_JOIN_ACCEPT:
             if ( IsLoRaMacNetworkJoined == true ) {
@@ -891,7 +892,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
             micRx |= ( ( uint32_t )LoRaMacRxPayload[size - LORAMAC_MFR_LEN + 1] << 8 );
             micRx |= ( ( uint32_t )LoRaMacRxPayload[size - LORAMAC_MFR_LEN + 2] << 16 );
             micRx |= ( ( uint32_t )LoRaMacRxPayload[size - LORAMAC_MFR_LEN + 3] << 24 );
-
             if( LoRaMacConfirmQueueIsCmdActive( MLME_JOIN ) == true )
             {
                 if( micRx == mic ) {
@@ -932,6 +932,7 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
 
                     LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_OK, MLME_JOIN );
                     IsLoRaMacNetworkJoined = true;
+                    SaveNetInfo(temp, size);
                 	//Joined save its DR using LoRaMacParams.ChannelsDatarate, if set it will be default
 //                	LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
             	} else {
@@ -1086,6 +1087,7 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
                         }
                     }
                     DownLinkCounter = downLinkCounter;
+                    SaveDownCnt();
                 }
 
                 // This must be done before parsing the payload and the MAC commands.
@@ -1200,7 +1202,6 @@ static void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t
     if( AckTimeoutTimer.IsRunning == false )
     {// Procedure is completed when the AckTimeoutTimer is not running anymore
     	LoRaMacFlags.Bits.MacDone = 1;
-
     	// Trig OnMacCheckTimerEvent call as soon as possible
     	TimerSetValue( &MacStateCheckTimer, 1 );
     	TimerStart( &MacStateCheckTimer );
@@ -1472,6 +1473,7 @@ static void OnMacStateCheckTimerEvent( void )
 
                         if ( IsUpLinkCounterFixed == false ) {
                             UpLinkCounter++;
+                            SaveUpCnt();
                             #ifdef CONFIG_LORA_VERIFY
                             if (g_lora_debug)
                                 PRINTF_RAW("Unconfirmed data, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
@@ -1495,6 +1497,7 @@ static void OnMacStateCheckTimerEvent( void )
                 NodeAckRequested = false;
                 if ( IsUpLinkCounterFixed == false ) {
                     UpLinkCounter++;
+                    SaveUpCnt();
                 #ifdef CONFIG_LORA_VERIFY
                 if (g_lora_debug)
                     PRINTF_RAW("Confirmed data received ACK, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
@@ -1513,12 +1516,10 @@ static void OnMacStateCheckTimerEvent( void )
         }
 #endif	
         if ( ( AckTimeoutRetry == true ) && ( ( LoRaMacState & LORAMAC_TX_DELAYED ) == 0 ) ) {
-        	//printf("Counter %d %d %d\r\n",AckTimeoutRetriesCounter,AckTimeoutRetries,AckTimeoutRetry);
             // Retransmissions procedure for confirmed uplinks
             AckTimeoutRetry = false;
             if ( ( AckTimeoutRetriesCounter < AckTimeoutRetries ) && ( AckTimeoutRetriesCounter <= MAX_ACK_RETRIES ) ) {
                 AckTimeoutRetriesCounter++;
-               // printf("Counter3 %d %d %d\r\n",AckTimeoutRetriesCounter,AckTimeoutRetries,AckTimeoutRetry);
 
                 if ( ( AckTimeoutRetriesCounter % 2 ) == 1 ) {
                     getPhy.Attribute = PHY_NEXT_LOWER_TX_DR;
@@ -1542,6 +1543,7 @@ static void OnMacStateCheckTimerEvent( void )
                     McpsConfirm.Datarate = LoRaMacParams.ChannelsDatarate;
                     if ( IsUpLinkCounterFixed == false ) {
                         UpLinkCounter++;
+                        SaveUpCnt();
                         #ifdef CONFIG_LORA_VERIFY
                         if (g_lora_debug)
                             PRINTF_RAW("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
@@ -1599,7 +1601,6 @@ static void OnMacStateCheckTimerEvent( void )
             }
 #endif    
         }
-
         // Verify if sticky MAC commands are pending or not
         if( IsStickyMacCommandPending( ) == true )
         {// Setup MLME indication
@@ -2148,6 +2149,7 @@ static void ProcessMacCommands( uint8_t *payload, uint8_t macIndex, uint8_t comm
                 //printf("status:%d\r\n",status);
                 if ( ( status & 0x07 ) == 0x07 ) {
                     LoRaMacParams.ChannelsDatarate = linkAdrDatarate;
+                    SaveDr();
                     LoRaMacParams.ChannelsTxPower = linkAdrTxPower;
                     LoRaMacParams.ChannelsNbRep = linkAdrNbRep;
                     //printf("ChannelsDatarate:%d ChannelsTxPower:%d,ChannelsNbRep:%d\r\n",LoRaMacParams.ChannelsDatarate,LoRaMacParams.ChannelsTxPower,LoRaMacParams.ChannelsNbRep);
@@ -2548,7 +2550,7 @@ static void ResetMacParameters( void )
 
     // Counters
     UpLinkCounter = 0;
-    DownLinkCounter = 0;
+    DownLinkCounter = -1;
     AdrAckCounter = 0;
 
     ChannelsNbRepCounter = 0;

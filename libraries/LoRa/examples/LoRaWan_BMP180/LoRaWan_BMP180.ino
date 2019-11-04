@@ -3,44 +3,25 @@
 #include <Wire.h>
 #include <BMP180.h>
 
-
-
-#ifndef ACTIVE_REGION
-#define ACTIVE_REGION LORAMAC_REGION_CN470
-#endif
-
-#ifndef CLASS_MODE
-#define CLASS_MODE CLASS_A
-#endif
-
-DeviceClass_t  CLASS=CLASS_MODE;
-
 /*
- * set LoraWan_RGB to 1,the RGB active in loraWan
+ * set LoraWan_RGB to Active,the RGB active in loraWan
  * RGB red means sending;
  * RGB purple means joined done;
  * RGB blue means RxWindow1;
  * RGB yellow means RxWindow2;
  * RGB green means received done;
  */
-#ifndef LoraWan_RGB
-#define LoraWan_RGB 0
-#endif
 
-/*
-   set to 1 the enable AT mode
-   set to 0 the disable support AT mode
-*/
-#define  AT_SUPPORT  1
-
-/*!
-   When set to true the application uses the Over-the-Air activation procedure
-   When set to false the application uses the Personalization activation procedure
-*/
-bool OVER_THE_AIR_ACTIVATION = true;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = true;
+/*LoraWan Class*/
+DeviceClass_t  CLASS=LORAWAN_CLASS;
+/*OTAA or ABP*/
+bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+/*ADR enable*/
+bool LORAWAN_ADR_ON = LORAWAN_ADR;
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool KeepNet = LORAWAN_Net_Reserve;
+/*LoraWan REGION*/
+LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
@@ -73,29 +54,19 @@ uint8_t AppPort = 2;
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t APP_TX_DUTYCYCLE = 15000;
 
-/*  get the BatteryVoltage in mV. */
-static uint16_t GetBatteryVoltage(void)
-{
-  pinMode(ADC_CTL,OUTPUT);
-  digitalWrite(ADC_CTL,LOW);
-  uint16_t volt=analogRead(ADC)*2;
-  digitalWrite(ADC_CTL,HIGH);
-  return volt;
-}
-
 /* Prepares the payload of the frame */
 BMP085 bmp;
 static void PrepareTxFrame( uint8_t port )
 {
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
-
+  
   bmp.begin();
   float temperature = bmp.readTemperature();
-  float pressure = bmp.readPressure()/100;
+  float pressure = bmp.readPressure();
   float altitude = bmp.readAltitude();
   float sealevelpressure = bmp.readSealevelPressure();
-
+  
   // you can get a more precise measurement of altitude
   // if you know the current sea level pressure which will
   // vary with weather and such. If it is 1015 millibars
@@ -104,7 +75,7 @@ static void PrepareTxFrame( uint8_t port )
   //    Serial.print(bmp.readAltitude(101500));
   //    Serial.println(" meters");
   Wire.end();
-
+  
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();
   
@@ -144,54 +115,57 @@ static void PrepareTxFrame( uint8_t port )
 void setup() {
     BoardInitMcu();
     Serial.begin(115200);
+#if(AT_SUPPORT)
+    Enable_AT();
+#endif
     DeviceState = DEVICE_STATE_INIT;
+    LoRaWAN.Ifskipjoin();
 }
 
 void loop()
 {
-  switch( DeviceState )
-  {
-    case DEVICE_STATE_INIT:
-    {
-      Serial.printf("LoRaWan Class%X test start! \r\n",CLASS+10);   
+	switch( DeviceState )
+	{
+		case DEVICE_STATE_INIT:
+		{ 
 #if(AT_SUPPORT)
-      Enable_AT();
-      getDevParam();
+			getDevParam();
 #endif
-      printDevParam();
-      LoRaWAN.Init(CLASS,ACTIVE_REGION);
-      DeviceState = DEVICE_STATE_JOIN;
-      break;
-    }
-    case DEVICE_STATE_JOIN:
-    {
-      LoRaWAN.Join();
-      break;
-    }
-    case DEVICE_STATE_SEND:
-    {
-      PrepareTxFrame( AppPort );
-      LoRaWAN.Send();
-      DeviceState = DEVICE_STATE_CYCLE;
-      break;
-    }
-    case DEVICE_STATE_CYCLE:
-    {
-      // Schedule next packet transmission
-      TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-      LoRaWAN.Cycle(TxDutyCycleTime);
-      DeviceState = DEVICE_STATE_SLEEP;
-      break;
-    }
-    case DEVICE_STATE_SLEEP:
-    {
-      LoRaWAN.Sleep();
-      break;
-    }
-    default:
-    {
-      DeviceState = DEVICE_STATE_INIT;
-      break;
-    }
-  }
+			printDevParam();
+			Serial.printf("LoRaWan Class%X start! \r\n",CLASS+10);  
+			LoRaWAN.Init(CLASS,REGION);
+			DeviceState = DEVICE_STATE_JOIN;
+			break;
+		}
+		case DEVICE_STATE_JOIN:
+		{
+			LoRaWAN.Join();
+			break;
+		}
+		case DEVICE_STATE_SEND:
+		{
+			PrepareTxFrame( AppPort );
+			LoRaWAN.Send();
+			DeviceState = DEVICE_STATE_CYCLE;
+			break;
+		}
+		case DEVICE_STATE_CYCLE:
+		{
+			// Schedule next packet transmission
+			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
+			LoRaWAN.Cycle(TxDutyCycleTime);
+			DeviceState = DEVICE_STATE_SLEEP;
+			break;
+		}
+		case DEVICE_STATE_SLEEP:
+		{
+			LoRaWAN.Sleep();
+			break;
+		}
+		default:
+		{
+			DeviceState = DEVICE_STATE_INIT;
+			break;
+		}
+	}
 }

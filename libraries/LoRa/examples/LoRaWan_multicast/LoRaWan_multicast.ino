@@ -1,6 +1,7 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 
+
 /*
  * set LoraWan_RGB to Active,the RGB active in loraWan
  * RGB red means sending;
@@ -11,7 +12,7 @@
  */
 
 /*LoraWan Class*/
-DeviceClass_t  CLASS=LORAWAN_CLASS;
+DeviceClass_t  CLASS=CLASS_C;
 /*OTAA or ABP*/
 bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
 /*ADR enable*/
@@ -23,6 +24,7 @@ LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
+
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -61,15 +63,26 @@ static void PrepareTxFrame( uint8_t port )
     AppData[3] = 0x03;
 }
 
+MulticastParams_t mult1;
+uint8_t mulNwkSKey[]={0x5c,0x1d,0xce,0x81,0xd8,0x19,0x40,0xb9,0xe0,0xfb,0x1e,0x07,0xdd,0x4d,0xd3,0x9c};
+uint8_t mulAppSKey[]={0x6b,0x5b,0x47,0x6f,0x73,0xb6,0xc3,0x98,0xc8,0x11,0xa8,0xd0,0xd9,0x9f,0x25,0xc7};
+uint32_t multicastAddress=0x00638f9e;
 
 void setup() {
-    BoardInitMcu();
-    Serial.begin(115200);
+	BoardInitMcu();
+	Serial.begin(115200);
 #if(AT_SUPPORT)
-    Enable_AT();
+	Enable_AT();
 #endif
-    DeviceState = DEVICE_STATE_INIT;
-    LoRaWAN.Ifskipjoin();
+	DeviceState = DEVICE_STATE_INIT;
+	LoRaWAN.Ifskipjoin();
+	mult1.Address=multicastAddress;
+	for(int i=0;i<16;i++)
+	{
+		mult1.NwkSKey[i]=mulNwkSKey[i];
+		mult1.AppSKey[i]=mulAppSKey[i];
+	}
+	LoRaMacMulticastChannelLink(&mult1);
 }
 
 void loop()
@@ -82,8 +95,8 @@ void loop()
       getDevParam();
 #endif
 			printDevParam();
-			Serial.printf("LoRaWan Class%X  start! \r\n",CLASS+10);   
-			LoRaWAN.Init(CLASS,REGION);
+			Serial.printf("LoRaWan mutlcast start! \r\n");   
+			LoRaWAN.Init(CLASS,ACTIVE_REGION);
 			DeviceState = DEVICE_STATE_JOIN;
 			break;
 		}
