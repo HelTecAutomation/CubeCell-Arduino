@@ -84,21 +84,10 @@ int maxtry = 50;
 
 HDC1080 hdc1080;
 //BH1750 lightMeter;
-//CCS811 ccs(CCS811_ADDR);
 CCS811 ccs;
 BMP280 bmp;
 //ClosedCube_BME680 bme680;
 //BME280 bme280;
-
-/*  get the BatteryVoltage in mV. */
-//static uint16_t GetBatteryVoltage(void)
-//{
-//  pinMode(ADC_CTL, OUTPUT);
-//  digitalWrite(ADC_CTL, LOW);
-//  uint16_t volt = analogRead(ADC) * 2;
-//  digitalWrite(ADC_CTL, HIGH);
-//  return volt;
-//}
 
 /*!
    \brief   Prepares the payload of the frame
