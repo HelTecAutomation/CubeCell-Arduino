@@ -80,7 +80,10 @@ class CCS811 {
 		void setDriveMode(uint8_t mode);
 		void enableInterrupt();
 		void disableInterrupt();
-		
+
+		uint16_t getBaseline( void );
+		void setBaseline( uint16_t );
+
         /**************************************************************************/
         /*! 
             @brief  returns the stored total volatile organic compounds measurement. This does does not read the sensor. To do so, call readData()
