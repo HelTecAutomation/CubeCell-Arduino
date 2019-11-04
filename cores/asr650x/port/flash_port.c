@@ -23,10 +23,16 @@ extern const hal_logic_partition_t hal_partitions[];
   */
 int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size)
 {
+	uint32_t temp=dst_addr;
     int remaining = size;
     uint8_t * src_addr = (uint8_t *) data;
     uint32 status;
 
+	if(dst_addr>=CY_SFLASH_USERBASE)
+	{
+		dst_addr-=CY_SFLASH_USERBASE;
+	}
+	
     uint32_t * page_cache = NULL;
     page_cache = (uint32_t *)aos_malloc(FLASH_PAGE_SIZE);
     if (page_cache == NULL)
@@ -38,12 +44,23 @@ int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size)
         int fl_offset = dst_addr - fl_addr;
         int len = MIN(FLASH_PAGE_SIZE - fl_offset, size);
 
-        /* Load from the flash into the cache */
-        memcpy(page_cache, (void *) fl_addr, FLASH_PAGE_SIZE);  
-        /* Update the cache from the source */
-        memcpy((uint8_t *)page_cache + fl_offset, src_addr, len);
+		if(temp<CY_SFLASH_USERBASE)
+		{
+			/* Load from the flash into the cache */
+        	memcpy(page_cache, (void *) fl_addr, FLASH_PAGE_SIZE);  
+        	/* Update the cache from the source */
+        	memcpy((uint8_t *)page_cache + fl_offset, src_addr, len);
+        	status = CySysFlashWriteRow(fl_addr/FLASH_PAGE_SIZE, (uint8 *)page_cache);
+        }
+        else
+        {
+			/* Load from the flash into the cache */
+        	memcpy(page_cache, (void *) (fl_addr+CY_SFLASH_USERBASE), FLASH_PAGE_SIZE);  
+        	/* Update the cache from the source */
+        	memcpy((uint8_t *)page_cache + fl_offset, src_addr, len);
+			status = CySysSFlashWriteUserRow(fl_addr/FLASH_PAGE_SIZE, (uint8 *)page_cache);
+        }
 
-        status = CySysFlashWriteRow(fl_addr/FLASH_PAGE_SIZE, (uint8 *)page_cache);
         if(status != CY_SYS_FLASH_SUCCESS)
         {
             printf("Error writing %u bytes at 0x%08x\n", FLASH_PAGE_SIZE, (unsigned int)fl_addr);

@@ -3,44 +3,25 @@
 #include <Wire.h>
 #include <BH1750.h>
 
-
-
-#ifndef ACTIVE_REGION
-#define ACTIVE_REGION LORAMAC_REGION_CN470
-#endif
-
-#ifndef CLASS_MODE
-#define CLASS_MODE CLASS_A
-#endif
-
-DeviceClass_t  CLASS=CLASS_MODE;
-
 /*
- * set LoraWan_RGB to 1,the RGB active in loraWan
+ * set LoraWan_RGB to Active,the RGB active in loraWan
  * RGB red means sending;
  * RGB purple means joined done;
  * RGB blue means RxWindow1;
  * RGB yellow means RxWindow2;
  * RGB green means received done;
  */
-#ifndef LoraWan_RGB
-#define LoraWan_RGB 0
-#endif
 
-/*
-   set to 1 the enable AT mode
-   set to 0 the disable support AT mode
-*/
-#define  AT_SUPPORT  1
-
-/*!
-   When set to true the application uses the Over-the-Air activation procedure
-   When set to false the application uses the Personalization activation procedure
-*/
-bool OVER_THE_AIR_ACTIVATION = true;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = true;
+/*LoraWan Class*/
+DeviceClass_t  CLASS=LORAWAN_CLASS;
+/*OTAA or ABP*/
+bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+/*ADR enable*/
+bool LORAWAN_ADR_ON = LORAWAN_ADR;
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool KeepNet = LORAWAN_Net_Reserve;
+/*LoraWan REGION*/
+LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
@@ -72,16 +53,6 @@ uint8_t AppPort = 2;
 
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t APP_TX_DUTYCYCLE = 15000;
-
-/*  get the BatteryVoltage in mV. */
-static uint16_t GetBatteryVoltage(void)
-{
-	pinMode(ADC_CTL,OUTPUT);
-	digitalWrite(ADC_CTL,LOW);
-	uint16_t volt=analogRead(ADC)*2;
-	digitalWrite(ADC_CTL,HIGH);
-	return volt;
-}
 
 /* Prepares the payload of the frame */
 BH1750 lightMeter;
@@ -115,7 +86,11 @@ static void PrepareTxFrame( uint8_t port )
 void setup() {
     BoardInitMcu();
     Serial.begin(115200);
+#if(AT_SUPPORT)
+    Enable_AT();
+#endif
     DeviceState = DEVICE_STATE_INIT;
+    LoRaWAN.Ifskipjoin();
 }
 
 void loop()
@@ -124,13 +99,12 @@ void loop()
 	{
 		case DEVICE_STATE_INIT:
 		{
-			Serial.printf("LoRaWan Class%X test start! \r\n",CLASS+10);   
 #if(AT_SUPPORT)
-			Enable_AT();
 			getDevParam();
 #endif
 			printDevParam();
-			LoRaWAN.Init(CLASS,ACTIVE_REGION);
+			Serial.printf("LoRaWan Class%X  start! \r\n",CLASS+10);   
+			LoRaWAN.Init(CLASS,REGION);
 			DeviceState = DEVICE_STATE_JOIN;
 			break;
 		}
