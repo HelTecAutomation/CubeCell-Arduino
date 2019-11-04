@@ -8,18 +8,16 @@
 #include <CCS811.h>
 #include <hal/soc/flash.h>
 
-#ifndef ACTIVE_REGION
-#define ACTIVE_REGION LORAMAC_REGION_EU868
-#endif
-
-#ifndef CLASS_MODE
-#define CLASS_MODE CLASS_A
-#endif
-
-DeviceClass_t  CLASS = CLASS_MODE;
+//HI
+//AT+DevEui=002307E701EEDF8E
+//AT+AppKey=21DD2980450EA8D5297AB29A90291262
+//AT+AppEui=70B3D57ED0023C84
+//AT+DutyCycle=900000 //15 Minuten
+//AT+DutyCycle=60000  // 1 Minute
+//AT+RESET=1
 
 /*
-   set LoraWan_RGB to 1,the RGB active in loraWan
+   set LoraWan_RGB to Active,the RGB active in loraWan
    RGB red means sending;
    RGB purple means joined done;
    RGB blue means RxWindow1;
@@ -34,20 +32,23 @@ DeviceClass_t  CLASS = CLASS_MODE;
    set to 1 the enable AT mode
    set to 0 the disable support AT mode
 */
-#define  AT_SUPPORT  0
+#ifndef AT_SUPPORT
+#define AT_SUPPORT 0
+#endif
 
-/*!
-   When set to true the application uses the Over-the-Air activation procedure
-   When set to false the application uses the Personalization activation procedure
-*/
-bool OVER_THE_AIR_ACTIVATION = true;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = true;
+/*LoraWan Class*/
+DeviceClass_t  CLASS = LORAWAN_CLASS;
+/*OTAA or ABP*/
+bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+/*ADR enable*/
+bool LORAWAN_ADR_ON = LORAWAN_ADR;
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool KeepNet = LORAWAN_Net_Reserve;
+/*LoraWan REGION*/
+LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
-
 /*!
   Number of trials to transmit the frame, if the LoRaMAC layer did not
   receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -90,14 +91,14 @@ BMP280 bmp;
 //BME280 bme280;
 
 /*  get the BatteryVoltage in mV. */
-static uint16_t GetBatteryVoltage(void)
-{
-  pinMode(ADC_CTL, OUTPUT);
-  digitalWrite(ADC_CTL, LOW);
-  uint16_t volt = analogRead(ADC) * 2;
-  digitalWrite(ADC_CTL, HIGH);
-  return volt;
-}
+//static uint16_t GetBatteryVoltage(void)
+//{
+//  pinMode(ADC_CTL, OUTPUT);
+//  digitalWrite(ADC_CTL, LOW);
+//  uint16_t volt = analogRead(ADC) * 2;
+//  digitalWrite(ADC_CTL, HIGH);
+//  return volt;
+//}
 
 /*!
    \brief   Prepares the payload of the frame
@@ -135,14 +136,14 @@ static void PrepareTxFrame( uint8_t port )
   ccs.begin();
   delay(1000);
 
-//  uint8_t basetemp;
-//  if (FLASH_read_at(0x0, baseline, 2)) {
-//    baseline = basetemp;
-//    Serial.print("Read BaseLine: ");
-//    Serial.println(baseline);
+  //  uint8_t basetemp;
+  //  if (FLASH_read_at(0x0, baseline, 2)) {
+  //    baseline = basetemp;
+  //    Serial.print("Read BaseLine: ");
+  //    Serial.println(baseline);
   baseline = 13440;
   ccs.setBaseline(baseline);
-//  }
+  //  }
   delay(5000);
 
   while (!ccs.available());
@@ -151,7 +152,7 @@ static void PrepareTxFrame( uint8_t port )
   tvoc = ccs.getTVOC();
 
   baseline = ccs.getBaseline();
-//  FLASH_Update(0x0, baseline, 2);
+  //  FLASH_Update(0x0, baseline, 2);
 
   Wire.end();
   while (co2 > 65500.0 && count < maxtry) {
@@ -274,7 +275,11 @@ static void PrepareTxFrame( uint8_t port )
 void setup() {
   BoardInitMcu( );
   Serial.begin(115200);
+#if(AT_SUPPORT == 1)
+  Enable_AT();
+#endif
   DeviceState = DEVICE_STATE_INIT;
+  LoRaWAN.Ifskipjoin();
 }
 
 void loop()
@@ -283,13 +288,12 @@ void loop()
   {
     case DEVICE_STATE_INIT:
       {
-        Serial.printf("LoRaWan Class%X test start! \r\n", CLASS + 10);
-#if(AT_SUPPORT)
-        Enable_AT();
+#if(AT_SUPPORT == 1)
         getDevParam();
 #endif
         printDevParam();
-        LoRaWAN.Init(CLASS, ACTIVE_REGION);
+        Serial.printf("LoRaWan Class%X  start! \r\n", CLASS + 10);
+        LoRaWAN.Init(CLASS, REGION);
         DeviceState = DEVICE_STATE_JOIN;
         break;
       }
