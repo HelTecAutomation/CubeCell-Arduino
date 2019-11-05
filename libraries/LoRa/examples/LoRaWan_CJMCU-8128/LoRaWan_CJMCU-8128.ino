@@ -2,20 +2,27 @@
 #include "Arduino.h"
 #include <Wire.h>
 
+#define MJMCU_8128 1
+#define BME_680    0
+#define BME_280    0
+
+#if(MJMCU_8128 == 1)
+//#include "BH1750.h"
 #include <BMP280.h>
 #include "HDC1080.h"
-//#include <BH1750.h>
 #include <CCS811.h>
 #include <hal/soc/flash.h>
-
-#ifndef ACTIVE_REGION
-#define ACTIVE_REGION LORAMAC_REGION_EU868
 #endif
 
-#ifndef CLASS_MODE
-#define CLASS_MODE CLASS_A
+#if(BME_680 ==1)
+//#include "BH1750.h"
+#include "BME680.h"
 #endif
 
+#if(BME_280 ==1)
+//#include "BH1750.h"
+#include "BME280.h"
+#endif
 
 //HI
 //AT+DevEui=002307E701EEDF8E
@@ -25,11 +32,8 @@
 //AT+DutyCycle=60000  // 1 Minute
 //AT+RESET=1
 
-
-DeviceClass_t  CLASS = CLASS_MODE;
-
 /*
-   set LoraWan_RGB to 1,the RGB active in loraWan
+   set LoraWan_RGB to Active,the RGB active in loraWan
    RGB red means sending;
    RGB purple means joined done;
    RGB blue means RxWindow1;
@@ -44,20 +48,23 @@ DeviceClass_t  CLASS = CLASS_MODE;
    set to 1 the enable AT mode
    set to 0 the disable support AT mode
 */
-#define  AT_SUPPORT  1
+#ifndef AT_SUPPORT
+#define AT_SUPPORT 0
+#endif
 
-/*!
-   When set to true the application uses the Over-the-Air activation procedure
-   When set to false the application uses the Personalization activation procedure
-*/
-bool OVER_THE_AIR_ACTIVATION = true;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = true;
+/*LoraWan Class*/
+DeviceClass_t  CLASS = LORAWAN_CLASS;
+/*OTAA or ABP*/
+bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+/*ADR enable*/
+bool LORAWAN_ADR_ON = LORAWAN_ADR;
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool KeepNet = LORAWAN_Net_Reserve;
+/*LoraWan REGION*/
+LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
-
 /*!
   Number of trials to transmit the frame, if the LoRaMAC layer did not
   receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -84,30 +91,30 @@ uint8_t ConfirmedNbTrials = 8;
 uint8_t AppPort = 2;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 600000;
+uint32_t APP_TX_DUTYCYCLE = 900000;
 
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
 uint16_t baseline;
 int count;
 int maxtry = 50;
 
+#if(MJMCU_8128 == 1)
 HDC1080 hdc1080;
-//BH1750 lightMeter;
-//CCS811 ccs(CCS811_ADDR);
 CCS811 ccs;
 BMP280 bmp;
-//ClosedCube_BME680 bme680;
-//BME280 bme280;
+//BH1750 lightMeter;
+#endif
 
-/*  get the BatteryVoltage in mV. */
-static uint16_t GetBatteryVoltage(void)
-{
-  pinMode(ADC_CTL, OUTPUT);
-  digitalWrite(ADC_CTL, LOW);
-  uint16_t volt = analogRead(ADC) * 2;
-  digitalWrite(ADC_CTL, HIGH);
-  return volt;
-}
+#if(BME_680 ==1)
+BME680 bme680;
+//BH1750 lightMeter;
+#endif
+
+#if(BME_280 ==1)
+BME280 bme280;
+//BH1750 lightMeter;
+#endif
+
 
 /*!
    \brief   Prepares the payload of the frame
@@ -119,6 +126,10 @@ static void PrepareTxFrame( uint8_t port )
   digitalWrite(Vext, LOW);
   delay(500);
 
+/*
+ *  MJMCU-8128
+ */
+#if(MJMCU_8128 == 1)
   count = 0;
   hdc1080.begin(0x40);
   delay(500);
@@ -145,14 +156,14 @@ static void PrepareTxFrame( uint8_t port )
   ccs.begin();
   delay(1000);
 
-//  uint8_t basetemp;
-//  if (FLASH_read_at(0x0, baseline, 2)) {
-//    baseline = basetemp;
-//    Serial.print("Read BaseLine: ");
-//    Serial.println(baseline);
+  //  uint8_t basetemp;
+  //  if (FLASH_read_at(0x0, baseline, 2)) {
+  //    baseline = basetemp;
+  //    Serial.print("Read BaseLine: ");
+  //    Serial.println(baseline);
   baseline = 13440;
   ccs.setBaseline(baseline);
-//  }
+  //  }
   delay(5000);
 
   while (!ccs.available());
@@ -161,7 +172,7 @@ static void PrepareTxFrame( uint8_t port )
   tvoc = ccs.getTVOC();
 
   baseline = ccs.getBaseline();
-//  FLASH_Update(0x0, baseline, 2);
+  //  FLASH_Update(0x0, baseline, 2);
 
   Wire.end();
   while (co2 > 65500.0 && count < maxtry) {
@@ -278,18 +289,184 @@ static void PrepareTxFrame( uint8_t port )
   Serial.print(baseline);
   Serial.print(", BatteryVoltage:");
   Serial.println(BatteryVoltage);
-  //    Serial.print("PayLoad=");
-  //    for (int xx=0; xx < AppDataSize; xx++) {
-  //      Serial.print(AppData[xx]);
-  //    }
-  //    Serial.println("");
+#endif
+
+/*
+ * BME680
+ */
+
+#if(BME_680 == 1)
+  //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
+  //    Serial.print("Failed to start BH2750!");
+  //  }
+  //  float lux = lightMeter.readLightLevel();
+  //  lightMeter.end();
+  lux = 0.0;
+  bme680.init(0x77); // I2C address: 0x76 or 0x77
+  bme680.reset();
+
+  Serial.print("Chip ID=0x");
+  Serial.println(bme680.getChipID(), HEX);
+
+  // oversampling: humidity = x1, temperature = x2, pressure = x16
+  bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
+  bme680.setIIRFilter(BME680_FILTER_3);
+  bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds
+
+  bme680.setForcedMode();
+  BME680_Status status = readAndPrintStatus();
+  if (status.newDataFlag) {
+    Serial.print("result: ");
+    Temperature = bme680.readTemperature();
+    Pressure = bme680.readPressure();
+    humidity = bme680.readHumidity();
+    TVOC = bme680.readGasResistance();
+
+    Wire.end();
+    digitalWrite(Vext, HIGH);
+    uint16_t BatteryVoltage = GetBatteryVoltage();
+    unsigned char *puc;
+
+    puc = (unsigned char *)(&Temperature);
+    AppDataSize = 22;//AppDataSize max value is 64
+    AppData[0] = puc[0];
+    AppData[1] = puc[1];
+    AppData[2] = puc[2];
+    AppData[3] = puc[3];
+
+    puc = (unsigned char *)(&Humidity);
+    AppData[4] = puc[0];
+    AppData[5] = puc[1];
+    AppData[6] = puc[2];
+    AppData[7] = puc[3];
+
+    puc = (unsigned char *)(&lux);
+    AppData[8] = puc[0];
+    AppData[9] = puc[1];
+    AppData[10] = puc[2];
+    AppData[11] = puc[3];
+
+    puc = (unsigned char *)(&Pressure);
+    AppData[12] = puc[0];
+    AppData[13] = puc[1];
+    AppData[14] = puc[2];
+    AppData[15] = puc[3];
+
+    puc = (unsigned char *)(&tvoc);
+    AppData[20] = puc[0];
+    AppData[21] = puc[1];
+    AppData[22] = puc[2];
+    AppData[23] = puc[3];
+
+    AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[25] = (uint8_t)BatteryVoltage;
+
+    Serial.print("T=");
+    Serial.print(Temperature);
+    Serial.print("C, RH=");
+    Serial.print(Humidity);
+    Serial.print("%, Lux=");
+    Serial.print(lux);
+    Serial.print(" lx, Pressure=");
+    Serial.print(Pressure);
+    Serial.print(" hPA, GAS=");
+    Serial.print(tvoc);
+    Serial.print(", BatteryVoltage:");
+    Serial.println(BatteryVoltage);
+
+    bme680.setForcedMode();
+  } else {
+    delay(200); // sensor data not yet ready
+  }
+#endif
+
+/*
+ * BME280
+ */
+#if(BME_280 == 1)
+  if (!bme280.init()) {
+    Serial.println("Device error!");
+  }
+  Temperature = bme280.getTemperature();
+  Pressure = bme280.getPressure();
+  Humidty = bme280.getHumidity()
+
+            //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
+            //    Serial.print("Failed to start BH2750!");
+            //  }
+            //  float lux = lightMeter.readLightLevel();
+            //  lightMeter.end();
+            lux = 0.0;
+  Wire.end();
+  digitalWrite(Vext, HIGH);
+  uint16_t BatteryVoltage = GetBatteryVoltage();
+  unsigned char *puc;
+
+  puc = (unsigned char *)(&Temperature);
+  AppDataSize = 18;//AppDataSize max value is 64
+  AppData[0] = puc[0];
+  AppData[1] = puc[1];
+  AppData[2] = puc[2];
+  AppData[3] = puc[3];
+
+  puc = (unsigned char *)(&Humidity);
+  AppData[4] = puc[0];
+  AppData[5] = puc[1];
+  AppData[6] = puc[2];
+  AppData[7] = puc[3];
+
+  puc = (unsigned char *)(&lux);
+  AppData[8] = puc[0];
+  AppData[9] = puc[1];
+  AppData[10] = puc[2];
+  AppData[11] = puc[3];
+
+  puc = (unsigned char *)(&Pressure);
+  AppData[12] = puc[0];
+  AppData[13] = puc[1];
+  AppData[14] = puc[2];
+  AppData[15] = puc[3];
+
+  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+  AppData[25] = (uint8_t)BatteryVoltage;
+
+  Serial.print("T=");
+  Serial.print(Temperature);
+  Serial.print("C, RH=");
+  Serial.print(Humidity);
+  Serial.print("%, Lux=");
+  Serial.print(lux);
+  Serial.print(" lx, Pressure=");
+  Serial.print(Pressure);
+  Serial.print(" hPA, BatteryVoltage:");
+  Serial.println(BatteryVoltage);
+#endif
 }
 
+#if(BME_680 == 1)
+BME680_Status readAndPrintStatus() {
+  BME680_Status status = bme680.readStatus();
+  Serial.print("status: (");
+  Serial.print(status.newDataFlag);
+  Serial.print(",");
+  Serial.print(status.measuringStatusFlag);
+  Serial.print(",");
+  Serial.print(status.gasMeasuringStatusFlag);
+  Serial.print(",");
+  Serial.print(status.gasMeasurementIndex);
+  Serial.println(") (newDataFlag,StatusFlag,GasFlag,GasIndex)");
+  return status;
+}
+#endif
 
 void setup() {
   BoardInitMcu( );
   Serial.begin(115200);
+#if(AT_SUPPORT == 1)
+  Enable_AT();
+#endif
   DeviceState = DEVICE_STATE_INIT;
+  LoRaWAN.Ifskipjoin();
 }
 
 void loop()
@@ -298,13 +475,12 @@ void loop()
   {
     case DEVICE_STATE_INIT:
       {
-        Serial.printf("LoRaWan Class%X test start! \r\n", CLASS + 10);
-#if(AT_SUPPORT)
-        Enable_AT();
+#if(AT_SUPPORT == 1)
         getDevParam();
 #endif
         printDevParam();
-        LoRaWAN.Init(CLASS, ACTIVE_REGION);
+        Serial.printf("LoRaWan Class%X  start! \r\n", CLASS + 10);
+        LoRaWAN.Init(CLASS, REGION);
         DeviceState = DEVICE_STATE_JOIN;
         break;
       }

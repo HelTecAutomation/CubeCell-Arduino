@@ -124,15 +124,15 @@ CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1=OFF
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
 
-CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0=ON
-CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
-CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1=OFF
-CubeCell-Board.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
-CubeCell-Board.menu.LORAWAN_RGB.1=ACTIVE
-CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
-CubeCell-Board.menu.LORAWAN_RGB.0=DEACTIVE
-CubeCell-Board.menu.LORAWAN_RGB.0.build.RGB=0
+CubeCell-Capsule.menu.LORAWAN_RGB.1=ACTIVE
+CubeCell-Capsule.menu.LORAWAN_RGB.1.build.RGB=1
+CubeCell-Capsule.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-Capsule.menu.LORAWAN_RGB.0.build.RGB=0
 
 ##############################################################
 

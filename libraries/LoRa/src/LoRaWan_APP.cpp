@@ -1,5 +1,5 @@
 #include <LoRaWan_APP.h>
-#if LoraWan_RGB==1
+#if(LoraWan_RGB==1)
 #include "Adafruit_NeoPixel.h"
 Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
@@ -187,8 +187,7 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
 	NextTx = true;
 }
 
-#if LoraWan_RGB==1
-
+#if(LoraWan_RGB==1)
 void RGB_ON(uint32_t color,uint32_t time)
 {
 	uint8_t red,green,blue;
