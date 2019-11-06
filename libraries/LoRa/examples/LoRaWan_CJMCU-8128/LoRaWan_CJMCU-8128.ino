@@ -52,6 +52,14 @@
 #define AT_SUPPORT 0
 #endif
 
+#ifndef ACTIVE_REGION
+#define ACTIVE_REGION LORAMAC_REGION_EU868
+#endif
+
+#ifndef LORAWAN_CLASS
+#define LORAWAN_CLASS CLASS_A
+#endif
+
 /*LoraWan Class*/
 DeviceClass_t  CLASS = LORAWAN_CLASS;
 /*OTAA or ABP*/
@@ -94,7 +102,7 @@ uint8_t AppPort = 2;
 uint32_t APP_TX_DUTYCYCLE = 900000;
 
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
-uint16_t baseline;
+uint16_t baseline, baselinetemp;
 int count;
 int maxtry = 50;
 
@@ -116,6 +124,11 @@ BME280 bme280;
 #endif
 
 
+#define ROW 0
+#define ROW_OFFSET 0
+#define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
+uint8_t baselineflash[2];
+
 /*!
    \brief   Prepares the payload of the frame
 */
@@ -126,9 +139,9 @@ static void PrepareTxFrame( uint8_t port )
   digitalWrite(Vext, LOW);
   delay(500);
 
-/*
- *  MJMCU-8128
- */
+  /*
+      MJMCU-8128
+  */
 #if(MJMCU_8128 == 1)
   count = 0;
   hdc1080.begin(0x40);
@@ -156,14 +169,14 @@ static void PrepareTxFrame( uint8_t port )
   ccs.begin();
   delay(1000);
 
-  //  uint8_t basetemp;
-  //  if (FLASH_read_at(0x0, baseline, 2)) {
-  //    baseline = basetemp;
-  //    Serial.print("Read BaseLine: ");
-  //    Serial.println(baseline);
-  baseline = 13440;
-  ccs.setBaseline(baseline);
-  //  }
+  FLASH_read_at(addr, baselineflash, sizeof(baselineflash));
+  baselinetemp = (baselineflash[0] << 8) | baselineflash[1];
+  if (baselinetemp > 0) {
+    baseline = baselinetemp;
+    Serial.print("Read BaseLine: ");
+    Serial.println(baseline);
+    ccs.setBaseline(baseline);
+  }
   delay(5000);
 
   while (!ccs.available());
@@ -172,8 +185,11 @@ static void PrepareTxFrame( uint8_t port )
   tvoc = ccs.getTVOC();
 
   baseline = ccs.getBaseline();
-  //  FLASH_Update(0x0, baseline, 2);
-
+  baselineflash[0] = (uint8_t)(baseline >> 8);
+  baselineflash[1] = (uint8_t)baseline;
+  FLASH_update(addr, baselineflash, sizeof(baselineflash));
+  Serial.print("Write BaseLine: ");
+  Serial.println(baseline);
   Wire.end();
   while (co2 > 65500.0 && count < maxtry) {
     ccs.begin();
@@ -291,9 +307,9 @@ static void PrepareTxFrame( uint8_t port )
   Serial.println(BatteryVoltage);
 #endif
 
-/*
- * BME680
- */
+  /*
+     BME680
+  */
 
 #if(BME_680 == 1)
   //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
@@ -380,9 +396,9 @@ static void PrepareTxFrame( uint8_t port )
   }
 #endif
 
-/*
- * BME280
- */
+  /*
+     BME280
+  */
 #if(BME_280 == 1)
   if (!bme280.init()) {
     Serial.println("Device error!");
