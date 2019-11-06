@@ -28,6 +28,13 @@
 #include <ASR_Arduino.h>
 #include <HardwareSerial.h>
 #include <CyLib.h> 
+#include "radio.h"
+#include "board.h"
+#include "timer.h"
+#include "rtc-board.h"
+#include "hw.h"
+#include "low_power.h"
+#include "asr_timer.h"
 
 
 //extern HardwareSerial Serial;
