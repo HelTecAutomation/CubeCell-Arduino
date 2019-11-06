@@ -34,13 +34,13 @@ int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size)
 		return -1;
 	}
 	
-	if(dst_addr>=510*256&&dst_addr<CY_SFLASH_USERBASE)
+	if(dst_addr>=512*256&&dst_addr<CY_SFLASH_USERBASE)
 	{
 		printf("flash addr error.\r\n");
 		return -1;
 	}
 
-	if((dst_addr+size)>=510*256&&(dst_addr+size)<CY_SFLASH_USERBASE)
+	if((dst_addr+size)>=512*256&&(dst_addr+size)<CY_SFLASH_USERBASE)
 	{
 		printf("flash addr error.\r\n");
 		return -1;
