@@ -149,6 +149,9 @@ uint8_t GetBoardPowerSource( void );
  */
 BoardVersion_t BoardGetVersion( void );
 
+extern int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size);
+extern int FLASH_read_at(uint32_t address, uint8_t *pData, uint32_t len_bytes);
+
 #ifdef __cplusplus
 }
 #endif

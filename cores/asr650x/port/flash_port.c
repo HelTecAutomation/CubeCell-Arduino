@@ -27,6 +27,31 @@ int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size)
     int remaining = size;
     uint8_t * src_addr = (uint8_t *) data;
     uint32 status;
+   // printf("dst_addr:%d,size:%d\r\n",dst_addr,size);
+	if(dst_addr+size>=CY_SFLASH_USERBASE+256*3)
+	{
+		printf("flash addr error.\r\n");
+		return -1;
+	}
+	
+	if(dst_addr>=510*256&&dst_addr<CY_SFLASH_USERBASE)
+	{
+		printf("flash addr error.\r\n");
+		return -1;
+	}
+
+	if((dst_addr+size)>=510*256&&(dst_addr+size)<CY_SFLASH_USERBASE)
+	{
+		printf("flash addr error.\r\n");
+		return -1;
+	}
+	
+	if(dst_addr<34*256)
+	{
+		printf("addr is in bootloader areas.\r\n");
+		return -1;
+	}
+
 
 	if(dst_addr>=CY_SFLASH_USERBASE)
 	{
@@ -42,7 +67,7 @@ int FLASH_update(uint32_t dst_addr, const void *data, uint32_t size)
     do {
         uint32_t fl_addr = ROUND_DOWN(dst_addr, FLASH_PAGE_SIZE);
         int fl_offset = dst_addr - fl_addr;
-        int len = MIN(FLASH_PAGE_SIZE - fl_offset, size);
+        int len = MIN(FLASH_PAGE_SIZE - fl_offset, remaining);
 
 		if(temp<CY_SFLASH_USERBASE)
 		{
