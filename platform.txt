@@ -1,0 +1,79 @@
+name=CubeCell
+version=0.0.1
+
+tools.CubeCellflash.cmd.windows={runtime.tools.CubeCellflash.path}/CubeCellflash.exe
+tools.CubeCellflash.cmd.linux={runtime.tools.CubeCellflash.path}/CubeCellflash
+tools.CubeCellflash.cmd.macosx={runtime.tools.CubeCellflash.path}/CubeCellflash
+
+tools.CubeCellelftool.cmd.windows={runtime.tools.CubeCellelftool.path}/CubeCellelftool.exe
+tools.CubeCellelftool.cmd.linux={runtime.tools.CubeCellelftool.path}/CubeCellelftool
+tools.CubeCellelftool.cmd.macosx={runtime.tools.CubeCellelftool.path}/CubeCellelftool
+
+compiler.warning_flags=-w
+compiler.warning_flags.none=-w
+compiler.warning_flags.default=
+compiler.warning_flags.more=-Wall
+compiler.warning_flags.all=-Wall -Wextra
+
+compiler.path={runtime.platform.path}/tools/gcc-arm-none-eabi/bin/
+
+compiler.sdk.path={runtime.platform.path}/cores/asr650x
+compiler.cpreprocessor.flags=-D{build.band}  -DACTIVE_REGION=LORAMAC_{build.band}  -DLORAWAN_CLASS={build.LORAWAN_CLASS} -DLORAWAN_NETMODE={build.LORAWAN_NETMODE} -DLORAWAN_ADR={build.LORAWAN_ADR}  -DLORAWAN_Net_Reserve={build.LORAWAN_Net_Reserve} -DAT_SUPPORT={build.LORAWAN_AT_SUPPORT} -DLoraWan_RGB={build.RGB} -DCY_CORE_ID=0 -DCONFIG_LORA_USE_TCXO -DCONFIG_MANUFACTURER="ASR" -DCONFIG_DEVICE_MODEL="6501" -DCONFIG_VERSION="v4.0"  "-I{compiler.sdk.path}/board/"  "-I{compiler.sdk.path}/board/src/" "-I{compiler.sdk.path}/board/inc/"  "-I{compiler.sdk.path}/device/asr6501_lrwan/" "-I{compiler.sdk.path}/device/sx126x/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/mac/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/mac/region/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/system/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/system/crypto/" "-I{compiler.sdk.path}/port/" "-I{compiler.sdk.path}/port/include/"  "-I{compiler.sdk.path}/projects/" "-I{compiler.sdk.path}/projects/PSoC4/"  "-I{compiler.sdk.path}/cores/" "-I{compiler.sdk.path}/Serial/"  "-I{compiler.sdk.path}/Wire/" "-I{compiler.sdk.path}/SPI/"
+
+compiler.c.cmd=arm-none-eabi-gcc
+compiler.c.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c  
+
+compiler.cpp.cmd=arm-none-eabi-g++
+compiler.cpp.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c   -fno-exceptions   -fexceptions  -fno-rtti
+
+compiler.S.cmd=arm-none-eabi-as
+compiler.S.flags=-mcpu=cortex-m0plus -mthumb  -g -w --gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
+
+compiler.c.elf.cmd=arm-none-eabi-gcc
+compiler.c.elf.flags=-mcpu=cortex-m0plus -mthumb "-L{compiler.sdk.path}/projects/Generated_Source/PSoC4" "{compiler.sdk.path}/projects/AsrLib.a"   "-T{compiler.sdk.path}/projects/Generated_Source\PSoC4\cm0plusgcc.ld" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects 
+
+compiler.as.cmd=arm-none-eabi-as
+
+compiler.ar.cmd=arm-none-eabi-ar
+compiler.ar.flags=-rcs 
+
+compiler.objcopy.cmd=arm-none-eabi-objcopy
+
+compiler.size.cmd=arm-none-eabi-size
+
+
+# These can be overridden in platform.local.txt
+compiler.c.extra_flags=
+compiler.c.elf.extra_flags=
+compiler.S.extra_flags=
+compiler.cpp.extra_flags=  
+compiler.ar.extra_flags=
+compiler.objcopy.eep.extra_flags=
+compiler.elf2hex.extra_flags= 
+compiler.ldflags=
+
+## Compile c files
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}"  {compiler.cpreprocessor.flags}  {compiler.c.flags}  {compiler.c.extra_flags}  {includes} "{source_file}" -o "{object_file}"
+
+
+## Compile c++ files
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}"  {compiler.cpreprocessor.flags} {compiler.cpp.flags} {compiler.cpp.extra_flags}  {includes} "{source_file}" -o "{object_file}"
+
+#### Compile S files
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags}  "{source_file}"  -o  "{object_file}" 
+
+## Create archives
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
+
+## Combine gc-sections, archives, and objects
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" -Wl,--start-group "-L{build.path}" -mcpu=cortex-m0plus -mthumb -mthumb-interwork "-L{compiler.sdk.path}/projects/PSoC4"  {compiler.c.elf.extra_flags} "-T{compiler.sdk.path}/projects/PSoC4/cm0plusgcc.ld" -lstdc++ -lm "{compiler.sdk.path}/projects/CubeCellLib.a" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files}  -lm "{build.path}/{archive_file}" -Wl,--end-group
+
+recipe.objcopy.hex.pattern={tools.CubeCellelftool.cmd} "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.project_name}.cyacd" 
+
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.hex"
+recipe.size.regex=Total\s+([0-9]+).*
+
+tools.CubeCellflash.upload.protocol=
+tools.CubeCellflash.upload.params.verbose=
+tools.CubeCellflash.upload.params.quiet=
+tools.CubeCellflash.upload.pattern="{cmd}" -serial "{serial.port}" "{build.path}/{build.project_name}.cyacd"
