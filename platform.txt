@@ -15,7 +15,7 @@ compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
-compiler.path={runtime.tools.gcc-arm-none-eabi.path}/bin/
+compiler.path={runtime.platform.path}/tools/gcc-arm-none-eabi/bin/
 
 compiler.sdk.path={runtime.platform.path}/cores/asr650x
 compiler.cpreprocessor.flags=-D{build.band}  -DACTIVE_REGION=LORAMAC_{build.band}  -DLORAWAN_CLASS={build.LORAWAN_CLASS} -DLORAWAN_NETMODE={build.LORAWAN_NETMODE} -DLORAWAN_ADR={build.LORAWAN_ADR}  -DLORAWAN_Net_Reserve={build.LORAWAN_Net_Reserve} -DAT_SUPPORT={build.LORAWAN_AT_SUPPORT} -DLoraWan_RGB={build.RGB} -DCY_CORE_ID=0 -DCONFIG_LORA_USE_TCXO -DCONFIG_MANUFACTURER="ASR" -DCONFIG_DEVICE_MODEL="6501" -DCONFIG_VERSION="v4.0"  "-I{compiler.sdk.path}/board/"  "-I{compiler.sdk.path}/board/src/" "-I{compiler.sdk.path}/board/inc/"  "-I{compiler.sdk.path}/device/asr6501_lrwan/" "-I{compiler.sdk.path}/device/sx126x/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/mac/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/mac/region/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/system/" "-I{compiler.sdk.path}/kernel/protocols/lorawan/lora/system/crypto/" "-I{compiler.sdk.path}/port/" "-I{compiler.sdk.path}/port/include/"  "-I{compiler.sdk.path}/projects/" "-I{compiler.sdk.path}/projects/PSoC4/"  "-I{compiler.sdk.path}/cores/" "-I{compiler.sdk.path}/Serial/"  "-I{compiler.sdk.path}/Wire/" "-I{compiler.sdk.path}/SPI/"
