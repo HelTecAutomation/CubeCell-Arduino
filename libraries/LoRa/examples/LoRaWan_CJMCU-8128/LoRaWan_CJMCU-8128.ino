@@ -2,14 +2,25 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-#define MJMCU_8128 1
+#define MJMCU_8128 0
 #define BME_680    0
-#define BME_280    0
+#define BME_280    1
 #define DS18B20    0
 
-const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+// Board_001
+const char myDevEui[] = { 0x00, 0x92, 0x25, 0xDD, 0x0A, 0xC5, 0x73, 0x54 };
+const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+const char myAppKey[] = { 0x84, 0xA7, 0x3F, 0x37, 0x8B, 0x72, 0xD9, 0xA2, 0x3C, 0x59, 0x8D, 0xBF, 0xCB, 0x96, 0x09, 0x08 };
+
+
+// Capsule_001
+//const char myDevEui[] = { 0x00, 0x23, 0x07, 0xE7, 0x01, 0xEE, 0xDF, 0x8E };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0x21, 0xDD, 0x29, 0x80, 0x45, 0x0E, 0xA8, 0xD5, 0x29, 0x7A, 0xB2, 0x9A, 0x90, 0x29, 0x12, 0x62 };
+
+//const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+//const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+//const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
@@ -351,8 +362,8 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print("result: ");
     Temperature = bme680.readTemperature();
     Pressure = bme680.readPressure();
-    humidity = bme680.readHumidity();
-    TVOC = bme680.readGasResistance();
+    Humidity = bme680.readHumidity();
+    tvoc = bme680.readGasResistance();
 
     Wire.end();
     digitalWrite(Vext, HIGH);
@@ -360,7 +371,7 @@ static void PrepareTxFrame( uint8_t port )
     unsigned char *puc;
 
     puc = (unsigned char *)(&Temperature);
-    AppDataSize = 22;//AppDataSize max value is 64
+    AppDataSize = 26;//AppDataSize max value is 64
     AppData[0] = puc[0];
     AppData[1] = puc[1];
     AppData[2] = puc[2];
@@ -383,6 +394,12 @@ static void PrepareTxFrame( uint8_t port )
     AppData[13] = puc[1];
     AppData[14] = puc[2];
     AppData[15] = puc[3];
+
+    puc = (unsigned char *)(&co2);
+    AppData[16] = puc[0];
+    AppData[17] = puc[1];
+    AppData[18] = puc[2];
+    AppData[19] = puc[3];
 
     puc = (unsigned char *)(&tvoc);
     AppData[20] = puc[0];
@@ -419,23 +436,24 @@ static void PrepareTxFrame( uint8_t port )
   if (!bme280.init()) {
     Serial.println("Device error!");
   }
+  delay(1000);
   Temperature = bme280.getTemperature();
-  Pressure = bme280.getPressure();
-  Humidty = bme280.getHumidity()
+  Pressure = bme280.getPressure()/100.0;
+  Humidity = bme280.getHumidity();
 
-            //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
-            //    Serial.print("Failed to start BH2750!");
-            //  }
-            //  float lux = lightMeter.readLightLevel();
-            //  lightMeter.end();
-            lux = 0.0;
+  //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
+  //    Serial.print("Failed to start BH2750!");
+  //  }
+  //  float lux = lightMeter.readLightLevel();
+  //  lightMeter.end();
+  lux = 0.0;
   Wire.end();
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();
   unsigned char *puc;
 
   puc = (unsigned char *)(&Temperature);
-  AppDataSize = 18;//AppDataSize max value is 64
+  AppDataSize = 26;//AppDataSize max value is 64
   AppData[0] = puc[0];
   AppData[1] = puc[1];
   AppData[2] = puc[2];
@@ -458,6 +476,18 @@ static void PrepareTxFrame( uint8_t port )
   AppData[13] = puc[1];
   AppData[14] = puc[2];
   AppData[15] = puc[3];
+
+  puc = (unsigned char *)(&co2);
+  AppData[16] = puc[0];
+  AppData[17] = puc[1];
+  AppData[18] = puc[2];
+  AppData[19] = puc[3];
+
+  puc = (unsigned char *)(&tvoc);
+  AppData[20] = puc[0];
+  AppData[21] = puc[1];
+  AppData[22] = puc[2];
+  AppData[23] = puc[3];
 
   AppData[24] = (uint8_t)(BatteryVoltage >> 8);
   AppData[25] = (uint8_t)BatteryVoltage;
@@ -572,11 +602,41 @@ static void PrepareTxFrame( uint8_t port )
   unsigned char *puc;
 
   puc = (unsigned char *)(&Temperature);
-  AppDataSize = 6;//AppDataSize max value is 64
+  AppDataSize = 26;//AppDataSize max value is 64
   AppData[0] = puc[0];
   AppData[1] = puc[1];
   AppData[2] = puc[2];
   AppData[3] = puc[3];
+
+  puc = (unsigned char *)(&Humidity);
+  AppData[4] = puc[0];
+  AppData[5] = puc[1];
+  AppData[6] = puc[2];
+  AppData[7] = puc[3];
+
+  puc = (unsigned char *)(&lux);
+  AppData[8] = puc[0];
+  AppData[9] = puc[1];
+  AppData[10] = puc[2];
+  AppData[11] = puc[3];
+
+  puc = (unsigned char *)(&Pressure);
+  AppData[12] = puc[0];
+  AppData[13] = puc[1];
+  AppData[14] = puc[2];
+  AppData[15] = puc[3];
+
+  puc = (unsigned char *)(&co2);
+  AppData[16] = puc[0];
+  AppData[17] = puc[1];
+  AppData[18] = puc[2];
+  AppData[19] = puc[3];
+
+  puc = (unsigned char *)(&tvoc);
+  AppData[20] = puc[0];
+  AppData[21] = puc[1];
+  AppData[22] = puc[2];
+  AppData[23] = puc[3];
 
   AppData[24] = (uint8_t)(BatteryVoltage >> 8);
   AppData[25] = (uint8_t)BatteryVoltage;
