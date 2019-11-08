@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v1.8.1 by LoRa8.eu
+# v1.8.2 by LoRa8.eu
 
 
 This sketch allows you to use a number of sensors.
@@ -12,7 +12,7 @@ All you have to do is to set the number to a 1 beside the sensor you would like 
 #define CCS_811    0
 #define BMP_180    0 // not tested
 #define HDC_1080   0
-#define BH_1750    0 // not yet
+#define BH_1750    0 // not tested
 #define One_Wire   0 // sensors not found
 
 and set your keys:
@@ -24,4 +24,3 @@ const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 Known Failures:
 
 1. BME_680 and One_wire: no sensors found
-2. BH1750: not implemented yet

@@ -1,6 +1,7 @@
-#include "LoRaWan_APP.h"
-#include "Arduino.h"
-#include <Wire.h>
+/*
+ LoRaWan_MultiSensor
+ v1.8.2 by LoRa8.eu
+*/
 
 #define MJMCU_8128 0
 #define BME_680    0 // wrong values
@@ -8,7 +9,7 @@
 #define CCS_811    0
 #define BMP_180    0 // not tested
 #define HDC_1080   0
-#define BH_1750    0 // not yet
+#define BH_1750    0 // not tested
 #define One_Wire   0 // sensors not found
 
 const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -18,6 +19,10 @@ const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
+
+#include "LoRaWan_APP.h"
+#include "Arduino.h"
+#include <Wire.h>
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
@@ -57,13 +62,9 @@ extern uint8_t AppKey[];
 #include <BMP180.h>
 #endif
 
-//HI
-//AT+DevEui=002307E701EEDF8E
-//AT+AppKey=21DD2980450EA8D5297AB29A90291262
-//AT+AppEui=70B3D57ED0023C84
-//AT+DutyCycle=900000 //15 Minuten
-//AT+DutyCycle=60000  // 1 Minute
-//AT+RESET=1
+#if(BH_1750 == 1)
+#include <BH1750.h>
+#endif
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -175,6 +176,10 @@ HDC1080 hdc0180;
 
 #if(BMP_180 == 1)
 BMP085 bmp;
+#endif
+
+#if(BH_1750 == 1)
+BH1750 lightMeter;
 #endif
 
 /*!
@@ -755,17 +760,17 @@ static void PrepareTxFrame( uint8_t port )
 #endif
 
 #if(BMP_180 == 1)
-count = 0;
+  count = 0;
   bmp.begin();
   delay(500);
   Temperature = (float)(bmp.readTemperature());
-  Pressure = (float)(bmp.readPressure())/100.0;
+  Pressure = (float)(bmp.readPressure()) / 100.0;
   Wire.end();
   while (Temperature > 120.0 && count < maxtry) {
     bmp.begin();
     delay(500);
     Temperature = (float)(cmp.readTemperature());
-    Pressure = (float)(bmp.readPressure())/100.0;
+    Pressure = (float)(bmp.readPressure()) / 100.0;
     Wire.end();
     count++;
     delay(500);
@@ -775,7 +780,7 @@ count = 0;
     Humidity = 0.0;
     Serial.println("BMP ERROR");
   }
-  
+
   Wire.end();
   digitalWrite(Vext, HIGH);
   uint16_t BatteryVoltage = GetBatteryVoltage();
@@ -802,6 +807,37 @@ count = 0;
   Serial.print("C, P=");
   Serial.print(Pressure);
   Serial.print("hPa, BatteryVoltage:");
+  Serial.println(BatteryVoltage);
+#endif
+
+  /*
+    BH1750
+  */
+
+#if(BH_1750 == 1)
+  count = 0;
+  lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2);
+  lux = lightMeter.readLightLevel();
+  lightMeter.end();
+  Wire.end();
+  while (Temperature > 120.0 && count < maxtry);
+  digitalWrite(Vext, HIGH);
+  uint16_t BatteryVoltage = GetBatteryVoltage();
+  unsigned char *puc;
+
+  puc = (unsigned char *)(&lux);
+  AppDataSize = 6;//AppDataSize max value is 64
+  AppData[0] = puc[0];
+  AppData[1] = puc[1];
+  AppData[2] = puc[2];
+  AppData[3] = puc[3];
+
+  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+  AppData[25] = (uint8_t)BatteryVoltage;
+
+  Serial.print("Light=");
+  Serial.print(lux);
+  Serial.print("lx, BatteryVoltage:");
   Serial.println(BatteryVoltage);
 #endif
 }
