@@ -31,6 +31,8 @@ bool BME280::init(void)
   writeRegister(BME280_REG_CONTROLHUMID, 0x05);  //Choose 16X oversampling
   writeRegister(BME280_REG_CONTROL, 0xB7);  //Choose 16X oversampling
 
+  delay(100);
+
   return true;
 }
 
