@@ -2,14 +2,22 @@
 #include "Arduino.h"
 #include <Wire.h>
 
-#define MJMCU_8128 1
-#define BME_680    0
-#define BME_280    0
-#define DS18B20    0
+#define MJMCU_8128 0
+#define BME_680    0 // wrong values
+#define BME_280    1
+#define CCS_811    0
+#define BMP_180    0 // not yet
+#define HDC_1080   0
+#define BH_1750    0 // not yet
+#define One_Wire   0 // sensors not found
 
 const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+/*
+  NO USER CHANGE NEEDED UNDER THIS LINE
+*/
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
@@ -33,9 +41,25 @@ extern uint8_t AppKey[];
 #include "BME280.h"
 #endif
 
-#if(DS18B20 == 1)
+#if(One_Wire == 1)
 #include <OneWire.h>
 #endif
+
+#if(CCS_811 == 1)
+#include <CCS811.h>
+#endif
+
+#if(HDC_1080 == 1)
+#include "HDC1080.h"
+#endif
+
+//HI
+//AT+DevEui=002307E701EEDF8E
+//AT+AppKey=21DD2980450EA8D5297AB29A90291262
+//AT+AppEui=70B3D57ED0023C84
+//AT+DutyCycle=900000 //15 Minuten
+//AT+DutyCycle=60000  // 1 Minute
+//AT+RESET=1
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -133,8 +157,16 @@ BME280 bme280;
 //BH1750 lightMeter;
 #endif
 
-#if(DS18B20 == 1)
+#if(One_Wire == 1)
 OneWire  ds(GPIO0);
+#endif
+
+#if(CCS_811 == 1)
+CCS811 ccs;
+#endif
+
+#if(HDC_1080 == 1)
+HDC1080 hdc0180;
 #endif
 
 /*!
@@ -353,7 +385,7 @@ static void PrepareTxFrame( uint8_t port )
     unsigned char *puc;
 
     puc = (unsigned char *)(&Temperature);
-    AppDataSize = 26;//AppDataSize max value is 64
+    AppDataSize = 18;//AppDataSize max value is 64
     AppData[0] = puc[0];
     AppData[1] = puc[1];
     AppData[2] = puc[2];
@@ -365,23 +397,11 @@ static void PrepareTxFrame( uint8_t port )
     AppData[6] = puc[2];
     AppData[7] = puc[3];
 
-    puc = (unsigned char *)(&lux);
-    AppData[8] = puc[0];
-    AppData[9] = puc[1];
-    AppData[10] = puc[2];
-    AppData[11] = puc[3];
-
     puc = (unsigned char *)(&Pressure);
     AppData[12] = puc[0];
     AppData[13] = puc[1];
     AppData[14] = puc[2];
     AppData[15] = puc[3];
-
-    puc = (unsigned char *)(&co2);
-    AppData[16] = puc[0];
-    AppData[17] = puc[1];
-    AppData[18] = puc[2];
-    AppData[19] = puc[3];
 
     puc = (unsigned char *)(&tvoc);
     AppData[20] = puc[0];
@@ -418,8 +438,9 @@ static void PrepareTxFrame( uint8_t port )
   if (!bme280.init()) {
     Serial.println("Device error!");
   }
+  delay(1000);
   Temperature = bme280.getTemperature();
-  Pressure = bme280.getPressure()/100.0;
+  Pressure = bme280.getPressure() / 100.0;
   Humidity = bme280.getHumidity();
 
   //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
@@ -434,7 +455,7 @@ static void PrepareTxFrame( uint8_t port )
   unsigned char *puc;
 
   puc = (unsigned char *)(&Temperature);
-  AppDataSize = 26;//AppDataSize max value is 64
+  AppDataSize = 14;//AppDataSize max value is 64
   AppData[0] = puc[0];
   AppData[1] = puc[1];
   AppData[2] = puc[2];
@@ -446,29 +467,11 @@ static void PrepareTxFrame( uint8_t port )
   AppData[6] = puc[2];
   AppData[7] = puc[3];
 
-  puc = (unsigned char *)(&lux);
-  AppData[8] = puc[0];
-  AppData[9] = puc[1];
-  AppData[10] = puc[2];
-  AppData[11] = puc[3];
-
   puc = (unsigned char *)(&Pressure);
   AppData[12] = puc[0];
   AppData[13] = puc[1];
   AppData[14] = puc[2];
   AppData[15] = puc[3];
-
-  puc = (unsigned char *)(&co2);
-  AppData[16] = puc[0];
-  AppData[17] = puc[1];
-  AppData[18] = puc[2];
-  AppData[19] = puc[3];
-
-  puc = (unsigned char *)(&tvoc);
-  AppData[20] = puc[0];
-  AppData[21] = puc[1];
-  AppData[22] = puc[2];
-  AppData[23] = puc[3];
 
   AppData[24] = (uint8_t)(BatteryVoltage >> 8);
   AppData[25] = (uint8_t)BatteryVoltage;
@@ -488,7 +491,8 @@ static void PrepareTxFrame( uint8_t port )
   /*
      DS18B20
   */
-#if(DS18B20 == 1)
+
+#if(One_wire == 1)
   byte i;
   byte present = 0;
   byte type_s;
@@ -583,29 +587,81 @@ static void PrepareTxFrame( uint8_t port )
   unsigned char *puc;
 
   puc = (unsigned char *)(&Temperature);
-  AppDataSize = 26;//AppDataSize max value is 64
+  AppDataSize = 6;//AppDataSize max value is 64
   AppData[0] = puc[0];
   AppData[1] = puc[1];
   AppData[2] = puc[2];
   AppData[3] = puc[3];
 
-  puc = (unsigned char *)(&Humidity);
-  AppData[4] = puc[0];
-  AppData[5] = puc[1];
-  AppData[6] = puc[2];
-  AppData[7] = puc[3];
+  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+  AppData[25] = (uint8_t)BatteryVoltage;
 
-  puc = (unsigned char *)(&lux);
-  AppData[8] = puc[0];
-  AppData[9] = puc[1];
-  AppData[10] = puc[2];
-  AppData[11] = puc[3];
+  Serial.print("T=");
+  Serial.print(Temperature);
+  Serial.print("C, BatteryVoltage:");
+  Serial.println(BatteryVoltage);
+#endif
 
-  puc = (unsigned char *)(&Pressure);
-  AppData[12] = puc[0];
-  AppData[13] = puc[1];
-  AppData[14] = puc[2];
-  AppData[15] = puc[3];
+  /*
+    CCS811
+  */
+
+#if(CCS_811 == 1)
+  count = 0;
+  ccs.begin();
+  delay(1000);
+
+  FLASH_read_at(addr, baselineflash, sizeof(baselineflash));
+  baselinetemp = (baselineflash[0] << 8) | baselineflash[1];
+  if (baselinetemp > 0) {
+    baseline = baselinetemp;
+    Serial.print("Read BaseLine: ");
+    Serial.println(baseline);
+    ccs.setBaseline(baseline);
+  }
+  delay(5000);
+
+  while (!ccs.available());
+  ccs.readData();
+  Temperature = ccs.calculateTemperature();
+  co2 = ccs.geteCO2();
+  tvoc = ccs.getTVOC();
+
+  baseline = ccs.getBaseline();
+  baselineflash[0] = (uint8_t)(baseline >> 8);
+  baselineflash[1] = (uint8_t)baseline;
+  FLASH_update(addr, baselineflash, sizeof(baselineflash));
+  Serial.print("Write BaseLine: ");
+  Serial.println(baseline);
+  Wire.end();
+  while (co2 > 65500.0 && count < maxtry) {
+    ccs.begin();
+    delay(1000);
+    while (!ccs.available());
+    ccs.readData();
+    co2 = ccs.geteCO2();
+    //co2 = ccs.getCO2();
+    tvoc = ccs.getTVOC();
+    Wire.end();
+    count++;
+  }
+  if (co2 > 65500.0) {
+    co2 = 0.0;
+    tvoc = 0.0;
+    Serial.println("CCS ERROR");
+  }
+
+  Wire.end();
+  digitalWrite(Vext, HIGH);
+  uint16_t BatteryVoltage = GetBatteryVoltage();
+  unsigned char *puc;
+
+  puc = (unsigned char *)(&Temperature);
+  AppDataSize = 14;//AppDataSize max value is 64
+  AppData[0] = puc[0];
+  AppData[1] = puc[1];
+  AppData[2] = puc[2];
+  AppData[3] = puc[3];
 
   puc = (unsigned char *)(&co2);
   AppData[16] = puc[0];
@@ -624,9 +680,72 @@ static void PrepareTxFrame( uint8_t port )
 
   Serial.print("T=");
   Serial.print(Temperature);
-  Serial.print("C, BatteryVoltage:");
+  Serial.print("C, CO2=");
+  Serial.print(co2);
+  Serial.print(" ppm, TVOC=");
+  Serial.print(tvoc);
+  Serial.print(" ppb, Baseline: ");
+  Serial.print(baseline);
+  Serial.print(", BatteryVoltage:");
   Serial.println(BatteryVoltage);
 #endif
+
+  /*
+    HDC1080
+  */
+
+#if(MJMCU_8128 == 1)
+  count = 0;
+  hdc1080.begin(0x40);
+  delay(500);
+  Temperature = (float)(hdc1080.readTemperature());
+  Humidity = (float)(hdc1080.readHumidity());
+  Wire.end();
+  while (Temperature > 120.0 && count < maxtry) {
+    hdc1080.begin(0x40);
+    delay(500);
+    Temperature = (float)(hdc1080.readTemperature());
+    Humidity = (float)(hdc1080.readHumidity());
+    Wire.end();
+    count++;
+    delay(500);
+  }
+  if (Temperature > 120.0) {
+    Temperature = 0.0;
+    Humidity = 0.0;
+    Serial.println("HDC ERROR");
+  }
+  hdc1080.end();
+
+  Wire.end();
+  digitalWrite(Vext, HIGH);
+  uint16_t BatteryVoltage = GetBatteryVoltage();
+  unsigned char *puc;
+
+  puc = (unsigned char *)(&Temperature);
+  AppDataSize = 10;//AppDataSize max value is 64
+  AppData[0] = puc[0];
+  AppData[1] = puc[1];
+  AppData[2] = puc[2];
+  AppData[3] = puc[3];
+
+  puc = (unsigned char *)(&Humidity);
+  AppData[4] = puc[0];
+  AppData[5] = puc[1];
+  AppData[6] = puc[2];
+  AppData[7] = puc[3];
+
+  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+  AppData[25] = (uint8_t)BatteryVoltage;
+
+  Serial.print("T=");
+  Serial.print(Temperature);
+  Serial.print("C, RH=");
+  Serial.print(Humidity);
+  Serial.print("%, BatteryVoltage:");
+  Serial.println(BatteryVoltage);
+#endif
+
 }
 
 #if(BME_680 == 1)
