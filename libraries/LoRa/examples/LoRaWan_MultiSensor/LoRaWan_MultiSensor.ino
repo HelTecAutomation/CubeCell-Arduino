@@ -6,7 +6,7 @@
 #define BME_680    0 // wrong values
 #define BME_280    1
 #define CCS_811    0
-#define BMP_180    0 // not yet
+#define BMP_180    0 // not tested
 #define HDC_1080   0
 #define BH_1750    0 // not yet
 #define One_Wire   0 // sensors not found
@@ -16,7 +16,7 @@ const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 /*
-  NO USER CHANGE NEEDED UNDER THIS LINE
+  NO USER CHANGES NEEDED UNDER THIS LINE
 */
 
 extern uint8_t DevEui[];
@@ -51,6 +51,10 @@ extern uint8_t AppKey[];
 
 #if(HDC_1080 == 1)
 #include "HDC1080.h"
+#endif
+
+#if(BMP_180 == 1)
+#include <BMP180.h>
 #endif
 
 //HI
@@ -167,6 +171,10 @@ CCS811 ccs;
 
 #if(HDC_1080 == 1)
 HDC1080 hdc0180;
+#endif
+
+#if(BMP_180 == 1)
+BMP085 bmp;
 #endif
 
 /*!
@@ -694,7 +702,7 @@ static void PrepareTxFrame( uint8_t port )
     HDC1080
   */
 
-#if(MJMCU_8128 == 1)
+#if(HDC_1080 == 1)
   count = 0;
   hdc1080.begin(0x40);
   delay(500);
@@ -746,6 +754,56 @@ static void PrepareTxFrame( uint8_t port )
   Serial.println(BatteryVoltage);
 #endif
 
+#if(BMP_180 == 1)
+count = 0;
+  bmp.begin();
+  delay(500);
+  Temperature = (float)(bmp.readTemperature());
+  Pressure = (float)(bmp.readPressure())/100.0;
+  Wire.end();
+  while (Temperature > 120.0 && count < maxtry) {
+    bmp.begin();
+    delay(500);
+    Temperature = (float)(cmp.readTemperature());
+    Pressure = (float)(bmp.readPressure())/100.0;
+    Wire.end();
+    count++;
+    delay(500);
+  }
+  if (Temperature > 120.0) {
+    Temperature = 0.0;
+    Humidity = 0.0;
+    Serial.println("BMP ERROR");
+  }
+  
+  Wire.end();
+  digitalWrite(Vext, HIGH);
+  uint16_t BatteryVoltage = GetBatteryVoltage();
+  unsigned char *puc;
+
+  puc = (unsigned char *)(&Temperature);
+  AppDataSize = 10;//AppDataSize max value is 64
+  AppData[0] = puc[0];
+  AppData[1] = puc[1];
+  AppData[2] = puc[2];
+  AppData[3] = puc[3];
+
+  puc = (unsigned char *)(&Pressure);
+  AppData[4] = puc[0];
+  AppData[5] = puc[1];
+  AppData[6] = puc[2];
+  AppData[7] = puc[3];
+
+  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
+  AppData[25] = (uint8_t)BatteryVoltage;
+
+  Serial.print("T=");
+  Serial.print(Temperature);
+  Serial.print("C, P=");
+  Serial.print(Pressure);
+  Serial.print("hPa, BatteryVoltage:");
+  Serial.println(BatteryVoltage);
+#endif
 }
 
 #if(BME_680 == 1)
