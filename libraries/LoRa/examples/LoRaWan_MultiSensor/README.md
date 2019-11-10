@@ -4,9 +4,12 @@
 
 This sketch allows you to use a number of sensors.
 All you have to do is to set the number to a 1 beside the sensor you would like to use 
-(only 1 selection is possible, selecting more will result in errors):
+(only 1 selection is possible, selecting more will result in errors).
 
-#define MJMCU_8128 1
+Selecting AUTO_SCAN the Firmware will try to identify the connected I2C Sensor by its address.
+
+#define AUTO_SCAN  1
+#define MJMCU_8128 0
 #define BME_680    0 // wrong values
 #define BME_280    0
 #define CCS_811    0
