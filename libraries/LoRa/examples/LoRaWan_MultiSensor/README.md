@@ -15,7 +15,7 @@ Selecting AUTO_SCAN the Firmware will try to identify the connected I2C Sensor b
 #define CCS_811    0
 #define BMP_180    0 // not tested
 #define HDC_1080   0
-#define BH_1750    0 // not tested
+#define BH_1750    0
 #define One_Wire   0 // sensors not found
 
 and set your keys:

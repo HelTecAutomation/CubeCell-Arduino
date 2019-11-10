@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.8.2 by WASN.eu
+  v1.8.3 by WASN.eu
 */
 
 #define AUTO_SCAN  1
@@ -11,7 +11,7 @@
 #define CCS_811    0
 #define BMP_180    0 // not tested
 #define HDC_1080   0
-#define BH_1750    0 // not tested
+#define BH_1750    0 
 
 const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -793,10 +793,12 @@ static void PrepareTxFrame( uint8_t port )
   if (BH_1750_e) {
     count = 0;
     lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2);
+    delay(100);
+    lux = lightMeter.readLightLevel();
+    delay(100);
     lux = lightMeter.readLightLevel();
     lightMeter.end();
     Wire.end();
-    while (Temperature > 120.0 && count < maxtry);
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
     unsigned char *puc;
