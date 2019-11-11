@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.8.3 by WASN.eu
+  v1.8.5 by WASN.eu
 */
 
 #define AUTO_SCAN  1
