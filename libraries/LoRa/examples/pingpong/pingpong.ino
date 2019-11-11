@@ -1,3 +1,21 @@
+/* Heltec Automation Ping Pong communication test example
+ *
+ * Function:
+ * 1. Ping Pong communication in two CubeCell device.
+ * 
+ * Description:
+ * 1. Only hardware layer communicate, no LoRaWAN protocol support;
+ * 2. Download the same code into two CubeCell devices, then they will begin Ping Pong test each other;
+ * 3. This example is for CubeCell hardware basic test.
+ *
+ * HelTec AutoMation, Chengdu, China
+ * 成都惠利特自动化科技有限公司
+ * www.heltec.org
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
+ * */
+
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 
@@ -141,7 +159,3 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 
     state=TX;
 }
-
-
-
-
