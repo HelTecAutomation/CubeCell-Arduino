@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.8.5 by WASN.eu
+  v1.9.0 by WASN.eu
 */
 
 #define AUTO_SCAN  1
@@ -399,49 +399,30 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 27;//AppDataSize max value is 64
+    AppDataSize = 15;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
      
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature+100.0)*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature+100.0)*10.0));
+    
+    AppData[3] = (uint8_t)((int)(Humidity*10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity*10.0));
+    
+    AppData[5] = (uint8_t)((int)(Pressure*10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure*10.0));
+    
+    AppData[7] = (uint8_t)((int)(lux*10.0) >> 8);
+    AppData[8] = (uint8_t)((int)(lux*10.0));
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[9] = (uint8_t)((int)co2 >> 8);
+    AppData[10] = (uint8_t)((int)co2);
+    
+    AppData[11] = (uint8_t)((int)tvoc >> 8);
+    AppData[12] = (uint8_t)((int)tvoc);
 
-    puc = (unsigned char *)(&lux);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
-
-    puc = (unsigned char *)(&Pressure);
-    AppData[13] = puc[0];
-    AppData[14] = puc[1];
-    AppData[15] = puc[2];
-    AppData[16] = puc[3];
-
-    puc = (unsigned char *)(&co2);
-    AppData[17] = puc[0];
-    AppData[18] = puc[1];
-    AppData[19] = puc[2];
-    AppData[20] = puc[3];
-
-    puc = (unsigned char *)(&tvoc);
-    AppData[21] = puc[0];
-    AppData[22] = puc[1];
-    AppData[23] = puc[2];
-    AppData[24] = puc[3];
-
-    AppData[25] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[26] = (uint8_t)BatteryVoltage;
+    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[14] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -503,38 +484,25 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 19;//AppDataSize max value is 64
+    AppDataSize = 11;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature+100.0)*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature+100.0)*10.0));
+    
+    AppData[3] = (uint8_t)((int)(Humidity*10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity*10.0));
+    
+    AppData[5] = (uint8_t)((int)(Pressure*10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure*10.0));
+    
+    AppData[7] = (uint8_t)((int)tvoc >> 8);
+    AppData[8] = (uint8_t)((int)tvoc);
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
-
-    puc = (unsigned char *)(&Pressure);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
-
-    puc = (unsigned char *)(&tvoc);
-    AppData[13] = puc[0];
-    AppData[14] = puc[1];
-    AppData[15] = puc[2];
-    AppData[16] = puc[3];
-
-    AppData[17] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[18] = (uint8_t)BatteryVoltage;
-
+    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[10] = (uint8_t)BatteryVoltage;
+    
     Serial.print("T=");
     Serial.print(Temperature);
     Serial.print("C, RH=");
@@ -572,31 +540,21 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
-
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 15;//AppDataSize max value is 64
+   
+    AppDataSize = 9;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature+100.0)*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature+100.0)*10.0));
+    
+    AppData[3] = (uint8_t)((int)(Humidity*10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity*10.0));
+    
+    AppData[5] = (uint8_t)((int)(Pressure*10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure*10.0));
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
-
-    puc = (unsigned char *)(&Pressure);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
-
-    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[14] = (uint8_t)BatteryVoltage;
+    AppData[7] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[8] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -662,31 +620,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 15;//AppDataSize max value is 64
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-        
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&co2);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)co2 >> 8);
+    AppData[2] = (uint8_t)((int)co2);
+    
+    AppData[3] = (uint8_t)((int)tvoc >> 8);
+    AppData[4] = (uint8_t)((int)tvoc);
 
-    puc = (unsigned char *)(&tvoc);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
-
-    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[14] = (uint8_t)BatteryVoltage;
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -730,25 +675,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 11;//AppDataSize max value is 64
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature+100.0)*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature+100.0)*10.0));
+    
+    AppData[3] = (uint8_t)((int)(Humidity*10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity*10.0));
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
-
-    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[10] = (uint8_t)BatteryVoltage;
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -783,25 +721,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
-
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 11;//AppDataSize max value is 64
+    
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature+100.0)*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature+100.0)*10.0));
+    
+    AppData[3] = (uint8_t)((int)(Pressure*10.0) >> 8);;
+    AppData[4] = (uint8_t)((int)(Pressure*10.0));
 
-    puc = (unsigned char *)(&Pressure);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
-
-    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[10] = (uint8_t)BatteryVoltage;
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -826,19 +757,15 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&lux);
-    AppDataSize = 7;//AppDataSize max value is 64
+    AppDataSize = 5;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
+    AppData[1] = (uint8_t)((int)(lux*10.0) >> 8);
+    AppData[2] = (uint8_t)((int)(lux*10.0));
 
-    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[6] = (uint8_t)BatteryVoltage;
+    AppData[3] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[4] = (uint8_t)BatteryVoltage;
 
     Serial.print("Light=");
     Serial.print(lux);
