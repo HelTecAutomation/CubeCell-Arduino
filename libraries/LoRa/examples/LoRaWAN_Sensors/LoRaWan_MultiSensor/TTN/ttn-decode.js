@@ -18,25 +18,25 @@ function Decoder(bytes, port) {
     sensor = bytes[0].toFixed(0);
     decoded.sensortype = sensor;
     if (sensor === "0") { // MJMCU-8128
-      decoded.temperature = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100; 
-      decoded.humidity = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
-      decoded.pressure = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
-      decoded.lux = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+      decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.co2 =  ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       decoded.tvoc =  ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "1") { // BME680
-      decoded.temperature = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100; 
-      decoded.humidity = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
-      decoded.pressure = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
-      decoded.gas = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+      decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.gas = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "2") { // BME280
-      decoded.temperature = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100; 
-      decoded.humidity = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
-      decoded.pressure = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+      decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "3") { // CCS811
@@ -45,17 +45,17 @@ function Decoder(bytes, port) {
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "4") { // HDC1080
-      decoded.temperature = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100; 
-      decoded.humidity = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+      decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "5") { // BMP180
-      decoded.temperature = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100; 
-      decoded.pressure = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+      decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "6") { // BH1750
-      decoded.lux = ((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10;
+      decoded.lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
   }
