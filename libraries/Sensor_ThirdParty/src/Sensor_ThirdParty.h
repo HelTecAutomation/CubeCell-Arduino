@@ -1,4 +1,4 @@
-#ifndef SENSORBASIC_H
-#define SENSORBASIC_H
+#ifndef SENSOR_THIRDPARTY_H
+#define SENSOR_THIRDPARTY_H
 
 #endif
