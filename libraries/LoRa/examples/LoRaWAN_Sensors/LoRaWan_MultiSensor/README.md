@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v1.9.1 by [WASN.eu](https://wasn.eu)
+# v1.9.3 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -15,7 +15,7 @@ Please select the sensor for saving battery power, for maximum flexibility choos
     #define BME_680    0 
     #define BME_280    0
     #define CCS_811    0
-    #define BMP_180    0 // not tested, not included in AUTO_SCAN
+    #define BMP_180    0 // not included in AUTO_SCAN
     #define HDC_1080   0
     #define BH_1750    0
     #define One_Wire   0 // sensors not found

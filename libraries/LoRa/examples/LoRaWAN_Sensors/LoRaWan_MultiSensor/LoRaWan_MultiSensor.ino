@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.9.1 by WASN.eu
+  v1.9.3 by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
@@ -14,7 +14,7 @@
 
 #define AUTO_SCAN  1
 #define MJMCU_8128 0
-#define BME_680    0 
+#define BME_680    0 // wrong values
 #define BME_280    0
 #define CCS_811    0
 #define BMP_180    0 // not tested, not included in AUTO_SCAN
@@ -32,10 +32,25 @@ uint32_t APP_TX_DUTYCYCLE = 900000;
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
 
+#if(One_Wire == 0)
+#include "BH1750.h"
+#include "BMP280.h"
+#include "HDC1080.h"
+#include "CCS811.h"
+#include "hal/soc/flash.h"
+#include "BME680.h"
+#include "BME280.h"
+#include "BMP180.h"
+#endif
+#if(One_Wire == 1)
+#include <OneWire.h>
+#endif
+
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
 extern uint8_t AppKey[];
 
+#if(AUTO_SCAN == 1)
 bool MJMCU_8128_e = false;
 bool BME_680_e = false;
 bool BME_280_e = false;
@@ -43,120 +58,97 @@ bool CCS_811_e = false;
 bool BMP_180_e = false;
 bool HDC_1080_e = false;
 bool BH_1750_e = false;
-
-uint8_t sensortype = 0;
+uint8_t sensortype = 88;
+#endif
 
 #if(MJMCU_8128 == 1)
-//#include "BH1750.h"
-#include <BMP280.h>
-#include "HDC1080.h"
-#include <CCS811.h>
-#include <hal/soc/flash.h>
-MJMCU_8128_e = true;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 0;
+bool MJMCU_8128_e = true;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 0;
 #endif
 
 #if(BME_680 == 1)
-//#include "BH1750.h"
-#include "BME680.h"
-MJMCU_8128_e = false;
-BME_680_e = true;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 1;
+bool MJMCU_8128_e = false;
+bool BME_680_e = true;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 1;
 #endif
 
 #if(BME_280 == 1)
-//#include "BH1750.h"
-#include "BME280.h"
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = true;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 2;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = true;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 2;
 #endif
 
 #if(One_Wire == 1)
-#include <OneWire.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t  sensortype = 99;
 #endif
 
 #if(CCS_811 == 1)
-#include <CCS811.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = true;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 3;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = true;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 3;
 #endif
 
 #if(HDC_1080 == 1)
-#include "HDC1080.h"
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = true;
-BH_1750_e = false;
-sensortype = 4;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = true;
+bool BH_1750_e = false;
+uint8_t sensortype = 4;
 #endif
 
 #if(BMP_180 == 1)
-#include <BMP180.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = true;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 5;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = true;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 5;
 #endif
 
 #if(BH_1750 == 1)
-#include <BH1750.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = true;
-sensortype = 6;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = true;
+uint8_t sensortype = 6;
 #endif
 
-#if(AUTO_SCAN == 1)
-#include "BH1750.h"
-#include <BMP280.h>
-#include "HDC1080.h"
-#include <CCS811.h>
-#include <hal/soc/flash.h>
-#include "BME680.h"
-#include "BME280.h"
-#include <BMP180.h>
-#endif
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -229,49 +221,7 @@ uint16_t baseline, baselinetemp;
 int count;
 int maxtry = 50;
 
-#if(MJMCU_8128 == 1)
-HDC1080 hdc1080;
-CCS811 ccs;
-BMP280 bmp;
-//BH1750 lightMeter;
-
-#define ROW 0
-#define ROW_OFFSET 0
-#define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
-uint8_t baselineflash[2];
-#endif
-
-#if(BME_680 == 1)
-BME680_Class bme680;
-//BH1750 lightMeter;
-#endif
-
-#if(BME_280 == 1)
-BME280 bme280;
-//BH1750 lightMeter;
-#endif
-
-#if(One_Wire == 1)
-OneWire  ds(GPIO0);
-#endif
-
-#if(CCS_811 == 1)
-CCS811 ccs;
-#endif
-
-#if(HDC_1080 == 1)
-HDC1080 hdc0180;
-#endif
-
-#if(BMP_180 == 1)
-BMP085 bmp180;
-#endif
-
-#if(BH_1750 == 1)
-BH1750 lightMeter;
-#endif
-
-#if(AUTO_SCAN == 1)
+#if(One_Wire == 0)
 HDC1080 hdc1080;
 CCS811 ccs;
 BMP280 bmp;
