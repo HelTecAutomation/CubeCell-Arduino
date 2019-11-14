@@ -1,203 +1,168 @@
-/*
+/*! @file BME680.h
 
-Arduino Library for Bosch Sensortec BME680 Environment Server
-Written by AA for ClosedCube
----
+@mainpage Arduino Library to control a Bosch BME Sensor
 
-The MIT License (MIT)
+@section Zanshin_BME680_section Description
 
-Copyright (c) 2017 ClosedCube Limited
+Class definition header for the Bosch BME680 temperature / humidity / pressure sensor. The sensor is described at 
+https://www.bosch-sensortec.com/bst/products/all_products/BME680 and the datasheet is available from Bosch at 
+https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME680-DS001-00.pdf \n\n
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The BME680 can use either SPI or I2C for communications. This library allow I2C at various bus speeds as well as 
+both standard Arduino hardware SPI and Software SPI.\n\n
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+The most recent version of the library is available at https://github.com/SV-Zanshin/BME680 and extensive 
+documentation of the library as well as example programs are described in the project's wiki pages located at
+https://github.com/SV-Zanshin/BME680/wiki. \n\n
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+The BME680 is a very small package so it is unlikely for an Arduino hobbyist to play around with directly, the
+hardware used to develop this library is a breakout board from AdaFruit which is well-documented at
+https://www.adafruit.com/product/3660. I purchased a https://www.bluedot.space/sensor-boards/bme680/ as I
+couldn't get a local adafruit board.
 
+@section license License
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details. You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+@section author Author
+
+Written by Arnd\@SV-Zanshin
+
+@section versions Changelog
+
+Version | Date       | Developer                     | Comments
+------- | ---------- | ----------------------------- | --------
+1.0.2   | 2019-01-26 | https://github.com/SV-Zanshin | Issue #3 - Converted documentation to doxygen style
+1.0.1   | 2018-07-22 | https://github.com/SV-Zanshin | Corrected I2C datatypes
+1.0.1   | 2018-07-03 | https://github.com/SV-Zanshin | Issue #1. Added waitForReading and parameter to getSensorData()
+1.0.0   | 2018-07-02 | https://github.com/SV-Zanshin | Added guard code against multiple I2C constants definitions
+1.0.0   | 2018-07-01 | https://github.com/SV-Zanshin | Added and tested I2C, SPI and software SPI connections
+1.0.0a  | 2018-06-30 | https://github.com/SV-Zanshin | Cloned from BME280 library and started recoding
 */
+#include "Arduino.h" // Arduino data type definitions
+#include <Wire.h>    // Standard I2C "Wire" library
 
+#ifndef BME680_h
+  /** @brief  Guard code definition for the library header*/
+  #define BME680_h
+  #define CONCAT_BYTES(msb, lsb) (((uint16_t)msb << 8) | (uint16_t)lsb) ///< Inline to combine msb and lsb
+  /*****************************************************************************************************************
+  ** Declare constants used in the class                                                                          **
+  *****************************************************************************************************************/
+  #ifndef I2C_MODES
+  /** @brief  Guard code definition for the I2C modes */
+  #define I2C_MODES
+    const uint32_t I2C_STANDARD_MODE              =  100000; ///< Default normal I2C 100KHz speed
+    const uint32_t I2C_FAST_MODE                  =  400000; ///< Fast mode
+    const uint32_t I2C_FAST_MODE_PLUS             = 1000000; ///< Really fast mode
+    const uint32_t I2C_HIGH_SPEED_MODE            = 3400000; ///< Turbo mode
+  #endif
+  
+  const uint8_t  BME680_STATUS_REGISTER           =    0x1D; ///< Device status register
+  const uint8_t  BME680_GAS_HEATER_REGISTER0      =    0x5A; ///< Heater Register 0 address
+  const uint8_t  BME680_GAS_DURATION_REGISTER0    =    0x64; ///< Heater Register 0 address
+  const uint8_t  BME680_CONTROL_GAS_REGISTER1     =    0x70; ///< Gas control register on/off
+  const uint8_t  BME680_CONTROL_GAS_REGISTER2     =    0x71; ///< Gas control register settings
+  const uint8_t  BME680_CONTROL_HUMIDITY_REGISTER =    0x72; ///< Humidity control register
+  const uint8_t  BME680_SPI_REGISTER              =    0x73; ///< Status register for SPI memory
+  const uint8_t  BME680_CONTROL_MEASURE_REGISTER  =    0x74; ///< Temp, Pressure control register
+  const uint8_t  BME680_CONFIG_REGISTER           =    0x75; ///< Configuration register
+  const uint8_t  BME680_CHIPID_REGISTER           =    0xD0; ///< Chip-Id register
+  const uint8_t  BME680_SOFTRESET_REGISTER        =    0xE0; ///< Reset when 0xB6 is written here
+  const uint8_t  BME680_CHIPID                    =    0x61; ///< Hard-coded value 0x61 for BME680
+  const uint8_t  BME680_RESET_CODE                =    0xB6; ///< Reset when this put in reset reg
+  /*****************************************************************************************************************
+  ** Declare enumerated types used in the class                                                                   **
+  *****************************************************************************************************************/
+  /*! @brief  Enumerate the sensor type */
+  enum sensorTypes       {TemperatureSensor,HumiditySensor,PressureSensor,GasSensor,UnknownSensor};
+  /*! @brief  Enumerate the Oversampling types */
+  enum oversamplingTypes {SensorOff,Oversample1,Oversample2,Oversample4,Oversample8,Oversample16,UnknownOversample };
+  /*! @brief  Enumerate the iir filter types */
+  enum iirFilterTypes    {IIROff,IIR2,IIR4,IIR8,IIR16,IIR32,IIR64,IIR128,UnknownIIR };
+  
+  /*!
+* @class BME680_Class
+* @brief Main BME680 class for the temperature / humidity / pressure sensor
+*/
+  class BME680_Class 
+  {
+    public:
+      BME680_Class();
+      ~BME680_Class();
+      bool     begin();                                                       // Start using I2C Communications   //
+      bool     begin(const uint32_t i2cSpeed);                                // I2C with a non-default speed     //
+      bool     setOversampling(const uint8_t sensor, const uint8_t sampling); // Set enum sensorType Oversampling //
+      bool     setGas(uint16_t GasTemp, uint16_t GasMillis);                  // Gas heating temperature and time //
+      uint8_t  setIIRFilter(const uint8_t iirFilterSetting=UINT8_MAX);        // Set IIR Filter and return value  //
+      void     getSensorData(int32_t &temp, int32_t &hum,                     // get most recent readings         //
+                             int32_t &press, int32_t &gas,                    //                                  //
+                             const bool waitSwitch = true);                   //                                  //
+      void     reset();                                                       // Reset the BME680                 //
+    private:
+      bool     commonInitialization();                       ///< Common initialization code
+      uint8_t  readByte(const uint8_t addr);                 ///< Read byte from register address
+      void     readSensors(const bool waitSwitch);           ///< read the registers in one burst
+      void     waitForReadings();                            ///< Wait for readings to finish
+      void     getCalibration();                             ///< Load calibration from registers
+      uint8_t  _I2CAddress         = 0;                      ///< Default is no I2C address known
+      uint8_t  _H6,_P10,_res_heat_range;                     ///< unsigned configuration variables
+      int8_t   _H3,_H4,_H5,_H7,_G1,_G3,_T3,_P3,_P6,_P7,_res_heat_val,_range_sw_error; ///< signed configuration variables
+      uint16_t _H1,_H2,_T1,_P1;                              ///< unsigned 16bit configuration variables
+      int16_t  _G2,_T2,_P2,_P4,_P5,_P8,_P9;                  ///< signed 16bit configuration variables
+      int32_t  _tfine,_Temperature,_Pressure,_Humidity,_Gas; ///< signed 32bit configuratio variables
 
-#ifndef _BME680_h
-#define _BME680_h
+      /*************************************************************************************************************
+      ** Declare the getData and putData methods as template functions. All device I/O is done through these two  **
+      ** functions regardless of whether I2C, hardware SPI or software SPI is being used. The two functions are   **
+      ** designed so that only the address and a variable are passed in and the functions determine the size of   **
+      ** the parameter variable and reads or writes that many bytes. So if a read is called using a character     **
+      ** array[10] then 10 bytes are read, if called with a int8 then only one byte is read. The return value, if **
+      ** used, is the number of bytes read or written                                                             **
+      ** This is done by using template function definitions which need to be defined in this header file rather  **
+      ** than in the c++ program library file.                                                                    **
+      *************************************************************************************************************/
+      /*!
+          @brief     Template for reading from I2C or SPI using any data type
+          @details   As a template it can support compile-time data type definitions
+          @param[in] addr Memory address
+          @param[in] value Data Type "T" to read
+          @return    Size of data read in bytes
+      */
+      template< typename T > uint8_t &getData(const uint8_t addr,T &value)
+      {
+        uint8_t* bytePtr    = (uint8_t*)&value;                              // Pointer to structure beginning
+        static uint8_t  structSize = sizeof(T);                              // Number of bytes in structure
+          Wire.beginTransmission(_I2CAddress);                               // Address the I2C device
+          Wire.write(addr);                                                  // Send register address to read
+          Wire.endTransmission();                                            // Close transmission
+          Wire.requestFrom(_I2CAddress, sizeof(T));                          // Request 1 byte of data
+          structSize = Wire.available();                                     // Use the actual number of bytes
+          for (uint8_t i=0;i<structSize;i++) *bytePtr++ = Wire.read();       // loop for each byte to be read
+        return(structSize);
+      } // of method getData()
 
-#include "Arduino.h"
-#include <Wire.h>
-
-#define BME680_REG_CTRL_GAS		0x71
-#define BME680_REG_CTRL_HUM		0x72
-#define BME680_REG_CTRL_MEAS	0x74
-#define BME680_REG_CONFIG		0x75
-#define BME680_REG_RESET		0xE0
-#define BME680_REG_CHIPID		0xD0
-#define BME680_REG_MEAS_STATUS	0x1D
-
-#define BME680_SOFT_RESET_CMD	0xB6
-
-enum BME680_IIRFilter {
-	BME680_FILTER_0		= 0x00,
-	BME680_FILTER_1		= 0x01,
-	BME680_FILTER_3		= 0x02,
-	BME680_FILTER_7		= 0x03,
-	BME680_FILTER_15	= 0x04,
-	BME680_FILTER_31	= 0x05,
-	BME680_FILTER_63	= 0x06,
-	BME680_FILTER_127	= 0x07
-};
-
-
-enum BME680_Oversampling {
-	BME680_OVERSAMPLING_SKIP	= 0x00,
-	BME680_OVERSAMPLING_X1		= 0x01,
-	BME680_OVERSAMPLING_X2		= 0x02,
-	BME680_OVERSAMPLING_X4		= 0x03,
-	BME680_OVERSAMPLING_X8		= 0x04,
-	BME680_OVERSAMPLING_X16		= 0x05
-};
-
-typedef union {
-	uint8_t rawData;
-	struct {
-		uint8_t reserved1 : 3;
-		uint8_t filter	  : 3;
-		uint8_t reserved2 : 2;
-	};
-} BME680_Config_Register;
-
-typedef union {
-	uint8_t rawData;
-	struct {
-		uint8_t mode : 2;
-		uint8_t osrs_p : 3;
-		uint8_t osrs_t : 3;
-	};
-} BME680_Ctrl_TP_Register;
-
-typedef union {
-	uint8_t rawData;
-	struct {
-		uint8_t osrs_h : 2;
-		uint8_t unused : 6;
-	};
-} BME680_Ctrl_H_Register;
-
-typedef union {
-	uint8_t rawData;
-	struct {
-		uint8_t nb_conv  : 4;
-		uint8_t run_gas  : 1;
-		uint8_t reserved : 3;
-	};
-} BME680_Heater_Profile;
-
-typedef union {
-	uint8_t rawData;
-	struct {
-		uint8_t gasMeasurementIndex : 3;
-		uint8_t unused : 2;
-		uint8_t measuringStatusFlag : 1;
-		uint8_t gasMeasuringStatusFlag : 1;
-		uint8_t newDataFlag : 2;
-	};
-} BME680_Status;
-
-
-struct bme680_cal_temp {
-	uint16_t t1, t2;
-	uint8_t t3;
-};
-
-struct bme680_cal_pres {
-	uint16_t p1;
-	int16_t p2, p4, p5, p8, p9;
-	int8_t p3, p6, p7, p10;
-};
-
-struct bme680_cal_hum {
-	uint16_t h1, h2;
-	int8_t h3, h4, h5, h7;
-	uint8_t h6;
-};
-
-struct bme680_cal_dev {
-	int32_t tfine;
-	uint8_t amb_temp;
-	uint8_t res_heat_range;
-	int8_t res_heat_val;
-	int8_t range_sw_err;
-};
-
-struct bme680_cal_gas {
-	int8_t gh1, gh3;
-	int16_t gh2;
-};
-
-
-class BME680 {
-
-public:
-	BME680();
-
-	void init(uint8_t address);
-
-	uint8_t getChipID();
-
-	uint8_t reset();
-
-	uint8_t setSleepMode();
-	uint8_t setForcedMode();
-
-	BME680_Status readStatus();
-
-	uint8_t setOversampling(BME680_Oversampling humidity, BME680_Oversampling temperature, BME680_Oversampling pressure);
-	uint8_t setIIRFilter(BME680_IIRFilter filter);
-	uint8_t setGasOn(uint16_t heaterTemperature, uint16_t heaterDuration);
-	uint8_t setGasOff();
-
-	double readTemperature();
-	double readHumidity();
-	double readPressure();
-	uint32_t readGasResistance();
-
-private:
-	uint8_t _address;
-	uint8_t _chipID;
-
-	struct bme680_cal_temp _calib_temp;
-	struct bme680_cal_pres _calib_pres;
-	struct bme680_cal_hum _calib_hum;
-	struct bme680_cal_dev _calib_dev;
-	struct bme680_cal_gas _calib_gas;
-
-	const uint32_t lookupTable1[16] = { 2147483647, 2147483647, 2147483647, 2147483647, 2147483647,
-										2126008810, 2147483647, 2130303777, 2147483647, 2147483647,
-										2143188679, 2136746228, 2147483647, 2126008810, 2147483647, 
-										2147483647 };
-
-	const uint32_t lookupTable2[16] = { 4096000000, 2048000000, 1024000000, 512000000, 255744255,
-										127110228, 64000000, 32258064, 16016016, 8000000, 
-										4000000, 2000000, 1000000, 500000, 250000,
-		                                125000 };
-
-	uint8_t loadCalData();
-
-	uint8_t readByte(uint8_t cmd);
-	uint8_t changeMode(uint8_t mode);
-
-	uint8_t calculateHeaterDuration(uint16_t heaterDuration);
-	uint8_t calculateHeaterTemperature(uint16_t heaterTemperature);
-};
-
-
-#endif 
+      /*!
+          @brief     Template for writing to I2C or SPI using any data type
+          @details   As a template it can support compile-time data type definitions
+          @param[in] addr Memory address
+          @param[in] value Data Type "T" to write
+          @return    Size of data written in bytes
+      */
+      template<typename T>uint8_t &putData(const uint8_t addr,const T &value)
+      {
+        const uint8_t* bytePtr = (const uint8_t*)&value;                     // Pointer to structure beginning
+        static uint8_t  structSize = sizeof(T);                              // Number of bytes in structure
+          Wire.beginTransmission(_I2CAddress);                               // Address the I2C device
+          Wire.write(addr);                                                  // Send register address to write
+          for (uint8_t i=0;i<sizeof(T);i++) Wire.write(*bytePtr++);          // loop for each byte to be written
+          Wire.endTransmission();                                            // Close transmission
+        return(structSize);
+      } // of method putData()
+  }; // of BME680 class definition
+#endif

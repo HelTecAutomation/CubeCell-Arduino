@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.9.0 by WASN.eu
+  v1.9.1 by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
@@ -14,10 +14,10 @@
 
 #define AUTO_SCAN  1
 #define MJMCU_8128 0
-#define BME_680    0 // wrong values
+#define BME_680    0 
 #define BME_280    0
 #define CCS_811    0
-#define BMP_180    0 // not tested
+#define BMP_180    0 // not tested, not included in AUTO_SCAN
 #define HDC_1080   0
 #define BH_1750    0
 
@@ -242,7 +242,7 @@ uint8_t baselineflash[2];
 #endif
 
 #if(BME_680 == 1)
-BME680 bme680;
+BME680_Class bme680;
 //BH1750 lightMeter;
 #endif
 
@@ -280,7 +280,7 @@ BH1750 lightMeter;
 #define ROW_OFFSET 0
 #define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
 uint8_t baselineflash[2];
-BME680 bme680;
+BME680_Class bme680;
 BME280 bme280;
 BMP085 bmp180;
 #endif
@@ -457,33 +457,23 @@ static void PrepareTxFrame( uint8_t port )
     //  float lux = lightMeter.readLightLevel();
     //  lightMeter.end();
     lux = 0.0;
-    bme680.init(0x77); // I2C address: 0x76 or 0x77
+    bme680.begin(I2C_STANDARD_MODE);
     delay(1000);
-    bme680.reset();
+    bme680.setOversampling(TemperatureSensor,Oversample16);
+    bme680.setOversampling(HumiditySensor,   Oversample16);
+    bme680.setOversampling(PressureSensor,   Oversample16);
+    bme680.setIIRFilter(IIR4);
+    bme680.setGas(320,150); // 320C for 150 milliseconds
 
-    Serial.print("Chip ID=0x");
-    Serial.println(bme680.getChipID(), HEX);
+    static int32_t temperature, humidity, pressure, gas;
+    bme680.getSensorData(temperature,humidity,pressure,gas);
+    delay(500);
+    bme680.getSensorData(temperature,humidity,pressure,gas);
 
-    // oversampling: humidity = x1, temperature = x2, pressure = x16
-    bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
-    bme680.setIIRFilter(BME680_FILTER_3);
-    bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds
-
-    bme680.setForcedMode();
-    BME680_Status status = readAndPrintStatus();
-
-    count = 0;
-    while (status.newDataFlag == 0 && count < maxtry) {
-      delay(1000);
-      BME680_Status status = readAndPrintStatus();
-      count++;
-    }
-
-    Serial.print("result: ");
-    Temperature = bme680.readTemperature();
-    Pressure = bme680.readPressure();
-    Humidity = bme680.readHumidity();
-    tvoc = bme680.readGasResistance();
+    Temperature = temperature/100.0;
+    Humidity = humidity/100.0;
+    Pressure = pressure/100.0;
+    tvoc = gas/100.0;
 
     Wire.end();
     digitalWrite(Vext, HIGH);
@@ -519,8 +509,6 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print(tvoc);
     Serial.print(", BatteryVoltage:");
     Serial.println(BatteryVoltage);
-
-    bme680.setForcedMode();
   }
 
   /*
@@ -778,22 +766,6 @@ static void PrepareTxFrame( uint8_t port )
   }
 }
 
-#if(BME_680 == 1 || AUTO_SCAN == 1)
-BME680_Status readAndPrintStatus() {
-  BME680_Status status = bme680.readStatus();
-  Serial.print("status: (");
-  Serial.print(status.newDataFlag);
-  Serial.print(",");
-  Serial.print(status.measuringStatusFlag);
-  Serial.print(",");
-  Serial.print(status.gasMeasuringStatusFlag);
-  Serial.print(",");
-  Serial.print(status.gasMeasurementIndex);
-  Serial.println(") (newDataFlag,StatusFlag,GasFlag,GasIndex)");
-  return status;
-}
-#endif
-
 void setup() {
   memcpy(DevEui, myDevEui, sizeof(myDevEui)); //Add these 3 lines to setup func
   memcpy(AppEui, myAppEui, sizeof(myAppEui));
@@ -906,19 +878,19 @@ void setup() {
         sensortype = 2;
         break;
       }
-    case 119: //0x77 -- BMP180 Barometer
-      {
-        Serial.println("Found BMP180");
-        MJMCU_8128_e = false;
-        BME_680_e = false;
-        BME_280_e = false;
-        CCS_811_e = false;
-        BMP_180_e = true;
-        HDC_1080_e = false;
-        BH_1750_e = false;
-        sensortype = 5;
-        break;
-      }
+//    case 119: //0x77 -- BMP180 Barometer
+//      {
+//        Serial.println("Found BMP180 or BME680");
+//        MJMCU_8128_e = false;
+//        BME_680_e = false;
+//        BME_280_e = false;
+//        CCS_811_e = false;
+//        BMP_180_e = true;
+//        HDC_1080_e = false;
+//        BH_1750_e = false;
+//        sensortype = 5;
+//        break;
+//      }
     case 16: //MJMCU-8128
       {
         Serial.println("Found MJMCU-8128");
@@ -932,7 +904,7 @@ void setup() {
         sensortype = 0;
         break;
       }
-    case 65: //BME680
+    case 119: //0x77 -- BME680
       {
         Serial.println("Found BME680");
         MJMCU_8128_e = false;
