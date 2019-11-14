@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v1.9.3 by [WASN.eu](https://wasn.eu)
+# v1.9.4 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -15,10 +15,10 @@ Please select the sensor for saving battery power, for maximum flexibility choos
     #define BME_680    0 
     #define BME_280    0
     #define CCS_811    0
-    #define BMP_180    0 // not included in AUTO_SCAN
+    #define BMP_180    0 
     #define HDC_1080   0
     #define BH_1750    0
-    #define One_Wire   0 // sensors not found
+    #define One_Wire   0 // not working
 
 and set your keys:
 
@@ -26,17 +26,15 @@ and set your keys:
     const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-Set the DutyCycle in ms:
+and set the DutyCycle in ms:
 
-    uint32_t APP_TX_DUTYCYCLE = 900000; // in ms
+    uint32_t APP_TX_DUTYCYCLE = 900000;
 
-If you don't like to set your keys in the sketch just leave them as they are and use the CubeCell Configurator [download](https://github.com/raystream/CubeCell_Getting_Started/raw/master/Configurator/CubeCell_Configurator.exe).
 
-# TTN Decoder:
+TTN Decoder:
 
   The ttn-decode.js file automaticaly decodes all known sensor types.
 
 Known Failures:
 
-- BME_680: no sensors found
 - One_Wire: no sensors found
