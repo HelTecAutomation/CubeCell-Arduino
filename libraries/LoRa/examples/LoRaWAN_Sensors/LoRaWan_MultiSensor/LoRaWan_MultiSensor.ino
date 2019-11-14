@@ -471,7 +471,7 @@ static void PrepareTxFrame( uint8_t port )
     bme680.getSensorData(temperature,humidity,pressure,gas);
 
     Temperature = temperature/100.0;
-    Humidity = humidity/100.0;
+    Humidity = humidity/1000.0;
     Pressure = pressure/100.0;
     tvoc = gas/100.0;
 
