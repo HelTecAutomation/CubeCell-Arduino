@@ -4,6 +4,14 @@
   v1.9.0 by WASN.eu
 */
 
+#include "LoRaWan_APP.h"
+#include "Arduino.h"
+#include <Wire.h>
+
+/*
+ * Define your Settings below
+ */
+
 #define AUTO_SCAN  1
 #define MJMCU_8128 0
 #define BME_680    0 // wrong values
@@ -23,10 +31,6 @@ uint32_t APP_TX_DUTYCYCLE = 900000;
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
-
-#include "LoRaWan_APP.h"
-#include "Arduino.h"
-#include <Wire.h>
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
