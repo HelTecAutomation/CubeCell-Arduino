@@ -30,7 +30,7 @@ function Decoder(bytes, port) {
       decoded.temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
       decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
-      decoded.gas = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.gas = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       decoded.IAQ = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }

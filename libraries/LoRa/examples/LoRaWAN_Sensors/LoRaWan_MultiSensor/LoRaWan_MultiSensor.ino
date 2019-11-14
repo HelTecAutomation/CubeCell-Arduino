@@ -431,7 +431,7 @@ static void PrepareTxFrame( uint8_t port )
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
 
-    AppDataSize = 12;//AppDataSize max value is 64
+    AppDataSize = 13;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
 
     AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -443,14 +443,14 @@ static void PrepareTxFrame( uint8_t port )
     AppData[5] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
     AppData[6] = (uint8_t)((int)(Pressure * 10.0));
 
-    AppData[7] = (uint8_t)((int)gas >> 8);
-    AppData[8] = (uint8_t)((int)gas);
+    AppData[7] = (uint8_t)((int)co2 >> 8);
+    AppData[8] = (uint8_t)((int)co2);
 
-    AppData[8] = (uint8_t)((int)tvoc >> 8);
-    AppData[9] = (uint8_t)((int)tvoc);
+    AppData[9] = (uint8_t)((int)tvoc >> 8);
+    AppData[10] = (uint8_t)((int)tvoc);
 
-    AppData[10] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[11] = (uint8_t)BatteryVoltage;
+    AppData[11] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[12] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
