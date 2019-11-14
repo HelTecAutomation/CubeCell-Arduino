@@ -13,5 +13,5 @@ Currently with following sensors:
 | ------ | ------------ | ------------------------------------------------------------ | ------------ |
 | BMP280 | Adafruit     | [https://github.com/adafruit/Adafruit_BMP280_Library](https://github.com/adafruit/Adafruit_BMP280_Library) | Work well  |
 | BME280 | Seeed Studio | [https://github.com/Seeed-Studio/Grove_BME280](https://github.com/Seeed-Studio/Grove_BME280) | Work well    |
-| BME680 | ClosedCube   | [https://github.com/SV-Zanshin/BME680](https://github.com/SV-Zanshin/BME680) | Work well |
+| BME680 | SV-Zanshin   | [https://github.com/SV-Zanshin/BME680](https://github.com/SV-Zanshin/BME680) | Work well |
 
