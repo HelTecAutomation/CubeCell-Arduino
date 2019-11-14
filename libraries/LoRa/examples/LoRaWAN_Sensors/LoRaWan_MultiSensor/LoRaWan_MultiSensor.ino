@@ -14,10 +14,10 @@
 
 #define AUTO_SCAN  1
 #define MJMCU_8128 0
-#define BME_680    0 
+#define BME_680    0
 #define BME_280    0
 #define CCS_811    0
-#define BMP_180    0 
+#define BMP_180    0
 #define HDC_1080   0
 #define BH_1750    0
 #define One_Wire   0 // not working
@@ -424,13 +424,14 @@ static void PrepareTxFrame( uint8_t port )
     Temperature = temperature / 100.0;
     Humidity = humidity / 1000.0;
     Pressure = pressure / 100.0;
-    tvoc = gas / 100.0;
+    co2 = gas / 100.0;
+    tvoc = CalculateIAQ();
 
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
 
-    AppDataSize = 11;//AppDataSize max value is 64
+    AppDataSize = 12;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
 
     AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -442,11 +443,14 @@ static void PrepareTxFrame( uint8_t port )
     AppData[5] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
     AppData[6] = (uint8_t)((int)(Pressure * 10.0));
 
-    AppData[7] = (uint8_t)((int)tvoc >> 8);
-    AppData[8] = (uint8_t)((int)tvoc);
+    AppData[7] = (uint8_t)((int)gas >> 8);
+    AppData[8] = (uint8_t)((int)gas);
 
-    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[10] = (uint8_t)BatteryVoltage;
+    AppData[8] = (uint8_t)((int)tvoc >> 8);
+    AppData[9] = (uint8_t)((int)tvoc);
+
+    AppData[10] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[11] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -457,6 +461,8 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print(" lx, Pressure=");
     Serial.print(Pressure);
     Serial.print(" hPA, GAS=");
+    Serial.print(co2);
+    Serial.print("mOhm, IAQ=");
     Serial.print(tvoc);
     Serial.print(", BatteryVoltage:");
     Serial.println(BatteryVoltage);
@@ -921,4 +927,40 @@ void loop()
         break;
       }
   }
+}
+
+float CalculateIAQ()
+{
+  float hum_weighting = 0.25; // so hum effect is 25% of the total air quality score
+  float gas_weighting = 0.75; // so gas effect is 75% of the total air quality score
+
+  float hum_score, gas_score;
+  float gas_reference = co2;
+  float hum_reference = 40;
+  int   getgasreference_count = 0;
+  
+  //Calculate humidity contribution to IAQ index
+  if (Humidity >= 38 && Humidity <= 42)
+    hum_score = 0.25 * 100; // Humidity +/-5% around optimum
+  else
+  { //sub-optimal
+    if (Humidity < 38)
+      hum_score = 0.25 / hum_reference * Humidity * 100;
+    else
+    {
+      hum_score = ((-0.25 / (100 - hum_reference) * Humidity) + 0.416666) * 100;
+    }
+  }
+
+  //Calculate gas contribution to IAQ index
+  float gas_lower_limit = 5000;   // Bad air quality limit
+  float gas_upper_limit = 50000;  // Good air quality limit
+  if (gas_reference > gas_upper_limit) gas_reference = gas_upper_limit;
+  if (gas_reference < gas_lower_limit) gas_reference = gas_lower_limit;
+  gas_score = (0.75 / (gas_upper_limit - gas_lower_limit) * gas_reference - (gas_lower_limit * (0.75 / (gas_upper_limit - gas_lower_limit)))) * 100;
+
+  //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
+  float air_quality_score = hum_score + gas_score;
+  
+  return air_quality_score;
 }

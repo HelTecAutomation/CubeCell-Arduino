@@ -31,6 +31,7 @@ function Decoder(bytes, port) {
       decoded.humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       decoded.gas = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
+      decoded.IAQ = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       decoded.battery = ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
     }
     if (sensor === "2") { // BME280
