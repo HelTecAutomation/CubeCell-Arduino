@@ -26,7 +26,13 @@ and set your keys:
     const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
     const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-TTN Decoder:
+Set the DutyCycle in ms:
+
+    uint32_t APP_TX_DUTYCYCLE = 900000; // in ms
+
+If you don't like to set your keys in the sketch just leave them as they are and use the CubeCell Configurator [download](https://github.com/raystream/CubeCell_Getting_Started/raw/master/Configurator/CubeCell_Configurator.exe).
+
+# TTN Decoder:
 
   The ttn-decode.js file automaticaly decodes all known sensor types.
 
