@@ -17,6 +17,9 @@ const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t APP_TX_DUTYCYCLE = 900000;
+
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
@@ -216,9 +219,6 @@ uint8_t ConfirmedNbTrials = 8;
 
 /* Application port */
 uint8_t AppPort = 2;
-
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 900000;
 
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
 uint16_t baseline, baselinetemp;
