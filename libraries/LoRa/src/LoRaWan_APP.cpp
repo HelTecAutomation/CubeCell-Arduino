@@ -393,7 +393,8 @@ static void lwan_dev_params_update( void )
 
 uint8_t BoardGetBatteryLevel()
 {
-	return 100;
+	int8 batlevel = ((GetBatteryVoltage()-3.7)/(4.2-3.7))*100;
+	return batlevel;
 }
 
 LoRaMacPrimitives_t LoRaMacPrimitive;
