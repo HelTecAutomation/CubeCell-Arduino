@@ -1,10 +1,10 @@
 # LoRaWan_MultiSensor
-# v1.9.4 by [WASN.eu](https://wasn.eu)
+# v1.9.5 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
-All you have to do is to set the number to a 1 beside the sensor you would like to use 
-(only 1 selection is possible, selecting more will result in errors).
+All you have to do is to set the number to a 1 beside the sensor you would like to use.
+You can choose more than one sensor.
 
 Selecting AUTO_SCAN the Firmware will try to identify the connected I2C Sensor by its address.
 AUTO_SCAN takes its time, it is not very battery friendly. 
