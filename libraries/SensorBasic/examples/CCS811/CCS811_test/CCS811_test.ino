@@ -23,6 +23,8 @@ CCS811 ccs;
 void setup() {
   pinMode(Vext,OUTPUT);
   digitalWrite(Vext,LOW);
+  pinMode(GPIO0,OUTPUT);
+  digitalWrite(GPIO0,LOW);
   Serial.begin(115200);
   Serial.println("CCS811 test");
   if(!ccs.begin()){
@@ -35,6 +37,7 @@ void setup() {
 }
 
 void loop() {
+  digitalWrite(GPIO0,LOW);
   if(ccs.available()){
     if(!ccs.readData()){
       Serial.print("CO2: ");
@@ -51,5 +54,6 @@ void loop() {
       while(1);
     }
   }
+  digitalWrite(GPIO0,HIGH);
   delay(500);
 }

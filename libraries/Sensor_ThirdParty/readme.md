@@ -10,8 +10,8 @@ This folder is for the sensors made by third party, examples code may had fixed,
 Currently with following sensors:
 
 | Sensor | Manufacturer | Source                                                       | Status       |
-| ------ | ------------ | ------------------------------------------------------------ | ------------ |
-| BMP280 | Adafruit     | [https://github.com/adafruit/Adafruit_BMP280_Library](https://github.com/adafruit/Adafruit_BMP280_Library) | Work well  |
-| BME280 | Seeed Studio | [https://github.com/Seeed-Studio/Grove_BME280](https://github.com/Seeed-Studio/Grove_BME280) | Work well    |
-| BME680 | ClosedCube   | [https://github.com/closedcube/ClosedCube_BME680_Arduino](https://github.com/closedcube/ClosedCube_BME680_Arduino) | Wrong values |
+| :----: | :----------: | :----------------------------------------------------------: | :----------: |
+| BMP280 | Adafruit     | [Adafruit](https://github.com/adafruit/Adafruit_BMP280_Library) | Work well  |
+| BME280 | Seeed Studio | [Seeed Studio](https://github.com/Seeed-Studio/Grove_BME280) | Work well    |
+| BME680 | ClosedCube   | [ClosedCube](https://github.com/closedcube/ClosedCube_BME680_Arduino) | Wrong values |
 

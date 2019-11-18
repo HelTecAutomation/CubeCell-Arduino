@@ -1,36 +1,34 @@
-/*
-
-  Advanced BH1750 library usage example
-
-  This example has some comments about advanced usage features.
-
-  Connection:
-
-    VCC -> 3V3 or 5V
-    GND -> GND
-    SCL -> SCL
-    SDA -> SDA
-    ADD -> (not connected) or GND
-
-  ADD pin is used to set sensor I2C address. If it has voltage greater or equal to
-  0.7VCC voltage (e.g. you've connected it to VCC) the sensor address will be
-  0x5C. In other case (if ADD voltage less than 0.7 * VCC) the sensor address will
-  be 0x23 (by default).
-
+/* Heltec Automation BH1750 Sensor test example
+ *
+ *  Advanced BH1750 library usage example
+ *
+ *  This example has some comments about advanced usage features.
+ *  Function:
+ *  Lighting intensity test
+ *  
+ * Connection:
+ *
+ *    VCC -> 3V3 or 5V
+ *    GND -> GND
+ *    SCL -> SCL
+ *    SDA -> SDA
+ *    ADD -> (not connected) or GND
+ * Description:
+ * ADD pin is used to set sensor I2C address. If it has voltage greater or equal to
+ * 0.7VCC voltage (e.g. you've connected it to VCC) the sensor address will be
+ * 0x5C. In other case (if ADD voltage less than 0.7 * VCC) the sensor address will
+ * be 0x23 (by default).
+ *  
+ * HelTec AutoMation, Chengdu, China
+ * www.heltec.org
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
 */
 
 #include <Wire.h>
 #include <BH1750.h>
 
-/*
-  BH1750 can be physically configured to use two I2C addresses:
-    - 0x23 (most common) (if ADD pin had < 0.7VCC voltage)
-    - 0x5C (if ADD pin had > 0.7VCC voltage)
-
-  Library uses 0x23 address as default, but you can define any other address.
-  If you had troubles with default value - try to change it to 0x5C.
-
-*/
 BH1750 lightMeter(0x23);
 
 void setup(){

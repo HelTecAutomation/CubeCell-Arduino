@@ -1,14 +1,23 @@
-/*
-
-  Example of BH1750 library usage.
-
-  This example initialises the BH1750 object using the high resolution
-  one-time mode and then makes a light level reading every second.
-
-  The BH1750 component starts up in default mode when it next powers up.
-  The BH1750 library automatically reconfigures the one-time mode in
-  preparation for the next measurement.
-
+/*Heltec Automation BH1750 Sensors test example
+ *
+ * Example of BH1750 library usage.
+ * 
+ * Function:
+ * Lighting intensity test
+ * 
+ * Description:
+ * This example initialises the BH1750 object using the high resolution
+ * one-time mode and then makes a light level reading every second.
+ *
+ * The BH1750 component starts up in default mode when it next powers up.
+ * The BH1750 library automatically reconfigures the one-time mode in
+ * preparation for the next measurement.
+ *
+ * HelTec AutoMation, Chengdu, China
+ * www.heltec.org
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
 */
 
 #include <Wire.h>

@@ -1,5 +1,35 @@
-#include <MPU9250.h>
+/* Heltec Automation MPU9520 Sensors test example
+ *
+ * Function:
+ * 9-axis sensor
+ *
+ * Description:
+ *  1.The MPU9250 integrates a 3-axis gyroscope, a 3-axis accelerometer, 
+ * and a 3-axis magnetometer. The output is 16-bit digital.
+ *
+ *  2. Data can be exchanged via the Integrated Circuit Bus (IIC) interface 
+ * and the microcontroller with a transfer rate of up to 400 kHz / s.
+ *
+ *  3. The accelerometer's measurement range is up to ¡À16g (g is gravitational
+ * acceleration), and the static measurement accuracy is high.
+ *
+ *  4. The magnetometer uses a high-intensity Hall-type sensor for data acquisition. 
+ * The magnetic induction measurement range is ¡À4800¦ÌT, which can be used for auxiliary
+ * measurement of yaw angle.
+ *
+ *  5.The MPU9250's built-in digital motion processor (DMP: Hardware Motion Processor)
+ * hardware acceleration engine integrates nine-axis sensor  data and outputs 
+ * complete 9-axis fusion calculation data to the application.
+ *
+ * HelTec AutoMation, Chengdu, China
+ * www.heltec.org
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
+ * 
+ */
 
+#include <MPU9250.h>
 
 MPU9250 mySensor;
 float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;

@@ -1,3 +1,16 @@
+/* Heltec Automation  BMP180 Sensors test example
+ *
+ * Function:
+ * Temperature and Pressure measurement
+ * 
+ * HelTec AutoMation, Chengdu, China
+ * www.heltec.org
+ *
+ * this project also realess in GitHub:
+ * https://github.com/HelTecAutomation/ASR650x-Arduino
+ * 
+*/
+ 
 #include <Wire.h>
 #include <BMP180.h>
 BMP085 bmp;
