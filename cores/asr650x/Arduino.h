@@ -46,6 +46,8 @@
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 
+#define LSBFIRST 0
+#define MSBFIRST 1
 
 #define  lowByte(w)   ((w) & 0xff) 
 #define  highByte(w)   ((w) >> 8) 
@@ -64,8 +66,9 @@
 #define noInterrupts() CyGlobalIntDisable
 #define interrupts()   CyGlobalIntEnable
 
-
-
+#define clockCyclesPerMicrosecond() ( 48L ) // clock cycle 48 MHz
+#define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
+#define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
 typedef bool boolean;
 typedef uint8_t byte;
