@@ -36,6 +36,7 @@
 #include "low_power.h"
 #include "asr_timer.h"
 
+#define ARDUINO_ARCH_SAMD 1
 
 //extern HardwareSerial Serial;
 
