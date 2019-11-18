@@ -1,34 +1,57 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v1.8.5 by WASN.eu
-*/
-
-#define AUTO_SCAN  1
-#define MJMCU_8128 0
-#define BME_680    0 // wrong values
-#define BME_280    0
-#define CCS_811    0
-#define BMP_180    0 // not tested
-#define HDC_1080   0
-#define BH_1750    0
-
-const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-/*
-  NO USER CHANGES NEEDED UNDER THIS LINE
+  v1.9.4 by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include <Wire.h>
 
+/*
+   Define your Settings below
+*/
+
+#define AUTO_SCAN  1
+#define MJMCU_8128 0
+#define BME_680    0
+#define BME_280    0
+#define CCS_811    0
+#define BMP_180    0
+#define HDC_1080   0
+#define BH_1750    0
+#define One_Wire   0 // not working
+
+const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t APP_TX_DUTYCYCLE = 900000;
+
+/*
+  NO USER CHANGES NEEDED UNDER THIS LINE
+*/
+
+#if(One_Wire == 0)
+#include "BH1750.h"
+#include "BMP280.h"
+#include "HDC1080.h"
+#include "CCS811.h"
+#include "hal/soc/flash.h"
+#include "BME680.h"
+#include "BME280.h"
+#include "BMP180.h"
+#endif
+#if(One_Wire == 1)
+#include <OneWire.h>
+#endif
+
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
 extern uint8_t AppKey[];
 
+#if(AUTO_SCAN == 1)
 bool MJMCU_8128_e = false;
 bool BME_680_e = false;
 bool BME_280_e = false;
@@ -36,120 +59,97 @@ bool CCS_811_e = false;
 bool BMP_180_e = false;
 bool HDC_1080_e = false;
 bool BH_1750_e = false;
-
-uint8_t sensortype = 0;
+uint8_t sensortype = 88;
+#endif
 
 #if(MJMCU_8128 == 1)
-//#include "BH1750.h"
-#include <BMP280.h>
-#include "HDC1080.h"
-#include <CCS811.h>
-#include <hal/soc/flash.h>
-MJMCU_8128_e = true;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 0;
+bool MJMCU_8128_e = true;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 0;
 #endif
 
 #if(BME_680 == 1)
-//#include "BH1750.h"
-#include "BME680.h"
-MJMCU_8128_e = false;
-BME_680_e = true;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 1;
+bool MJMCU_8128_e = false;
+bool BME_680_e = true;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 1;
 #endif
 
 #if(BME_280 == 1)
-//#include "BH1750.h"
-#include "BME280.h"
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = true;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 2;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = true;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 2;
 #endif
 
 #if(One_Wire == 1)
-#include <OneWire.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t  sensortype = 99;
 #endif
 
 #if(CCS_811 == 1)
-#include <CCS811.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = true;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 3;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = true;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 3;
 #endif
 
 #if(HDC_1080 == 1)
-#include "HDC1080.h"
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = true;
-BH_1750_e = false;
-sensortype = 4;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = true;
+bool BH_1750_e = false;
+uint8_t sensortype = 4;
 #endif
 
 #if(BMP_180 == 1)
-#include <BMP180.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = true;
-HDC_1080_e = false;
-BH_1750_e = false;
-sensortype = 5;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = true;
+bool HDC_1080_e = false;
+bool BH_1750_e = false;
+uint8_t sensortype = 5;
 #endif
 
 #if(BH_1750 == 1)
-#include <BH1750.h>
-MJMCU_8128_e = false;
-BME_680_e = false;
-BME_280_e = false;
-CCS_811_e = false;
-BMP_180_e = false;
-HDC_1080_e = false;
-BH_1750_e = true;
-sensortype = 6;
+bool MJMCU_8128_e = false;
+bool BME_680_e = false;
+bool BME_280_e = false;
+bool CCS_811_e = false;
+bool BMP_180_e = false;
+bool HDC_1080_e = false;
+bool BH_1750_e = true;
+uint8_t sensortype = 6;
 #endif
 
-#if(AUTO_SCAN == 1)
-#include "BH1750.h"
-#include <BMP280.h>
-#include "HDC1080.h"
-#include <CCS811.h>
-#include <hal/soc/flash.h>
-#include "BME680.h"
-#include "BME280.h"
-#include <BMP180.h>
-#endif
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -217,57 +217,12 @@ uint8_t ConfirmedNbTrials = 8;
 /* Application port */
 uint8_t AppPort = 2;
 
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 900000;
-
 float Temperature, Humidity, Pressure, lux, co2, tvoc;
 uint16_t baseline, baselinetemp;
 int count;
 int maxtry = 50;
 
-#if(MJMCU_8128 == 1)
-HDC1080 hdc1080;
-CCS811 ccs;
-BMP280 bmp;
-//BH1750 lightMeter;
-
-#define ROW 0
-#define ROW_OFFSET 0
-#define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
-uint8_t baselineflash[2];
-#endif
-
-#if(BME_680 == 1)
-BME680 bme680;
-//BH1750 lightMeter;
-#endif
-
-#if(BME_280 == 1)
-BME280 bme280;
-//BH1750 lightMeter;
-#endif
-
-#if(One_Wire == 1)
-OneWire  ds(GPIO0);
-#endif
-
-#if(CCS_811 == 1)
-CCS811 ccs;
-#endif
-
-#if(HDC_1080 == 1)
-HDC1080 hdc0180;
-#endif
-
-#if(BMP_180 == 1)
-BMP085 bmp180;
-#endif
-
-#if(BH_1750 == 1)
-BH1750 lightMeter;
-#endif
-
-#if(AUTO_SCAN == 1)
+#if(One_Wire == 0)
 HDC1080 hdc1080;
 CCS811 ccs;
 BMP280 bmp;
@@ -276,7 +231,7 @@ BH1750 lightMeter;
 #define ROW_OFFSET 0
 #define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
 uint8_t baselineflash[2];
-BME680 bme680;
+BME680_Class bme680;
 BME280 bme280;
 BMP085 bmp180;
 #endif
@@ -399,49 +354,30 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 27;//AppDataSize max value is 64
+    AppDataSize = 15;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-     
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-    puc = (unsigned char *)(&lux);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
+    AppData[3] = (uint8_t)((int)(Humidity * 10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity * 10.0));
 
-    puc = (unsigned char *)(&Pressure);
-    AppData[13] = puc[0];
-    AppData[14] = puc[1];
-    AppData[15] = puc[2];
-    AppData[16] = puc[3];
+    AppData[5] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure * 10.0));
 
-    puc = (unsigned char *)(&co2);
-    AppData[17] = puc[0];
-    AppData[18] = puc[1];
-    AppData[19] = puc[2];
-    AppData[20] = puc[3];
+    AppData[7] = (uint8_t)((int)(lux * 10.0) >> 8);
+    AppData[8] = (uint8_t)((int)(lux * 10.0));
 
-    puc = (unsigned char *)(&tvoc);
-    AppData[21] = puc[0];
-    AppData[22] = puc[1];
-    AppData[23] = puc[2];
-    AppData[24] = puc[3];
+    AppData[9] = (uint8_t)((int)co2 >> 8);
+    AppData[10] = (uint8_t)((int)co2);
 
-    AppData[25] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[26] = (uint8_t)BatteryVoltage;
+    AppData[11] = (uint8_t)((int)tvoc >> 8);
+    AppData[12] = (uint8_t)((int)tvoc);
+
+    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[14] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -472,68 +408,49 @@ static void PrepareTxFrame( uint8_t port )
     //  float lux = lightMeter.readLightLevel();
     //  lightMeter.end();
     lux = 0.0;
-    bme680.init(0x77); // I2C address: 0x76 or 0x77
+    bme680.begin(I2C_STANDARD_MODE);
     delay(1000);
-    bme680.reset();
+    bme680.setOversampling(TemperatureSensor, Oversample16);
+    bme680.setOversampling(HumiditySensor,   Oversample16);
+    bme680.setOversampling(PressureSensor,   Oversample16);
+    bme680.setIIRFilter(IIR4);
+    bme680.setGas(320, 150); // 320C for 150 milliseconds
 
-    Serial.print("Chip ID=0x");
-    Serial.println(bme680.getChipID(), HEX);
+    static int32_t temperature, humidity, pressure, gas;
+    bme680.getSensorData(temperature, humidity, pressure, gas);
+    delay(500);
+    bme680.getSensorData(temperature, humidity, pressure, gas);
 
-    // oversampling: humidity = x1, temperature = x2, pressure = x16
-    bme680.setOversampling(BME680_OVERSAMPLING_X1, BME680_OVERSAMPLING_X2, BME680_OVERSAMPLING_X16);
-    bme680.setIIRFilter(BME680_FILTER_3);
-    bme680.setGasOn(300, 100); // 300 degree Celsius and 100 milliseconds
-
-    bme680.setForcedMode();
-    BME680_Status status = readAndPrintStatus();
-
-    count = 0;
-    while (status.newDataFlag == 0 && count < maxtry) {
-      delay(1000);
-      BME680_Status status = readAndPrintStatus();
-      count++;
-    }
-
-    Serial.print("result: ");
-    Temperature = bme680.readTemperature();
-    Pressure = bme680.readPressure();
-    Humidity = bme680.readHumidity();
-    tvoc = bme680.readGasResistance();
+    Temperature = temperature / 100.0;
+    Humidity = humidity / 1000.0;
+    Pressure = pressure / 100.0;
+    co2 = gas / 100.0;
+    tvoc = CalculateIAQ();
 
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 19;//AppDataSize max value is 64
+    AppDataSize = 13;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-    
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-    puc = (unsigned char *)(&Pressure);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
+    AppData[3] = (uint8_t)((int)(Humidity * 10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity * 10.0));
 
-    puc = (unsigned char *)(&tvoc);
-    AppData[13] = puc[0];
-    AppData[14] = puc[1];
-    AppData[15] = puc[2];
-    AppData[16] = puc[3];
+    AppData[5] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure * 10.0));
 
-    AppData[17] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[18] = (uint8_t)BatteryVoltage;
+    AppData[7] = (uint8_t)((int)co2 >> 8);
+    AppData[8] = (uint8_t)((int)co2);
+
+    AppData[9] = (uint8_t)((int)tvoc >> 8);
+    AppData[10] = (uint8_t)((int)tvoc);
+
+    AppData[11] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[12] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -544,11 +461,11 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print(" lx, Pressure=");
     Serial.print(Pressure);
     Serial.print(" hPA, GAS=");
+    Serial.print(co2);
+    Serial.print("mOhm, IAQ=");
     Serial.print(tvoc);
     Serial.print(", BatteryVoltage:");
     Serial.println(BatteryVoltage);
-
-    bme680.setForcedMode();
   }
 
   /*
@@ -572,31 +489,21 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 15;//AppDataSize max value is 64
+    AppDataSize = 9;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-    
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-    puc = (unsigned char *)(&Pressure);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
+    AppData[3] = (uint8_t)((int)(Humidity * 10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity * 10.0));
 
-    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[14] = (uint8_t)BatteryVoltage;
+    AppData[5] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+    AppData[6] = (uint8_t)((int)(Pressure * 10.0));
+
+    AppData[7] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[8] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -662,31 +569,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 15;//AppDataSize max value is 64
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-        
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&co2);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)co2 >> 8);
+    AppData[2] = (uint8_t)((int)co2);
 
-    puc = (unsigned char *)(&tvoc);
-    AppData[9] = puc[0];
-    AppData[10] = puc[1];
-    AppData[11] = puc[2];
-    AppData[12] = puc[3];
+    AppData[3] = (uint8_t)((int)tvoc >> 8);
+    AppData[4] = (uint8_t)((int)tvoc);
 
-    AppData[13] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[14] = (uint8_t)BatteryVoltage;
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -730,25 +624,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 11;//AppDataSize max value is 64
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-    
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&Humidity);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[10] = (uint8_t)BatteryVoltage;
+    AppData[3] = (uint8_t)((int)(Humidity * 10.0) >> 8);
+    AppData[4] = (uint8_t)((int)(Humidity * 10.0));
+
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -757,6 +644,10 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print("%, BatteryVoltage:");
     Serial.println(BatteryVoltage);
   }
+
+  /*
+    BMP180
+  */
 
   if (BMP_180_e) {
     count = 0;
@@ -783,25 +674,18 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&Temperature);
-    AppDataSize = 11;//AppDataSize max value is 64
+    AppDataSize = 7;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-    
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    puc = (unsigned char *)(&Pressure);
-    AppData[5] = puc[0];
-    AppData[6] = puc[1];
-    AppData[7] = puc[2];
-    AppData[8] = puc[3];
+    AppData[1] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-    AppData[9] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[10] = (uint8_t)BatteryVoltage;
+    AppData[3] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+    AppData[4] = (uint8_t)((int)(Pressure * 10.0));
+
+    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[6] = (uint8_t)BatteryVoltage;
 
     Serial.print("T=");
     Serial.print(Temperature);
@@ -826,19 +710,15 @@ static void PrepareTxFrame( uint8_t port )
     Wire.end();
     digitalWrite(Vext, HIGH);
     uint16_t BatteryVoltage = GetBatteryVoltage();
-    unsigned char *puc;
 
-    puc = (unsigned char *)(&lux);
-    AppDataSize = 7;//AppDataSize max value is 64
+    AppDataSize = 5;//AppDataSize max value is 64
     AppData[0] = (uint8_t)sensortype;
-    
-    AppData[1] = puc[0];
-    AppData[2] = puc[1];
-    AppData[3] = puc[2];
-    AppData[4] = puc[3];
 
-    AppData[5] = (uint8_t)(BatteryVoltage >> 8);
-    AppData[6] = (uint8_t)BatteryVoltage;
+    AppData[1] = (uint8_t)((int)(lux * 10.0) >> 8);
+    AppData[2] = (uint8_t)((int)(lux * 10.0));
+
+    AppData[3] = (uint8_t)(BatteryVoltage >> 8);
+    AppData[4] = (uint8_t)BatteryVoltage;
 
     Serial.print("Light=");
     Serial.print(lux);
@@ -846,22 +726,6 @@ static void PrepareTxFrame( uint8_t port )
     Serial.println(BatteryVoltage);
   }
 }
-
-#if(BME_680 == 1 || AUTO_SCAN == 1)
-BME680_Status readAndPrintStatus() {
-  BME680_Status status = bme680.readStatus();
-  Serial.print("status: (");
-  Serial.print(status.newDataFlag);
-  Serial.print(",");
-  Serial.print(status.measuringStatusFlag);
-  Serial.print(",");
-  Serial.print(status.gasMeasuringStatusFlag);
-  Serial.print(",");
-  Serial.print(status.gasMeasurementIndex);
-  Serial.println(") (newDataFlag,StatusFlag,GasFlag,GasIndex)");
-  return status;
-}
-#endif
 
 void setup() {
   memcpy(DevEui, myDevEui, sizeof(myDevEui)); //Add these 3 lines to setup func
@@ -975,19 +839,6 @@ void setup() {
         sensortype = 2;
         break;
       }
-    case 119: //0x77 -- BMP180 Barometer
-      {
-        Serial.println("Found BMP180");
-        MJMCU_8128_e = false;
-        BME_680_e = false;
-        BME_280_e = false;
-        CCS_811_e = false;
-        BMP_180_e = true;
-        HDC_1080_e = false;
-        BH_1750_e = false;
-        sensortype = 5;
-        break;
-      }
     case 16: //MJMCU-8128
       {
         Serial.println("Found MJMCU-8128");
@@ -1001,17 +852,29 @@ void setup() {
         sensortype = 0;
         break;
       }
-    case 65: //BME680
+    case 119: //0x77 -- BME680
       {
-        Serial.println("Found BME680");
-        MJMCU_8128_e = false;
-        BME_680_e = true;
-        BME_280_e = false;
-        CCS_811_e = false;
-        BMP_180_e = false;
-        HDC_1080_e = false;
-        BH_1750_e = false;
-        sensortype = 1;
+        if (!bmp180.begin()) {
+          Serial.println("Found BME680");
+          MJMCU_8128_e = false;
+          BME_680_e = true;
+          BME_280_e = false;
+          CCS_811_e = false;
+          BMP_180_e = false;
+          HDC_1080_e = false;
+          BH_1750_e = false;
+          sensortype = 1;
+        } else {
+          Serial.println("Found BMP180");
+          MJMCU_8128_e = false;
+          BME_680_e = false;
+          BME_280_e = false;
+          CCS_811_e = false;
+          BMP_180_e = true;
+          HDC_1080_e = false;
+          BH_1750_e = false;
+          sensortype = 5;
+        }
         break;
       }
   }
@@ -1064,4 +927,40 @@ void loop()
         break;
       }
   }
+}
+
+float CalculateIAQ()
+{
+  float hum_weighting = 0.25; // so hum effect is 25% of the total air quality score
+  float gas_weighting = 0.75; // so gas effect is 75% of the total air quality score
+
+  float hum_score, gas_score;
+  float gas_reference = co2;
+  float hum_reference = 40;
+  int   getgasreference_count = 0;
+  
+  //Calculate humidity contribution to IAQ index
+  if (Humidity >= 38 && Humidity <= 42)
+    hum_score = 0.25 * 100; // Humidity +/-5% around optimum
+  else
+  { //sub-optimal
+    if (Humidity < 38)
+      hum_score = 0.25 / hum_reference * Humidity * 100;
+    else
+    {
+      hum_score = ((-0.25 / (100 - hum_reference) * Humidity) + 0.416666) * 100;
+    }
+  }
+
+  //Calculate gas contribution to IAQ index
+  float gas_lower_limit = 5000;   // Bad air quality limit
+  float gas_upper_limit = 50000;  // Good air quality limit
+  if (gas_reference > gas_upper_limit) gas_reference = gas_upper_limit;
+  if (gas_reference < gas_lower_limit) gas_reference = gas_lower_limit;
+  gas_score = (0.75 / (gas_upper_limit - gas_lower_limit) * gas_reference - (gas_lower_limit * (0.75 / (gas_upper_limit - gas_lower_limit)))) * 100;
+
+  //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
+  float air_quality_score = hum_score + gas_score;
+  
+  return air_quality_score;
 }

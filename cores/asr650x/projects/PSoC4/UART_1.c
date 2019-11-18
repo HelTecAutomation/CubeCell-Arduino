@@ -216,6 +216,7 @@ void UART_1_Start(void)
     }
 
     UART_1_Enable();
+    UART_1_SCB_IRQ_Stop();
 }
 
 
