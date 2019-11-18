@@ -15,3 +15,4 @@ Currently with following sensors:
 | BME280 | Seeed Studio | [Seeed Studio](https://github.com/Seeed-Studio/Grove_BME280) | Work well    |
 | BME680 | SV-Zanshin   | [SV-Zanshin](https://github.com/SV-Zanshin/BME680) | Work well  |
 | ADS1x15| Adafruit     | [Adafruit](https://github.com/adafruit/Adafruit_ADS1X15) | not tested yet |
+| SHT2x  | SodaqMoja    | [SodaqMoja](https://github.com/SodaqMoja/Sodaq_SHT2x) | not tested yet |
