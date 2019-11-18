@@ -33,7 +33,7 @@ function Decoder(bytes, port) {
         decoded.CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]).toFixed(0);
       }
       else if (sensor === "4") { // HDC1080
-        decoded.HDC0180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
+        decoded.HDC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100).toFixed(1); 
         decoded.HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10).toFixed(1);
       }
       else if (sensor === "5") { // BMP180
