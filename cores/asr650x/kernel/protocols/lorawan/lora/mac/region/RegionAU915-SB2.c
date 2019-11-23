@@ -335,7 +335,7 @@ void RegionAU915SB2InitDefaults( InitType_t type )
             // 500 kHz channels
             for( uint8_t i = AU915_SB2_MAX_NB_CHANNELS - 8; i < AU915_SB2_MAX_NB_CHANNELS; i++ )
             {
-                Channels[i].Frequency = 915900000 + ( i - ( AU915_SB2_MAX_NB_CHANNELS - 8 ) ) * 1600000;
+                Channels[i].Frequency = 923300000 + ( i - ( AU915_SB2_MAX_NB_CHANNELS - 8 ) ) * 1600000;
                 Channels[i].DrRange.Value = ( DR_6 << 4 ) | DR_6;
                 Channels[i].Band = 0;
             }
