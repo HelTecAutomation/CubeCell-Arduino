@@ -145,6 +145,60 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #define AU915_RX_BEACON_SETUP( )
 #endif
 
+#ifdef REGION_AU915_SB2
+#include "RegionAU915-SB2.h"
+#define AU915_SB2_CASE                                 case LORAMAC_REGION_AU915_SB2:
+#define AU915_SB2_IS_ACTIVE( )                         AU915_SB2_CASE { return true; }
+#define AU915_SB2_GET_PHY_PARAM( )                     AU915_SB2_CASE { return RegionAU915SB2GetPhyParam( getPhy ); }
+#define AU915_SB2_SET_BAND_TX_DONE( )                  AU915_SB2_CASE { RegionAU915SB2SetBandTxDone( txDone ); break; }
+#define AU915_SB2_INIT_DEFAULTS( )                     AU915_SB2_CASE { RegionAU915SB2InitDefaults( type ); break; }
+#define AU915_SB2_VERIFY( )                            AU915_SB2_CASE { return RegionAU915SB2Verify( verify, phyAttribute ); }
+#define AU915_SB2_APPLY_CF_LIST( )                     AU915_SB2_CASE { RegionAU915SB2ApplyCFList( applyCFList ); break; }
+#define AU915_SB2_CHAN_MASK_SET( )                     AU915_SB2_CASE { return RegionAU915SB2ChanMaskSet( chanMaskSet ); }
+#define AU915_SB2_ADR_NEXT( )                          AU915_SB2_CASE { return RegionAU915SB2AdrNext( adrNext, drOut, txPowOut, adrAckCounter ); }
+#define AU915_SB2_COMPUTE_RX_WINDOW_PARAMETERS( )      AU915_SB2_CASE { RegionAU915SB2ComputeRxWindowParameters( datarate, minRxSymbols, rxError, rxConfigParams ); break; }
+#define AU915_SB2_RX_CONFIG( )                         AU915_SB2_CASE { return RegionAU915SB2RxConfig( rxConfig, datarate ); }
+#define AU915_SB2_TX_CONFIG( )                         AU915_SB2_CASE { return RegionAU915SB2TxConfig( txConfig, txPower, txTimeOnAir ); }
+#define AU915_SB2_LINK_ADR_REQ( )                      AU915_SB2_CASE { return RegionAU915SB2LinkAdrReq( linkAdrReq, drOut, txPowOut, nbRepOut, nbBytesParsed ); }
+#define AU915_SB2_RX_PARAM_SETUP_REQ( )                AU915_SB2_CASE { return RegionAU915SB2RxParamSetupReq( rxParamSetupReq ); }
+#define AU915_SB2_NEW_CHANNEL_REQ( )                   AU915_SB2_CASE { return RegionAU915SB2NewChannelReq( newChannelReq ); }
+#define AU915_SB2_TX_PARAM_SETUP_REQ( )                AU915_SB2_CASE { return RegionAU915SB2TxParamSetupReq( txParamSetupReq ); }
+#define AU915_SB2_DL_CHANNEL_REQ( )                    AU915_SB2_CASE { return RegionAU915SB2DlChannelReq( dlChannelReq ); }
+#define AU915_SB2_ALTERNATE_DR( )                      AU915_SB2_CASE { return RegionAU915SB2AlternateDr( alternateDr ); }
+#define AU915_SB2_CALC_BACKOFF( )                      AU915_SB2_CASE { RegionAU915SB2CalcBackOff( calcBackOff ); break; }
+#define AU915_SB2_NEXT_CHANNEL( )                      AU915_SB2_CASE { return RegionAU915SB2NextChannel( nextChanParams, channel, time, aggregatedTimeOff ); }
+#define AU915_SB2_CHANNEL_ADD( )                       AU915_SB2_CASE { return RegionAU915SB2ChannelAdd( channelAdd ); }
+#define AU915_SB2_CHANNEL_REMOVE( )                    AU915_SB2_CASE { return RegionAU915SB2ChannelsRemove( channelRemove ); }
+#define AU915_SB2_SET_CONTINUOUS_WAVE( )               AU915_SB2_CASE { RegionAU915SB2SetContinuousWave( continuousWave ); break; }
+#define AU915_SB2_APPLY_DR_OFFSET( )                   AU915_SB2_CASE { return RegionAU915SB2ApplyDrOffset( downlinkDwellTime, dr, drOffset ); }
+#define AU915_SB2_RX_BEACON_SETUP( )                   AU915_SB2_CASE { RegionAU915SB2RxBeaconSetup( rxBeaconSetup, outDr ); }
+#else
+#define AU915_SB2_IS_ACTIVE( )
+#define AU915_SB2_GET_PHY_PARAM( )
+#define AU915_SB2_SET_BAND_TX_DONE( )
+#define AU915_SB2_INIT_DEFAULTS( )
+#define AU915_SB2_VERIFY( )
+#define AU915_SB2_APPLY_CF_LIST( )
+#define AU915_SB2_CHAN_MASK_SET( )
+#define AU915_SB2_ADR_NEXT( )
+#define AU915_SB2_COMPUTE_RX_WINDOW_PARAMETERS( )
+#define AU915_SB2_RX_CONFIG( )
+#define AU915_SB2_TX_CONFIG( )
+#define AU915_SB2_LINK_ADR_REQ( )
+#define AU915_SB2_RX_PARAM_SETUP_REQ( )
+#define AU915_SB2_NEW_CHANNEL_REQ( )
+#define AU915_SB2_TX_PARAM_SETUP_REQ( )
+#define AU915_SB2_DL_CHANNEL_REQ( )
+#define AU915_SB2_ALTERNATE_DR( )
+#define AU915_SB2_CALC_BACKOFF( )
+#define AU915_SB2_NEXT_CHANNEL( )
+#define AU915_SB2_CHANNEL_ADD( )
+#define AU915_SB2_CHANNEL_REMOVE( )
+#define AU915_SB2_SET_CONTINUOUS_WAVE( )
+#define AU915_SB2_APPLY_DR_OFFSET( )
+#define AU915_SB2_RX_BEACON_SETUP( )
+#endif
+
 #ifdef REGION_CN470
 #include "RegionCN470.h"
 #define CN470_CASE                                 case LORAMAC_REGION_CN470:
@@ -591,6 +645,7 @@ bool RegionIsActive( LoRaMacRegion_t region )
         IN865_IS_ACTIVE( );
         US915_IS_ACTIVE( );
         US915_HYBRID_IS_ACTIVE( );
+        AU915_SB2_IS_ACTIVE( );
         default:
         {
             return false;
@@ -613,6 +668,7 @@ PhyParam_t RegionGetPhyParam( LoRaMacRegion_t region, GetPhyParams_t* getPhy )
         IN865_GET_PHY_PARAM( );
         US915_GET_PHY_PARAM( );
         US915_HYBRID_GET_PHY_PARAM( );
+        AU915_SB2_GET_PHY_PARAM( );
         default:
         {
             return phyParam;
@@ -634,6 +690,7 @@ void RegionSetBandTxDone( LoRaMacRegion_t region, SetBandTxDoneParams_t* txDone 
         IN865_SET_BAND_TX_DONE( );
         US915_SET_BAND_TX_DONE( );
         US915_HYBRID_SET_BAND_TX_DONE( );
+        AU915_SB_SET_BAND_TX_DONE( );
         default:
         {
             return;
@@ -655,6 +712,7 @@ void RegionInitDefaults( LoRaMacRegion_t region, InitType_t type )
         IN865_INIT_DEFAULTS( );
         US915_INIT_DEFAULTS( );
         US915_HYBRID_INIT_DEFAULTS( );
+        AU915_SB2_INIT_DEFAULTS( );
         default:
         {
             break;
@@ -676,6 +734,7 @@ bool RegionVerify( LoRaMacRegion_t region, VerifyParams_t* verify, PhyAttribute_
         IN865_VERIFY( );
         US915_VERIFY( );
         US915_HYBRID_VERIFY( );
+        AU915_SB2_VERIFY( );
         default:
         {
             return false;
@@ -697,6 +756,7 @@ void RegionApplyCFList( LoRaMacRegion_t region, ApplyCFListParams_t* applyCFList
         IN865_APPLY_CF_LIST( );
         US915_APPLY_CF_LIST( );
         US915_HYBRID_APPLY_CF_LIST( );
+        AU915_SB2_APPLY_CF_LIST( );
         default:
         {
             break;
@@ -718,6 +778,7 @@ bool RegionChanMaskSet( LoRaMacRegion_t region, ChanMaskSetParams_t* chanMaskSet
         IN865_CHAN_MASK_SET( );
         US915_CHAN_MASK_SET( );
         US915_HYBRID_CHAN_MASK_SET( );
+        AU915_SB2_CHAN_MASK_SET( );
         default:
         {
             return false;
@@ -739,6 +800,7 @@ bool RegionAdrNext( LoRaMacRegion_t region, AdrNextParams_t* adrNext, int8_t* dr
         IN865_ADR_NEXT( );
         US915_ADR_NEXT( );
         US915_HYBRID_ADR_NEXT( );
+        AU915_SB2_ADR_NEXT( );
         default:
         {
             return false;
@@ -760,6 +822,7 @@ void RegionComputeRxWindowParameters( LoRaMacRegion_t region, int8_t datarate, u
         IN865_COMPUTE_RX_WINDOW_PARAMETERS( );
         US915_COMPUTE_RX_WINDOW_PARAMETERS( );
         US915_HYBRID_COMPUTE_RX_WINDOW_PARAMETERS( );
+        AU915_SB2_COMPUTE_RX_WINDOW_PARAMETERS( );
         default:
         {
             break;
@@ -781,6 +844,7 @@ bool RegionRxConfig( LoRaMacRegion_t region, RxConfigParams_t* rxConfig, int8_t*
         IN865_RX_CONFIG( );
         US915_RX_CONFIG( );
         US915_HYBRID_RX_CONFIG( );
+        AU915_SB2_RX_CONFIG( );
         default:
         {
             return false;
@@ -802,6 +866,7 @@ bool RegionTxConfig( LoRaMacRegion_t region, TxConfigParams_t* txConfig, int8_t*
         IN865_TX_CONFIG( );
         US915_TX_CONFIG( );
         US915_HYBRID_TX_CONFIG( );
+        AU915_SB2_TX_CONFIG( );
         default:
         {
             return false;
@@ -823,6 +888,7 @@ uint8_t RegionLinkAdrReq( LoRaMacRegion_t region, LinkAdrReqParams_t* linkAdrReq
         IN865_LINK_ADR_REQ( );
         US915_LINK_ADR_REQ( );
         US915_HYBRID_LINK_ADR_REQ( );
+        AU915_SB2_LINK_ADR_REQ( );
         default:
         {
             return 0;
@@ -844,6 +910,7 @@ uint8_t RegionRxParamSetupReq( LoRaMacRegion_t region, RxParamSetupReqParams_t* 
         IN865_RX_PARAM_SETUP_REQ( );
         US915_RX_PARAM_SETUP_REQ( );
         US915_HYBRID_RX_PARAM_SETUP_REQ( );
+        AU915_SB2_RX_PARAM_SETUP_REQ( );
         default:
         {
             return 0;
@@ -865,6 +932,7 @@ uint8_t RegionNewChannelReq( LoRaMacRegion_t region, NewChannelReqParams_t* newC
         IN865_NEW_CHANNEL_REQ( );
         US915_NEW_CHANNEL_REQ( );
         US915_HYBRID_NEW_CHANNEL_REQ( );
+        AU915_SB2_NEW_CHANNEL_REQ( );
         default:
         {
             return 0;
@@ -886,6 +954,7 @@ int8_t RegionTxParamSetupReq( LoRaMacRegion_t region, TxParamSetupReqParams_t* t
         IN865_TX_PARAM_SETUP_REQ( );
         US915_TX_PARAM_SETUP_REQ( );
         US915_HYBRID_TX_PARAM_SETUP_REQ( );
+        AU915_SB2_TX_PARAM_SETUP_REQ( );
         default:
         {
             return 0;
@@ -907,6 +976,7 @@ uint8_t RegionDlChannelReq( LoRaMacRegion_t region, DlChannelReqParams_t* dlChan
         IN865_DL_CHANNEL_REQ( );
         US915_DL_CHANNEL_REQ( );
         US915_HYBRID_DL_CHANNEL_REQ( );
+        AU915_SB2_DL_CHANNEL_REQ( );
         default:
         {
             return 0;
@@ -928,6 +998,7 @@ int8_t RegionAlternateDr( LoRaMacRegion_t region, AlternateDrParams_t* alternate
         IN865_ALTERNATE_DR( );
         US915_ALTERNATE_DR( );
         US915_HYBRID_ALTERNATE_DR( );
+        AU915_SB2_ALTERNATE_DR( );
         default:
         {
             return 0;
@@ -949,6 +1020,7 @@ void RegionCalcBackOff( LoRaMacRegion_t region, CalcBackOffParams_t* calcBackOff
         IN865_CALC_BACKOFF( );
         US915_CALC_BACKOFF( );
         US915_HYBRID_CALC_BACKOFF( );
+        AU915_SB2_CALC_BACKOFF( );
         default:
         {
             break;
@@ -970,6 +1042,7 @@ bool RegionNextChannel( LoRaMacRegion_t region, NextChanParams_t* nextChanParams
         IN865_NEXT_CHANNEL( );
         US915_NEXT_CHANNEL( );
         US915_HYBRID_NEXT_CHANNEL( );
+        AU915_SB2_NEXT_CHANNEL( );
         default:
         {
             return false;
@@ -991,6 +1064,7 @@ LoRaMacStatus_t RegionChannelAdd( LoRaMacRegion_t region, ChannelAddParams_t* ch
         IN865_CHANNEL_ADD( );
         US915_CHANNEL_ADD( );
         US915_HYBRID_CHANNEL_ADD( );
+        AU915_SB2_CHANNEL_ADD( );
         default:
         {
             return LORAMAC_STATUS_PARAMETER_INVALID;
@@ -1012,6 +1086,7 @@ bool RegionChannelsRemove( LoRaMacRegion_t region, ChannelRemoveParams_t* channe
         IN865_CHANNEL_REMOVE( );
         US915_CHANNEL_REMOVE( );
         US915_HYBRID_CHANNEL_REMOVE( );
+        AU915_SB2_CHANNEL_REMOVE( );
         default:
         {
             return false;
@@ -1033,6 +1108,7 @@ void RegionSetContinuousWave( LoRaMacRegion_t region, ContinuousWaveParams_t* co
         IN865_SET_CONTINUOUS_WAVE( );
         US915_SET_CONTINUOUS_WAVE( );
         US915_HYBRID_SET_CONTINUOUS_WAVE( );
+        AU915_SB2_SET_CONTINUOUS_WAVE( );
         default:
         {
             break;
@@ -1054,6 +1130,7 @@ uint8_t RegionApplyDrOffset( LoRaMacRegion_t region, uint8_t downlinkDwellTime, 
         IN865_APPLY_DR_OFFSET( );
         US915_APPLY_DR_OFFSET( );
         US915_HYBRID_APPLY_DR_OFFSET( );
+        AU915_SB2_APPLY_DR_OFFSET( );
         default:
         {
             return dr;
@@ -1075,6 +1152,7 @@ void RegionRxBeaconSetup( LoRaMacRegion_t region, RxBeaconSetup_t* rxBeaconSetup
         IN865_RX_BEACON_SETUP( );
         US915_RX_BEACON_SETUP( );
         US915_HYBRID_RX_BEACON_SETUP( );
+        AU915_SB2_RX_BEACON_SETUP( );
         default:
         {
             break;

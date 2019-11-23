@@ -42,6 +42,7 @@
  *              The following regions are supported:
  *              - #define REGION_AS923
  *              - #define REGION_AU915
+ *              - #define REGION_AU915_SB2
  *              - #define REGION_CN470
  *              - #define REGION_CN779
  *              - #define REGION_EU433
@@ -66,6 +67,7 @@
  * ------------ | :-----:
  * AS923        | SF12 - BW125
  * AU915        | SF10 - BW125
+ * AU915_SB2    | SF10 - BW125
  * CN470        | SF12 - BW125
  * CN779        | SF12 - BW125
  * EU433        | SF12 - BW125
@@ -82,6 +84,7 @@
  * ------------ | :-----:
  * AS923        | SF11 - BW125
  * AU915        | SF9  - BW125
+ * AU915_SB2    | SF9  - BW125
  * CN470        | SF11 - BW125
  * CN779        | SF11 - BW125
  * EU433        | SF11 - BW125
@@ -98,6 +101,7 @@
  * ------------ | :-----:
  * AS923        | SF10 - BW125
  * AU915        | SF8  - BW125
+ * AU915_SB2    | SF8  - BW125
  * CN470        | SF10 - BW125
  * CN779        | SF10 - BW125
  * EU433        | SF10 - BW125
@@ -114,6 +118,7 @@
  * ------------ | :-----:
  * AS923        | SF9  - BW125
  * AU915        | SF7  - BW125
+ * AU915_SB2    | SF7  - BW125
  * CN470        | SF9  - BW125
  * CN779        | SF9  - BW125
  * EU433        | SF9  - BW125
@@ -130,6 +135,7 @@
  * ------------ | :-----:
  * AS923        | SF8  - BW125
  * AU915        | SF8  - BW500
+ * AU915_SB2    | SF8  - BW500
  * CN470        | SF8  - BW125
  * CN779        | SF8  - BW125
  * EU433        | SF8  - BW125
@@ -146,6 +152,7 @@
  * ------------ | :-----:
  * AS923        | SF7  - BW125
  * AU915        | RFU
+ * AU915_SB2    | RFU
  * CN470        | SF7  - BW125
  * CN779        | SF7  - BW125
  * EU433        | SF7  - BW125
@@ -162,6 +169,7 @@
  * ------------ | :-----:
  * AS923        | SF7  - BW250
  * AU915        | RFU
+ * AU915_SB2    | RFU
  * CN470        | SF12 - BW125
  * CN779        | SF7  - BW250
  * EU433        | SF7  - BW250
@@ -178,6 +186,7 @@
  * ------------ | :-----:
  * AS923        | FSK
  * AU915        | RFU
+ * AU915_SB2    | RFU
  * CN470        | SF12 - BW125
  * CN779        | FSK
  * EU433        | FSK
@@ -194,6 +203,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF12 - BW500
+ * AU915_SB2    | SF12 - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -210,6 +220,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF11 - BW500
+ * AU915_SB2    | SF11 - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -226,6 +237,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF10 - BW500
+ * AU915_SB2    | SF10 - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -242,6 +254,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF9  - BW500
+ * AU915_SB2    | SF9  - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -258,6 +271,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF8  - BW500
+ * AU915_SB2    | SF8  - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -274,6 +288,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | SF7  - BW500
+ * AU915_SB2    | SF7  - BW500
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -290,6 +305,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | RFU
+ * AU915_SB2    | RFU
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -306,6 +322,7 @@
  * ------------ | :-----:
  * AS923        | RFU
  * AU915        | RFU
+ * AU915_SB2    | RFU
  * CN470        | RFU
  * CN779        | RFU
  * EU433        | RFU
@@ -324,6 +341,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP
  * AU915        | Max EIRP
+ * AU915_SB2    | Max EIRP
  * CN470        | Max EIRP
  * CN779        | Max EIRP
  * EU433        | Max EIRP
@@ -340,6 +358,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 2
  * AU915        | Max EIRP - 2
+ * AU915_SB2    | Max EIRP - 2
  * CN470        | Max EIRP - 2
  * CN779        | Max EIRP - 2
  * EU433        | Max EIRP - 2
@@ -356,6 +375,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 4
  * AU915        | Max EIRP - 4
+ * AU915_SB2    | Max EIRP - 4
  * CN470        | Max EIRP - 4
  * CN779        | Max EIRP - 4
  * EU433        | Max EIRP - 4
@@ -372,6 +392,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 6
  * AU915        | Max EIRP - 6
+ * AU915_SB2    | Max EIRP - 6
  * CN470        | Max EIRP - 6
  * CN779        | Max EIRP - 6
  * EU433        | Max EIRP - 6
@@ -388,6 +409,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 8
  * AU915        | Max EIRP - 8
+ * AU915_SB2    | Max EIRP - 8
  * CN470        | Max EIRP - 8
  * CN779        | Max EIRP - 8
  * EU433        | Max EIRP - 8
@@ -404,6 +426,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 10
  * AU915        | Max EIRP - 10
+ * AU915_SB2    | Max EIRP - 10
  * CN470        | Max EIRP - 10
  * CN779        | Max EIRP - 10
  * EU433        | Max EIRP - 10
@@ -420,6 +443,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 12
  * AU915        | Max EIRP - 12
+ * AU915_SB2    | Max EIRP - 12
  * CN470        | Max EIRP - 12
  * CN779        | -
  * EU433        | -
@@ -436,6 +460,7 @@
  * ------------ | :-----:
  * AS923        | Max EIRP - 14
  * AU915        | Max EIRP - 14
+ * AU915_SB2    | Max EIRP - 14
  * CN470        | Max EIRP - 14
  * CN779        | -
  * EU433        | -
