@@ -2151,7 +2151,7 @@ static void ProcessMacCommands( uint8_t *payload, uint8_t macIndex, uint8_t comm
                 //printf("status:%d\r\n",status);
                 if ( ( status & 0x07 ) == 0x07 ) {
                     LoRaMacParams.ChannelsDatarate = linkAdrDatarate;
-                    SaveDr();
+                    //SaveDr();
                     LoRaMacParams.ChannelsTxPower = linkAdrTxPower;
                     LoRaMacParams.ChannelsNbRep = linkAdrNbRep;
                     //printf("ChannelsDatarate:%d ChannelsTxPower:%d,ChannelsNbRep:%d\r\n",LoRaMacParams.ChannelsDatarate,LoRaMacParams.ChannelsTxPower,LoRaMacParams.ChannelsNbRep);
