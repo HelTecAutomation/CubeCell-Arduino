@@ -1087,7 +1087,9 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
                         }
                     }
                     DownLinkCounter = downLinkCounter;
-                    SaveDownCnt();
+                    if(DownLinkCounter%15000==0&&DownLinkCounter>0){
+                    	SaveDownCnt();
+                    }
                 }
 
                 // This must be done before parsing the payload and the MAC commands.
@@ -1473,7 +1475,7 @@ static void OnMacStateCheckTimerEvent( void )
 
                         if ( IsUpLinkCounterFixed == false ) {
                             UpLinkCounter++;
-                            SaveUpCnt();
+                            //SaveUpCnt();
                             #ifdef CONFIG_LORA_VERIFY
                             if (g_lora_debug)
                                 PRINTF_RAW("Unconfirmed data, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
@@ -1497,7 +1499,7 @@ static void OnMacStateCheckTimerEvent( void )
                 NodeAckRequested = false;
                 if ( IsUpLinkCounterFixed == false ) {
                     UpLinkCounter++;
-                    SaveUpCnt();
+                    //SaveUpCnt();
                 #ifdef CONFIG_LORA_VERIFY
                 if (g_lora_debug)
                     PRINTF_RAW("Confirmed data received ACK, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
@@ -1543,7 +1545,7 @@ static void OnMacStateCheckTimerEvent( void )
                     McpsConfirm.Datarate = LoRaMacParams.ChannelsDatarate;
                     if ( IsUpLinkCounterFixed == false ) {
                         UpLinkCounter++;
-                        SaveUpCnt();
+                        //SaveUpCnt();
                         #ifdef CONFIG_LORA_VERIFY
                         if (g_lora_debug)
                             PRINTF_RAW("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
