@@ -1087,7 +1087,7 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
                         }
                     }
                     DownLinkCounter = downLinkCounter;
-                    if(DownLinkCounter%15000==0&&DownLinkCounter>0){
+                    if(DownLinkCounter%15000==0){
                     	SaveDownCnt();
                     }
                 }
