@@ -23,9 +23,15 @@ DS250x add-only programmable memory reader w/SKIP ROM.
  */
 
 #include <OneWire.h>
-OneWire ds(6);                    // OneWire bus on digital pin 6
+OneWire  ds(GPIO1);                    // on pin GPIO1 PIN 6 (a 4.7K resistor is necessary)
+
 void setup() {
-  Serial.begin (9600);
+    //Vext ON
+  pinMode(Vext,OUTPUT);
+  digitalWrite(Vext,LOW);
+  delay(500);
+
+  Serial.begin(115200);
 }
 
 void loop() {

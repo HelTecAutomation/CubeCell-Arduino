@@ -11,8 +11,7 @@
  *       they're inputs.  If you write to them, they're outputs.
  *   - For reading from a switch, you should use 10K pull-up resisters.
  */
-
-OneWire net(10);  // on pin 10
+OneWire  ds(GPIO1);  // on pin GPIO1 PIN 6 (a 4.7K resistor is necessary)
 
 
 void PrintBytes(const uint8_t* addr, uint8_t count, bool newline=false) {
@@ -26,7 +25,12 @@ void PrintBytes(const uint8_t* addr, uint8_t count, bool newline=false) {
 
 
 void setup(void) {
-  Serial.begin(9600);
+  //Vext ON
+  pinMode(Vext,OUTPUT);
+  digitalWrite(Vext,LOW);
+  delay(500);
+
+  Serial.begin(115200);
 }
 
 void loop(void) {
