@@ -196,6 +196,7 @@ void RGB_ON(uint32_t color,uint32_t time)
 	blue=(uint8_t)color;
 	pinMode(Vext,OUTPUT);
 	digitalWrite(Vext,LOW); //SET POWER
+	delay(1);
 	pixels.begin(); // INITIALIZE RGB strip object (REQUIRED)
 	pixels.clear(); // Set all pixel colors to 'off'
 	pixels.setPixelColor(0, pixels.Color(red, green, blue));
