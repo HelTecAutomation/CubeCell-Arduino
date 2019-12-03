@@ -57,10 +57,10 @@ CubeCell-Board.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Board.menu.LORAWAN_ADR.1=OFF
 CubeCell-Board.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-Board.menu.LORAWAN_Net_Reserve.0=ON
-CubeCell-Board.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
-CubeCell-Board.menu.LORAWAN_Net_Reserve.1=OFF
-CubeCell-Board.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+CubeCell-Board.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-Board.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-Board.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-Board.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
 CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0=ON
 CubeCell-Board.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
