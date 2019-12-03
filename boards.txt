@@ -123,10 +123,10 @@ CubeCell-Capsule.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Capsule.menu.LORAWAN_ADR.1=OFF
 CubeCell-Capsule.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0=ON
-CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
-CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1=OFF
-CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
 CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.0=ON
 CubeCell-Capsule.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
@@ -190,10 +190,10 @@ CubeCell-Module.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Module.menu.LORAWAN_ADR.1=OFF
 CubeCell-Module.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-Module.menu.LORAWAN_Net_Reserve.0=ON
-CubeCell-Module.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=true
-CubeCell-Module.menu.LORAWAN_Net_Reserve.1=OFF
-CubeCell-Module.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=false
+CubeCell-Module.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-Module.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-Module.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-Module.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
 CubeCell-Module.menu.LORAWAN_AT_SUPPORT.0=ON
 CubeCell-Module.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
