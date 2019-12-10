@@ -40,6 +40,7 @@ void GetNetInfo(void);
 void SaveDr(void);
 bool CheckNetInfo(void);
 void NetInfoDisable(void);
+extern bool AT_user_check(char * cmd, char * content);
 
 
 

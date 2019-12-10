@@ -1,5 +1,4 @@
 #include "LoRaWan_APP.h"
-#include "LoRa_APP.h"
 #include "Arduino.h"
 
 /*
@@ -24,7 +23,6 @@ LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
 bool IsTxConfirmed = true;
-
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -63,98 +61,82 @@ static void PrepareTxFrame( uint8_t port )
     AppData[3] = 0x03;
 }
 
+/* function for user AT command
+ * the User AT run before default AT command
+ * return true break default AT command  
+ * return false continue default AT command  
+ * the format of AT command is 'AT+XXXX=YYYY'
+ * XXX is the para * cmd and YYYY is the para * content
+ * you can test with 'AT+test=abcd' 
+ */
+bool AT_user_check(char * cmd, char * content)
+{
+  if(strcmp(cmd,"test")==0)
+  {
+    for(int i=0;i<strlen(content);i++)
+    {
+      Serial.printf("%c",content[i]);
+    }
+    Serial.println();
+    return true;
+  }
+  return false;
+}
 
 void setup() {
-	BoardInitMcu();
-	Serial.begin(115200);
-	PassthroughMode = true;
-	Enable_AT(); 
-	getDevParam();
-	printDevParam();
-	DeviceState = DEVICE_STATE_SLEEP;
-  	LoRaWAN.Ifskipjoin();
-	DeviceState_lora = LORA_INIT;
+    BoardInitMcu();
+    Serial.begin(115200);
+#if(AT_SUPPORT)
+    Enable_AT();
+#endif
+    DeviceState = DEVICE_STATE_INIT;
+    LoRaWAN.Ifskipjoin();
 }
 
 void loop()
 {
-	if(Mode_LoraWan)//loraWan mode(defalt;)
+	switch( DeviceState )
 	{
-	  switch( DeviceState )
-	  {
-	    case DEVICE_STATE_INIT:
-	    {
-	      //Serial.printf("LoRaWan PassthroughMode start!\r\n");
-	      //Serial.printf("please start with command\r\n");
-	      getDevParam();
-	      LoRaWAN.Init(CLASS,ACTIVE_REGION);
-	      DeviceState = DEVICE_STATE_JOIN;
-	      break;
-	    }
-	    case DEVICE_STATE_JOIN:
-	    {
-	      LoRaWAN.Join();
-	      break;
-	    }
-	    case DEVICE_STATE_SEND:
-	    {
-	      LoRaWAN.Send();
-	      DeviceState = DEVICE_STATE_SLEEP;
-	      break;
-	    }
-	    case DEVICE_STATE_CYCLE:
-	    {
-	      // only used while joining
-	      TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-	      DeviceState = DEVICE_STATE_SLEEP;
-	      LoRaWAN.Cycle(TxDutyCycleTime);
-	      break;
-	    }
-	    case DEVICE_STATE_SLEEP:
-	    {
-	      LoRaWAN.Sleep();
-	      break;
-	    }
-	    default:
-	    {
-	      DeviceState = DEVICE_STATE_SLEEP;
-	      break;
-	    }
-	  }
-	}
-	else//lora mode
-	{
-	  switch( DeviceState_lora )
-	  {
-	    case LORA_INIT:
-	    {
-	      getDevParam();
-	      LoRa.Init(Lora_FREQ, Lora_TXPW, Lora_SF);
-	      DeviceState_lora = MCU_SLEEP;
-	      break;
-	    }
-	    case LORA_SEND:
-	    {
-	      LoRa.Send();
-	      DeviceState_lora = MCU_SLEEP;
-	      break;
-	    }
-	    case LORA_RECEIVE:
-	    {
-	      LoRa.Receive();
-	      DeviceState_lora = MCU_SLEEP;
-	      break;
-	    }
-	    case MCU_SLEEP:
-	    {
-	      LoRa.LOWPOWER();
-	      break;
-	    }
-	    default:
-	    {
-	      DeviceState_lora = MCU_SLEEP;
-	      break;
-	    }
-	  }
+		case DEVICE_STATE_INIT:
+		{
+#if(AT_SUPPORT)
+      getDevParam();
+#endif
+			printDevParam();
+			Serial.printf("LoRaWan Class%X  start! \r\n",CLASS+10);   
+			LoRaWAN.Init(CLASS,REGION);
+			DeviceState = DEVICE_STATE_JOIN;
+			break;
+		}
+		case DEVICE_STATE_JOIN:
+		{
+			LoRaWAN.Join();
+			break;
+		}
+		case DEVICE_STATE_SEND:
+		{
+			PrepareTxFrame( AppPort );
+			LoRaWAN.Send();
+			DeviceState = DEVICE_STATE_CYCLE;
+			break;
+		}
+		case DEVICE_STATE_CYCLE:
+		{
+			// Schedule next packet transmission
+			TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
+			LoRaWAN.Cycle(TxDutyCycleTime);
+			DeviceState = DEVICE_STATE_SLEEP;
+			break;
+		}
+		case DEVICE_STATE_SLEEP:
+		{
+			LoRaWAN.Sleep();
+			break;
+		}
+		default:
+		{
+			DeviceState = DEVICE_STATE_INIT;
+			break;
+		}
 	}
 }

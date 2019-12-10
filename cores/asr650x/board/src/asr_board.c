@@ -469,6 +469,10 @@ void BoardInitMcu( void )
     pinMode(ADC_CTL,OUTPUT);
     digitalWrite(ADC_CTL,HIGH);
     SX126xIoInit();
+    delay(10);
+    SX126xReset();
+    delay(10);
+    RadioSleep();
 }
 
 void DBG_LogLevelSet(int level)

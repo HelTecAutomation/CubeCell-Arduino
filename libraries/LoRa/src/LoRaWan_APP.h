@@ -59,6 +59,7 @@ extern "C" bool SendFrame( void );
 extern "C" void RGB_ON(uint32_t color,uint32_t time);
 extern "C" void RGB_OFF(void);
 extern "C" uint16_t GetBatteryVoltage(void);
+extern "C" bool AT_user_check(char * cmd, char * content);
 
 
 
