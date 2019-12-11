@@ -4,6 +4,9 @@
 Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
+#ifdef REGION_EU868
+#include "RegionEU868.h"
+#endif
 
 /*!
  * Default datarate
@@ -374,6 +377,13 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 
 static void lwan_dev_params_update( void )
 {
+#ifdef REGION_EU868
+	LoRaMacChannelAdd( 3, ( ChannelParams_t )EU868_LC4 );
+	LoRaMacChannelAdd( 4, ( ChannelParams_t )EU868_LC5 );
+	LoRaMacChannelAdd( 5, ( ChannelParams_t )EU868_LC6 );
+	LoRaMacChannelAdd( 6, ( ChannelParams_t )EU868_LC7 );
+	LoRaMacChannelAdd( 7, ( ChannelParams_t )EU868_LC8 );
+#endif
 	MibRequestConfirm_t mibReq;
 	uint16_t channelsMaskTemp[6];
 	channelsMaskTemp[0] = 0x00FF;
@@ -390,6 +400,8 @@ static void lwan_dev_params_update( void )
 	mibReq.Type = MIB_CHANNELS_MASK;
 	mibReq.Param.ChannelsMask = channelsMaskTemp;
 	LoRaMacMibSetRequestConfirm(&mibReq);
+
+
 }
 
 uint8_t BoardGetBatteryLevel()

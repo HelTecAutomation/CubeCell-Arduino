@@ -8,6 +8,7 @@
 #include "LoRaMac.h"
 #include "Commissioning.h"
 #include "hw.h"
+#include "Region.h"
 #include "low_power.h"
 #include "spi-board.h"
 #include "rtc-board.h"
