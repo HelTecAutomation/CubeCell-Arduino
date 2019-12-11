@@ -4,7 +4,7 @@
 Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
-#ifdef REGION_EU868
+#if REGION_EU868
 #include "RegionEU868.h"
 #endif
 
