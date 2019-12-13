@@ -6,7 +6,7 @@
 
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
-#include <Wire.h>
+#include "Wire.h"
 
 /*
    Define your Settings below
@@ -20,7 +20,45 @@
 #define BMP_180    0
 #define HDC_1080   0
 #define BH_1750    0
-#define One_Wire   0 // not working
+#define SHT_2X     0
+#define ADS_1015   0
+#define MPU_9250   0
+#define One_Wire   0 
+
+//CAPSULE_001
+//const char myDevEui[] = { 0x00, 0x23, 0x07, 0xE7, 0x01, 0xEE, 0xDF, 0x8E };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0x21, 0xDD, 0x29, 0x80, 0x45, 0x0E, 0xA8, 0xD5, 0x29, 0x7A, 0xB2, 0x9A, 0x90, 0x29, 0x12, 0x62 };
+
+//CAPSULE_002
+//const char myDevEui[] = { 0x00, 0x20, 0xE6, 0x4A, 0x49, 0x5B, 0x2F, 0x92 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0xFA, 0x88, 0xE2, 0xD0, 0x34, 0x5E, 0x14, 0x3C, 0xFB, 0x78, 0x0A, 0x4B, 0x67, 0xDC, 0x85, 0x46 };
+
+//CAPSULE_003
+//const char myDevEui[] = { 0x00, 0x70, 0x30, 0xFF, 0x92, 0x1E, 0xD8, 0x46 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0xA5, 0xD1, 0xE4, 0xAD, 0x46, 0x84, 0x21, 0xBD, 0xA0, 0xD6, 0x92, 0x65, 0x63, 0xBB, 0x43, 0x5D };
+
+//CAPSULE_004
+//const char myDevEui[] = { 0x00, 0xDF, 0x9E, 0x17, 0x0D, 0x29, 0xFC, 0xD1 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0x59, 0xFC, 0x2E, 0x6A, 0xF0, 0x2B, 0x20, 0x02, 0x39, 0xAA, 0xA3, 0x70, 0x67, 0xB8, 0x08, 0xFD };
+
+//CAPSULE_005
+//const char myDevEui[] = { 0x00, 0x8B, 0xE3, 0x6E, 0x2F, 0xCF, 0x87, 0x73 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0xE2, 0x95, 0x2E, 0xE3, 0x91, 0x85, 0xF6, 0xA1, 0x38, 0x05, 0x41, 0x0B, 0x25, 0x50, 0x25, 0x7D };
+
+//BOARD_001
+//const char myDevEui[] = { 0x00, 0x92, 0x25, 0xDD, 0x0A, 0xC5, 0x73, 0x54 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0x84, 0xA7, 0x3F, 0x37, 0x8B, 0x72, 0xD9, 0xA2, 0x3C, 0x59, 0x8D, 0xBF, 0xCB, 0x96, 0x09, 0x08 };
+
+//BOARD_002
+//const char myDevEui[] = { 0x00, 0x4B, 0xE3, 0x42, 0x2B, 0x23, 0x06, 0x67 };
+//const char myAppEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x02, 0x3C, 0x84 };
+//const char myAppKey[] = { 0x22, 0x72, 0xAC, 0xC5, 0x83, 0xBD, 0x4B, 0xF0, 0x67, 0x74, 0x02, 0x94, 0x2D, 0x71, 0x6C, 0x11 };
 
 const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
@@ -33,7 +71,6 @@ uint32_t APP_TX_DUTYCYCLE = 900000;
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
 
-#if(One_Wire == 0)
 #include "BH1750.h"
 #include "BMP280.h"
 #include "HDC1080.h"
@@ -42,10 +79,10 @@ uint32_t APP_TX_DUTYCYCLE = 900000;
 #include "BME680.h"
 #include "BME280.h"
 #include "BMP180.h"
-#endif
-#if(One_Wire == 1)
-#include <OneWire.h>
-#endif
+#include "SHT2x.h"
+#include "ADS1015.h"
+#include "OneWire.h"
+#include "MPU9250.h"
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
@@ -58,6 +95,10 @@ bool HDC_1080_e = false; // 4
 bool BMP_180_e = false;  // 5
 bool BH_1750_e = false;  // 6
 bool BMP_280_e = false;  // 7
+bool SHT_2X_e = false;   // 8
+bool ADS_1015_e = false; // 9
+bool MPU_9250_e = false; // 10
+bool One_Wire_e = false; // 100-103
 uint8_t sensortype = 0;
 
 /*
@@ -86,6 +127,18 @@ uint8_t sensortype = 0;
 
 #ifndef LORAWAN_CLASS
 #define LORAWAN_CLASS CLASS_A
+#endif
+
+#ifndef LORAWAN_NETMODE
+#define LORAWAN_NETMODE 0
+#endif
+
+#ifndef LORAWAN_ADR
+#define LORAWAN_ADR 1
+#endif
+
+#ifndef LORAWAN_Net_Reserve
+#define LORAWAN_Net_Reserve 1
 #endif
 
 /*LoraWan Class*/
@@ -131,7 +184,6 @@ uint16_t baseline, baselinetemp;
 int count;
 int maxtry = 50;
 
-#if(One_Wire == 0)
 HDC1080 hdc1080;
 CCS811 ccs;
 BMP280 bmp280;
@@ -143,10 +195,10 @@ uint8_t baselineflash[2];
 BME680_Class bme680;
 BME280 bme280;
 BMP085 bmp180;
-#endif
-#if(One_Wire == 1)
+MPU9250 mpu9250;
+ADS1015 ads1015;
+
 OneWire  ds(GPIO1);  // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
-#endif
 
 /*!
    \brief   Prepares the payload of the frame
@@ -209,9 +261,7 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print(Temperature);
     Serial.print("C, RH = ");
     Serial.print(Humidity);
-    Serial.print(" %, Lux = ");
-    Serial.print(lux);
-    Serial.print(" lx, Pressure = ");
+    Serial.print(" %, Pressure = ");
     Serial.print(Pressure);
     Serial.print(" hPA, GAS = ");
     Serial.print(co2);
@@ -233,12 +283,6 @@ static void PrepareTxFrame( uint8_t port )
     Pressure = bme280.getPressure() / 100.0;
     Humidity = bme280.getHumidity();
 
-    //  if (!lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
-    //    Serial.print("Failed to start BH2750!");
-    //  }
-    //  float lux = lightMeter.readLightLevel();
-    //  lightMeter.end();
-    lux = 0.0;
     Wire.end();
 
     AppData[AppDataSize++] = 2;
@@ -256,9 +300,7 @@ static void PrepareTxFrame( uint8_t port )
     Serial.print(Temperature);
     Serial.print("C, RH = ");
     Serial.print(Humidity);
-    Serial.print(" %, Lux = ");
-    Serial.print(lux);
-    Serial.print(" lx, Pressure = ");
+    Serial.print(" %, Pressure = ");
     Serial.print(Pressure);
     Serial.println(" hPA");
   }
@@ -492,6 +534,270 @@ static void PrepareTxFrame( uint8_t port )
     Serial.println(" hPA");
   }
 
+  /*
+      SHT_2X
+  */
+  if (SHT_2X_e) {
+    Wire.begin();
+    delay(500);
+    Temperature = SHT2x.GetTemperature();
+    Humidity = SHT2x.GetHumidity();
+    Wire.end();
+
+    AppData[AppDataSize++] = 7;
+
+    AppData[AppDataSize++] = (uint8_t)(((int)((Temperature + 100.0) * 10.0)) >> 8);
+    AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
+
+    AppData[AppDataSize++] = ((int)(Humidity * 10.0)) >> 8;
+    AppData[AppDataSize++] = (int)(Humidity * 10.0);
+
+    Serial.print("SHT2X: T=");
+    Serial.print(Temperature);
+    Serial.print("C, Humidity=");
+    Serial.print(Humidity);
+    Serial.println(" %");
+  }
+
+  /*
+      ADS_1015
+  */
+  if (ADS_1015_e) {
+    ads1015.begin();
+    int16_t adc0, adc1, adc2, adc3;
+
+    adc0 = ads1015.readADC_SingleEnded(0);
+    adc1 = ads1015.readADC_SingleEnded(1);
+    adc2 = ads1015.readADC_SingleEnded(2);
+    adc3 = ads1015.readADC_SingleEnded(3);
+
+    AppData[AppDataSize++] = 8;
+
+    AppData[AppDataSize++] = ((int)adc0) >> 8;
+    AppData[AppDataSize++] = (int)adc0;
+    AppData[AppDataSize++] = ((int)adc1) >> 8;
+    AppData[AppDataSize++] = (int)adc1;
+    AppData[AppDataSize++] = ((int)adc2) >> 8;
+    AppData[AppDataSize++] = (int)adc2;
+    AppData[AppDataSize++] = ((int)adc3) >> 8;
+    AppData[AppDataSize++] = (int)adc3;
+
+    Serial.print("ADS1015: ADC0=");
+    Serial.print(adc0);
+    Serial.print(", ADC1=");
+    Serial.print(adc1);
+    Serial.print(", ADC2=");
+    Serial.print(adc2);
+    Serial.print(", ADC3=");
+    Serial.print(adc3);
+    Serial.println();
+
+    Wire.end();
+  }
+
+  /*
+    MPU9250
+  */
+  if (MPU_9250_e) {
+    sensortype = 10;
+
+    Wire.begin();
+    delay(500);
+    mpu9250.setWire(&Wire);
+    delay(100);
+    mpu9250.beginAccel();
+    mpu9250.beginGyro();
+    mpu9250.beginMag();
+    delay(200);
+    uint8_t sensorId;
+
+    if (mpu9250.readId(&sensorId) == 0) {
+      Serial.println("MPU9250 sensorId: " + String(sensorId));
+    } else {
+      Serial.println("Cannot read sensorId");
+    }
+
+    float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
+    if (mpu9250.accelUpdate() == 0) {
+      aX = mpu9250.accelX();
+      aY = mpu9250.accelY();
+      aZ = mpu9250.accelZ();
+      aSqrt = mpu9250.accelSqrt();
+      Serial.print("accelX: " + String(aX));
+      Serial.print(", accelY: " + String(aY));
+      Serial.print(", accelZ: " + String(aZ));
+      Serial.println(", accelSqrt: " + String(aSqrt));
+    } else {
+      Serial.println("Cannod read accel values");
+    }
+
+    if (mpu9250.gyroUpdate() == 0) {
+      gX = mpu9250.gyroX();
+      gY = mpu9250.gyroY();
+      gZ = mpu9250.gyroZ();
+      Serial.print("gyroX: " + String(gX));
+      Serial.print(", gyroY: " + String(gY));
+      Serial.println(", gyroZ: " + String(gZ));
+    } else {
+      Serial.println("Cannot read gyro values");
+    }
+
+    if (mpu9250.magUpdate() == 0) {
+      mX = mpu9250.magX();
+      mY = mpu9250.magY();
+      mZ = mpu9250.magZ();
+      mDirection = mpu9250.magHorizDirection();
+      Serial.print("magX: " + String(mX));
+      Serial.print(", maxY: " + String(mY));
+      Serial.print(", magZ: " + String(mZ));
+      Serial.println(", horizontal direction: " + String(mDirection));
+    } else {
+      Serial.println("Cannot read mag values");
+    }
+
+    Wire.end();
+
+    AppData[AppDataSize++] = 10;
+
+    unsigned char *puc;
+    puc = (unsigned char *)(&aX);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&aY);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&aZ);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&gX);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&gY);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&gZ);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&mX);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&mY);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&mZ);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&aSqrt);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+    puc = (unsigned char *)(&mDirection);
+    AppData[AppDataSize++] = puc[0];
+    AppData[AppDataSize++] = puc[1];
+    AppData[AppDataSize++] = puc[2];
+    AppData[AppDataSize++] = puc[3];
+  }
+
+  /*
+     One_Wire
+  */
+  if (One_Wire_e) {
+    byte present = 0;
+    byte type_s;
+    byte data[12];
+    byte owaddress[8];
+    int owsensorcount = 0;
+
+    if (ds.search(owaddress)) {
+      Serial.print("OneWire Sensor foudn with data =");
+      for(byte i = 0; i < 8; i++) {
+        Serial.write(' ');
+        Serial.print(owaddress[i], HEX);
+      }
+
+      if (OneWire::crc8(owaddress, 7) != owaddress[7]) {
+        Serial.println("CRC is not valid!");
+        return;
+      }
+      Serial.println();
+ 
+      switch (owaddress[0]) {
+        case 0x10:
+          Serial.print("  Chip = DS18S20 (0x10)");  // or old DS1820
+          type_s = 1;
+          break;
+        case 0x28:
+          Serial.print("  Chip = DS18B20 (0x28)");
+          type_s = 0;
+          break;
+        case 0x22:
+          Serial.print("  Chip = DS1822 (0x22)");
+          type_s = 0;
+          break;
+        default:
+          Serial.print("Device is not known.");
+        return;
+      } 
+
+      ds.reset();
+      ds.select(owaddress);
+      ds.write(0x44, 1);      
+  
+      delay(1000);    
+
+      present = ds.reset();
+      ds.select(owaddress);    
+      ds.write(0xBE);        
+  
+      // 28 AA 68 3B 4A 14 1 AC    = DS18B20 (0x28) 21.75C type_s=0
+      for (byte i = 0; i < 9; i++) {          
+        data[i] = ds.read();
+      }
+  
+      int16_t raw = (data[1] << 8) | data[0];
+      if (type_s) {
+        raw = raw << 3; 
+        if (data[7] == 0x10) {
+          raw = (raw & 0xFFF0) + 12 - data[6];
+        }
+      } else {
+        byte cfg = (data[4] & 0x60);
+        if (cfg == 0x00) raw = raw & ~7;  
+        else if (cfg == 0x20) raw = raw & ~3; 
+        else if (cfg == 0x40) raw = raw & ~1; 
+      }
+      Temperature = (float)raw / 16.0;
+
+      AppData[AppDataSize++] = 100 + owsensorcount++;
+      AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+      AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
+
+      Serial.print(": T=");
+      Serial.print(Temperature);
+      Serial.println("C");
+    }
+    ds.reset_search();
+  }
+
   digitalWrite(Vext, HIGH);
 
   uint16_t BatteryVoltage = GetBatteryVoltage();
@@ -520,6 +826,9 @@ void setup() {
   BMP_180_e = false;
   HDC_1080_e = false;
   BH_1750_e = false;
+  SHT_2X_e = false;
+  ADS_1015_e = false;
+  MPU_9250_e = false;
   sensortype = 88;
 #endif
 
@@ -551,15 +860,21 @@ void setup() {
   BMP_280_e = true;
 #endif
 
+#if(SHT_2x == 1)
+  SHT_2X_e = true;
+#endif
+
+#if(ADS_1015 == 1)
+  ADS_1015_e = true;
+#endif
+
+#if(MPU_9250 == 1)
+  MPU_9250_e = true;
+#endif 
+
 #if(One_Wire == 1)
-  bool MJMCU_8128_e = false;
-  bool BME_680_e = false;
-  bool BME_280_e = false;
-  bool CCS_811_e = false;
-  bool BMP_180_e = false;
-  bool HDC_1080_e = false;
-  bool BH_1750_e = false;
-  uint8_t  sensortype = 99;
+  One_Wire_e = true;
+  sensortype = 100;
 #endif
 
   BoardInitMcu( );
@@ -601,21 +916,29 @@ void setup() {
           {
             Serial.println("found BH1750");
             BH_1750_e = true;
-            sensortype = 6;
             break;
           }
-        case 64: //0x40 -- HDC1080 temperature and humidity sensor
+        case 64: //0x40 -- HDC1080/SHT2X
           {
-            Serial.println("Found HDC1080");
-            HDC_1080_e = true;
-            sensortype = 4;
+            if (SHT2x.GetTemperature() > -100 && SHT2x.GetTemperature() < 100) {
+              Serial.println("found SHT2X");
+              SHT_2X_e = true;
+            } else {
+              Serial.println("Found HDC1080");
+              HDC_1080_e = true;
+            }
             break;
           }
         case 90: //0x5A --CCS811
           {
             Serial.println("Found CCS811");
             CCS_811_e = true;
-            sensortype = 3;
+            break;
+          }
+        case 104: //0x68 -- MPU9250 9-axis sensor
+          {
+            Serial.println("Found MPU9250");
+            MPU_9250_e = true;
             break;
           }
         case 118: //0x76 -- BMP280/BME280
@@ -623,11 +946,9 @@ void setup() {
             if (!bme280.init()) {
               Serial.println("Found BMP280");
               BMP_280_e = true;
-              sensortype = 7;
             } else {
               Serial.println("Found BME280");
               BME_280_e = true;
-              sensortype = 2;
             }
             break;
           }
@@ -636,12 +957,16 @@ void setup() {
             if (!bmp180.begin()) {
               Serial.println("Found BME680");
               BME_680_e = true;
-              sensortype = 1;
             } else {
               Serial.println("Found BMP180");
               BMP_180_e = true;
-              sensortype = 5;
             }
+            break;
+          }
+        case 222: //0x48 -- ADS1015
+          {
+            Serial.println("Found ADS1015");
+            ADS_1015_e = true;
             break;
           }
       }
@@ -746,4 +1071,14 @@ float CalculateIAQ()
   float air_quality_score = hum_score + gas_score;
 
   return air_quality_score;
+}
+
+#define TCAADDR 0x70
+
+void tcaselect(uint8_t i) {
+  if (i > 7) return;
+
+  Wire.beginTransmission(TCAADDR);
+  Wire.write(1 << i);
+  Wire.endTransmission();
 }

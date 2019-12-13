@@ -11,14 +11,15 @@ AUTO_SCAN takes its time, it is not very battery friendly.
 Please select the sensor for saving battery power, for maximum flexibility choose AUTO_SCAN.
 
     #define AUTO_SCAN  1
-    #define MJMCU_8128 0
     #define BME_680    0 
     #define BME_280    0
     #define CCS_811    0
     #define BMP_180    0 
     #define HDC_1080   0
     #define BH_1750    0
-    #define One_Wire   0 // not working
+    #define SHT_2X     0
+    #define ADS_1015   0
+    #define One_Wire   0 // sometime the device hangs
 
 and set your keys:
 
