@@ -15,47 +15,366 @@ i = 0;
 
 if (port === 2) {
   while (i < bytes.length-2) {
+    iicport = bytes[i++].toFixed(0);
     sensor = bytes[i++].toFixed(0);
     if (sensor === "1") { // BME680
-      decoded.BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
-      decoded.BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
-      decoded.BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
-      decoded.BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
-      decoded.BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      if (iicport === "0") {
+        decoded.P0_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P0_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P0_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P0_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P0_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "1") {
+        decoded.P1_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P1_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P1_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P1_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P1_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "2") {
+        decoded.P2_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P2_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P2_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P2_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P2_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "3") {
+        decoded.P3_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P3_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P3_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P3_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P3_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "4") {
+        decoded.P4_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P4_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P4_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P4_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P4_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "5") {
+        decoded.P5_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P5_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P5_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P5_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P5_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "6") {
+        decoded.P6_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P6_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P6_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P6_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P6_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "7") {
+        decoded.P7_BME680_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P7_BME680_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P7_BME680_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P7_BME680_gas = ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P7_BME680_IAQ = ((bytes[i++] << 8) | bytes[i++]);
+      }
     }
     if (sensor === "2") { // BME280
-      decoded.BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
-      decoded.BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
-      decoded.BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {
+        decoded.P0_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P0_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P0_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {
+        decoded.P1_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P1_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P1_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {
+        decoded.P2_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P2_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P2_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {
+        decoded.P3_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P3_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P3_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {
+        decoded.P4_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P4_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P4_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {
+        decoded.P5_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P5_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P5_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {
+        decoded.P6_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P6_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P6_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "8") {
+        decoded.P7_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P7_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+        decoded.P7_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     if (sensor === "3") { // CCS811
-      decoded.CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
-      decoded.CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      if (iicport === "0") {
+        decoded.P0_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P0_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "1") {
+        decoded.P1_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P1_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "2") {
+        decoded.P2_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P2_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "3") {
+        decoded.P3_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P3_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "4") {
+        decoded.P4_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P4_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "5") {
+        decoded.P5_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P5_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "6") {
+        decoded.P6_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P6_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "7") {
+        decoded.P7_CCS811_co2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P7_CCS811_tvoc =  ((bytes[i++] << 8) | bytes[i++]);
+      }
     }
     if (sensor === "4") { // HDC1080
-      decoded.HDC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
-      decoded.HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {
+        decoded.P0_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P0_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {
+        decoded.P1_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P1_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {
+        decoded.P2_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P2_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {
+        decoded.P3_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P3_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {
+        decoded.P4_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P4_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {
+        decoded.P5_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P5_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {
+        decoded.P6_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P6_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {
+        decoded.P7_DC1080_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P7_HDC1080_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     if (sensor === "5") { // BMP180
-      decoded.BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
-      decoded.BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {
+        decoded.P0_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P0_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {
+        decoded.P1_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P1_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {
+        decoded.P2_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P2_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {
+        decoded.P3_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P3_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {
+        decoded.P4_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P4_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {
+        decoded.P5_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P5_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {
+        decoded.P6_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P6_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {
+        decoded.P7_BMP180_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P7_BMP180_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     if (sensor === "6") { // BH1750
-      decoded.BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {  
+        decoded.P0_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {  
+        decoded.P1_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {  
+        decoded.P2_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {  
+        decoded.P3_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {  
+        decoded.P4_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {  
+        decoded.P5_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {  
+        decoded.P6_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {  
+        decoded.P7_BH1750_lux = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     if (sensor === "7") { // BMP280
-      decoded.BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
-      decoded.BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {  
+        decoded.P0_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P0_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {  
+        decoded.P1_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P1_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {  
+        decoded.P2_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P2_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {  
+        decoded.P3_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P3_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {  
+        decoded.P4_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P4_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {  
+        decoded.P5_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P5_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {  
+        decoded.P6_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P6_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {  
+        decoded.P7_BMP280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P7_BMP280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     else if (sensor === "8") { // SHT2X
-      decoded.SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
-      decoded.SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      if (iicport === "0") {
+        decoded.P0_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P0_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {
+        decoded.P1_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P1_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {
+        decoded.P2_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P2_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {
+        decoded.P3_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P3_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {
+        decoded.P4_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P4_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {
+        decoded.P5_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P5_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {
+        decoded.P6_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P6_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {
+        decoded.P7_SHT2X_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100); 
+        decoded.P7_SHT2X_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
     }
     else if (sensor === "9") { // ADS1015/ADS1115
-      decoded.ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
-      decoded.ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
-      decoded.ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
-      decoded.ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      if (iicport === "0") {
+        decoded.P0_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P0_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P0_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P0_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "1") {
+        decoded.P1_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P1_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P1_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P1_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "2") {
+        decoded.P2_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P2_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P2_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P2_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "3") {
+        decoded.P3_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P3_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P3_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P3_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "4") {
+        decoded.P4_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P4_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P4_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P4_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "5") {
+        decoded.P5_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P5_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P5_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P5_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "6") {
+        decoded.P6_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P6_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P6_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P6_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+      if (iicport === "7") {
+        decoded.P7_ADS1015_ADC0 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P7_ADS1015_ADC1 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P7_ADS1015_ADC2 =  ((bytes[i++] << 8) | bytes[i++]);
+        decoded.P7_ADS1015_ADC3 =  ((bytes[i++] << 8) | bytes[i++]);
+      }
+    }
+    else if (sensor === "10") { // MPU9250
+      decoded.ax = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.aY = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.aZ = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.gX = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.gY = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.gZ = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.mX = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.mY = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.mZ = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.mDirection = bytesToFloat(bytes.slice(i,i+=4));
     }
     else if (sensor === "100") { // OneWire
       decoded.OW_01_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);   

@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v1.9.5 by [WASN.eu](https://wasn.eu)
+# v2.0.1 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -31,6 +31,13 @@ and set the DutyCycle in ms:
 
     uint32_t APP_TX_DUTYCYCLE = 900000;
 
+If you would like to add a TCA9548A 8port I2C switch to the I2C bus:
+    
+    #define ModularNode 1
+
+if not 
+
+    #define ModularNode 0
 
 TTN Decoder:
 
