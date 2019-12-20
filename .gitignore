@@ -3,4 +3,5 @@ tools/CubeCellelftool
 tools/dist
 tools/CubeCellflash
 tools/gcc-arm-none-eabi
+tools/._gcc-arm-none-eabi
 .DS_Store

@@ -63,17 +63,35 @@ static void PrepareTxFrame( uint8_t port )
 	digitalWrite(Vext, LOW);
 	pinMode(GPIO0,OUTPUT);
 	digitalWrite(GPIO0,LOW);
-	uint16_t co2;
-	uint16_t tvoc;
+	pinMode(GPIO4,OUTPUT);
+	digitalWrite(GPIO4,HIGH);
+	uint16_t co2=0;
+	uint16_t tvoc=0;
+	uint8_t i=0;
 	ccs.begin();
 	while(!ccs.available());
-	delay(5000);
-	ccs.readData();
-	co2 = ccs.geteCO2();
-	tvoc = ccs.getTVOC();
+  
+	delay(5000);//wait for sensor 
+  
+	//Read 5 times to get the average value
+	while(i<5)
+	{
+		(ccs.available())
+		{
+			if(!ccs.readData())
+			{
+				co2 += ccs.geteCO2();
+				tvoc += ccs.getTVOC();
+				i++;
+			}
+		}
+	}
+	co2/=i;
+	tvoc/=i;
 	Wire.end();
 	digitalWrite(Vext, HIGH);
 	digitalWrite(GPIO0,HIGH);
+	digitalWrite(GPIO4,LOW);
 	uint16_t BatteryVoltage = GetBatteryVoltage();
   
 	AppDataSize = 6;//AppDataSize max value is 64

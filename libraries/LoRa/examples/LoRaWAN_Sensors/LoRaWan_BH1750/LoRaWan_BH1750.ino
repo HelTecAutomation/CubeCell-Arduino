@@ -58,12 +58,18 @@ uint32_t APP_TX_DUTYCYCLE = 15000;
 BH1750 lightMeter;
 static void PrepareTxFrame( uint8_t port )
 {
+	pinMode(GPIO0, OUTPUT);
 	pinMode(Vext, OUTPUT);
+	digitalWrite(GPIO0, HIGH);
 	digitalWrite(Vext, LOW);
 	lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2);
-	float lux = lightMeter.readLightLevel();
+	float lux = lightMeter.readLightLevel();//first measurement may be inaccurate  
+	delay(10);
+	lux = lightMeter.readLightLevel();
 	lightMeter.end();
 	digitalWrite(Vext, HIGH);
+	digitalWrite(GPIO0, LOW);
+	pinMode(GPIO0, ANALOG);
 	uint16_t BatteryVoltage = GetBatteryVoltage();
 	
 	unsigned char *puc;
