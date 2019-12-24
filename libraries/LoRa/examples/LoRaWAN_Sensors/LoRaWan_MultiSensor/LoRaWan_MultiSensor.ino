@@ -12,24 +12,24 @@
    Define your Settings below
 */
 
-#define AUTO_SCAN  1
-#define BME_680    0
-#define BME_280    0
-#define CCS_811    0
-#define BMP_280    0
-#define BMP_180    0
-#define HDC_1080   0
-#define BH_1750    0
-#define SHT_2X     0
-#define ADS_1015   0
-#define MPU_9250   0
-#define One_Wire   0 // sometings hangs
+#define AUTO_SCAN 0
+#define BME_680 0
+#define BME_280 1
+#define CCS_811 0
+#define BMP_280 0
+#define BMP_180 0
+#define HDC_1080 0
+#define BH_1750 0
+#define SHT_2X 0
+#define ADS_1015 0
+#define MPU_9250 0
+#define One_Wire 0
 
-const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+const char myDevEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+const char myAppEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+const char myAppKey[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-#define ModularNode 0   // only usable with a WASN ModularNode
+#define ModularNode 0 // only usable with a WASN ModularNode (TCA)
 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
@@ -55,17 +55,17 @@ extern uint8_t DevEui[];
 extern uint8_t AppEui[];
 extern uint8_t AppKey[];
 
-bool BME_680_e[8] = {0,0,0,0,0,0,0,0};  // 1
-bool BME_280_e[8] = {0,0,0,0,0,0,0,0};  // 2
-bool CCS_811_e[8] = {0,0,0,0,0,0,0,0};  // 3
-bool HDC_1080_e[8] = {0,0,0,0,0,0,0,0}; // 4
-bool BMP_180_e[8] = {0,0,0,0,0,0,0,0};  // 5
-bool BH_1750_e[8] = {0,0,0,0,0,0,0,0};  // 6
-bool BMP_280_e[8] = {0,0,0,0,0,0,0,0};  // 7
-bool SHT_2X_e[8] = {0,0,0,0,0,0,0,0};   // 8
-bool ADS_1015_e[8] = {0,0,0,0,0,0,0,0}; // 9
-bool MPU_9250_e[8] = {0,0,0,0,0,0,0,0}; // 10
-bool One_Wire_e = false; // 100-103
+bool BME_680_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 1
+bool BME_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 2
+bool CCS_811_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 3
+bool HDC_1080_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 4
+bool BMP_180_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 5
+bool BH_1750_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 6
+bool BMP_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 7
+bool SHT_2X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   // 8
+bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 9
+bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 10
+bool One_Wire_e = false;                       // 100-103
 uint8_t sensortype = 0;
 
 /*
@@ -109,7 +109,7 @@ uint8_t sensortype = 0;
 #endif
 
 /*LoraWan Class*/
-DeviceClass_t  CLASS = LORAWAN_CLASS;
+DeviceClass_t CLASS = LORAWAN_CLASS;
 /*OTAA or ABP*/
 bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
 /*ADR enable*/
@@ -157,7 +157,7 @@ BMP280 bmp280;
 BH1750 lightMeter;
 #define ROW 0
 #define ROW_OFFSET 0
-#define addr CY_SFLASH_USERBASE+CY_FLASH_SIZEOF_ROW*ROW + ROW_OFFSET
+#define addr CY_SFLASH_USERBASE + CY_FLASH_SIZEOF_ROW *ROW + ROW_OFFSET
 uint8_t baselineflash[2];
 BME680_Class bme680;
 BME280 bme280;
@@ -165,13 +165,13 @@ BMP085 bmp180;
 MPU9250 mpu9250;
 ADS1015 ads1015;
 
-OneWire  ds(GPIO1);  // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
+OneWire ds(GPIO1); // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
 
 /*!
    \brief   Prepares the payload of the frame
 */
 
-static void PrepareTxFrame( uint8_t port )
+static void PrepareTxFrame(uint8_t port)
 {
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
@@ -180,8 +180,9 @@ static void PrepareTxFrame( uint8_t port )
   AppDataSize = 0;
   int pnr = 0;
 
-#if(ModularNode == 1)
-  for (pnr=0;pnr<8;pnr++) { 
+#if (ModularNode == 1)
+  for (pnr = 0; pnr < 8; pnr++)
+  {
     Serial.print("Sensor Port ");
     Serial.println(pnr);
 #endif
@@ -190,20 +191,21 @@ static void PrepareTxFrame( uint8_t port )
         BME680
     */
 
-    if (BME_680_e[pnr]) {
+    if (BME_680_e[pnr])
+    {
       sensortype = 1;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       bme680.begin(I2C_STANDARD_MODE);
       delay(1000);
       bme680.setOversampling(TemperatureSensor, Oversample16);
-      bme680.setOversampling(HumiditySensor,   Oversample16);
-      bme680.setOversampling(PressureSensor,   Oversample16);
+      bme680.setOversampling(HumiditySensor, Oversample16);
+      bme680.setOversampling(PressureSensor, Oversample16);
       bme680.setIIRFilter(IIR4);
       bme680.setGas(320, 150); // 320C for 150 milliseconds
 
@@ -228,7 +230,8 @@ static void PrepareTxFrame( uint8_t port )
       AppData[AppDataSize++] = (uint8_t)((int)(Humidity * 10.0) >> 8);
       AppData[AppDataSize++] = (uint8_t)((int)(Humidity * 10.0));
 
-      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);
+      ;
       AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0));
 
       AppData[AppDataSize++] = (uint8_t)((int)co2 >> 8);
@@ -252,16 +255,18 @@ static void PrepareTxFrame( uint8_t port )
     /*
       BME280
     */
-    if (BME_280_e[pnr]) {
+    if (BME_280_e[pnr])
+    {
       sensortype = 2;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
-      if (!bme280.init()) {
+      if (!bme280.init())
+      {
         Serial.println("  BME280 error!");
       }
       delay(1000);
@@ -280,7 +285,8 @@ static void PrepareTxFrame( uint8_t port )
       AppData[AppDataSize++] = (uint8_t)((int)(Humidity * 10.0) >> 8);
       AppData[AppDataSize++] = (uint8_t)((int)(Humidity * 10.0));
 
-      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);
+      ;
       AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0));
 
       Serial.print("  BME280: T = ");
@@ -296,14 +302,15 @@ static void PrepareTxFrame( uint8_t port )
         HDC1080
     */
 
-    if (HDC_1080_e[pnr]) {
+    if (HDC_1080_e[pnr])
+    {
       sensortype = 4;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       count = 0;
       hdc1080.begin(0x40);
@@ -311,7 +318,8 @@ static void PrepareTxFrame( uint8_t port )
       Temperature = (float)(hdc1080.readTemperature());
       Humidity = (float)(hdc1080.readHumidity());
       Wire.end();
-      while (Temperature > 120.0 && count < maxtry) {
+      while (Temperature > 120.0 && count < maxtry)
+      {
         hdc1080.begin(0x40);
         delay(500);
         Temperature = (float)(hdc1080.readTemperature());
@@ -320,7 +328,8 @@ static void PrepareTxFrame( uint8_t port )
         count++;
         delay(500);
       }
-      if (Temperature > 120.0) {
+      if (Temperature > 120.0)
+      {
         Temperature = 0.0;
         Humidity = 0.0;
         Serial.println("  HDC ERROR");
@@ -347,14 +356,15 @@ static void PrepareTxFrame( uint8_t port )
       CCS811
     */
 
-    if (CCS_811_e[pnr]) {
+    if (CCS_811_e[pnr])
+    {
       sensortype = 3;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       count = 0;
       ccs.begin();
@@ -362,7 +372,8 @@ static void PrepareTxFrame( uint8_t port )
 
       FLASH_read_at(addr, baselineflash, sizeof(baselineflash));
       baselinetemp = (baselineflash[0] << 8) | baselineflash[1];
-      if (baselinetemp > 0) {
+      if (baselinetemp > 0)
+      {
         baseline = baselinetemp;
         Serial.print("  CCS811 Read BaseLine: ");
         Serial.println(baseline);
@@ -370,7 +381,8 @@ static void PrepareTxFrame( uint8_t port )
       }
       delay(5000);
 
-      while (!ccs.available());
+      while (!ccs.available())
+        ;
       ccs.readData();
       Temperature = ccs.calculateTemperature();
       co2 = ccs.geteCO2();
@@ -383,17 +395,20 @@ static void PrepareTxFrame( uint8_t port )
       Serial.print("  CCS811 Write BaseLine: ");
       Serial.println(baseline);
       Wire.end();
-      while (co2 > 65500.0 && count < maxtry) {
+      while (co2 > 65500.0 && count < maxtry)
+      {
         ccs.begin();
         delay(1000);
-        while (!ccs.available());
+        while (!ccs.available())
+          ;
         ccs.readData();
         co2 = ccs.geteCO2();
         tvoc = ccs.getTVOC();
         Wire.end();
         count++;
       }
-      if (co2 > 65500.0) {
+      if (co2 > 65500.0)
+      {
         co2 = 0.0;
         tvoc = 0.0;
         Serial.println("  CCS ERROR");
@@ -420,14 +435,15 @@ static void PrepareTxFrame( uint8_t port )
       BMP180
     */
 
-    if (BMP_180_e[pnr]) {
+    if (BMP_180_e[pnr])
+    {
       sensortype = 5;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       count = 0;
       bmp180.begin();
@@ -435,7 +451,8 @@ static void PrepareTxFrame( uint8_t port )
       Temperature = (float)(bmp180.readTemperature());
       Pressure = (float)(bmp180.readPressure()) / 100.0;
       Wire.end();
-      while (Temperature > 120.0 && count < maxtry) {
+      while (Temperature > 120.0 && count < maxtry)
+      {
         bmp180.begin();
         delay(500);
         Temperature = (float)(bmp180.readTemperature());
@@ -444,7 +461,8 @@ static void PrepareTxFrame( uint8_t port )
         count++;
         delay(500);
       }
-      if (Temperature > 120.0) {
+      if (Temperature > 120.0)
+      {
         Temperature = 0.0;
         Humidity = 0.0;
         Serial.println("  BMP ERROR");
@@ -456,7 +474,8 @@ static void PrepareTxFrame( uint8_t port )
       AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
       AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);;
+      AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);
+      ;
       AppData[AppDataSize++] = (uint8_t)((int)(Pressure * 10.0));
 
       Serial.print("  BMP180: T = ");
@@ -470,14 +489,15 @@ static void PrepareTxFrame( uint8_t port )
       BH1750
     */
 
-    if (BH_1750_e[pnr]) {
+    if (BH_1750_e[pnr])
+    {
       sensortype = 6;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       count = 0;
       lightMeter.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2);
@@ -502,40 +522,43 @@ static void PrepareTxFrame( uint8_t port )
     /*
         BMP_280
     */
-    if (BMP_280_e[pnr]) {
+    if (BMP_280_e[pnr])
+    {
       sensortype = 7;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       count = 0;
       bmp280.begin();
       delay(500);
       bmp280.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
-                        BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                        BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                        BMP280::FILTER_X16,      /* Filtering. */
-                        BMP280::STANDBY_MS_500); /* Standby time. */
+                         BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                         BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                         BMP280::FILTER_X16,      /* Filtering. */
+                         BMP280::STANDBY_MS_500); /* Standby time. */
       Temperature = bmp280.readTemperature();
       Pressure = (float)bmp280.readPressure() / 100.0;
       Wire.end();
-      while (Pressure > 1190.0 && count < maxtry) {
+      while (Pressure > 1190.0 && count < maxtry)
+      {
         bmp280.begin();
         delay(500);
         bmp280.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
-                          BMP280::SAMPLING_X2,     /* Temp. oversampling */
-                          BMP280::SAMPLING_X16,    /* Pressure oversampling */
-                          BMP280::FILTER_X16,      /* Filtering. */
-                          BMP280::STANDBY_MS_500); /* Standby time. */
+                           BMP280::SAMPLING_X2,     /* Temp. oversampling */
+                           BMP280::SAMPLING_X16,    /* Pressure oversampling */
+                           BMP280::FILTER_X16,      /* Filtering. */
+                           BMP280::STANDBY_MS_500); /* Standby time. */
         Pressure = (float)bmp280.readPressure() / 100.0;
         Wire.end();
         count++;
         delay(500);
       }
-      if (Pressure > 1190.0) {
+      if (Pressure > 1190.0)
+      {
         Pressure = 0;
         Serial.println("  BMP ERROR");
       }
@@ -560,12 +583,13 @@ static void PrepareTxFrame( uint8_t port )
     /*
         SHT_2X
     */
-    if (SHT_2X_e[pnr]) {
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+    if (SHT_2X_e[pnr])
+    {
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       Wire.begin();
       delay(500);
@@ -592,12 +616,13 @@ static void PrepareTxFrame( uint8_t port )
     /*
         ADS_1015
     */
-    if (ADS_1015_e[pnr]) {
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+    if (ADS_1015_e[pnr])
+    {
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       ads1015.begin();
       int16_t adc0, adc1, adc2, adc3;
@@ -607,7 +632,7 @@ static void PrepareTxFrame( uint8_t port )
       adc2 = ads1015.readADC_SingleEnded(2);
       adc3 = ads1015.readADC_SingleEnded(3);
 
-      AppData[AppDataSize++] = pnr; 
+      AppData[AppDataSize++] = pnr;
       AppData[AppDataSize++] = 9;
 
       AppData[AppDataSize++] = ((int)adc0) >> 8;
@@ -635,14 +660,15 @@ static void PrepareTxFrame( uint8_t port )
     /*
       MPU9250
     */
-    if (MPU_9250_e[pnr]) {
+    if (MPU_9250_e[pnr])
+    {
       sensortype = 10;
 
-      #if(ModularNode == 1) 
-        Wire.begin();
-        tcaselect(pnr);
-        delay(100);
-      #endif
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
 
       Wire.begin();
       delay(500);
@@ -654,14 +680,18 @@ static void PrepareTxFrame( uint8_t port )
       delay(200);
       uint8_t sensorId;
 
-      if (mpu9250.readId(&sensorId) == 0) {
+      if (mpu9250.readId(&sensorId) == 0)
+      {
         Serial.println("  MPU9250 sensorId: " + String(sensorId));
-      } else {
+      }
+      else
+      {
         Serial.println("  Cannot read sensorId");
       }
 
       float aX, aY, aZ, aSqrt, gX, gY, gZ, mDirection, mX, mY, mZ;
-      if (mpu9250.accelUpdate() == 0) {
+      if (mpu9250.accelUpdate() == 0)
+      {
         aX = mpu9250.accelX();
         aY = mpu9250.accelY();
         aZ = mpu9250.accelZ();
@@ -670,22 +700,28 @@ static void PrepareTxFrame( uint8_t port )
         Serial.print(", accelY: " + String(aY));
         Serial.print(", accelZ: " + String(aZ));
         Serial.println(", accelSqrt: " + String(aSqrt));
-      } else {
+      }
+      else
+      {
         Serial.println("  Cannod read accel values");
       }
 
-      if (mpu9250.gyroUpdate() == 0) {
+      if (mpu9250.gyroUpdate() == 0)
+      {
         gX = mpu9250.gyroX();
         gY = mpu9250.gyroY();
         gZ = mpu9250.gyroZ();
         Serial.print("  gyroX: " + String(gX));
         Serial.print(", gyroY: " + String(gY));
         Serial.println(", gyroZ: " + String(gZ));
-      } else {
+      }
+      else
+      {
         Serial.println("  Cannot read gyro values");
       }
 
-      if (mpu9250.magUpdate() == 0) {
+      if (mpu9250.magUpdate() == 0)
+      {
         mX = mpu9250.magX();
         mY = mpu9250.magY();
         mZ = mpu9250.magZ();
@@ -694,7 +730,9 @@ static void PrepareTxFrame( uint8_t port )
         Serial.print(", maxY: " + String(mY));
         Serial.print(", magZ: " + String(mZ));
         Serial.println(", horizontal direction: " + String(mDirection));
-      } else {
+      }
+      else
+      {
         Serial.println("  Cannot read mag values");
       }
 
@@ -760,78 +798,94 @@ static void PrepareTxFrame( uint8_t port )
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
     }
-  #if(ModularNode == 1)
+#if (ModularNode == 1)
   }
-  #endif
+#endif
   /*
     One_Wire
   */
-  if (One_Wire_e) {
+  if (One_Wire_e)
+  {
     Serial.println("Scan for OneWire Sensors ...");
     byte present = 0;
     byte type_s;
     byte data[12];
     byte owaddress[8];
     int owsensorcount = 0;
-    Wire.begin();
 
-    if (ds.search(owaddress)) {
+    ds.reset_search();
+    delay(250);
+
+    if (ds.search(owaddress))
+    {
       Serial.print("  OneWire Sensor found with data: ");
-      for(byte i = 0; i < 8; i++) {
+      for (byte i = 0; i < 8; i++)
+      {
         Serial.write(' ');
         Serial.print(owaddress[i], HEX);
       }
 
-      if (OneWire::crc8(owaddress, 7) != owaddress[7]) {
+      if (OneWire::crc8(owaddress, 7) != owaddress[7])
+      {
         Serial.print("  CRC is not valid!");
         return;
       }
       Serial.println();
-  
-      switch (owaddress[0]) {
-        case 0x10:
-          Serial.print("    Chip = DS18S20 (0x10)");  // or old DS1820
-          type_s = 1;
-          break;
-        case 0x28:
-          Serial.print("    Chip = DS18B20 (0x28)");
-          type_s = 0;
-          break;
-        case 0x22:
-          Serial.print("    Chip = DS1822 (0x22)");
-          type_s = 0;
-          break;
-        default:
-          Serial.print("    Device is not known.");
+
+      switch (owaddress[0])
+      {
+      case 0x10:
+        Serial.print("    Chip = DS18S20 (0x10)"); // or old DS1820
+        type_s = 1;
+        break;
+      case 0x28:
+        Serial.print("    Chip = DS18B20 (0x28)");
+        type_s = 0;
+        break;
+      case 0x22:
+        Serial.print("    Chip = DS1822 (0x22)");
+        type_s = 0;
+        break;
+      default:
+        Serial.print("    Device is not known.");
         return;
-      } 
+      }
 
       ds.reset();
       ds.select(owaddress);
-      ds.write(0x44, 1);      //start conv with parsite power
-    
-      delay(1000);    
+      //ds.write(0x44, 1); //start conv with parsite power
+      ds.write(0x44, 1); //start conv with power
+
+      delay(1000);
 
       present = ds.reset();
-      ds.select(owaddress);    
-      ds.write(0xBE);        
-    
+      ds.select(owaddress);
+      ds.write(0xBE);
+
       // 28 AA 68 3B 4A 14 1 AC    = DS18B20 (0x28) 21.75C type_s=0
-      for (byte i = 0; i < 9; i++) {          
+      for (byte i = 0; i < 9; i++)
+      {
         data[i] = ds.read();
       }
-    
+
       int16_t raw = (data[1] << 8) | data[0];
-      if (type_s) {
-        raw = raw << 3; 
-        if (data[7] == 0x10) {
+      if (type_s)
+      {
+        raw = raw << 3;
+        if (data[7] == 0x10)
+        {
           raw = (raw & 0xFFF0) + 12 - data[6];
         }
-      } else {
+      }
+      else
+      {
         byte cfg = (data[4] & 0x60);
-        if (cfg == 0x00) raw = raw & ~7;  
-        else if (cfg == 0x20) raw = raw & ~3; 
-        else if (cfg == 0x40) raw = raw & ~1; 
+        if (cfg == 0x00)
+          raw = raw & ~7;
+        else if (cfg == 0x20)
+          raw = raw & ~3;
+        else if (cfg == 0x40)
+          raw = raw & ~1;
       }
       Temperature = (float)raw / 16.0;
 
@@ -842,7 +896,9 @@ static void PrepareTxFrame( uint8_t port )
       Serial.print(": T=");
       Serial.print(Temperature);
       Serial.println("C");
-    } else {
+    }
+    else
+    {
       Serial.println("  No OneWire Sensors found.");
     }
     ds.reset_search();
@@ -864,80 +920,82 @@ static void PrepareTxFrame( uint8_t port )
   Serial.println();
 }
 
-void setup() {
+void setup()
+{
   memcpy(DevEui, myDevEui, sizeof(myDevEui)); //Add these 3 lines to setup func
   memcpy(AppEui, myAppEui, sizeof(myAppEui));
   memcpy(AppKey, myAppKey, sizeof(myAppKey));
 
-#if(AUTO_SCAN == 1)
-  for (int xx=0;xx<8;xx++) {
-  BME_680_e[xx] = 0;
-  BME_280_e[xx] = 0;
-  CCS_811_e[xx] = 0;
-  BMP_180_e[xx] = 0;
-  HDC_1080_e[xx] = 0;
-  BH_1750_e[xx] = 0;
-  SHT_2X_e[xx] = 0;
-  ADS_1015_e[xx] = 0;
-  MPU_9250_e[xx] = 0;
+#if (AUTO_SCAN == 1)
+  for (int xx = 0; xx < 8; xx++)
+  {
+    BME_680_e[xx] = 0;
+    BME_280_e[xx] = 0;
+    CCS_811_e[xx] = 0;
+    BMP_180_e[xx] = 0;
+    HDC_1080_e[xx] = 0;
+    BH_1750_e[xx] = 0;
+    SHT_2X_e[xx] = 0;
+    ADS_1015_e[xx] = 0;
+    MPU_9250_e[xx] = 0;
   }
   sensortype = 88;
 #endif
 
-#if(BME_680 == 1)
-  BME_680_e = {1,0,0,0,0,0,0,0};
+#if (BME_680 == 1)
+  BME_680_e[0] = 1;
 #endif
 
-#if(BME_280 == 1)
-  BME_280_e = {1,0,0,0,0,0,0,0};
+#if (BME_280 == 1)
+  BME_280_e[0] = 1;
 #endif
 
-#if(CCS_811 == 1)
-  CCS_811_e = {1,0,0,0,0,0,0,0};
+#if (CCS_811 == 1)
+  CCS_811_e[0] = 1;
 #endif
 
-#if(HDC_1080 == 1)
-  HDC_1080_e = {1,0,0,0,0,0,0,0};
+#if (HDC_1080 == 1)
+  HDC_1080_e[0] = 1;
 #endif
 
-#if(BMP_180 == 1)
-  BMP_180_e = {1,0,0,0,0,0,0,0};
+#if (BMP_180 == 1)
+  BMP_180_e[0] = 1;
 #endif
 
-#if(BH_1750 == 1)
-  BH_1750_e = {1,0,0,0,0,0,0,0};
+#if (BH_1750 == 1)
+  BH_1750_e[0] = 1;
 #endif
 
-#if(BMP_280 == 1)
-  BMP_280_e = {1,0,0,0,0,0,0,0};
+#if (BMP_280 == 1)
+  BMP_280_e[0] = 1;
 #endif
 
-#if(SHT_2x == 1)
-  SHT_2X_e = {1,0,0,0,0,0,0,0};
+#if (SHT_2x == 1)
+  SHT_2X_e[0] = 1;
 #endif
 
-#if(ADS_1015 == 1)
-  ADS_1015_e = {1,0,0,0,0,0,0,0};
+#if (ADS_1015 == 1)
+  ADS_1015_e[0] = 1;
 #endif
 
-#if(MPU_9250 == 1)
-  MPU_9250_e = {1,0,0,0,0,0,0,0};
-#endif 
+#if (MPU_9250 == 1)
+  MPU_9250_e[0] = 1;
+#endif
 
-#if(One_Wire == 1)
+#if (One_Wire == 1)
   One_Wire_e = true;
   sensortype = 100;
 #endif
 
-  BoardInitMcu( );
+  BoardInitMcu();
   Serial.begin(115200);
-#if(AT_SUPPORT == 1)
+#if (AT_SUPPORT == 1)
   Enable_AT();
 #endif
   DeviceState = DEVICE_STATE_INIT;
   LoRaWAN.Ifskipjoin();
 
-#if(AUTO_SCAN == 1)
+#if (AUTO_SCAN == 1)
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW); //set vext to high
   delay(500);
@@ -950,15 +1008,16 @@ void setup() {
   nDevices = 0;
   int pnr = 0;
 
-  #if(ModularNode == 1)
-  for (pnr=0;pnr<8;pnr++) { 
+#if (ModularNode == 1)
+  for (pnr = 0; pnr < 8; pnr++)
+  {
     tcaselect(pnr);
     Serial.print(" Port ");
     Serial.println(pnr);
     nDevices = 0;
-  #endif
+#endif
 
-    for (address = 1; address < 127; address++ )
+    for (address = 1; address < 127; address++)
     {
       Wire.beginTransmission(address);
       error = Wire.endTransmission();
@@ -976,66 +1035,75 @@ void setup() {
 
         switch (address)
         {
-          case 35: //0x23 -- BH1750
-            {
-              Serial.println("      found BH1750");
-              BH_1750_e[pnr] = true;
-              break;
-            }
-          case 64: //0x40 -- HDC1080/SHT2X
-            {
-              hdc1080.begin(0x40);
-              delay(200);
-              if (hdc1080.readTemperature() > 120) {
-                Serial.println("      found SHT2X");
-                SHT_2X_e[pnr] = true;
-              } else {
-                Serial.println("      Found HDC1080");
-                HDC_1080_e[pnr] = true;
-              }
-              hdc1080.end();
-              break;
-            }
-         case 90: //0x5A --CCS811
-            {
-              Serial.println("      Found CCS811");
-              CCS_811_e[pnr] = true;
-              break;
-            }
-         case 104: //0x68 -- MPU9250 9-axis sensor
-            {
-              Serial.println("      Found MPU9250");
-              MPU_9250_e[pnr] = true;
-              break;
-            }
-          case 118: //0x76 -- BMP280/BME280
-            {
-              if (!bme280.init()) {
-                Serial.println("      Found BMP280");
-                BMP_280_e[pnr] = true;
-              } else {
-                Serial.println("      Found BME280");
-                BME_280_e[pnr] = true;
-              }
-              break;
-            }
-          case 119: //0x77 -- BME680/BMP180
-            {
-              if (!bmp180.begin()) {
-                Serial.println("      Found BME680");
-                BME_680_e[pnr] = true;
-              } else {
-                Serial.println("      Found BMP180");
-                BMP_180_e[pnr] = true;
-              }
-              break;
-            }
-          case 222: //0x48 -- ADS1015
-            {
-              Serial.println("      Found ADS1015");
-              ADS_1015_e[pnr] = true;
-              break;
-            }
+        case 35: //0x23 -- BH1750
+        {
+          Serial.println("      found BH1750");
+          BH_1750_e[pnr] = true;
+          break;
+        }
+        case 64: //0x40 -- HDC1080/SHT2X
+        {
+          hdc1080.begin(0x40);
+          delay(200);
+          if (hdc1080.readTemperature() > 120)
+          {
+            Serial.println("      found SHT2X");
+            SHT_2X_e[pnr] = true;
+          }
+          else
+          {
+            Serial.println("      Found HDC1080");
+            HDC_1080_e[pnr] = true;
+          }
+          hdc1080.end();
+          break;
+        }
+        case 72: //0x48 -- ADS1015
+        {
+          Serial.println("      Found ADS1015");
+          ADS_1015_e[pnr] = true;
+          break;
+        }
+        case 90: //0x5A --CCS811
+        {
+          Serial.println("      Found CCS811");
+          CCS_811_e[pnr] = true;
+          break;
+        }
+        case 104: //0x68 -- MPU9250 9-axis sensor
+        {
+          Serial.println("      Found MPU9250");
+          MPU_9250_e[pnr] = true;
+          break;
+        }
+        case 118: //0x76 -- BMP280/BME280
+        {
+          if (!bme280.init())
+          {
+            Serial.println("      Found BMP280");
+            BMP_280_e[pnr] = true;
+          }
+          else
+          {
+            Serial.println("      Found BME280");
+            BME_280_e[pnr] = true;
+          }
+          break;
+        }
+        case 119: //0x77 -- BME680/BMP180
+        {
+          if (!bmp180.begin())
+          {
+            Serial.println("      Found BME680");
+            BME_680_e[pnr] = true;
+          }
+          else
+          {
+            Serial.println("      Found BMP180");
+            BMP_180_e[pnr] = true;
+          }
+          break;
+        }
         }
         nDevices++;
       }
@@ -1047,69 +1115,69 @@ void setup() {
         Serial.println(address, HEX);
       }
     }
-    #if(ModularNode == 1)
-      nDevices--;
-    #endif
+#if (ModularNode == 1)
+    nDevices--;
+#endif
     if (nDevices == 0)
     {
       Serial.println("  No Sensors found");
     }
-  #if(ModularNode == 1)
+#if (ModularNode == 1)
   }
-  #endif
-  
+#endif
+
   Wire.end();
 #endif
 }
 
 void loop()
 {
-  switch ( DeviceState )
+  switch (DeviceState)
   {
-    case DEVICE_STATE_INIT:
-      {
-#if(AT_SUPPORT == 1)
-        getDevParam();
+  case DEVICE_STATE_INIT:
+  {
+#if (AT_SUPPORT == 1)
+    getDevParam();
 #endif
-        printDevParam();
-        Serial.print("+LED=");
-        Serial.println(LoraWan_RGB);
-        Serial.println("");
-        Serial.printf("LoRaWan Class % X  start! \r\n", CLASS + 10);
-        LoRaWAN.Init(CLASS, REGION);
-        DeviceState = DEVICE_STATE_JOIN;
-        break;
-      }
-    case DEVICE_STATE_JOIN:
-      {
-        LoRaWAN.Join();
-        break;
-      }
-    case DEVICE_STATE_SEND:
-      {
-        PrepareTxFrame( AppPort );
-        LoRaWAN.Send();
-        DeviceState = DEVICE_STATE_CYCLE;
-        break;
-      }
-    case DEVICE_STATE_CYCLE:
-      {
-        // Schedule next packet transmission
-        TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-        LoRaWAN.Cycle(TxDutyCycleTime);
-        DeviceState = DEVICE_STATE_SLEEP;
-        break;
-      }
-    case DEVICE_STATE_SLEEP:
-      {
-        LoRaWAN.Sleep();
-        break;
-      }
-    default:
-      {
-        DeviceState = DEVICE_STATE_INIT;
-        break;
-      }
+    printDevParam();
+    Serial.print("+LED=");
+    Serial.println(LoraWan_RGB);
+    Serial.println("");
+    Serial.printf("LoRaWan Class % X  start! \r\n", CLASS + 10);
+    LoRaWAN.Init(CLASS, REGION);
+    DeviceState = DEVICE_STATE_JOIN;
+    break;
+  }
+  case DEVICE_STATE_JOIN:
+  {
+    LoRaWAN.Join();
+    break;
+  }
+  case DEVICE_STATE_SEND:
+  {
+    PrepareTxFrame(AppPort);
+    LoRaWAN.Send();
+    DeviceState = DEVICE_STATE_CYCLE;
+    break;
+  }
+  case DEVICE_STATE_CYCLE:
+  {
+    // Schedule next packet transmission
+    TxDutyCycleTime = APP_TX_DUTYCYCLE + randr(0, APP_TX_DUTYCYCLE_RND);
+    LoRaWAN.Cycle(TxDutyCycleTime);
+    DeviceState = DEVICE_STATE_SLEEP;
+    break;
+  }
+  case DEVICE_STATE_SLEEP:
+  {
+    LoRaWAN.Sleep();
+    break;
+  }
+  default:
+  {
+    DeviceState = DEVICE_STATE_INIT;
+    break;
+  }
   }
 }
 
@@ -1121,7 +1189,7 @@ float CalculateIAQ()
   float hum_score, gas_score;
   float gas_reference = co2;
   float hum_reference = 40;
-  int   getgasreference_count = 0;
+  int getgasreference_count = 0;
 
   //Calculate humidity contribution to IAQ index
   if (Humidity >= 38 && Humidity <= 42)
@@ -1137,10 +1205,12 @@ float CalculateIAQ()
   }
 
   //Calculate gas contribution to IAQ index
-  float gas_lower_limit = 5000;   // Bad air quality limit
-  float gas_upper_limit = 50000;  // Good air quality limit
-  if (gas_reference > gas_upper_limit) gas_reference = gas_upper_limit;
-  if (gas_reference < gas_lower_limit) gas_reference = gas_lower_limit;
+  float gas_lower_limit = 5000;  // Bad air quality limit
+  float gas_upper_limit = 50000; // Good air quality limit
+  if (gas_reference > gas_upper_limit)
+    gas_reference = gas_upper_limit;
+  if (gas_reference < gas_lower_limit)
+    gas_reference = gas_lower_limit;
   gas_score = (0.75 / (gas_upper_limit - gas_lower_limit) * gas_reference - (gas_lower_limit * (0.75 / (gas_upper_limit - gas_lower_limit)))) * 100;
 
   //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
@@ -1151,27 +1221,34 @@ float CalculateIAQ()
 
 #define TCAADDR 0x70
 
-void tcaselect(uint8_t i) {
-  if (i > 7) return;
+void tcaselect(uint8_t i)
+{
+  if (i > 7)
+    return;
 
   Wire.beginTransmission(TCAADDR);
   Wire.write(1 << i);
   Wire.endTransmission();
 }
 
-bool AT_user_check(char * cmd, char * content)
+bool AT_user_check(char *cmd, char *content)
 {
-  if(strcmp(cmd,"LED")==0)
+  if (strcmp(cmd, "LED") == 0)
   {
-    if (content[0] == '?') {
+    if (content[0] == '?')
+    {
       Serial.print("+LED=");
       Serial.println(LoraWan_RGB);
-    } else if (content[0] == 1) {
-      #define LoraWan_RGB 1;
+    }
+    else if (content[0] == 1)
+    {
+#define LoraWan_RGB 1;
       Serial.println("+LED=1");
       Serial.println("+OK");
-    } else if (content[0] == 0) {
-      #define LoraWan_RGB 0;
+    }
+    else if (content[0] == 0)
+    {
+#define LoraWan_RGB 0;
       Serial.println("+OK");
     }
     return true;
