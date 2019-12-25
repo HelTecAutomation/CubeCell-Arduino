@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v2.0.1 by [WASN.eu](https://wasn.eu)
+# v2.0.2 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -10,16 +10,19 @@ Selecting AUTO_SCAN the Firmware will try to identify the connected I2C Sensor b
 AUTO_SCAN takes its time, it is not very battery friendly. 
 Please select the sensor for saving battery power, for maximum flexibility choose AUTO_SCAN.
 
-    #define AUTO_SCAN  1
-    #define BME_680    0 
-    #define BME_280    0
-    #define CCS_811    0
-    #define BMP_180    0 
-    #define HDC_1080   0
-    #define BH_1750    0
-    #define SHT_2X     0
-    #define ADS_1015   0
-    #define One_Wire   0 // sometime the device hangs
+    #define AUTO_SCAN 1
+    #define BME_680 0
+    #define BME_280 0
+    #define CCS_811 0
+    #define BMP_280 0
+    #define BMP_180 0
+    #define HDC_1080 0
+    #define BH_1750 0
+    #define SHT_2X 0
+    #define ADS_1015 0
+    #define MPU_9250 0
+    #define LR_VL53L1X 0
+    #define One_Wire 1 // sometime the device hangs
 
 and set your keys:
 
@@ -33,7 +36,7 @@ and set the DutyCycle in ms:
 
 If you would like to add a TCA9548A 8port I2C switch to the I2C bus:
     
-    #define ModularNode 1
+    set the build options "ModularNode" to active
 
 if not 
 

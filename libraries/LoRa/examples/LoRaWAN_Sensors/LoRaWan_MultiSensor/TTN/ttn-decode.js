@@ -364,17 +364,136 @@ if (port === 2) {
       }
     }
     else if (sensor === "10") { // MPU9250
-      decoded.ax = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.aY = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.aZ = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.gX = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.gY = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.gZ = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.mX = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.mY = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.mZ = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.aSqrt = bytesToFloat(bytes.slice(i,i+=4));
-      decoded.mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      if (iicport === "0") {
+        decoded.P0_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P0_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "1") {
+        decoded.P1_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P1_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "2") {
+        decoded.P2_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P2_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "3") {
+        decoded.P3_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P3_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "4") {
+        decoded.P4_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P4_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "5") {
+        decoded.P5_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P5_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "6") {
+        decoded.P6_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P6_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "7") {
+        decoded.P7_MPU9250_ax = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_aY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_aZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_gX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_gY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_gZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_mX = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_mY = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_mZ = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_aSqrt = bytesToFloat(bytes.slice(i,i+=4));
+        decoded.P7_MPU9250_mDirection = bytesToFloat(bytes.slice(i,i+=4));
+      }
+    }
+    else if (sensor === "11") { // VL53L1X
+      if (iicport === "0") {
+        decoded.P0_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "1") {
+        decoded.P1_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "2") {
+        decoded.P2_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "3") {
+        decoded.P3_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "4") {
+        decoded.P4_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "5") {
+        decoded.P5_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "6") {
+        decoded.P6_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
+      if (iicport === "7") {
+        decoded.P7_VL53L1X =_distance = bytesToFloat(bytes.slice(i,i+=4));
+      }
     }
     else if (sensor === "100") { // OneWire
       decoded.OW_01_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);   

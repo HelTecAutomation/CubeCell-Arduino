@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v2.0.1 by WASN.eu
+  v2.0.2 by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
@@ -12,9 +12,9 @@
    Define your Settings below
 */
 
-#define AUTO_SCAN 0
+#define AUTO_SCAN 1
 #define BME_680 0
-#define BME_280 1
+#define BME_280 0
 #define CCS_811 0
 #define BMP_280 0
 #define BMP_180 0
@@ -23,20 +23,19 @@
 #define SHT_2X 0
 #define ADS_1015 0
 #define MPU_9250 0
-#define One_Wire 0
+#define LR_VL53L1X 0
+#define One_Wire 1
 
 const char myDevEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppKey[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-#define ModularNode 0 // only usable with a WASN ModularNode (TCA)
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t APP_TX_DUTYCYCLE = 900000;
 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
-
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 900000;
 
 #include "BH1750.h"
 #include "BMP280.h"
@@ -49,6 +48,7 @@ uint32_t APP_TX_DUTYCYCLE = 900000;
 #include "SHT2x.h"
 #include "ADS1015.h"
 #include "MPU9250.h"
+#include "VL53L1X.h"
 #include "OneWire.h"
 
 extern uint8_t DevEui[];
@@ -65,6 +65,7 @@ bool BMP_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 7
 bool SHT_2X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   // 8
 bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 9
 bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 10
+bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 11
 bool One_Wire_e = false;                       // 100-103
 uint8_t sensortype = 0;
 
@@ -106,6 +107,10 @@ uint8_t sensortype = 0;
 
 #ifndef LORAWAN_Net_Reserve
 #define LORAWAN_Net_Reserve 1
+#endif
+
+#ifndef ModularNode
+#define ModularNode 0
 #endif
 
 /*LoraWan Class*/
@@ -164,6 +169,7 @@ BME280 bme280;
 BMP085 bmp180;
 MPU9250 mpu9250;
 ADS1015 ads1015;
+SFEVL53L1X LRSVL53L1X;
 
 OneWire ds(GPIO1); // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
 
@@ -798,6 +804,46 @@ static void PrepareTxFrame(uint8_t port)
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
     }
+    /*
+        BME680
+    */
+
+    if (LR_VL53L1X_e[pnr])
+    {
+      sensortype = 11;
+
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
+
+      Serial.print("  VL53L1X: ");
+
+      if (!LRSVL53L1X.begin() == 0) { //Begin returns 0 on a good init
+        Serial.println("Sensor failure!");
+      }
+      LRSVL53L1X.setDistanceModeShort();
+      //distanceSensor.setDistanceModeLong();
+      LRSVL53L1X.startRanging(); //Write configuration block of 135 bytes to setup a measurement
+      int distance = LRSVL53L1X.getDistance(); //Get the result of the measurement from the sensor
+      LRSVL53L1X.stopRanging();
+      Serial.print("range: ");
+      Serial.print(distance);
+      Serial.println("mm");
+
+      Wire.end();
+
+      AppData[AppDataSize++] = pnr;
+      AppData[AppDataSize++] = 11;
+
+      unsigned char *puc;
+      puc = (unsigned char *)(&distance);
+      AppData[AppDataSize++] = puc[0];
+      AppData[AppDataSize++] = puc[1];
+      AppData[AppDataSize++] = puc[2];
+      AppData[AppDataSize++] = puc[3];
+    }
 #if (ModularNode == 1)
   }
 #endif
@@ -938,6 +984,7 @@ void setup()
     SHT_2X_e[xx] = 0;
     ADS_1015_e[xx] = 0;
     MPU_9250_e[xx] = 0;
+    LR_VL53L1X_e[xx] = 0;
   }
   sensortype = 88;
 #endif
@@ -980,6 +1027,10 @@ void setup()
 
 #if (MPU_9250 == 1)
   MPU_9250_e[0] = 1;
+#endif
+
+#if (VL53L1X == 1)
+  LR_VL53L1X_e[0] = 1;
 #endif
 
 #if (One_Wire == 1)
@@ -1062,6 +1113,12 @@ void setup()
         {
           Serial.println("      Found ADS1015");
           ADS_1015_e[pnr] = true;
+          break;
+        }
+        case 82: //0x52 -- VL53L1X
+        {
+          Serial.println("      Found VL53L1X");
+          LR_VL53L1X_e[pnr] = true;
           break;
         }
         case 90: //0x5A --CCS811
