@@ -227,6 +227,18 @@ uint16_t GetBatteryVoltage(void)
 	return volt;
 }
 
+
+void __attribute__((weak)) DownLinkDataHandle(McpsIndication_t *mcpsIndication)
+{
+	printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
+	printf("+REV DATA:");
+	for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
+	{
+		printf("%02X",mcpsIndication->Buffer[i]);
+	}
+	printf("\r\n");
+}
+
 /*!
  * \brief   MCPS-Indication event function
  *
@@ -287,19 +299,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	// Check RxSlot
 	if( mcpsIndication->RxData == true )
 	{
-		//memset(temp,0,200);
-		//memset(temp1,0,200);
-
-		//HexToString((const char *)(mcpsIndication->Buffer),mcpsIndication->BufferSize,(char *)(temp1));
-		//temp1[mcpsIndication->BufferSize * 2]='\0';
-
-		printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
-		printf("+REV DATA:");
-		for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
-		{
-			printf("%02X",mcpsIndication->Buffer[i]);
-		}
-		printf("\r\n");
+		DownLinkDataHandle(mcpsIndication);
 	}
 }
 
