@@ -85,14 +85,15 @@ bool SendFrame( void )
 	}
 	else
 	{
-		if( IsTxConfirmed == false )
+		if( IsTxConfirmed == true )
 		{
-			printf("unconfirmed uplink sending ...\r\n");
-			mcpsReq.Type = MCPS_UNCONFIRMED;
-			mcpsReq.Req.Unconfirmed.fPort = AppPort;
-			mcpsReq.Req.Unconfirmed.fBuffer = AppData;
-			mcpsReq.Req.Unconfirmed.fBufferSize = AppDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			printf("confirmed uplink sending ...\r\n");
+			mcpsReq.Type = MCPS_CONFIRMED;
+			mcpsReq.Req.Confirmed.fPort = AppPort;
+			mcpsReq.Req.Confirmed.fBuffer = AppData;
+			mcpsReq.Req.Confirmed.fBufferSize = AppDataSize;
+			mcpsReq.Req.Confirmed.NbTrials = ConfirmedNbTrials;
+			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
 		}
 		else
 		{
@@ -103,6 +104,12 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.fBufferSize = AppDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = ConfirmedNbTrials;
 			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			printf("unconfirmed uplink sending ...\r\n");
+			mcpsReq.Type = MCPS_UNCONFIRMED;
+			mcpsReq.Req.Unconfirmed.fPort = AppPort;
+			mcpsReq.Req.Unconfirmed.fBuffer = AppData;
+			mcpsReq.Req.Unconfirmed.fBufferSize = AppDataSize;
+			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
 		}
 	}
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
