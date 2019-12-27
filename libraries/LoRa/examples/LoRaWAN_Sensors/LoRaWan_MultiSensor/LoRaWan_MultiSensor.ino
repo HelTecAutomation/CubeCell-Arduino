@@ -26,12 +26,39 @@
 #define LR_VL53L1X 0
 #define One_Wire 1
 
+#define ModularNode 0  // TCS9548A I2C 8 port Switch
+
 const char myDevEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppKey[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t APP_TX_DUTYCYCLE = 900000;
+
+/* Indicates if the node is sending confirmed or unconfirmed messages */
+bool IsTxConfirmed = false;
+/*!
+  Number of trials to transmit the frame, if the LoRaMAC layer did not
+  receive an acknowledgment. The MAC performs a datarate adaptation,
+  according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
+  to the following table:
+
+  Transmission nb | Data Rate
+  ----------------|-----------
+  1 (first)       | DR
+  2               | DR
+  3               | max(DR-1,0)
+  4               | max(DR-1,0)
+  5               | max(DR-2,0)
+  6               | max(DR-2,0)
+  7               | max(DR-3,0)
+  8               | max(DR-3,0)
+
+  Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
+  the datarate, in case the LoRaMAC layer did not receive an acknowledgment
+*/
+uint8_t ConfirmedNbTrials = 8;
+
 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
@@ -109,10 +136,6 @@ uint8_t sensortype = 0;
 #define LORAWAN_Net_Reserve 1
 #endif
 
-#ifndef ModularNode
-#define ModularNode 0
-#endif
-
 /*LoraWan Class*/
 DeviceClass_t CLASS = LORAWAN_CLASS;
 /*OTAA or ABP*/
@@ -123,30 +146,6 @@ bool LORAWAN_ADR_ON = LORAWAN_ADR;
 bool KeepNet = LORAWAN_Net_Reserve;
 /*LoraWan REGION*/
 LoRaMacRegion_t REGION = ACTIVE_REGION;
-
-/* Indicates if the node is sending confirmed or unconfirmed messages */
-bool IsTxConfirmed = false;
-/*!
-  Number of trials to transmit the frame, if the LoRaMAC layer did not
-  receive an acknowledgment. The MAC performs a datarate adaptation,
-  according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
-  to the following table:
-
-  Transmission nb | Data Rate
-  ----------------|-----------
-  1 (first)       | DR
-  2               | DR
-  3               | max(DR-1,0)
-  4               | max(DR-1,0)
-  5               | max(DR-2,0)
-  6               | max(DR-2,0)
-  7               | max(DR-3,0)
-  8               | max(DR-3,0)
-
-  Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
-  the datarate, in case the LoRaMAC layer did not receive an acknowledgment
-*/
-uint8_t ConfirmedNbTrials = 8;
 
 /* Application port */
 uint8_t AppPort = 2;
@@ -1299,13 +1298,13 @@ bool AT_user_check(char *cmd, char *content)
     }
     else if (content[0] == 1)
     {
-#define LoraWan_RGB 1;
+#define LoraWan_RGB 1
       Serial.println("+LED=1");
       Serial.println("+OK");
     }
     else if (content[0] == 0)
     {
-#define LoraWan_RGB 0;
+#define LoraWan_RGB 0
       Serial.println("+OK");
     }
     return true;

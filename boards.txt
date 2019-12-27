@@ -5,7 +5,6 @@ menu.LORAWAN_ADR=LORAWAN_ADR
 menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
 menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
 menu.LORAWAN_RGB=LORAWAN_RGB
-menu.ModularNode=ModularNode
 ##############################################################
 
 CubeCell-Board.name=CubeCell-Board
@@ -71,10 +70,6 @@ CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Board.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Board.menu.LORAWAN_RGB.0.build.RGB=0
 
-CubeCell-Board.menu.ModularNode.1=ACTIVE
-CubeCell-Board.menu.ModularNode.1.build.ModularNode=1
-CubeCell-Board.menu.ModularNode.0=DEACTIVE
-CubeCell-Board.menu.ModularNode.0.build.ModularNode=0
 ##############################################################
 
 CubeCell-Capsule.name=CubeCell-Capsule

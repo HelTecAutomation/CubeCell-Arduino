@@ -36,7 +36,7 @@ and set the DutyCycle in ms:
 
 If you would like to add a TCA9548A 8port I2C switch to the I2C bus:
     
-    set the build options "ModularNode" to active
+    #define ModularNode 1 
 
 if not 
 
