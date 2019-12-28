@@ -19,3 +19,4 @@ Currently with following sensor breakout boards:
 | Broadcom APDS-9960 |      GY-9960LLC       | [Sparkfun - patched](https://github.com/sparkfun/APDS-9960_RGB_and_Gesture_Sensor/pull/25) |   Works well   |
 |  Sensirion SHT2x   |       SodaqMoja       |                   [SodaqMoja](https://github.com/SodaqMoja/Sodaq_SHT2x)                    | not tested yet |
 |     ST VL53L1X     |       Sparkfun        |          [Sparkfun](https://github.com/sparkfun/SparkFun_VL53L1X_Arduino_Library)          | not tested yet |
+|   Maxim MAX44009   |  GY-49, CJMCU-44009   |                    [Dan Tudose](https://github.com/dantudose/MAX44009)                     |   Works well   |
