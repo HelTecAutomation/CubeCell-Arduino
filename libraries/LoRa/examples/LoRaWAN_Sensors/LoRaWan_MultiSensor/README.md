@@ -42,6 +42,14 @@ if not
 
     #define ModularNode 0
 
+By default are uplinks send unconfirmed. 
+
+    bool IsTxConfirmed = false;
+
+Set it to true for confirmed uplinks.
+
+
+
 TTN Decoder:
 
   The ttn-decode.js file automaticaly decodes all known sensor types.
