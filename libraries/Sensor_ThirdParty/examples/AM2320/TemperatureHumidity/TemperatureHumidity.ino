@@ -1,4 +1,4 @@
-/**   
+/**
   Adapted to CubeCell HTCC-AB01 by Mike Cochrane
   December 29, 2019
 
@@ -21,26 +21,28 @@
 
 Adafruit_AM2320 am2320 = Adafruit_AM2320();
 
-void setup() {
+void setup()
+{
     pinMode(Vext, OUTPUT);
     Serial.begin(115200);
     Serial.println("Adafruit AM2320 Basic Test");
 }
 
-void loop() {
+void loop()
+{
     // Vext ON
     digitalWrite(Vext, LOW);
-    delay(250);  
-    
+    delay(250);
+
     am2320.begin();
-    delay(400);  
-    
-    Serial.print("Temp: "); 
+    delay(400);
+
+    Serial.print("Temp: ");
     Serial.println(am2320.readTemperature());
-    Serial.print("Hum: "); 
+    Serial.print("Hum: ");
     Serial.println(am2320.readHumidity());
     Wire.end();
-    
+
     // Vext OFF
     digitalWrite(Vext, HIGH);
     delay(1000);
