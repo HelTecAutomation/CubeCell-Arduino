@@ -97,13 +97,6 @@ bool SendFrame( void )
 		}
 		else
 		{
-			printf("confirmed uplink sending ...\r\n");
-			mcpsReq.Type = MCPS_CONFIRMED;
-			mcpsReq.Req.Confirmed.fPort = AppPort;
-			mcpsReq.Req.Confirmed.fBuffer = AppData;
-			mcpsReq.Req.Confirmed.fBufferSize = AppDataSize;
-			mcpsReq.Req.Confirmed.NbTrials = ConfirmedNbTrials;
-			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
 			printf("unconfirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_UNCONFIRMED;
 			mcpsReq.Req.Unconfirmed.fPort = AppPort;
