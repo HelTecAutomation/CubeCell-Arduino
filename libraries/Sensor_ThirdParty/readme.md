@@ -22,3 +22,4 @@ Currently with following sensor breakout boards:
 |   Maxim MAX44009   |  GY-49, CJMCU-44009   |                                    [Dan Tudose](https://github.com/dantudose/MAX44009) - install through library manager                                    |   Works well   |
 |   SiLabs SI1145    |        GY-1145        | [Adafruit - patched by Oleg Moiseenko (merlokk), Mike Cochrane (MikeNZ)](https://github.com/mikenz/A9_Adafruit_SI1145/tree/CubeCell) - download from Github |   Works well   |
 |      VEML6070      |      GY-VEML6070      |                          [Adafruit - patched](https://github.com/mikenz/A9_Adafruit_VEML6070/tree/CubeCell) - download from Github                          |   Works well   |
+|       LM75A        |       CJMCU-75        |                              [M2M Solutions AB](https://github.com/m2m-solutions/M2M_LM75A) - install through library manager                               |   Works well   |
