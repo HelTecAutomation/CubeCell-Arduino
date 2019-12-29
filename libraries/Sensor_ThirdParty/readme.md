@@ -23,3 +23,4 @@ Currently with following sensor breakout boards:
 |   SiLabs SI1145    |        GY-1145        | [Adafruit - patched by Oleg Moiseenko (merlokk), Mike Cochrane (MikeNZ)](https://github.com/mikenz/A9_Adafruit_SI1145/tree/CubeCell) - download from Github |   Works well   |
 |      VEML6070      |      GY-VEML6070      |                          [Adafruit - patched](https://github.com/mikenz/A9_Adafruit_VEML6070/tree/CubeCell) - download from Github                          |   Works well   |
 |       LM75A        |       CJMCU-75        |                              [M2M Solutions AB](https://github.com/m2m-solutions/M2M_LM75A) - install through library manager                               |   Works well   |
+| Microchip MCP9808  | Adafruit, CJMCU-9808  |                             [Adafruit](https://github.com/adafruit/Adafruit_MCP9808_Library)  - install through library manager                             |   Works well   |
