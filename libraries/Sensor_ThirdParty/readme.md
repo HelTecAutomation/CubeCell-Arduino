@@ -28,3 +28,4 @@ Currently with following sensor breakout boards:
 |   SiLabs Si7021    | Adafruit, Sparkfun, GY-21 |                                  [Adafruit](https://github.com/adafruit/Adafruit_Si7021) - install through library manager                                  |   Works well   |
 |     TE HTU21D      | Adafruit, Sparkfun, GY-21 |                     [Sparkfun](https://github.com/sparkfun/SparkFun_HTU21D_Breakout_Arduino_Library) - install through library manager                      |   Works well   |
 |    Asair AHT10     |    Various AliExpress     |                                             [Thinary](https://github.com/Thinary/AHT10) - download from Github                                              |   Works well   |
+|  Sensirion SHT3x   |         Adafruit          |                                  [Adafruit](https://github.com/adafruit/Adafruit_SHT31) - install through library manager                                   |   Works well   |
