@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v2.0.2 by [WASN.eu](https://wasn.eu)
+# v2.0.4 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.

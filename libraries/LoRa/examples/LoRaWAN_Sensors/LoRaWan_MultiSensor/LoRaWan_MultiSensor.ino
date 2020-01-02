@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v2.0.2 by WASN.eu
+  v2.0.4 by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
@@ -24,7 +24,8 @@
 #define ADS_1015 0
 #define MPU_9250 0
 #define LR_VL53L1X 0
-#define One_Wire 1
+#define HMC_5883L 0
+#define One_Wire 0
 
 #define ModularNode 0  // TCS9548A I2C 8 port Switch
 
@@ -64,6 +65,8 @@ uint8_t ConfirmedNbTrials = 8;
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
 
+String wasnver = "2.0.4";
+
 #include "BH1750.h"
 #include "BMP280.h"
 #include "HDC1080.h"
@@ -93,6 +96,7 @@ bool SHT_2X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   // 8
 bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 9
 bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 10
 bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 11
+bool HMC_5883L_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 12
 bool One_Wire_e = false;                       // 100-103
 uint8_t sensortype = 0;
 
@@ -181,6 +185,8 @@ static void PrepareTxFrame(uint8_t port)
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
   delay(500);
+  pinMode(GPIO0, OUTPUT);
+  digitalWrite(GPIO0, LOW);
 
   AppDataSize = 0;
   int pnr = 0;
@@ -804,7 +810,7 @@ static void PrepareTxFrame(uint8_t port)
       AppData[AppDataSize++] = puc[3];
     }
     /*
-        BME680
+        VL53L1X
     */
 
     if (LR_VL53L1X_e[pnr])
@@ -838,6 +844,72 @@ static void PrepareTxFrame(uint8_t port)
 
       unsigned char *puc;
       puc = (unsigned char *)(&distance);
+      AppData[AppDataSize++] = puc[0];
+      AppData[AppDataSize++] = puc[1];
+      AppData[AppDataSize++] = puc[2];
+      AppData[AppDataSize++] = puc[3];
+    }
+    /*
+        HMC5883L
+    */
+
+    if (HMC_5883L_e[pnr])
+    {
+      sensortype = 12;
+
+#if (ModularNode == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
+
+      Serial.print("  HMC5883L: ");
+
+      #define hmx5883address 0x0D // 0x1E 0x0D
+      Wire.beginTransmission(hmx5883address); //open communication with HMC5883
+      Wire.write(0x02); //select mode register
+      Wire.write(0x00); //continuous measurement mode
+      Wire.endTransmission();
+
+      int magx,magy,magz; //triple axis data
+      Wire.beginTransmission(hmx5883address);
+      Wire.write(0x03); //select register 3, X MSB register
+      Wire.endTransmission();
+      //Read data from each axis, 2 registers per axis
+      Wire.requestFrom(hmx5883address, 6);
+      if(6<=Wire.available()){
+        magx = Wire.read()<<8; //X msb
+        magx |= Wire.read(); //X lsb
+        magz = Wire.read()<<8; //Z msb
+        magz |= Wire.read(); //Z lsb
+        magy = Wire.read()<<8; //Y msb
+        magy |= Wire.read(); //Y lsb
+      }
+
+      Serial.print("X: ");
+      Serial.print(magx);
+      Serial.print(", Y: ");   
+      Serial.print(magz);
+      Serial.print(", Z: ");   
+      Serial.println(magz);
+
+      Wire.end();
+
+      AppData[AppDataSize++] = pnr;
+      AppData[AppDataSize++] = 12;
+
+      unsigned char *puc;
+      puc = (unsigned char *)(&magx);
+      AppData[AppDataSize++] = puc[0];
+      AppData[AppDataSize++] = puc[1];
+      AppData[AppDataSize++] = puc[2];
+      AppData[AppDataSize++] = puc[3];
+      puc = (unsigned char *)(&magy);
+      AppData[AppDataSize++] = puc[0];
+      AppData[AppDataSize++] = puc[1];
+      AppData[AppDataSize++] = puc[2];
+      AppData[AppDataSize++] = puc[3];
+      puc = (unsigned char *)(&magz);
       AppData[AppDataSize++] = puc[0];
       AppData[AppDataSize++] = puc[1];
       AppData[AppDataSize++] = puc[2];
@@ -898,7 +970,6 @@ static void PrepareTxFrame(uint8_t port)
 
       ds.reset();
       ds.select(owaddress);
-      //ds.write(0x44, 1); //start conv with parsite power
       ds.write(0x44, 1); //start conv with power
 
       delay(1000);
@@ -907,7 +978,6 @@ static void PrepareTxFrame(uint8_t port)
       ds.select(owaddress);
       ds.write(0xBE);
 
-      // 28 AA 68 3B 4A 14 1 AC    = DS18B20 (0x28) 21.75C type_s=0
       for (byte i = 0; i < 9; i++)
       {
         data[i] = ds.read();
@@ -956,18 +1026,12 @@ static void PrepareTxFrame(uint8_t port)
   AppData[AppDataSize++] = (uint8_t)BatteryVoltage;
   Serial.print("BatteryVoltage: ");
   Serial.print(BatteryVoltage);
-  //Serial.print(", AppDataSize: ");
-  //Serial.println(AppDataSize);
-  //for (int i = 0; i < AppDataSize; i++) {
-  //  Serial.print(AppData[i], HEX);
-  //  Serial.print(" ");
-  //}
   Serial.println();
 }
 
 void setup()
 {
-  memcpy(DevEui, myDevEui, sizeof(myDevEui)); //Add these 3 lines to setup func
+  memcpy(DevEui, myDevEui, sizeof(myDevEui));
   memcpy(AppEui, myAppEui, sizeof(myAppEui));
   memcpy(AppKey, myAppKey, sizeof(myAppKey));
 
@@ -984,6 +1048,7 @@ void setup()
     ADS_1015_e[xx] = 0;
     MPU_9250_e[xx] = 0;
     LR_VL53L1X_e[xx] = 0;
+    HMC_5883L_e[xx] = 0;
   }
   sensortype = 88;
 #endif
@@ -1032,6 +1097,10 @@ void setup()
   LR_VL53L1X_e[0] = 1;
 #endif
 
+#if (HMC_5883L == 1)
+  HMC_5883L_e[0] = 1;
+#endif
+
 #if (One_Wire == 1)
   One_Wire_e = true;
   sensortype = 100;
@@ -1039,17 +1108,24 @@ void setup()
 
   BoardInitMcu();
   Serial.begin(115200);
+  Serial.println("Copyright @ 2019 WASN.eu");
+  Serial.print("FW-version: ");
+  Serial.println(wasnver);
+  Serial.println("");
 #if (AT_SUPPORT == 1)
   Enable_AT();
 #endif
   DeviceState = DEVICE_STATE_INIT;
   LoRaWAN.Ifskipjoin();
 
+pinMode(Vext, OUTPUT);
+digitalWrite(Vext, LOW); //set vext to high
+delay(500);
+pinMode(GPIO0, OUTPUT);
+digitalWrite(GPIO0, LOW);
+Wire.begin();
+
 #if (AUTO_SCAN == 1)
-  pinMode(Vext, OUTPUT);
-  digitalWrite(Vext, LOW); //set vext to high
-  delay(500);
-  Wire.begin();
   byte error, address;
   int nDevices;
 
@@ -1057,15 +1133,17 @@ void setup()
 
   nDevices = 0;
   int pnr = 0;
+  int unknowndev = 0;
 
-#if (ModularNode == 1)
+  #if (ModularNode == 1)
   for (pnr = 0; pnr < 8; pnr++)
   {
     tcaselect(pnr);
     Serial.print(" Port ");
     Serial.println(pnr);
     nDevices = 0;
-#endif
+    unknowndev = 0;
+  #endif
 
     for (address = 1; address < 127; address++)
     {
@@ -1085,81 +1163,102 @@ void setup()
 
         switch (address)
         {
-        case 35: //0x23 -- BH1750
-        {
-          Serial.println("      found BH1750");
-          BH_1750_e[pnr] = true;
-          break;
-        }
-        case 64: //0x40 -- HDC1080/SHT2X
-        {
-          hdc1080.begin(0x40);
-          delay(200);
-          if (hdc1080.readTemperature() > 120)
+          case 13: //0x0D -- HMC5883L
           {
-            Serial.println("      found SHT2X");
-            SHT_2X_e[pnr] = true;
+              Serial.println("      found HMC5883L");
+              HMC_5883L_e[pnr] = true;
+              break;
           }
-          else
+          case 35: //0x23 -- BH1750
           {
-            Serial.println("      Found HDC1080");
-            HDC_1080_e[pnr] = true;
+            Serial.println("      found BH1750");
+            BH_1750_e[pnr] = true;
+            break;
           }
-          hdc1080.end();
-          break;
-        }
-        case 72: //0x48 -- ADS1015
-        {
-          Serial.println("      Found ADS1015");
-          ADS_1015_e[pnr] = true;
-          break;
-        }
-        case 82: //0x52 -- VL53L1X
-        {
-          Serial.println("      Found VL53L1X");
-          LR_VL53L1X_e[pnr] = true;
-          break;
-        }
-        case 90: //0x5A --CCS811
-        {
-          Serial.println("      Found CCS811");
-          CCS_811_e[pnr] = true;
-          break;
-        }
-        case 104: //0x68 -- MPU9250 9-axis sensor
-        {
-          Serial.println("      Found MPU9250");
-          MPU_9250_e[pnr] = true;
-          break;
-        }
-        case 118: //0x76 -- BMP280/BME280
-        {
-          if (!bme280.init())
+          case 64: //0x40 -- HDC1080/SHT2X
           {
-            Serial.println("      Found BMP280");
-            BMP_280_e[pnr] = true;
+            hdc1080.begin(0x40);
+            delay(200);
+            if (hdc1080.readTemperature() > 120)
+            {
+              Serial.println("      found SHT2X");
+              SHT_2X_e[pnr] = true;
+            }
+            else
+            {
+              Serial.println("      Found HDC1080");
+              HDC_1080_e[pnr] = true;
+            }
+            //hdc1080.end();
+            break;
           }
-          else
+          case 72: //0x48 -- ADS1015
           {
-            Serial.println("      Found BME280");
-            BME_280_e[pnr] = true;
+            Serial.println("      Found ADS1015");
+            ADS_1015_e[pnr] = true;
+            break;
           }
-          break;
-        }
-        case 119: //0x77 -- BME680/BMP180
-        {
-          if (!bmp180.begin())
+          case 82: //0x52 -- VL53L1X
           {
-            Serial.println("      Found BME680");
-            BME_680_e[pnr] = true;
+            Serial.println("      Found VL53L1X");
+            LR_VL53L1X_e[pnr] = true;
+            break;
           }
-          else
+          case 90: //0x5A --CCS811
           {
-            Serial.println("      Found BMP180");
-            BMP_180_e[pnr] = true;
+            Serial.println("      Found CCS811");
+            CCS_811_e[pnr] = true;
+            break;
           }
-          break;
-        }
+          case 104: //0x68 -- MPU9250 9-axis sensor
+          {
+            Serial.println("      Found MPU9250");
+            MPU_9250_e[pnr] = true;
+            break;
+          }
+          case 118: //0x76 -- BMP280/BME280
+          {
+            if (!bme280.init())
+            {
+              Serial.println("      Found BMP280");
+              BMP_280_e[pnr] = true;
+            }
+            else
+            {
+              Serial.println("      Found BME280");
+              BME_280_e[pnr] = true;
+            }
+            break;
+          }
+          case 119: //0x77 -- BME680/BMP180
+          {
+            if (!bmp180.begin())
+            {
+              Serial.println("      Found BME680");
+              BME_680_e[pnr] = true;
+            }
+            else
+            {
+              Serial.println("      Found BMP180");
+              BMP_180_e[pnr] = true;
+            }
+            break;
+          }
+          default:
+          {
+            if (address != 112 && address > 2) {
+              Serial.print("      Unknown Sensor at address 0x");
+              if (address < 16)
+                Serial.print("0");
+              Serial.println(address, HEX);
+            }
+            unknowndev++;
+            if (unknowndev == address && address > 1) {
+              address = 128;
+              Serial.println("     Sensor Bus error");
+            }
+            break;
+          }
         }
         nDevices++;
       }
@@ -1196,9 +1295,6 @@ void loop()
     getDevParam();
 #endif
     printDevParam();
-    Serial.print("+LED=");
-    Serial.println(LoraWan_RGB);
-    Serial.println("");
     Serial.printf("LoRaWan Class % X  start! \r\n", CLASS + 10);
     LoRaWAN.Init(CLASS, REGION);
     DeviceState = DEVICE_STATE_JOIN;
@@ -1289,23 +1385,12 @@ void tcaselect(uint8_t i)
 
 bool AT_user_check(char *cmd, char *content)
 {
-  if (strcmp(cmd, "LED") == 0)
+  if (strcmp(cmd, "VER") == 0) 
   {
     if (content[0] == '?')
     {
-      Serial.print("+LED=");
-      Serial.println(LoraWan_RGB);
-    }
-    else if (content[0] == 1)
-    {
-#define LoraWan_RGB 1
-      Serial.println("+LED=1");
-      Serial.println("+OK");
-    }
-    else if (content[0] == 0)
-    {
-#define LoraWan_RGB 0
-      Serial.println("+OK");
+      Serial.print("+VER=");
+      Serial.println(wasnver);
     }
     return true;
   }
@@ -1317,14 +1402,17 @@ void DownLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
   Serial.printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
   Serial.print("+REV DATA:");
-  for(uint8_t i=0;i<mcpsIndication->BufferSize;i++)
-  {
+  for(uint8_t i=0;i<mcpsIndication->BufferSize;i++) {
     Serial.printf("%02X",mcpsIndication->Buffer[i]);
   }
   Serial.println();
-  uint32_t color=mcpsIndication->Buffer[0]<<16|mcpsIndication->Buffer[1]<<8|mcpsIndication->Buffer[2];
-#if(LoraWan_RGB==1)
-  RGB_ON(color,5000);
-  RGB_OFF();
-#endif
+  for(uint8_t i=0;i<mcpsIndication->BufferSize;i++) {
+    if (mcpsIndication->Buffer[i] == 220) { // DC for APP_TX_DUTYCYCLE; 0D BB A0  for 900000 (15min); 04 93 E0 for 300000 (5min)
+      APP_TX_DUTYCYCLE = mcpsIndication->Buffer[i++]<<32|mcpsIndication->Buffer[i++]<<16|mcpsIndication->Buffer[i++]<<8|mcpsIndication->Buffer[i++];
+      Serial.print("  new DutyCycle received: ");
+      Serial.print(APP_TX_DUTYCYCLE);
+      Serial.println("ms");
+      SaveDr();
+    }
+  }
 }
