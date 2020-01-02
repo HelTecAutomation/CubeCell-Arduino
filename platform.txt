@@ -68,7 +68,7 @@ recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compil
 ## Combine gc-sections, archives, and objects
 recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" -Wl,--start-group "-L{build.path}" -mcpu=cortex-m0plus -mthumb -mthumb-interwork "-L{compiler.sdk.path}/projects/PSoC4"  {compiler.c.elf.extra_flags} "-T{compiler.sdk.path}/projects/PSoC4/cm0plusgcc.ld" -lstdc++ -lm "{compiler.sdk.path}/projects/CubeCellLib.a" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files}  -lm "{build.path}/{archive_file}" -Wl,--end-group
 
-recipe.objcopy.hex.pattern={tools.CubeCellelftool.cmd} "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.project_name}.cyacd"
+recipe.objcopy.hex.pattern={tools.CubeCellelftool.cmd} "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.cyacd" 
 
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.hex"
 recipe.size.regex=Total\s+([0-9]+).*
@@ -76,4 +76,4 @@ recipe.size.regex=Total\s+([0-9]+).*
 tools.CubeCellflash.upload.protocol=
 tools.CubeCellflash.upload.params.verbose=
 tools.CubeCellflash.upload.params.quiet=
-tools.CubeCellflash.upload.pattern="{cmd}" -serial "{serial.port}" "{build.path}/{build.project_name}.cyacd"
+tools.CubeCellflash.upload.pattern="{cmd}" -serial "{serial.port}" "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.cyacd"
