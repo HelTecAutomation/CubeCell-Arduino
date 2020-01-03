@@ -27,7 +27,7 @@
 #include <math.h>
 #include <ASR_Arduino.h>
 #include <HardwareSerial.h>
-#include <CyLib.h> 
+#include <CyLib.h>
 #include "radio.h"
 #include "board.h"
 #include "timer.h"
@@ -35,6 +35,7 @@
 #include "hw.h"
 #include "low_power.h"
 #include "asr_timer.h"
+#include "binary.h"
 
 #define ARDUINO_ARCH_SAMD 1
 
@@ -50,13 +51,13 @@
 #define LSBFIRST 0
 #define MSBFIRST 1
 
-#define  lowByte(w)   ((w) & 0xff) 
-#define  highByte(w)   ((w) >> 8) 
-#define  bitRead(value, bit)   (((value) >> (bit)) & 0x01) 
+#define  lowByte(w)   ((w) & 0xff)
+#define  highByte(w)   ((w) >> 8)
+#define  bitRead(value, bit)   (((value) >> (bit)) & 0x01)
 #define  bitWrite(value, bit, bitvalue)   (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
-#define  bitSet(value, bit)   ((value) |= (1UL << (bit))) 
-#define  bitClear(value, bit)   ((value) &= ~(1UL << (bit))) 
-#define  bit(b)   (1 << (b)) 
+#define  bitSet(value, bit)   ((value) |= (1UL << (bit)))
+#define  bitClear(value, bit)   ((value) &= ~(1UL << (bit)))
+#define  bit(b)   (1 << (b))
 
 #define min(a, b) ((a)<(b)?(a):(b))
 #define max(a, b) ((a)>(b)?(a):(b))
