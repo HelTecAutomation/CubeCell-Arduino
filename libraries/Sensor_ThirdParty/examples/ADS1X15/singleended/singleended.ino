@@ -1,8 +1,8 @@
 #include <Wire.h>
-#include <ADS1015.h>
+#include <Adafruit_ADS1015.h>
 
-// ADS1115 ads;  /* Use this for the 16-bit version */
-ADS1015 ads;     /* Use thi for the 12-bit version */
+Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
+// Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
 void setup(void) 
 {
@@ -36,14 +36,18 @@ void loop(void)
 {
   int16_t adc0, adc1, adc2, adc3;
 
+  /* Be sure to update this value based on the IC and the gain settings! */
+  //float   multiplier = 3.0F;    /* ADS1015 @ +/- 6.144V gain (12-bit results) */
+  float multiplier = 0.1875F; /* ADS1115  @ +/- 6.144V gain (16-bit results) */
+
   adc0 = ads.readADC_SingleEnded(0);
   adc1 = ads.readADC_SingleEnded(1);
   adc2 = ads.readADC_SingleEnded(2);
   adc3 = ads.readADC_SingleEnded(3);
-  Serial.print("AIN0: "); Serial.println(adc0);
-  Serial.print("AIN1: "); Serial.println(adc1);
-  Serial.print("AIN2: "); Serial.println(adc2);
-  Serial.print("AIN3: "); Serial.println(adc3);
+  Serial.print("AIN0: "); Serial.println(adc0 * multiplier);
+  Serial.print("AIN1: "); Serial.println(adc1 * multiplier);
+  Serial.print("AIN2: "); Serial.println(adc2 * multiplier);
+  Serial.print("AIN3: "); Serial.println(adc3 * multiplier);
   Serial.println(" ");
   
   delay(1000);
