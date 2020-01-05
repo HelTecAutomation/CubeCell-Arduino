@@ -28,7 +28,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "BME280.h"
+#include "Seeed_BME280.h"
 #include <Wire.h>
 
 BME280 bme280;
@@ -38,7 +38,7 @@ void setup()
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
   delay(500);
-  
+
   Serial.begin(115200);
   if(!bme280.init()){
     Serial.println("Device error!");
@@ -48,12 +48,12 @@ void setup()
 void loop()
 {
   float pressure;
-  
+
   //get and print temperatures
   Serial.print("Temp: ");
   Serial.print(bme280.getTemperature());
   Serial.println("C");//The unit for  Celsius because original arduino don't support speical symbols
-  
+
   //get and print atmospheric pressure data
   Serial.print("Pressure: ");
   Serial.print(pressure = bme280.getPressure());

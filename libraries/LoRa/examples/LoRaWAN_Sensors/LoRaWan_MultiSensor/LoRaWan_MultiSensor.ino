@@ -73,10 +73,10 @@ String wasnver = "2.0.4";
 #include "CCS811.h"
 #include "hal/soc/flash.h"
 #include "BME680.h"
-#include "BME280.h"
+#include "Seeed_BME280.h"
 #include "BMP180.h"
 #include "SHT2x.h"
-#include "ADS1015.h"
+#include "Adafruit_ADS1015.h"
 #include "MPU9250.h"
 #include "VL53L1X.h"
 #include "OneWire.h"
@@ -171,7 +171,7 @@ BME680_Class bme680;
 BME280 bme280;
 BMP085 bmp180;
 MPU9250 mpu9250;
-ADS1015 ads1015;
+Adafruit_ADS1015 ads1015;
 SFEVL53L1X LRSVL53L1X;
 
 OneWire ds(GPIO1); // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
@@ -888,9 +888,9 @@ static void PrepareTxFrame(uint8_t port)
 
       Serial.print("X: ");
       Serial.print(magx);
-      Serial.print(", Y: ");   
+      Serial.print(", Y: ");
       Serial.print(magz);
-      Serial.print(", Z: ");   
+      Serial.print(", Z: ");
       Serial.println(magz);
 
       Wire.end();
@@ -1385,7 +1385,7 @@ void tcaselect(uint8_t i)
 
 bool AT_user_check(char *cmd, char *content)
 {
-  if (strcmp(cmd, "VER") == 0) 
+  if (strcmp(cmd, "VER") == 0)
   {
     if (content[0] == '?')
     {
