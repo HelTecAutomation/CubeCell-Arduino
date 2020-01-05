@@ -35,3 +35,4 @@ Currently with following sensor breakout boards:
 |     TI INA219      | Adafruit, Sparkfun, GY-219 |                                  [Adafruit](https://github.com/adafruit/Adafruit_INA219) - install through library manager                                  |   Works well   |
 |     TI INA219      | Adafruit, Sparkfun, GY-219 |                                      [SV-Zanshin](https://github.com/SV-Zanshin/INA) - install through library manager                                      |   Works well   |
 |     TI INA226      |         CJMCU-226          |                                      [SV-Zanshin](https://github.com/SV-Zanshin/INA) - install through library manager                                      |   Works well   |
+|   Maxim DS18B20    |             -              |          [Miles Burton](https://github.com/milesburton/Arduino-Temperature-Control-Library) - install through library manager "DallasTemperature"           |   Works well   |
