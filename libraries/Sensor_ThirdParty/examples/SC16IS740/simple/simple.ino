@@ -18,7 +18,7 @@ void setup() {
 void loop() {
 	while(extSerial.available()) {
 		int c = extSerial.read();
-		Log.info("received %d", c);
+		Serial.println("received %d", c);
 	}
 
 	extSerial.print(out);
