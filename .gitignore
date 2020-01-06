@@ -6,4 +6,4 @@ tools/gcc-arm-none-eabi
 tools/._gcc-arm-none-eabi
 .DS_Store
 .development
-
+.vscode
