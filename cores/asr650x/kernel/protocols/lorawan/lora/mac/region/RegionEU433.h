@@ -255,6 +255,12 @@
  */
 #define EU433_LC3                                   { 433575000, 0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
 
+#define EU433_LC4                                   { 433775000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+#define EU433_LC5                                   { 433975000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+#define EU433_LC6                                   { 434175000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+#define EU433_LC7                                   { 434375000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+#define EU433_LC8                                   { 434575000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+
 /*!
  * LoRaMac channels which are allowed for the join procedure
  */
