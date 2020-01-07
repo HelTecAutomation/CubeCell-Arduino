@@ -95,6 +95,7 @@ public:
 
 protected:
     int _uart_nr;
+    uint32_t SerialBaud;
     //uart_t* _uart;
 };
 

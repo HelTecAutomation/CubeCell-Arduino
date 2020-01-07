@@ -23,6 +23,7 @@ void HardwareSerial::begin(unsigned long baud, uint32_t config, int8_t rxPin, in
   {
 	  UART_1_Start();
   }
+  SerialBaud=baud;
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
@@ -30,6 +31,7 @@ void HardwareSerial::updateBaudRate(unsigned long baud)
 	uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/baud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
 	UART_1_SCBCLK_DIV_REG = div<<8;
 	UART_1_SCBCLK_CMD_REG = 0x8000FF41u;
+	SerialBaud=baud;
 }
 
 void HardwareSerial::end()
@@ -58,8 +60,15 @@ void HardwareSerial::setDebugOutput(bool en)
 
 int HardwareSerial::available(void)
 {
-   return UART_1_SpiUartGetRxBufferSize();
-
+	uint8_t buffsize;
+	for(uint32_t i=0;i<(23040000/SerialBaud);i++)
+	{
+		buffsize=UART_1_SpiUartGetRxBufferSize();
+		if(buffsize){
+			return buffsize;
+		}
+	}
+	return 0;
 }
 int HardwareSerial::availableForWrite(void)
 {
