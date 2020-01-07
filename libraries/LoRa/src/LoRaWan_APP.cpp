@@ -8,6 +8,10 @@ Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #include "RegionEU868.h"
 #endif
 
+#if REGION_EU433
+#include "RegionEU433.h"
+#endif
+
 /*!
  * Default datarate
  */
@@ -85,7 +89,16 @@ bool SendFrame( void )
 	}
 	else
 	{
-		if( IsTxConfirmed == true )
+		if( IsTxConfirmed == false )
+		{
+			printf("unconfirmed uplink sending ...\r\n");
+			mcpsReq.Type = MCPS_UNCONFIRMED;
+			mcpsReq.Req.Unconfirmed.fPort = AppPort;
+			mcpsReq.Req.Unconfirmed.fBuffer = AppData;
+			mcpsReq.Req.Unconfirmed.fBufferSize = AppDataSize;
+			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+		}
+		else
 		{
 			printf("confirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_CONFIRMED;
@@ -94,15 +107,6 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.fBufferSize = AppDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = ConfirmedNbTrials;
 			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
-		}
-		else
-		{
-			printf("unconfirmed uplink sending ...\r\n");
-			mcpsReq.Type = MCPS_UNCONFIRMED;
-			mcpsReq.Req.Unconfirmed.fPort = AppPort;
-			mcpsReq.Req.Unconfirmed.fBuffer = AppData;
-			mcpsReq.Req.Unconfirmed.fBufferSize = AppDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
 		}
 	}
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
@@ -384,6 +388,15 @@ static void lwan_dev_params_update( void )
 	LoRaMacChannelAdd( 6, ( ChannelParams_t )EU868_LC7 );
 	LoRaMacChannelAdd( 7, ( ChannelParams_t )EU868_LC8 );
 #endif
+
+#ifdef REGION_EU433
+		LoRaMacChannelAdd( 3, ( ChannelParams_t )EU433_LC4 );
+		LoRaMacChannelAdd( 4, ( ChannelParams_t )EU433_LC5 );
+		LoRaMacChannelAdd( 5, ( ChannelParams_t )EU433_LC6 );
+		LoRaMacChannelAdd( 6, ( ChannelParams_t )EU433_LC7 );
+		LoRaMacChannelAdd( 7, ( ChannelParams_t )EU433_LC8 );
+#endif
+
 	MibRequestConfirm_t mibReq;
 	uint16_t channelsMaskTemp[6];
 	channelsMaskTemp[0] = 0x00FF;
