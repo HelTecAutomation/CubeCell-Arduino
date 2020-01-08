@@ -1,7 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include <Wire.h>
-
 #include <BMP280.h>
 
 /*
@@ -25,7 +24,8 @@ bool KeepNet = LORAWAN_Net_Reserve;
 LoRaMacRegion_t REGION = ACTIVE_REGION;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
-bool IsTxConfirmed = true;
+bool IsTxConfirmed = LORAWAN_UPLINKMODE;
+
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,

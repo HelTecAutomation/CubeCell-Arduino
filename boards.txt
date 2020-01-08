@@ -2,6 +2,7 @@ menu.LORAWAN_REGION=LORAWAN_REGION
 menu.LORAWAN_CLASS=LORAWAN_CLASS
 menu.LORAWAN_NETMODE=LORAWAN_NETMODE
 menu.LORAWAN_ADR=LORAWAN_ADR
+menu.LORAWAN_UPLINKMODE=LORAWAN_UPLINKMODE
 menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
 menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
 menu.LORAWAN_RGB=LORAWAN_RGB
@@ -54,6 +55,11 @@ CubeCell-Board.menu.LORAWAN_ADR.0=ON
 CubeCell-Board.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Board.menu.LORAWAN_ADR.1=OFF
 CubeCell-Board.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
 CubeCell-Board.menu.LORAWAN_Net_Reserve.0=OFF
 CubeCell-Board.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
@@ -120,6 +126,11 @@ CubeCell-Capsule.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Capsule.menu.LORAWAN_ADR.1=OFF
 CubeCell-Capsule.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0=OFF
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.1=ON
@@ -184,6 +195,11 @@ CubeCell-Module.menu.LORAWAN_ADR.0=ON
 CubeCell-Module.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Module.menu.LORAWAN_ADR.1=OFF
 CubeCell-Module.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-Board.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
 CubeCell-Module.menu.LORAWAN_Net_Reserve.0=OFF
 CubeCell-Module.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
