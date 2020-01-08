@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v2.0.4 by [WASN.eu](https://wasn.eu)
+# v2.0.7 by [WASN.eu](https://wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -22,7 +22,7 @@ Please select the sensor for saving battery power, for maximum flexibility choos
     #define ADS_1015 0
     #define MPU_9250 0
     #define LR_VL53L1X 0
-    #define One_Wire 1 // sometime the device hangs
+    #define One_Wire 1 
 
 and set your keys:
 
@@ -55,5 +55,3 @@ TTN Decoder:
   The ttn-decode.js file automaticaly decodes all known sensor types.
 
 Known Failures:
-
-- One_Wire: no sensors found

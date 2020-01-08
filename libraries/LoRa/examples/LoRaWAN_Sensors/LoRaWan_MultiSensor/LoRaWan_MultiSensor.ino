@@ -1,7 +1,7 @@
 /*
   LoRaWan_MultiSensor
   programmed by WideAreaSensorNetwork
-  v2.0.4 by WASN.eu
+  copyright by WASN.eu
 */
 
 #include "LoRaWan_APP.h"
@@ -25,7 +25,8 @@
 #define MPU_9250 0
 #define LR_VL53L1X 0
 #define HMC_5883L 0
-#define One_Wire 0
+#define One_Wire 1
+//#define UART 1
 
 #define ModularNode 0  // TCS9548A I2C 8 port Switch
 
@@ -33,31 +34,13 @@ const char myDevEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppEui[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 const char myAppKey[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-/*the application data transmission duty cycle.  value in [ms].*/
+/* the application data transmission duty cycle.  value in [ms]. */
 uint32_t APP_TX_DUTYCYCLE = 900000;
 
-/* Indicates if the node is sending confirmed or unconfirmed messages */
+/* Indicates if the node is sending confirmed or unconfirmed messages. */
 bool IsTxConfirmed = false;
-/*!
-  Number of trials to transmit the frame, if the LoRaMAC layer did not
-  receive an acknowledgment. The MAC performs a datarate adaptation,
-  according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
-  to the following table:
 
-  Transmission nb | Data Rate
-  ----------------|-----------
-  1 (first)       | DR
-  2               | DR
-  3               | max(DR-1,0)
-  4               | max(DR-1,0)
-  5               | max(DR-2,0)
-  6               | max(DR-2,0)
-  7               | max(DR-3,0)
-  8               | max(DR-3,0)
-
-  Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
-  the datarate, in case the LoRaMAC layer did not receive an acknowledgment
-*/
+/* Number of trials to transmit the frame. */
 uint8_t ConfirmedNbTrials = 8;
 
 
@@ -65,7 +48,7 @@ uint8_t ConfirmedNbTrials = 8;
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
 
-String wasnver = "2.0.4";
+String wasnver = "2.0.7";
 
 #include "BH1750.h"
 #include "BMP280.h"
@@ -79,7 +62,10 @@ String wasnver = "2.0.4";
 #include "Adafruit_ADS1015.h"
 #include "MPU9250.h"
 #include "VL53L1X.h"
+#include "HMC5883L.h"
 #include "OneWire.h"
+#include "DallasTemperature.h"
+#include "SC16IS740RK.h"
 
 extern uint8_t DevEui[];
 extern uint8_t AppEui[];
@@ -97,8 +83,8 @@ bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 9
 bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 10
 bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 11
 bool HMC_5883L_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 12
+bool UART_e = false;                            // 200
 bool One_Wire_e = false;                       // 100-103
-uint8_t sensortype = 0;
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -173,8 +159,12 @@ BMP085 bmp180;
 MPU9250 mpu9250;
 Adafruit_ADS1015 ads1015;
 SFEVL53L1X LRSVL53L1X;
+HMC5883L hmc5883;
 
 OneWire ds(GPIO1); // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
+DallasTemperature sensors(&ds);
+
+SC16IS740 extSerial(Wire, 0);
 
 /*!
    \brief   Prepares the payload of the frame
@@ -202,10 +192,9 @@ static void PrepareTxFrame(uint8_t port)
         BME680
     */
 
-    if (BME_680_e[pnr])
+    if (BME_680_e[pnr]) // 1
     {
-      sensortype = 1;
-
+    
 #if (ModularNode == 1)
       Wire.begin();
       tcaselect(pnr);
@@ -266,9 +255,8 @@ static void PrepareTxFrame(uint8_t port)
     /*
       BME280
     */
-    if (BME_280_e[pnr])
+    if (BME_280_e[pnr]) // 2
     {
-      sensortype = 2;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -313,9 +301,8 @@ static void PrepareTxFrame(uint8_t port)
         HDC1080
     */
 
-    if (HDC_1080_e[pnr])
+    if (HDC_1080_e[pnr]) // 4
     {
-      sensortype = 4;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -367,9 +354,8 @@ static void PrepareTxFrame(uint8_t port)
       CCS811
     */
 
-    if (CCS_811_e[pnr])
+    if (CCS_811_e[pnr]) // 3
     {
-      sensortype = 3;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -446,9 +432,8 @@ static void PrepareTxFrame(uint8_t port)
       BMP180
     */
 
-    if (BMP_180_e[pnr])
+    if (BMP_180_e[pnr]) // 5
     {
-      sensortype = 5;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -500,9 +485,11 @@ static void PrepareTxFrame(uint8_t port)
       BH1750
     */
 
-    if (BH_1750_e[pnr])
+    if (BH_1750_e[pnr]) // 6
     {
-      sensortype = 6;
+
+      pinMode(GPIO0, OUTPUT);
+      digitalWrite(GPIO0, HIGH);
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -533,9 +520,9 @@ static void PrepareTxFrame(uint8_t port)
     /*
         BMP_280
     */
-    if (BMP_280_e[pnr])
+
+    if (BMP_280_e[pnr]) // 7
     {
-      sensortype = 7;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -594,6 +581,7 @@ static void PrepareTxFrame(uint8_t port)
     /*
         SHT_2X
     */
+
     if (SHT_2X_e[pnr])
     {
 #if (ModularNode == 1)
@@ -606,6 +594,22 @@ static void PrepareTxFrame(uint8_t port)
       delay(500);
       Temperature = SHT2x.GetTemperature();
       Humidity = SHT2x.GetHumidity();
+      /*
+      count = 0;
+      while (Humidity == 0.0 && count < maxtry)
+      {
+        Temperature = SHT2x.GetTemperature();
+        Humidity = SHT2x.GetHumidity();
+        count++;
+        delay(100);
+      }
+      if (Humidity == 0.0)
+      {
+        //Temperature = 0.0;
+        //Humidity = 0.0;
+        Serial.println("  SHT2X ERROR");
+      }
+      */
       Wire.end();
 
       AppData[AppDataSize++] = pnr;
@@ -627,6 +631,7 @@ static void PrepareTxFrame(uint8_t port)
     /*
         ADS_1015
     */
+
     if (ADS_1015_e[pnr])
     {
 #if (ModularNode == 1)
@@ -671,9 +676,9 @@ static void PrepareTxFrame(uint8_t port)
     /*
       MPU9250
     */
-    if (MPU_9250_e[pnr])
+
+    if (MPU_9250_e[pnr]) // 10
     {
-      sensortype = 10;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -809,13 +814,13 @@ static void PrepareTxFrame(uint8_t port)
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
     }
+
     /*
         VL53L1X
     */
 
-    if (LR_VL53L1X_e[pnr])
+    if (LR_VL53L1X_e[pnr]) // 11
     {
-      sensortype = 11;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -849,13 +854,13 @@ static void PrepareTxFrame(uint8_t port)
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
     }
+
     /*
         HMC5883L
     */
 
-    if (HMC_5883L_e[pnr])
+    if (HMC_5883L_e[pnr]) //. 12
     {
-      sensortype = 12;
 
 #if (ModularNode == 1)
       Wire.begin();
@@ -863,35 +868,21 @@ static void PrepareTxFrame(uint8_t port)
       delay(100);
 #endif
 
-      Serial.print("  HMC5883L: ");
+      Serial.print("  HMC5883L: ");\
 
-      #define hmx5883address 0x0D // 0x1E 0x0D
-      Wire.beginTransmission(hmx5883address); //open communication with HMC5883
-      Wire.write(0x02); //select mode register
-      Wire.write(0x00); //continuous measurement mode
-      Wire.endTransmission();
+      Wire.begin();
+      int error = 0;
 
-      int magx,magy,magz; //triple axis data
-      Wire.beginTransmission(hmx5883address);
-      Wire.write(0x03); //select register 3, X MSB register
-      Wire.endTransmission();
-      //Read data from each axis, 2 registers per axis
-      Wire.requestFrom(hmx5883address, 6);
-      if(6<=Wire.available()){
-        magx = Wire.read()<<8; //X msb
-        magx |= Wire.read(); //X lsb
-        magz = Wire.read()<<8; //Z msb
-        magz |= Wire.read(); //Z lsb
-        magy = Wire.read()<<8; //Y msb
-        magy |= Wire.read(); //Y lsb
-      }
+      error = hmc5883.setScale(1.3); // Set the scale of the compass.
+      error = hmc5883.setMeasurementMode(MEASUREMENT_CONTINUOUS); // Set the measurement mode to Continuous
+      MagnetometerRaw raw = hmc5883.readRawAxis();
 
       Serial.print("X: ");
-      Serial.print(magx);
-      Serial.print(", Y: ");
-      Serial.print(magz);
-      Serial.print(", Z: ");
-      Serial.println(magz);
+      Serial.print(raw.XAxis);
+      Serial.print(", Y: ");   
+      Serial.print(raw.YAxis);
+      Serial.print(", Z: ");   
+      Serial.println(raw.ZAxis);
 
       Wire.end();
 
@@ -899,17 +890,17 @@ static void PrepareTxFrame(uint8_t port)
       AppData[AppDataSize++] = 12;
 
       unsigned char *puc;
-      puc = (unsigned char *)(&magx);
+      puc = (unsigned char *)(&raw.XAxis);
       AppData[AppDataSize++] = puc[0];
       AppData[AppDataSize++] = puc[1];
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
-      puc = (unsigned char *)(&magy);
+      puc = (unsigned char *)(&raw.YAxis);
       AppData[AppDataSize++] = puc[0];
       AppData[AppDataSize++] = puc[1];
       AppData[AppDataSize++] = puc[2];
       AppData[AppDataSize++] = puc[3];
-      puc = (unsigned char *)(&magz);
+      puc = (unsigned char *)(&raw.ZAxis);
       AppData[AppDataSize++] = puc[0];
       AppData[AppDataSize++] = puc[1];
       AppData[AppDataSize++] = puc[2];
@@ -918,99 +909,69 @@ static void PrepareTxFrame(uint8_t port)
 #if (ModularNode == 1)
   }
 #endif
+
+  /*
+       UART
+  */
+  
+  if (UART_e) // 200
+  {
+
+#if (ModularNode == 1)
+    Wire.begin();
+    tcaselect(0);
+    delay(100);
+#endif
+
+    Serial.print("  UART: ");    
+
+    extSerial.begin(9600);
+
+    while(extSerial.available()) {
+		  int c = extSerial.read();
+		  Serial.print(c);
+	  }
+    
+    Serial.println("");
+
+    Wire.end();
+
+    AppData[AppDataSize++] = 0;
+    AppData[AppDataSize++] = 200;
+
+  }
+  
+
   /*
     One_Wire
   */
   if (One_Wire_e)
   {
     Serial.println("Scan for OneWire Sensors ...");
-    byte present = 0;
-    byte type_s;
-    byte data[12];
-    byte owaddress[8];
-    int owsensorcount = 0;
+    sensors.begin();
 
-    ds.reset_search();
-    delay(250);
+    if (sensors.getDeviceCount() > 0) {
+      sensors.requestTemperatures();
 
-    if (ds.search(owaddress))
-    {
-      Serial.print("  OneWire Sensor found with data: ");
-      for (byte i = 0; i < 8; i++)
-      {
-        Serial.write(' ');
-        Serial.print(owaddress[i], HEX);
-      }
+      for (int idxx=0; idxx < sensors.getDeviceCount(); idxx++) {
+        Temperature = sensors.getTempCByIndex(idxx);
 
-      if (OneWire::crc8(owaddress, 7) != owaddress[7])
-      {
-        Serial.print("  CRC is not valid!");
-        return;
-      }
-      Serial.println();
+        AppData[AppDataSize++] = 100;
+        AppData[AppDataSize++] = 100 + idxx;
+        AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
+        AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
 
-      switch (owaddress[0])
-      {
-      case 0x10:
-        Serial.print("    Chip = DS18S20 (0x10)"); // or old DS1820
-        type_s = 1;
-        break;
-      case 0x28:
-        Serial.print("    Chip = DS18B20 (0x28)");
-        type_s = 0;
-        break;
-      case 0x22:
-        Serial.print("    Chip = DS1822 (0x22)");
-        type_s = 0;
-        break;
-      default:
-        Serial.print("    Device is not known.");
-        return;
-      }
-
-      ds.reset();
-      ds.select(owaddress);
-      ds.write(0x44, 1); //start conv with power
-
-      delay(1000);
-
-      present = ds.reset();
-      ds.select(owaddress);
-      ds.write(0xBE);
-
-      for (byte i = 0; i < 9; i++)
-      {
-        data[i] = ds.read();
-      }
-
-      int16_t raw = (data[1] << 8) | data[0];
-      if (type_s)
-      {
-        raw = raw << 3;
-        if (data[7] == 0x10)
-        {
-          raw = (raw & 0xFFF0) + 12 - data[6];
+        Serial.print("  OW");
+        if (idxx < 10) {
+          Serial.print("00");
+        } else if (idxx < 100) {
+          Serial.print("0");
         }
+        Serial.print(idxx);
+        Serial.print(": T=");
+        Serial.print(Temperature);
+        Serial.println("C");
       }
-      else
-      {
-        byte cfg = (data[4] & 0x60);
-        if (cfg == 0x00)
-          raw = raw & ~7;
-        else if (cfg == 0x20)
-          raw = raw & ~3;
-        else if (cfg == 0x40)
-          raw = raw & ~1;
-      }
-      Temperature = (float)raw / 16.0;
-
-      AppData[AppDataSize++] = 100 + owsensorcount++;
-      AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
-      AppData[AppDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0));
-
-      Serial.print(": T=");
-      Serial.print(Temperature);
-      Serial.println("C");
     }
     else
     {
@@ -1050,7 +1011,6 @@ void setup()
     LR_VL53L1X_e[xx] = 0;
     HMC_5883L_e[xx] = 0;
   }
-  sensortype = 88;
 #endif
 
 #if (BME_680 == 1)
@@ -1103,8 +1063,11 @@ void setup()
 
 #if (One_Wire == 1)
   One_Wire_e = true;
-  sensortype = 100;
 #endif
+
+//#if (UART == 1)
+//  UART_e = true;
+//#endif
 
   BoardInitMcu();
   Serial.begin(115200);
@@ -1150,6 +1113,13 @@ Wire.begin();
       Wire.beginTransmission(address);
       error = Wire.endTransmission();
 
+      if (address == 35) {
+        pinMode(GPIO0, OUTPUT);
+        digitalWrite(GPIO0, HIGH);
+      } else {
+        pinMode(GPIO0, OUTPUT);
+        digitalWrite(GPIO0, LOW);
+      }
       if (error == 0)
       {
         /* if (address != 112) {
@@ -1275,7 +1245,7 @@ Wire.begin();
 #endif
     if (nDevices == 0)
     {
-      Serial.println("  No Sensors found");
+      Serial.println("    No Sensors found");
     }
 #if (ModularNode == 1)
   }
@@ -1385,7 +1355,7 @@ void tcaselect(uint8_t i)
 
 bool AT_user_check(char *cmd, char *content)
 {
-  if (strcmp(cmd, "VER") == 0)
+  if (strcmp(cmd, "VER") == 0) 
   {
     if (content[0] == '?')
     {
