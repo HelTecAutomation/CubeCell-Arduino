@@ -72,6 +72,18 @@
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
+#define pinMode(pin,mode) PINMODE_ ## mode(pin)
+#define PINMODE_ANALOG(pin) pinMode(pin,ANALOG)
+#define PINMODE_INPUT(pin) pinMode(pin,INPUT)
+#define PINMODE_OUTPUT_PULLUP(pin) pinMode(pin,OUTPUT_PULLUP)
+#define PINMODE_OUTPUT_PULLDOWN(pin) pinMode(pin,OUTPUT_PULLDOWN)
+#define PINMODE_OD_LO(pin) pinMode(pin,OD_LO)
+#define PINMODE_OD_HI(pin) pinMode(pin,OD_HI)
+#define PINMODE_OUTPUT(pin) pinMode(pin,OUTPUT)
+#define PINMODE_OUTPUT_PULLUP_PULLDOWN(pin) pinMode(pin,OUTPUT_PULLUP_PULLDOWN)
+#define PINMODE_INPUT_PULLUP(pin) ({pinMode(pin,OUTPUT_PULLUP); digitalWrite(pin,HIGH);})
+#define PINMODE_INPUT_PULLDOWN(pin) ({pinMode(pin,OUTPUT_PULLDOWN); digitalWrite(pin,LOW);})
+
 typedef bool boolean;
 typedef uint8_t byte;
 typedef uint16_t word;
