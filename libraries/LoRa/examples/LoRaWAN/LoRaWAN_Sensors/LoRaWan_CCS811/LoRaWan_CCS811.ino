@@ -75,7 +75,7 @@ static void PrepareTxFrame( uint8_t port )
 	//Read 5 times to get the average value
 	while(i<5)
 	{
-		(ccs.available())
+		ccs.available();
 		{
 			if(!ccs.readData())
 			{
