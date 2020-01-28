@@ -18,7 +18,7 @@
 
 ![](win-screenshots/ASR-board.png)
 
-6. Plug in your CubeCell via a high quality MicroUSB cable, if CP2012 UART-USB bridge didn't install automatically, please refer to this document: [Establish Serial Connection](https://docs.heltec.cn/#/en/user_manual/establish_serial_connection)
+6. Plug in your CubeCell via a high quality Micro USB cable, if CP2102 UART-USB bridge didn't install automatically, please refer to this document: [Establish Serial Connection](https://docs.heltec.cn/#/en/user_manual/establish_serial_connection)
 
 7. Start Arduino IDE, select relevant board in ```Tools > Board``` menu, and correctly config the `menu`;
 
