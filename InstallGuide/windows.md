@@ -8,15 +8,15 @@
 3. Execute the command under the **\Documents\Arduino\hardware\CubeCell** path (Must in this path),
    start ```Git Bash``` and input `git clone https://github.com/HelTecAutomation/ASR650x-Arduino.git`
 
-![Step 3](https://github.com/HelTecAutomation/ASR650x-Arduino/blob/master/InstallGuide/win-screenshots/location.png)
+![](win-screenshots/location.png)
 
 4. Open ```/Documents/Arduino/hardware/CubeCell/ASR650x-Arduino/tools``` and double-click ```get.exe```
 
-![Step 4](https://github.com/HelTecAutomation/ASR650x-Arduino/blob/master/InstallGuide/win-screenshots/get.png)
+![](win-screenshots/get.png)
 
 5. When ```get.exe``` running finished, you will be able to see the following files in the directory;
 
-![Step 5](https://github.com/HelTecAutomation/ASR650x-Arduino/blob/master/InstallGuide/win-screenshots/ASR-board.png)
+![](win-screenshots/ASR-board.png)
 
 6. Plug in your CubeCell via a high quality MicroUSB cable, if CP2012 UART-USB bridge didn't install automatically, please refer to this document: [Establish Serial Connection](https://docs.heltec.cn/#/en/user_manual/establish_serial_connection)
 
@@ -24,15 +24,15 @@
 
 8. Compile and upload.
 
-![Arduino IDE Example](https://github.com/HelTecAutomation/ASR650x-Arduino/blob/master/InstallGuide/win-screenshots/compile.png)
+![](win-screenshots/compile.png)
 
 ### Update to the latest code
 
-1. Open ```/Documents/Arduino/hardware/CubeCell/ASR650x-Arduino```,  start git command shell via ```Git Bash```, input ```git pull```
+1. In the ```/Documents/Arduino/hardware/CubeCell/ASR650x-Arduino```  path, open a git command shell, input ```git pull```
 
-![Update Step 1](https://github.com/HelTecAutomation/ASR650x-Arduino/blob/master/InstallGuide/win-screenshots/gitpull.png)
+![](win-screenshots/gitpull.png)
 
 2. Wait for git pull to end;
 
-3. Open ```/Documents/Arduino/hardware/CubeCell/tools``` and double-click ```get.exe```
+3. Open ```/Documents/Arduino/hardware/CubeCell/tools``` and run ```get.exe``` again.
 
