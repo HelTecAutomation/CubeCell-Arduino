@@ -27,8 +27,10 @@
 #define HMC_5883L 0
 #define One_Wire 1
 //#define UART 1
-
-#define ModularNode 0  // TCS9548A I2C 8 port Switch
+  
+#define TCS9548 0      // TCS9548A I2C 8 port Switch
+#define minpnr 0       // TCS9548A first I2C Port
+#define maxpnr 7       // TCS9548A last I2C Port
 
 /* OTAA para*/
 uint8_t devEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
@@ -40,12 +42,23 @@ uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11
 uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
 uint32_t devAddr =  ( uint32_t )0x007e6ae1;
 
+/* the application data transmission duty cycle.  value in [ms]. */
+uint32_t APP_TX_DUTYCYCLE = 900000;
+
+/* Indicates if the node is sending confirmed or unconfirmed messages. */
+bool IsTxConfirmed = false;
+
+/* Number of trials to transmit the frame. */
+uint8_t ConfirmedNbTrials = 8;
+
 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
+#define ModularNode 1
 
-String wasnver = "2.0.7";
+String wasnver = "2.1.1";
+String wasnflash = "ModularNode"; //Board, Capsule, IndoorNode, ModularNode, TCA9548A
 
 #include "BH1750.h"
 #include "BMP280.h"
@@ -64,25 +77,29 @@ String wasnver = "2.0.7";
 #include "DallasTemperature.h"
 #include "SC16IS740RK.h"
 
-extern uint8_t DevEui[];
-extern uint8_t AppEui[];
-extern uint8_t AppKey[];
+bool BME_680_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   1
+bool BME_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   2
+bool CCS_811_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   3
+bool HDC_1080_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};    //   4
+bool BMP_180_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   5
+bool BH_1750_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   6
+bool BMP_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   7
+bool SHT_2X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};      //   8
+bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};    //   9
+bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};    //  10
+bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  //  11
+bool HMC_5883L_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   //  12
+bool One_Wire_e = false;                          // 100-103
+bool UART_e = false;                              // 200
 
-bool BME_680_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 1
-bool BME_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 2
-bool CCS_811_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 3
-bool HDC_1080_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 4
-bool BMP_180_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 5
-bool BH_1750_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 6
-bool BMP_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 7
-bool SHT_2X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   // 8
-bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 9
-bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0}; // 10
-bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 11
-bool HMC_5883L_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  // 12
-bool UART_e = false;                            // 200
-bool One_Wire_e = false;                       // 100-103
-
+/*
+   set LoraWan_RGB to Active,the RGB active in loraWan
+   RGB red means sending;
+   RGB purple means joined done;
+   RGB blue means RxWindow1;
+   RGB yellow means RxWindow2;
+   RGB green means received done;
+*/
 
 /*LoraWan region, select in arduino IDE tools*/
 LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
@@ -107,6 +124,7 @@ bool isTxConfirmed = LORAWAN_UPLINKMODE;
 
 /* Application port */
 uint8_t appPort = 2;
+
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -169,12 +187,26 @@ static void prepareTxFrame(uint8_t port)
 
   appDataSize = 0;
   int pnr = 0;
+  int modnr = 0;
 
-#if (ModularNode == 1)
-  for (pnr = 0; pnr < 8; pnr++)
+#if (ModularNode == 1 || TCS9548 == 1)
+  for (pnr = minpnr; pnr < (maxpnr+1); pnr++)
   {
-    Serial.print("Sensor Port ");
-    Serial.println(pnr);
+    #if (ModularNode == 1)
+      if (pnr == 4) {
+        pnr = 7;
+      }
+    #endif
+    if (ModularNode == 1 && (pnr == 0 || pnr == 7)) {
+      Serial.print("Modular Port ");
+    } else {
+      Serial.print("Sensor Port ");
+    }
+    if (ModularNode == 1 && pnr == 7) {
+      Serial.println("1");
+    } else {
+      Serial.println(pnr);
+    }
 #endif
 
     /*
@@ -184,7 +216,7 @@ static void prepareTxFrame(uint8_t port)
     if (BME_680_e[pnr]) // 1
     {
     
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -210,7 +242,14 @@ static void prepareTxFrame(uint8_t port)
       tvoc = CalculateIAQ();
 
       Wire.end();
-      appData[appDataSize++] = pnr;
+
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 1;
 
       appData[appDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -247,7 +286,7 @@ static void prepareTxFrame(uint8_t port)
     if (BME_280_e[pnr]) // 2
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -264,7 +303,13 @@ static void prepareTxFrame(uint8_t port)
 
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 2;
 
       appData[appDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -293,7 +338,7 @@ static void prepareTxFrame(uint8_t port)
     if (HDC_1080_e[pnr]) // 4
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -323,7 +368,13 @@ static void prepareTxFrame(uint8_t port)
       }
       hdc1080.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 4;
 
       appData[appDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -346,7 +397,7 @@ static void prepareTxFrame(uint8_t port)
     if (CCS_811_e[pnr]) // 3
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -400,7 +451,13 @@ static void prepareTxFrame(uint8_t port)
         Serial.println("  CCS ERROR");
       }
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 3;
 
       appData[appDataSize++] = (uint8_t)((int)co2 >> 8);
@@ -424,7 +481,7 @@ static void prepareTxFrame(uint8_t port)
     if (BMP_180_e[pnr]) // 5
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -453,7 +510,13 @@ static void prepareTxFrame(uint8_t port)
         Serial.println("  BMP ERROR");
       }
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 5;
 
       appData[appDataSize++] = (uint8_t)((int)((Temperature + 100.0) * 10.0) >> 8);
@@ -480,7 +543,7 @@ static void prepareTxFrame(uint8_t port)
       pinMode(GPIO0, OUTPUT);
       digitalWrite(GPIO0, HIGH);
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -495,7 +558,13 @@ static void prepareTxFrame(uint8_t port)
       lightMeter.end();
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 6;
 
       appData[appDataSize++] = (uint8_t)((int)(lux * 10.0) >> 8);
@@ -513,7 +582,7 @@ static void prepareTxFrame(uint8_t port)
     if (BMP_280_e[pnr]) // 7
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -550,7 +619,13 @@ static void prepareTxFrame(uint8_t port)
         Serial.println("  BMP ERROR");
       }
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
 
       appData[appDataSize++] = 7;
 
@@ -573,7 +648,7 @@ static void prepareTxFrame(uint8_t port)
 
     if (SHT_2X_e[pnr])
     {
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -601,7 +676,13 @@ static void prepareTxFrame(uint8_t port)
       */
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 8;
 
       appData[appDataSize++] = (uint8_t)(((int)((Temperature + 100.0) * 10.0)) >> 8);
@@ -623,7 +704,7 @@ static void prepareTxFrame(uint8_t port)
 
     if (ADS_1015_e[pnr])
     {
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -637,7 +718,13 @@ static void prepareTxFrame(uint8_t port)
       adc2 = ads1015.readADC_SingleEnded(2);
       adc3 = ads1015.readADC_SingleEnded(3);
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 9;
 
       appData[appDataSize++] = ((int)adc0) >> 8;
@@ -669,7 +756,7 @@ static void prepareTxFrame(uint8_t port)
     if (MPU_9250_e[pnr]) // 10
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -743,7 +830,13 @@ static void prepareTxFrame(uint8_t port)
 
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 10;
 
       unsigned char *puc;
@@ -811,7 +904,7 @@ static void prepareTxFrame(uint8_t port)
     if (LR_VL53L1X_e[pnr]) // 11
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -833,7 +926,13 @@ static void prepareTxFrame(uint8_t port)
 
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 11;
 
       unsigned char *puc;
@@ -851,7 +950,7 @@ static void prepareTxFrame(uint8_t port)
     if (HMC_5883L_e[pnr]) //. 12
     {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
@@ -875,7 +974,13 @@ static void prepareTxFrame(uint8_t port)
 
       Wire.end();
 
-      appData[appDataSize++] = pnr;
+      modnr = pnr;
+#if (ModularNode == 1)
+      if (modnr == 0 || modnr == 7) {
+        modnr += 200;
+      }
+#endif
+      appData[appDataSize++] = modnr;
       appData[appDataSize++] = 12;
 
       unsigned char *puc;
@@ -895,7 +1000,7 @@ static void prepareTxFrame(uint8_t port)
       appData[appDataSize++] = puc[2];
       appData[appDataSize++] = puc[3];
     }
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
   }
 #endif
 
@@ -906,7 +1011,7 @@ static void prepareTxFrame(uint8_t port)
   if (UART_e) // 200
   {
 
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
     Wire.begin();
     tcaselect(0);
     delay(100);
@@ -971,16 +1076,17 @@ static void prepareTxFrame(uint8_t port)
 
   digitalWrite(Vext, HIGH);
 
-  uint16_t batteryVoltage = getBatteryVoltage();
-  appData[appDataSize++] = (uint8_t)(batteryVoltage >> 8);
-  appData[appDataSize++] = (uint8_t)batteryVoltage;
+  uint16_t BatteryVoltage = getBatteryVoltage();
+  appData[appDataSize++] = (uint8_t)(BatteryVoltage >> 8);
+  appData[appDataSize++] = (uint8_t)BatteryVoltage;
   Serial.print("BatteryVoltage: ");
-  Serial.print(batteryVoltage);
+  Serial.print(BatteryVoltage);
   Serial.println();
 }
 
 void setup()
 {
+
 #if (AUTO_SCAN == 1)
   for (int xx = 0; xx < 8; xx++)
   {
@@ -1060,18 +1166,18 @@ void setup()
   Serial.print("FW-version: ");
   Serial.println(wasnver);
   Serial.println("");
-#if(AT_SUPPORT)
+#if (AT_SUPPORT == 1)
   enableAt();
 #endif
   deviceState = DEVICE_STATE_INIT;
   LoRaWAN.ifskipjoin();
 
-  pinMode(Vext, OUTPUT);
-  digitalWrite(Vext, LOW); //set vext to high
-  delay(500);
-  pinMode(GPIO0, OUTPUT);
-  digitalWrite(GPIO0, LOW);
-  Wire.begin();
+pinMode(Vext, OUTPUT);
+digitalWrite(Vext, LOW); //set vext to high
+delay(500);
+pinMode(GPIO0, OUTPUT);
+digitalWrite(GPIO0, LOW);
+Wire.begin();
 
 #if (AUTO_SCAN == 1)
   byte error, address;
@@ -1083,12 +1189,25 @@ void setup()
   int pnr = 0;
   int unknowndev = 0;
 
-  #if (ModularNode == 1)
-  for (pnr = 0; pnr < 8; pnr++)
+  #if (ModularNode == 1 || TCS9548 == 1)
+  for (pnr = minpnr; pnr < (maxpnr+1); pnr++)
   {
+    #if (ModularNode == 1)
+      if (pnr == 4) {
+        pnr = 7;
+      }
+    #endif
     tcaselect(pnr);
-    Serial.print(" Port ");
-    Serial.println(pnr);
+    if (ModularNode == 1 && (pnr == 0 || pnr == 7)) {
+      Serial.print(" Modular Port ");
+    } else {
+      Serial.print(" Sensor Port ");
+    }
+    if (ModularNode == 1 && pnr == 7) {
+      Serial.println("1");
+    } else {
+      Serial.println(pnr);
+    }
     nDevices = 0;
     unknowndev = 0;
   #endif
@@ -1225,14 +1344,14 @@ void setup()
         Serial.println(address, HEX);
       }
     }
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
     nDevices--;
 #endif
     if (nDevices == 0)
     {
       Serial.println("    No Sensors found");
     }
-#if (ModularNode == 1)
+#if (ModularNode == 1 || TCS9548 == 1)
   }
 #endif
 
@@ -1242,51 +1361,53 @@ void setup()
 
 void loop()
 {
-	switch( deviceState )
-	{
-		case DEVICE_STATE_INIT:
-		{
-#if(AT_SUPPORT)
-			getDevParam();
+  switch (deviceState)
+  {
+  case DEVICE_STATE_INIT:
+  {
+#if (AT_SUPPORT == 1)
+    getDevParam();
 #endif
-			printDevParam();
-			LoRaWAN.init(loraWanClass,loraWanRegion);
-			deviceState = DEVICE_STATE_JOIN;
-			break;
-		}
-		case DEVICE_STATE_JOIN:
-		{
-			LoRaWAN.join();
-			break;
-		}
-		case DEVICE_STATE_SEND:
-		{
-			prepareTxFrame( appPort );
-			LoRaWAN.send();
-			deviceState = DEVICE_STATE_CYCLE;
-			break;
-		}
-		case DEVICE_STATE_CYCLE:
-		{
-			// Schedule next packet transmission
-			txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
-			LoRaWAN.cycle(txDutyCycleTime);
-			deviceState = DEVICE_STATE_SLEEP;
-			break;
-		}
-		case DEVICE_STATE_SLEEP:
-		{
-			LoRaWAN.sleep();
-			break;
-		}
-		default:
-		{
-			deviceState = DEVICE_STATE_INIT;
-			break;
-		}
-	}
+    printDevParam();
+    LoRaWAN.init(loraWanClass,loraWanRegion);
+    deviceState = DEVICE_STATE_JOIN;
+    break;
+  }
+  case DEVICE_STATE_JOIN:
+  {
+    #if (ACTIVE_REGION == 1)
+    setSubBand2();
+    #endif
+    LoRaWAN.join();
+    break;
+  }
+  case DEVICE_STATE_SEND:
+  {
+    prepareTxFrame(appPort);
+    LoRaWAN.send();
+    deviceState = DEVICE_STATE_CYCLE;
+    break;
+  }
+  case DEVICE_STATE_CYCLE:
+  {
+    // Schedule next packet transmission
+    txDutyCycleTime = APP_TX_DUTYCYCLE + randr(0, APP_TX_DUTYCYCLE_RND);
+    LoRaWAN.cycle(txDutyCycleTime);
+    deviceState = DEVICE_STATE_SLEEP;
+    break;
+  }
+  case DEVICE_STATE_SLEEP:
+  {
+    LoRaWAN.sleep();
+    break;
+  }
+  default:
+  {
+    deviceState = DEVICE_STATE_INIT;
+    break;
+  }
+  }
 }
-
 
 float CalculateIAQ()
 {
@@ -1338,7 +1459,7 @@ void tcaselect(uint8_t i)
   Wire.endTransmission();
 }
 
-bool checkUserAt(char *cmd, char *content)
+bool AT_user_check(char *cmd, char *content)
 {
   if (strcmp(cmd, "VER") == 0) 
   {
@@ -1349,11 +1470,41 @@ bool checkUserAt(char *cmd, char *content)
     }
     return true;
   }
+  if (strcmp(cmd, "FLASH") == 0) 
+  {
+    if (content[0] == '?')
+    {
+      Serial.print("+FLASH=");
+      Serial.println(wasnflash);
+    }
+    return true;
+  }
+  if (strcmp(cmd, "BATTERY") == 0)
+  {
+    if (content[0] == '?')
+    {
+      uint16_t BatteryVoltage = getBatteryVoltage();
+      Serial.print("+BATTERY=");
+      Serial.print(BatteryVoltage);
+      Serial.println();
+    }
+    return true;
+  }
+  if (strcmp(cmd, "LED") == 0)
+  {
+    if (content[0] == '?')
+    {
+      Serial.print("+LED=");
+      Serial.print(LoraWan_RGB);
+      Serial.println();
+    }
+    return true;
+  }
   return false;
 }
 
 //downlink data handle function
-void downLinkDataHandle(McpsIndication_t *mcpsIndication)
+void DownLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
   Serial.printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n",mcpsIndication->RxSlot?"RXWIN2":"RXWIN1",mcpsIndication->BufferSize,mcpsIndication->Port);
   Serial.print("+REV DATA:");
@@ -1363,11 +1514,22 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
   Serial.println();
   for(uint8_t i=0;i<mcpsIndication->BufferSize;i++) {
     if (mcpsIndication->Buffer[i] == 220) { // DC for APP_TX_DUTYCYCLE; 0D BB A0  for 900000 (15min); 04 93 E0 for 300000 (5min)
-      appTxDutyCycle = mcpsIndication->Buffer[i++]<<32|mcpsIndication->Buffer[i++]<<16|mcpsIndication->Buffer[i++]<<8|mcpsIndication->Buffer[i++];
+      APP_TX_DUTYCYCLE = mcpsIndication->Buffer[i++]<<32|mcpsIndication->Buffer[i++]<<16|mcpsIndication->Buffer[i++]<<8|mcpsIndication->Buffer[i++];
       Serial.print("  new DutyCycle received: ");
-      Serial.print(appTxDutyCycle);
+      Serial.print(APP_TX_DUTYCYCLE);
       Serial.println("ms");
       saveDr();
     }
   }
+}
+
+void setSubBand2() {
+  Serial.println("setSubBand2");
+  // Enabling only 2nd block of 8 channels (8-15) + channel 65
+  MibRequestConfirm_t mibReq;
+
+  uint16_t channelMask[] = { 0xFF00, 0x0000, 0x0000, 0x0000, 0x0002, 0x0000};
+  mibReq.Type = MIB_CHANNELS_MASK;
+  mibReq.Param.ChannelsMask = channelMask;
+  LoRaMacMibSetRequestConfirm( &mibReq );
 }
