@@ -15,7 +15,7 @@
 |___/ |_/_/ \_\___|_|\_\_| \___/|_|_\\___|___|
 embedded.connectivity.solutions===============
 
-Description: LoRa MAC region US915 implementation
+Description: LoRa MAC region AU915 implementation
 
 License: Revised BSD License, see LICENSE.TXT file include in the project
 
@@ -35,7 +35,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 
 #include "Region.h"
 #include "RegionCommon.h"
-#include "RegionUS915.h"
+#include "RegionAU915.h"
 #include "debug.h"
 
 // Definitions
@@ -45,14 +45,14 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 /*!
  * LoRaMAC channels
  */
-static ChannelParams_t Channels[US915_MAX_NB_CHANNELS];
+static ChannelParams_t Channels[AU915_MAX_NB_CHANNELS];
 
 /*!
  * LoRaMac bands
  */
-static Band_t Bands[US915_MAX_NB_BANDS] =
+static Band_t Bands[AU915_MAX_NB_BANDS] =
 {
-    US915_BAND0
+    AU915_BAND0
 };
 
 /*!
@@ -88,7 +88,7 @@ static int8_t GetNextLowerTxDr( int8_t dr, int8_t minDr )
 
 static uint32_t GetBandwidth( uint32_t drIndex )
 {
-    switch( BandwidthsUS915[drIndex] )
+    switch( BandwidthsAU915[drIndex] )
     {
         default:
         case 125000:
@@ -107,17 +107,6 @@ static int8_t LimitTxPower( int8_t txPower, int8_t maxBandTxPower, int8_t datara
     // Limit tx power to the band max
     txPowerResult =  MAX( txPower, maxBandTxPower );
 
-    if( datarate == DR_4 )
-    {// Limit tx power to max 26dBm
-        txPowerResult = MAX( txPower, TX_POWER_2 );
-    }
-    else
-    {
-        if( RegionCommonCountChannels( channelsMask, 0, 4 ) < 50 )
-        {// Limit tx power to max 21dBm
-            txPowerResult = MAX( txPower, TX_POWER_5 );
-        }
-    }
     return txPowerResult;
 }
 
@@ -126,7 +115,7 @@ static uint8_t CountNbOfEnabledChannels( uint8_t datarate, uint16_t* channelsMas
     uint8_t nbEnabledChannels = 0;
     uint8_t delayTransmission = 0;
 
-    for( uint8_t i = 0, k = 0; i < US915_MAX_NB_CHANNELS; i += 16, k++ )
+    for( uint8_t i = 0, k = 0; i < AU915_MAX_NB_CHANNELS; i += 16, k++ )
     {
         for( uint8_t j = 0; j < 16; j++ )
         {
@@ -155,7 +144,7 @@ static uint8_t CountNbOfEnabledChannels( uint8_t datarate, uint16_t* channelsMas
     return nbEnabledChannels;
 }
 
-PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
+PhyParam_t RegionAU915GetPhyParam( GetPhyParams_t* getPhy )
 {
     PhyParam_t phyParam = { 0 };
 
@@ -163,92 +152,92 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
     {
         case PHY_MIN_RX_DR:
         {
-            phyParam.Value = US915_RX_MIN_DATARATE;
+            phyParam.Value = AU915_RX_MIN_DATARATE;
             break;
         }
         case PHY_MIN_TX_DR:
         {
-            phyParam.Value = US915_TX_MIN_DATARATE;
+            phyParam.Value = AU915_TX_MIN_DATARATE;
             break;
         }
         case PHY_DEF_TX_DR:
         {
-            phyParam.Value = US915_DEFAULT_DATARATE;
+            phyParam.Value = AU915_DEFAULT_DATARATE;
             break;
         }
         case PHY_NEXT_LOWER_TX_DR:
         {
-            phyParam.Value = GetNextLowerTxDr( getPhy->Datarate, US915_TX_MIN_DATARATE );
+            phyParam.Value = GetNextLowerTxDr( getPhy->Datarate, AU915_TX_MIN_DATARATE );
             break;
         }
         case PHY_DEF_TX_POWER:
         {
-            phyParam.Value = US915_DEFAULT_TX_POWER;
+            phyParam.Value = AU915_DEFAULT_TX_POWER;
             break;
         }
         case PHY_MAX_PAYLOAD:
         {
-            phyParam.Value = MaxPayloadOfDatarateUS915[getPhy->Datarate];
+            phyParam.Value = MaxPayloadOfDatarateAU915[getPhy->Datarate];
             break;
         }
         case PHY_MAX_PAYLOAD_REPEATER:
         {
-            phyParam.Value = MaxPayloadOfDatarateRepeaterUS915[getPhy->Datarate];
+            phyParam.Value = MaxPayloadOfDatarateRepeaterAU915[getPhy->Datarate];
             break;
         }
         case PHY_DUTY_CYCLE:
         {
-            phyParam.Value = US915_DUTY_CYCLE_ENABLED;
+            phyParam.Value = AU915_DUTY_CYCLE_ENABLED;
             break;
         }
         case PHY_MAX_RX_WINDOW:
         {
-            phyParam.Value = US915_MAX_RX_WINDOW;
+            phyParam.Value = AU915_MAX_RX_WINDOW;
             break;
         }
         case PHY_RECEIVE_DELAY1:
         {
-            phyParam.Value = US915_RECEIVE_DELAY1;
+            phyParam.Value = AU915_RECEIVE_DELAY1;
             break;
         }
         case PHY_RECEIVE_DELAY2:
         {
-            phyParam.Value = US915_RECEIVE_DELAY2;
+            phyParam.Value = AU915_RECEIVE_DELAY2;
             break;
         }
         case PHY_JOIN_ACCEPT_DELAY1:
         {
-            phyParam.Value = US915_JOIN_ACCEPT_DELAY1;
+            phyParam.Value = AU915_JOIN_ACCEPT_DELAY1;
             break;
         }
         case PHY_JOIN_ACCEPT_DELAY2:
         {
-            phyParam.Value = US915_JOIN_ACCEPT_DELAY2;
+            phyParam.Value = AU915_JOIN_ACCEPT_DELAY2;
             break;
         }
         case PHY_MAX_FCNT_GAP:
         {
-            phyParam.Value = US915_MAX_FCNT_GAP;
+            phyParam.Value = AU915_MAX_FCNT_GAP;
             break;
         }
         case PHY_ACK_TIMEOUT:
         {
-            phyParam.Value = ( US915_ACKTIMEOUT + randr( -US915_ACK_TIMEOUT_RND, US915_ACK_TIMEOUT_RND ) );
+            phyParam.Value = ( AU915_ACKTIMEOUT + randr( -AU915_ACK_TIMEOUT_RND, AU915_ACK_TIMEOUT_RND ) );
             break;
         }
         case PHY_DEF_DR1_OFFSET:
         {
-            phyParam.Value = US915_DEFAULT_RX1_DR_OFFSET;
+            phyParam.Value = AU915_DEFAULT_RX1_DR_OFFSET;
             break;
         }
         case PHY_DEF_RX2_FREQUENCY:
         {
-            phyParam.Value = US915_RX_WND_2_FREQ;
+            phyParam.Value = AU915_RX_WND_2_FREQ;
             break;
         }
         case PHY_DEF_RX2_DR:
         {
-            phyParam.Value = US915_RX_WND_2_DR;
+            phyParam.Value = AU915_RX_WND_2_DR;
             break;
         }
         case PHY_CHANNELS_MASK:
@@ -263,7 +252,7 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
         }
         case PHY_MAX_NB_CHANNELS:
         {
-            phyParam.Value = US915_MAX_NB_CHANNELS;
+            phyParam.Value = AU915_MAX_NB_CHANNELS;
             break;
         }
         case PHY_CHANNELS:
@@ -278,9 +267,13 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
             break;
         }
         case PHY_DEF_MAX_EIRP:
+        {
+            phyParam.fValue = AU915_DEFAULT_MAX_EIRP;
+            break;
+        }
         case PHY_DEF_ANTENNA_GAIN:
         {
-            phyParam.fValue = 0;
+            phyParam.fValue = AU915_DEFAULT_ANTENNA_GAIN;
             break;
         }
         case PHY_NB_JOIN_TRIALS:
@@ -289,32 +282,26 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = 2;
             break;
         }
-
-        case PHY_BEACON_CHANNEL_FREQ:
-        {
-            phyParam.Value = US915_BEACON_CHANNEL_FREQ;
-            break;
-        }
         case PHY_BEACON_FORMAT:
         {
-            phyParam.BeaconFormat.BeaconSize = US915_BEACON_SIZE;
-            phyParam.BeaconFormat.Rfu1Size = US915_RFU1_SIZE;
-            phyParam.BeaconFormat.Rfu2Size = US915_RFU2_SIZE;
+            phyParam.BeaconFormat.BeaconSize = AU915_BEACON_SIZE;
+            phyParam.BeaconFormat.Rfu1Size = AU915_RFU1_SIZE;
+            phyParam.BeaconFormat.Rfu2Size = AU915_RFU2_SIZE;
             break;
         }
         case PHY_BEACON_CHANNEL_DR:
         {
-            phyParam.Value = US915_BEACON_CHANNEL_DR;
+            phyParam.Value = AU915_BEACON_CHANNEL_DR;
             break;
         }
         case PHY_BEACON_CHANNEL_STEPWIDTH:
         {
-            phyParam.Value = US915_BEACON_CHANNEL_STEPWIDTH;
+            phyParam.Value = AU915_BEACON_CHANNEL_STEPWIDTH;
             break;
         }
         case PHY_BEACON_NB_CHANNELS:
         {
-            phyParam.Value = US915_BEACON_NB_CHANNELS;
+            phyParam.Value = AU915_BEACON_NB_CHANNELS;
             break;
         }
         default:
@@ -326,12 +313,12 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
     return phyParam;
 }
 
-void RegionUS915SetBandTxDone( SetBandTxDoneParams_t* txDone )
+void RegionAU915SetBandTxDone( SetBandTxDoneParams_t* txDone )
 {
     RegionCommonSetBandTxDone( txDone->Joined, &Bands[Channels[txDone->Channel].Band], txDone->LastTxDoneTime );
 }
 
-void RegionUS915InitDefaults( InitType_t type )
+void RegionAU915InitDefaults( InitType_t type )
 {
     switch( type )
     {
@@ -339,21 +326,21 @@ void RegionUS915InitDefaults( InitType_t type )
         {
             // Channels
             // 125 kHz channels
-            for( uint8_t i = 0; i < US915_MAX_NB_CHANNELS - 8; i++ )
+            for( uint8_t i = 0; i < AU915_MAX_NB_CHANNELS - 8; i++ )
             {
-                Channels[i].Frequency = 902300000 + i * 200000;
-                Channels[i].DrRange.Value = ( DR_3 << 4 ) | DR_0;
+                Channels[i].Frequency = 915200000 + i * 200000;
+                Channels[i].DrRange.Value = ( DR_5 << 4 ) | DR_0;
                 Channels[i].Band = 0;
             }
             // 500 kHz channels
-            for( uint8_t i = US915_MAX_NB_CHANNELS - 8; i < US915_MAX_NB_CHANNELS; i++ )
+            for( uint8_t i = AU915_MAX_NB_CHANNELS - 8; i < AU915_MAX_NB_CHANNELS; i++ )
             {
-                Channels[i].Frequency = 903000000 + ( i - ( US915_MAX_NB_CHANNELS - 8 ) ) * 1600000;
-                Channels[i].DrRange.Value = ( DR_4 << 4 ) | DR_4;
+                Channels[i].Frequency = 915900000 + ( i - ( AU915_MAX_NB_CHANNELS - 8 ) ) * 1600000;
+                Channels[i].DrRange.Value = ( DR_6 << 4 ) | DR_6;
                 Channels[i].Band = 0;
             }
 
-            // ChannelsMask
+            // Initialize channels default mask
             ChannelsDefaultMask[0] = 0xFFFF;
             ChannelsDefaultMask[1] = 0xFFFF;
             ChannelsDefaultMask[2] = 0xFFFF;
@@ -386,31 +373,28 @@ void RegionUS915InitDefaults( InitType_t type )
     }
 }
 
-bool RegionUS915Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
+bool RegionAU915Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
 {
     switch( phyAttribute )
     {
         case PHY_TX_DR:
-        {
-            return RegionCommonValueInRange( verify->DatarateParams.Datarate, US915_TX_MIN_DATARATE, US915_TX_MAX_DATARATE );
-        }
         case PHY_DEF_TX_DR:
         {
-            return RegionCommonValueInRange( verify->DatarateParams.Datarate, DR_0, DR_5 );
+            return RegionCommonValueInRange( verify->DatarateParams.Datarate, AU915_TX_MIN_DATARATE, AU915_TX_MAX_DATARATE );
         }
         case PHY_RX_DR:
         {
-            return RegionCommonValueInRange( verify->DatarateParams.Datarate, US915_RX_MIN_DATARATE, US915_RX_MAX_DATARATE );
+            return RegionCommonValueInRange( verify->DatarateParams.Datarate, AU915_RX_MIN_DATARATE, AU915_RX_MAX_DATARATE );
         }
         case PHY_DEF_TX_POWER:
         case PHY_TX_POWER:
         {
             // Remark: switched min and max!
-            return RegionCommonValueInRange( verify->TxPower, US915_MAX_TX_POWER, US915_MIN_TX_POWER );
+            return RegionCommonValueInRange( verify->TxPower, AU915_MAX_TX_POWER, AU915_MIN_TX_POWER );
         }
         case PHY_DUTY_CYCLE:
         {
-            return US915_DUTY_CYCLE_ENABLED;
+            return AU915_DUTY_CYCLE_ENABLED;
         }
         case PHY_NB_JOIN_TRIALS:
         {
@@ -426,21 +410,23 @@ bool RegionUS915Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
     return true;
 }
 
-void RegionUS915ApplyCFList( ApplyCFListParams_t* applyCFList )
+void RegionAU915ApplyCFList( ApplyCFListParams_t* applyCFList )
 {
     return;
 }
 
-bool RegionUS915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
+bool RegionAU915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
 {
     uint8_t nbChannels = RegionCommonCountChannels( chanMaskSet->ChannelsMaskIn, 0, 4 );
 
     // Check the number of active channels
-    if( ( nbChannels < 2 ) &&
-        ( nbChannels > 0 ) )
-    {
-        return false;
-    }
+    // According to ACMA regulation, we require at least 20 125KHz channels, if
+    // the node shall utilize 125KHz channels.
+//    if( ( nbChannels < 20 ) &&
+//        ( nbChannels > 0 ) )
+//    {
+//        return false;
+//    }
 
     switch( chanMaskSet->ChannelsMaskType )
     {
@@ -465,7 +451,7 @@ bool RegionUS915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
     return true;
 }
 
-bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
+bool RegionAU915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
 {
     bool adrAckReq = false;
     int8_t datarate = adrNext->Datarate;
@@ -478,34 +464,34 @@ bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
 
     if( adrNext->AdrEnabled == true )
     {
-        if( datarate == US915_TX_MIN_DATARATE )
+        if( datarate == AU915_TX_MIN_DATARATE )
         {
             *adrAckCounter = 0;
             adrAckReq = false;
         }
         else
         {
-            if( adrNext->AdrAckCounter >= US915_ADR_ACK_LIMIT )
+            if( adrNext->AdrAckCounter >= AU915_ADR_ACK_LIMIT )
             {
                 adrAckReq = true;
-                txPower = US915_MAX_TX_POWER;
+                txPower = AU915_MAX_TX_POWER;
             }
             else
             {
                 adrAckReq = false;
             }
-            if( adrNext->AdrAckCounter >= ( US915_ADR_ACK_LIMIT + US915_ADR_ACK_DELAY ) )
+            if( adrNext->AdrAckCounter >= ( AU915_ADR_ACK_LIMIT + AU915_ADR_ACK_DELAY ) )
             {
-                if( ( adrNext->AdrAckCounter % US915_ADR_ACK_DELAY ) == 1 )
+                if( ( adrNext->AdrAckCounter % AU915_ADR_ACK_DELAY ) == 1 )
                 {
                     // Decrease the datarate
                     getPhy.Attribute = PHY_NEXT_LOWER_TX_DR;
                     getPhy.Datarate = datarate;
                     getPhy.UplinkDwellTime = adrNext->UplinkDwellTime;
-                    phyParam = RegionUS915GetPhyParam( &getPhy );
+                    phyParam = RegionAU915GetPhyParam( &getPhy );
                     datarate = phyParam.Value;
 
-                    if( datarate == US915_TX_MIN_DATARATE )
+                    if( datarate == AU915_TX_MIN_DATARATE )
                     {
                         // We must set adrAckReq to false as soon as we reach the lowest datarate
                         adrAckReq = false;
@@ -530,7 +516,7 @@ bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
     return adrAckReq;
 }
 
-void RegionUS915ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols, uint32_t rxError, RxConfigParams_t *rxConfigParams )
+void RegionAU915ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols, uint32_t rxError, RxConfigParams_t *rxConfigParams )
 {
     double tSymbol = 0.0;
     uint32_t radioWakeUpTime;
@@ -540,18 +526,18 @@ void RegionUS915ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols
 
     if( datarate == DR_7 )
     { // FSK
-        tSymbol = RegionCommonComputeSymbolTimeFsk( DataratesUS915[datarate] );
+        tSymbol = RegionCommonComputeSymbolTimeFsk( DataratesAU915[datarate] );
     }
     else
     { // LoRa
-        tSymbol = RegionCommonComputeSymbolTimeLoRa( DataratesUS915[datarate], BandwidthsUS915[datarate] );
+        tSymbol = RegionCommonComputeSymbolTimeLoRa( DataratesAU915[datarate], BandwidthsAU915[datarate] );
     }
 
     radioWakeUpTime = Radio.GetWakeupTime( );
     RegionCommonComputeRxWindowParameters( tSymbol, minRxSymbols, rxError, radioWakeUpTime, &rxConfigParams->WindowTimeout, &rxConfigParams->WindowOffset );
 }
 
-bool RegionUS915RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
+bool RegionAU915RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 {
     int8_t dr = rxConfig->Datarate;
     uint8_t maxPayload = 0;
@@ -566,11 +552,11 @@ bool RegionUS915RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
     if( rxConfig->RxSlot == RX_SLOT_WIN_1 )
     {
         // Apply window 1 frequency
-        frequency = US915_FIRST_RX1_CHANNEL + ( rxConfig->Channel % 8 ) * US915_STEPWIDTH_RX1_CHANNEL;
+        frequency = AU915_FIRST_RX1_CHANNEL + ( rxConfig->Channel % 8 ) * AU915_STEPWIDTH_RX1_CHANNEL;
     }
 
     // Read the physical datarate from the datarates table
-    phyDr = DataratesUS915[dr];
+    phyDr = DataratesAU915[dr];
 
     Radio.SetChannel( frequency );
 
@@ -579,34 +565,34 @@ bool RegionUS915RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 
     if( rxConfig->RepeaterSupport == true )
     {
-        maxPayload = MaxPayloadOfDatarateRepeaterUS915[dr];
+        maxPayload = MaxPayloadOfDatarateRepeaterAU915[dr];
     }
     else
     {
-        maxPayload = MaxPayloadOfDatarateUS915[dr];
+        maxPayload = MaxPayloadOfDatarateAU915[dr];
     }
     Radio.SetMaxPayloadLength( MODEM_LORA, maxPayload + LORA_MAC_FRMPAYLOAD_OVERHEAD );
-    DBG_PRINTF("RX on freq %u Hz at DR %d\n\r", (unsigned int)frequency, dr);
+    FREQ_PRINTF("RX on freq %u Hz at DR %d\r\n", (unsigned int)frequency, dr);
 
     *datarate = (uint8_t) dr;
     return true;
 }
 
-bool RegionUS915TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime_t* txTimeOnAir )
+bool RegionAU915TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime_t* txTimeOnAir )
 {
-    int8_t phyDr = DataratesUS915[txConfig->Datarate];
+    int8_t phyDr = DataratesAU915[txConfig->Datarate];
     int8_t txPowerLimited = LimitTxPower( txConfig->TxPower, Bands[Channels[txConfig->Channel].Band].TxMaxPower, txConfig->Datarate, ChannelsMask );
     uint32_t bandwidth = GetBandwidth( txConfig->Datarate );
     int8_t phyTxPower = 0;
 
     // Calculate physical TX power
-    phyTxPower = RegionCommonComputeTxPower( txPowerLimited, US915_DEFAULT_MAX_ERP, 0 );
+    phyTxPower = RegionCommonComputeTxPower( txPowerLimited, txConfig->MaxEirp, txConfig->AntennaGain );
 
     Radio.SetChannel( Channels[txConfig->Channel].Frequency );
 
     Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
     Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 3e3 );
-    DBG_PRINTF("TX on freq %u Hz at DR %d\n\r", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
+    FREQ_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
 
     *txTimeOnAir = Radio.TimeOnAir( MODEM_LORA,  txConfig->PktLen );
     *txPower = txPowerLimited;
@@ -614,7 +600,7 @@ bool RegionUS915TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     return true;
 }
 
-uint8_t RegionUS915LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, int8_t* txPowOut, uint8_t* nbRepOut, uint8_t* nbBytesParsed )
+uint8_t RegionAU915LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, int8_t* txPowOut, uint8_t* nbRepOut, uint8_t* nbBytesParsed )
 {
     uint8_t status = 0x07;
     LinkAdrParams_t linkAdrParams;
@@ -676,18 +662,18 @@ uint8_t RegionUS915LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, in
     }
 
     // Verify datarate
-    if( RegionCommonChanVerifyDr( US915_MAX_NB_CHANNELS, channelsMask, linkAdrParams.Datarate, US915_TX_MIN_DATARATE, US915_TX_MAX_DATARATE, Channels  ) == false )
+    if( RegionCommonChanVerifyDr( AU915_MAX_NB_CHANNELS, channelsMask, linkAdrParams.Datarate, AU915_TX_MIN_DATARATE, AU915_TX_MAX_DATARATE, Channels  ) == false )
     {
         status &= 0xFD; // Datarate KO
     }
 
     // Verify tx power
-    if( RegionCommonValueInRange( linkAdrParams.TxPower, US915_MAX_TX_POWER, US915_MIN_TX_POWER ) == 0 )
+    if( RegionCommonValueInRange( linkAdrParams.TxPower, AU915_MAX_TX_POWER, AU915_MIN_TX_POWER ) == 0 )
     {
         // Verify if the maximum TX power is exceeded
-        if( US915_MAX_TX_POWER > linkAdrParams.TxPower )
+        if( AU915_MAX_TX_POWER > linkAdrParams.TxPower )
         { // Apply maximum TX power. Accept TX power.
-            linkAdrParams.TxPower = US915_MAX_TX_POWER;
+            linkAdrParams.TxPower = AU915_MAX_TX_POWER;
         }
         else
         {
@@ -723,22 +709,22 @@ uint8_t RegionUS915LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, in
     return status;
 }
 
-uint8_t RegionUS915RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
+uint8_t RegionAU915RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
 {
     uint8_t status = 0x07;
     uint32_t freq = rxParamSetupReq->Frequency;
 
     // Verify radio frequency
     if( ( Radio.CheckRfFrequency( freq ) == false ) ||
-        ( freq < US915_FIRST_RX1_CHANNEL ) ||
-        ( freq > US915_LAST_RX1_CHANNEL ) ||
-        ( ( ( freq - ( uint32_t ) US915_FIRST_RX1_CHANNEL ) % ( uint32_t ) US915_STEPWIDTH_RX1_CHANNEL ) != 0 ) )
+        ( freq < AU915_FIRST_RX1_CHANNEL ) ||
+        ( freq > AU915_LAST_RX1_CHANNEL ) ||
+        ( ( ( freq - ( uint32_t ) AU915_FIRST_RX1_CHANNEL ) % ( uint32_t ) AU915_STEPWIDTH_RX1_CHANNEL ) != 0 ) )
     {
         status &= 0xFE; // Channel frequency KO
     }
 
     // Verify datarate
-    if( RegionCommonValueInRange( rxParamSetupReq->Datarate, US915_RX_MIN_DATARATE, US915_RX_MAX_DATARATE ) == false )
+    if( RegionCommonValueInRange( rxParamSetupReq->Datarate, AU915_RX_MIN_DATARATE, AU915_RX_MAX_DATARATE ) == false )
     {
         status &= 0xFD; // Datarate KO
     }
@@ -749,7 +735,7 @@ uint8_t RegionUS915RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
     }
 
     // Verify datarate offset
-    if( RegionCommonValueInRange( rxParamSetupReq->DrOffset, US915_MIN_RX1_DR_OFFSET, US915_MAX_RX1_DR_OFFSET ) == false )
+    if( RegionCommonValueInRange( rxParamSetupReq->DrOffset, AU915_MIN_RX1_DR_OFFSET, AU915_MAX_RX1_DR_OFFSET ) == false )
     {
         status &= 0xFB; // Rx1DrOffset range KO
     }
@@ -757,23 +743,23 @@ uint8_t RegionUS915RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
     return status;
 }
 
-uint8_t RegionUS915NewChannelReq( NewChannelReqParams_t* newChannelReq )
+uint8_t RegionAU915NewChannelReq( NewChannelReqParams_t* newChannelReq )
 {
     // Datarate and frequency KO
     return 0;
 }
 
-int8_t RegionUS915TxParamSetupReq( TxParamSetupReqParams_t* txParamSetupReq )
+int8_t RegionAU915TxParamSetupReq( TxParamSetupReqParams_t* txParamSetupReq )
 {
     return -1;
 }
 
-uint8_t RegionUS915DlChannelReq( DlChannelReqParams_t* dlChannelReq )
+uint8_t RegionAU915DlChannelReq( DlChannelReqParams_t* dlChannelReq )
 {
     return 0;
 }
 
-int8_t RegionUS915AlternateDr( AlternateDrParams_t* alternateDr )
+int8_t RegionAU915AlternateDr( AlternateDrParams_t* alternateDr )
 {
     int8_t datarate = 0;
 
@@ -791,7 +777,7 @@ int8_t RegionUS915AlternateDr( AlternateDrParams_t* alternateDr )
     return datarate;
 }
 
-void RegionUS915CalcBackOff( CalcBackOffParams_t* calcBackOff )
+void RegionAU915CalcBackOff( CalcBackOffParams_t* calcBackOff )
 {
     uint8_t channel = calcBackOff->Channel;
     uint16_t joinDutyCycle = 0;
@@ -809,11 +795,11 @@ void RegionUS915CalcBackOff( CalcBackOffParams_t* calcBackOff )
     }
 }
 
-bool RegionUS915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel, TimerTime_t* time, TimerTime_t* aggregatedTimeOff )
+bool RegionAU915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel, TimerTime_t* time, TimerTime_t* aggregatedTimeOff )
 {
     uint8_t nbEnabledChannels = 0;
     uint8_t delayTx = 0;
-    uint8_t enabledChannels[US915_MAX_NB_CHANNELS] = { 0 };
+    uint8_t enabledChannels[AU915_MAX_NB_CHANNELS] = { 0 };
     TimerTime_t nextTxDelay = 0;
 
     // Count 125kHz channels
@@ -835,9 +821,6 @@ bool RegionUS915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
         // Reset Aggregated time off
         *aggregatedTimeOff = 0;
 
-        // Update bands Time OFF
-        nextTxDelay = RegionCommonUpdateBandTimeOff( nextChanParams->Joined, nextChanParams->DutyCycleEnabled, Bands, US915_MAX_NB_BANDS );
-
         // Search how many channels are enabled
         nbEnabledChannels = CountNbOfEnabledChannels( nextChanParams->Datarate,
                                                       ChannelsMaskRemaining, Channels,
@@ -854,7 +837,7 @@ bool RegionUS915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
         // We found a valid channel
         *channel = enabledChannels[randr( 0, nbEnabledChannels - 1 )];
         // Disable the channel in the mask
-        RegionCommonChanDisable( ChannelsMaskRemaining, *channel, US915_MAX_NB_CHANNELS - 8 );
+        RegionCommonChanDisable( ChannelsMaskRemaining, *channel, AU915_MAX_NB_CHANNELS - 8 );
 
         *time = 0;
         return true;
@@ -873,31 +856,31 @@ bool RegionUS915NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
     }
 }
 
-LoRaMacStatus_t RegionUS915ChannelAdd( ChannelAddParams_t* channelAdd )
+LoRaMacStatus_t RegionAU915ChannelAdd( ChannelAddParams_t* channelAdd )
 {
     return LORAMAC_STATUS_PARAMETER_INVALID;
 }
 
-bool RegionUS915ChannelsRemove( ChannelRemoveParams_t* channelRemove  )
+bool RegionAU915ChannelsRemove( ChannelRemoveParams_t* channelRemove  )
 {
     return LORAMAC_STATUS_PARAMETER_INVALID;
 }
 
-void RegionUS915SetContinuousWave( ContinuousWaveParams_t* continuousWave )
+void RegionAU915SetContinuousWave( ContinuousWaveParams_t* continuousWave )
 {
     int8_t txPowerLimited = LimitTxPower( continuousWave->TxPower, Bands[Channels[continuousWave->Channel].Band].TxMaxPower, continuousWave->Datarate, ChannelsMask );
     int8_t phyTxPower = 0;
     uint32_t frequency = Channels[continuousWave->Channel].Frequency;
 
     // Calculate physical TX power
-    phyTxPower = RegionCommonComputeTxPower( txPowerLimited, US915_DEFAULT_MAX_ERP, 0 );
+    phyTxPower = RegionCommonComputeTxPower( txPowerLimited, continuousWave->MaxEirp, continuousWave->AntennaGain );
 
     Radio.SetTxContinuousWave( frequency, phyTxPower, continuousWave->Timeout );
 }
 
-uint8_t RegionUS915ApplyDrOffset( uint8_t downlinkDwellTime, int8_t dr, int8_t drOffset )
+uint8_t RegionAU915ApplyDrOffset( uint8_t downlinkDwellTime, int8_t dr, int8_t drOffset )
 {
-    int8_t datarate = DatarateOffsetsUS915[dr][drOffset];
+    int8_t datarate = DatarateOffsetsAU915[dr][drOffset];
 
     if( datarate < 0 )
     {
@@ -906,20 +889,20 @@ uint8_t RegionUS915ApplyDrOffset( uint8_t downlinkDwellTime, int8_t dr, int8_t d
     return datarate;
 }
 
-void RegionUS915RxBeaconSetup( RxBeaconSetup_t* rxBeaconSetup, uint8_t* outDr )
+void RegionAU915RxBeaconSetup( RxBeaconSetup_t* rxBeaconSetup, uint8_t* outDr )
 {
     RegionCommonRxBeaconSetupParams_t regionCommonRxBeaconSetup;
 
-    regionCommonRxBeaconSetup.Datarates = DataratesUS915;
+    regionCommonRxBeaconSetup.Datarates = DataratesAU915;
     regionCommonRxBeaconSetup.Frequency = rxBeaconSetup->Frequency;
-    regionCommonRxBeaconSetup.BeaconSize = US915_BEACON_SIZE;
-    regionCommonRxBeaconSetup.BeaconDatarate = US915_BEACON_CHANNEL_DR;
-    regionCommonRxBeaconSetup.BeaconChannelBW = US915_BEACON_CHANNEL_BW;
+    regionCommonRxBeaconSetup.BeaconSize = AU915_BEACON_SIZE;
+    regionCommonRxBeaconSetup.BeaconDatarate = AU915_BEACON_CHANNEL_DR;
+    regionCommonRxBeaconSetup.BeaconChannelBW = AU915_BEACON_CHANNEL_BW;
     regionCommonRxBeaconSetup.RxTime = rxBeaconSetup->RxTime;
     regionCommonRxBeaconSetup.SymbolTimeout = rxBeaconSetup->SymbolTimeout;
 
     RegionCommonRxBeaconSetup( &regionCommonRxBeaconSetup );
 
     // Store downlink datarate
-    *outDr = US915_BEACON_CHANNEL_DR;
+    *outDr = AU915_BEACON_CHANNEL_DR;
 }

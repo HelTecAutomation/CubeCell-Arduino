@@ -47,21 +47,17 @@ char rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 
-int16_t txnumber;
+int16_t txNumber;
 
-int16_t RSSI,rxSize;
+int16_t rssi,rxSize;
 
 
 void setup() {
-    BoardInitMcu( );
+    boardInitMcu( );
     Serial.begin(115200);
 
-    txnumber=0;
-    RSSI=0;
-
- 
-
-
+    txNumber=0;
+    rssi=0;
 
     Radio.Init( &RadioEvents );
     Radio.SetChannel( RF_FREQUENCY );
@@ -75,20 +71,16 @@ void setup() {
 
 void loop()
 {
-
-		
-			delay(1000);
-			txnumber++;
-		    sprintf(txpacket,"%s","Hello world number");  //start a package
-        sprintf(txpacket+strlen(txpacket),"%d",txnumber); //add to the end of package
+	delay(1000);
+	txNumber++;
+	sprintf(txpacket,"%s","Hello world number");  //start a package
+	sprintf(txpacket+strlen(txpacket),"%d",txNumber); //add to the end of package
 		   
-		    RGB_ON(COLOR_SEND,0); //change rgb light
+	turnOnRGB(COLOR_SEND,0); //change rgb color
 
-		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
+	Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
-		    Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out
-		   
-		
+	Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out	
 }
 
 

@@ -12,20 +12,39 @@
  * RGB green means received done;
  */
 
-/*LoraWan Class*/
-DeviceClass_t  CLASS=LORAWAN_CLASS;
+/* OTAA para*/
+uint8_t devEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+uint8_t appEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t appKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+
+/* ABP para*/
+uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
+uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
+uint32_t devAddr =  ( uint32_t )0x007e6ae1;
+
+/*LoraWan region, select in arduino IDE tools*/
+LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+
+/*LoraWan Class, Class A and Class C are supported*/
+DeviceClass_t  loraWanClass = LORAWAN_CLASS;
+
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t appTxDutyCycle = 15000;
+
 /*OTAA or ABP*/
-bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+bool overTheAirActivation = LORAWAN_NETMODE;
+
 /*ADR enable*/
-bool LORAWAN_ADR_ON = LORAWAN_ADR;
+bool loraWanAdr = LORAWAN_ADR;
+
 /* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
-bool KeepNet = LORAWAN_Net_Reserve;
-/*LoraWan REGION*/
-LoRaMacRegion_t REGION = ACTIVE_REGION;
+bool keepNet = LORAWAN_NET_RESERVE;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
-bool IsTxConfirmed = LORAWAN_UPLINKMODE;
+bool isTxConfirmed = LORAWAN_UPLINKMODE;
 
+/* Application port */
+uint8_t appPort = 2;
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -46,15 +65,9 @@ bool IsTxConfirmed = LORAWAN_UPLINKMODE;
 * Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
 * the datarate, in case the LoRaMAC layer did not receive an acknowledgment
 */
-uint8_t ConfirmedNbTrials = 8;
+uint8_t confirmedNbTrials = 8;
 
-/* Application port */
-uint8_t AppPort = 2;
-
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 15000;
-
-float Temperature, Humidity, Pressure, lux, co2, tvoc;
+float temperature, humidity, pressure, lux, co2, tvoc;
 uint16_t baseline;
 int count;
 int maxtry = 50;
@@ -65,8 +78,15 @@ BMP280 bmp;
    \brief   Prepares the payload of the frame
 */
 
-static void PrepareTxFrame( uint8_t port )
+static void prepareTxFrame( uint8_t port )
 {
+	/*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
+	*appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
+	*if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
+	*if disabled AT, LORAWAN_APP_DATA_MAX_SIZE can be modified, the max value is reference to lorawan region and SF.
+	*for example, if use REGION_CN470, 
+	*the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
+	*/
   pinMode(Vext, OUTPUT);
   digitalWrite(Vext, LOW);
   delay(500);
@@ -79,9 +99,9 @@ static void PrepareTxFrame( uint8_t port )
                   BMP280::FILTER_X16,      /* Filtering. */
                   BMP280::STANDBY_MS_500); /* Standby time. */
   float temp = bmp.readTemperature();
-  Pressure = (float)bmp.readPressure() / 100.0;
+  pressure = (float)bmp.readPressure() / 100.0;
   Wire.end();
-  while (Pressure > 1190.0 && count < maxtry) {
+  while (pressure > 1190.0 && count < maxtry) {
     bmp.begin();
     delay(500);
     bmp.setSampling(BMP280::MODE_NORMAL,     /* Operating Mode. */
@@ -89,69 +109,69 @@ static void PrepareTxFrame( uint8_t port )
                     BMP280::SAMPLING_X16,    /* Pressure oversampling */
                     BMP280::FILTER_X16,      /* Filtering. */
                     BMP280::STANDBY_MS_500); /* Standby time. */
-    Pressure = (float)bmp.readPressure() / 100.0;
+    pressure = (float)bmp.readPressure() / 100.0;
     Wire.end();
     count++;
     delay(500);
   }
-  if (Pressure > 1190.0) {
-    Pressure = 0;
+  if (pressure > 1190.0) {
+    pressure = 0;
     Serial.println("BMP ERROR");
   }
 
   Wire.end();
   digitalWrite(Vext, HIGH);
-  uint16_t BatteryVoltage = GetBatteryVoltage();
+  uint16_t batteryVoltage = getBatteryVoltage();
   unsigned char *puc;
 
-  puc = (unsigned char *)(&Temperature);
-  AppDataSize = 26;//AppDataSize max value is 64
-  AppData[0] = puc[0];
-  AppData[1] = puc[1];
-  AppData[2] = puc[2];
-  AppData[3] = puc[3];
+  puc = (unsigned char *)(&temperature);
+  appDataSize = 26;
+  appData[0] = puc[0];
+  appData[1] = puc[1];
+  appData[2] = puc[2];
+  appData[3] = puc[3];
 
-  puc = (unsigned char *)(&Humidity);
-  AppData[4] = puc[0];
-  AppData[5] = puc[1];
-  AppData[6] = puc[2];
-  AppData[7] = puc[3];
+  puc = (unsigned char *)(&humidity);
+  appData[4] = puc[0];
+  appData[5] = puc[1];
+  appData[6] = puc[2];
+  appData[7] = puc[3];
 
   puc = (unsigned char *)(&lux);
-  AppData[8] = puc[0];
-  AppData[9] = puc[1];
-  AppData[10] = puc[2];
-  AppData[11] = puc[3];
+  appData[8] = puc[0];
+  appData[9] = puc[1];
+  appData[10] = puc[2];
+  appData[11] = puc[3];
 
-  puc = (unsigned char *)(&Pressure);
-  AppData[12] = puc[0];
-  AppData[13] = puc[1];
-  AppData[14] = puc[2];
-  AppData[15] = puc[3];
+  puc = (unsigned char *)(&pressure);
+  appData[12] = puc[0];
+  appData[13] = puc[1];
+  appData[14] = puc[2];
+  appData[15] = puc[3];
 
   puc = (unsigned char *)(&co2);
-  AppData[16] = puc[0];
-  AppData[17] = puc[1];
-  AppData[18] = puc[2];
-  AppData[19] = puc[3];
+  appData[16] = puc[0];
+  appData[17] = puc[1];
+  appData[18] = puc[2];
+  appData[19] = puc[3];
 
   puc = (unsigned char *)(&tvoc);
-  AppData[20] = puc[0];
-  AppData[21] = puc[1];
-  AppData[22] = puc[2];
-  AppData[23] = puc[3];
+  appData[20] = puc[0];
+  appData[21] = puc[1];
+  appData[22] = puc[2];
+  appData[23] = puc[3];
 
-  AppData[24] = (uint8_t)(BatteryVoltage >> 8);
-  AppData[25] = (uint8_t)BatteryVoltage;
+  appData[24] = (uint8_t)(batteryVoltage >> 8);
+  appData[25] = (uint8_t)batteryVoltage;
 
   Serial.print("T=");
-  Serial.print(Temperature);
+  Serial.print(temperature);
   Serial.print("C, RH=");
-  Serial.print(Humidity);
+  Serial.print(humidity);
   Serial.print("%, Lux=");
   Serial.print(lux);
   Serial.print(" lx, Pressure=");
-  Serial.print(Pressure);
+  Serial.print(pressure);
   Serial.print(" hPA, CO2=");
   Serial.print(co2);
   Serial.print(" ppm, TVOC=");
@@ -159,61 +179,64 @@ static void PrepareTxFrame( uint8_t port )
   Serial.print(" ppb, Baseline: ");
   Serial.print(baseline);
   Serial.print(", BatteryVoltage:");
-  Serial.println(BatteryVoltage);
+  Serial.println(batteryVoltage);
 }
 
 
 void setup() {
-  BoardInitMcu( );
-  Serial.begin(115200);
-  DeviceState = DEVICE_STATE_INIT;
+	boardInitMcu();
+	Serial.begin(115200);
+#if(AT_SUPPORT)
+	enableAt();
+#endif
+	deviceState = DEVICE_STATE_INIT;
+	LoRaWAN.ifskipjoin();
 }
 
 void loop()
 {
-  switch ( DeviceState )
-  {
-    case DEVICE_STATE_INIT:
-      {
-        Serial.printf("LoRaWan Class%X test start! \r\n", CLASS + 10);
+	switch( deviceState )
+	{
+		case DEVICE_STATE_INIT:
+		{
 #if(AT_SUPPORT)
-        Enable_AT();
-        getDevParam();
+			getDevParam();
 #endif
-        printDevParam();
-        LoRaWAN.Init(CLASS, ACTIVE_REGION);
-        DeviceState = DEVICE_STATE_JOIN;
-        break;
-      }
-    case DEVICE_STATE_JOIN:
-      {
-        LoRaWAN.Join();
-        break;
-      }
-    case DEVICE_STATE_SEND:
-      {
-        PrepareTxFrame( AppPort );
-        LoRaWAN.Send();
-        DeviceState = DEVICE_STATE_CYCLE;
-        break;
-      }
-    case DEVICE_STATE_CYCLE:
-      {
-        // Schedule next packet transmission
-        TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-        LoRaWAN.Cycle(TxDutyCycleTime);
-        DeviceState = DEVICE_STATE_SLEEP;
-        break;
-      }
-    case DEVICE_STATE_SLEEP:
-      {
-        LoRaWAN.Sleep();
-        break;
-      }
-    default:
-      {
-        DeviceState = DEVICE_STATE_INIT;
-        break;
-      }
-  }
+			printDevParam();
+			LoRaWAN.init(loraWanClass,loraWanRegion);
+			deviceState = DEVICE_STATE_JOIN;
+			break;
+		}
+		case DEVICE_STATE_JOIN:
+		{
+			LoRaWAN.join();
+			break;
+		}
+		case DEVICE_STATE_SEND:
+		{
+			prepareTxFrame( appPort );
+			LoRaWAN.send();
+			deviceState = DEVICE_STATE_CYCLE;
+			break;
+		}
+		case DEVICE_STATE_CYCLE:
+		{
+			// Schedule next packet transmission
+			txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
+			LoRaWAN.cycle(txDutyCycleTime);
+			deviceState = DEVICE_STATE_SLEEP;
+			break;
+		}
+		case DEVICE_STATE_SLEEP:
+		{
+			LoRaWAN.sleep();
+			break;
+		}
+		default:
+		{
+			deviceState = DEVICE_STATE_INIT;
+			break;
+		}
+	}
 }
+

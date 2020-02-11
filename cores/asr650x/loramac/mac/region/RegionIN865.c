@@ -15,7 +15,7 @@
 |___/ |_/_/ \_\___|_|\_\_| \___/|_|_\\___|___|
 embedded.connectivity.solutions===============
 
-Description: LoRa MAC region EU868 implementation
+Description: LoRa MAC region IN865 implementation
 
 License: Revised BSD License, see LICENSE.TXT file include in the project
 
@@ -35,7 +35,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 
 #include "Region.h"
 #include "RegionCommon.h"
-#include "RegionEU868.h"
+#include "RegionIN865.h"
 #include "debug.h"
 
 // Definitions
@@ -45,18 +45,14 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 /*!
  * LoRaMAC channels
  */
-static ChannelParams_t Channels[EU868_MAX_NB_CHANNELS];
+static ChannelParams_t Channels[IN865_MAX_NB_CHANNELS];
 
 /*!
  * LoRaMac bands
  */
-static Band_t Bands[EU868_MAX_NB_BANDS] =
+static Band_t Bands[IN865_MAX_NB_BANDS] =
 {
-    EU868_BAND0,
-    EU868_BAND1,
-    EU868_BAND2,
-    EU868_BAND3,
-    EU868_BAND4,
+    IN865_BAND0
 };
 
 /*!
@@ -78,6 +74,10 @@ static int8_t GetNextLowerTxDr( int8_t dr, int8_t minDr )
     {
         nextLowerDr = minDr;
     }
+    else if( dr == DR_7 )
+    {
+        nextLowerDr = DR_5;
+    }
     else
     {
         nextLowerDr = dr - 1;
@@ -87,7 +87,7 @@ static int8_t GetNextLowerTxDr( int8_t dr, int8_t minDr )
 
 static uint32_t GetBandwidth( uint32_t drIndex )
 {
-    switch( BandwidthsEU868[drIndex] )
+    switch( BandwidthsIN865[drIndex] )
     {
         default:
         case 125000:
@@ -117,32 +117,7 @@ static bool VerifyTxFreq( uint32_t freq, uint8_t *band )
         return false;
     }
 
-    // Check frequency bands
-    if( ( freq >= 863000000 ) && ( freq < 865000000 ) )
-    {
-        *band = 2;
-    }
-    else if( ( freq >= 865000000 ) && ( freq <= 868000000 ) )
-    {
-        *band = 0;
-    }
-    else if( ( freq > 868000000 ) && ( freq <= 868600000 ) )
-    {
-        *band = 1;
-    }
-    else if( ( freq >= 868700000 ) && ( freq <= 869200000 ) )
-    {
-        *band = 2;
-    }
-    else if( ( freq >= 869400000 ) && ( freq <= 869650000 ) )
-    {
-        *band = 3;
-    }
-    else if( ( freq >= 869700000 ) && ( freq <= 870000000 ) )
-    {
-        *band = 4;
-    }
-    else
+    if( ( freq < 865000000 ) || ( freq > 867000000 ) )
     {
         return false;
     }
@@ -154,7 +129,7 @@ static uint8_t CountNbOfEnabledChannels( bool joined, uint8_t datarate, uint16_t
     uint8_t nbEnabledChannels = 0;
     uint8_t delayTransmission = 0;
 
-    for( uint8_t i = 0, k = 0; i < EU868_MAX_NB_CHANNELS; i += 16, k++ )
+    for( uint8_t i = 0, k = 0; i < IN865_MAX_NB_CHANNELS; i += 16, k++ )
     {
         for( uint8_t j = 0; j < 16; j++ )
         {
@@ -166,7 +141,7 @@ static uint8_t CountNbOfEnabledChannels( bool joined, uint8_t datarate, uint16_t
                 }
                 if( joined == false )
                 {
-                    if( ( EU868_JOIN_CHANNELS & ( 1 << j ) ) == 0 )
+                    if( ( IN865_JOIN_CHANNELS & ( 1 << j ) ) == 0 )
                     {
                         continue;
                     }
@@ -190,7 +165,7 @@ static uint8_t CountNbOfEnabledChannels( bool joined, uint8_t datarate, uint16_t
     return nbEnabledChannels;
 }
 
-PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
+PhyParam_t RegionIN865GetPhyParam( GetPhyParams_t* getPhy )
 {
     PhyParam_t phyParam = { 0 };
 
@@ -198,92 +173,92 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
     {
         case PHY_MIN_RX_DR:
         {
-            phyParam.Value = EU868_RX_MIN_DATARATE;
+            phyParam.Value = IN865_RX_MIN_DATARATE;
             break;
         }
         case PHY_MIN_TX_DR:
         {
-            phyParam.Value = EU868_TX_MIN_DATARATE;
+            phyParam.Value = IN865_TX_MIN_DATARATE;
             break;
         }
         case PHY_DEF_TX_DR:
         {
-            phyParam.Value = EU868_DEFAULT_DATARATE;
+            phyParam.Value = IN865_DEFAULT_DATARATE;
             break;
         }
         case PHY_NEXT_LOWER_TX_DR:
         {
-            phyParam.Value = GetNextLowerTxDr( getPhy->Datarate, EU868_TX_MIN_DATARATE );
+            phyParam.Value = GetNextLowerTxDr( getPhy->Datarate, IN865_TX_MIN_DATARATE );
             break;
         }
         case PHY_DEF_TX_POWER:
         {
-            phyParam.Value = EU868_DEFAULT_TX_POWER;
+            phyParam.Value = IN865_DEFAULT_TX_POWER;
             break;
         }
         case PHY_MAX_PAYLOAD:
         {
-            phyParam.Value = MaxPayloadOfDatarateEU868[getPhy->Datarate];
+            phyParam.Value = MaxPayloadOfDatarateIN865[getPhy->Datarate];
             break;
         }
         case PHY_MAX_PAYLOAD_REPEATER:
         {
-            phyParam.Value = MaxPayloadOfDatarateRepeaterEU868[getPhy->Datarate];
+            phyParam.Value = MaxPayloadOfDatarateRepeaterIN865[getPhy->Datarate];
             break;
         }
         case PHY_DUTY_CYCLE:
         {
-            phyParam.Value = EU868_DUTY_CYCLE_ENABLED;
+            phyParam.Value = IN865_DUTY_CYCLE_ENABLED;
             break;
         }
         case PHY_MAX_RX_WINDOW:
         {
-            phyParam.Value = EU868_MAX_RX_WINDOW;
+            phyParam.Value = IN865_MAX_RX_WINDOW;
             break;
         }
         case PHY_RECEIVE_DELAY1:
         {
-            phyParam.Value = EU868_RECEIVE_DELAY1;
+            phyParam.Value = IN865_RECEIVE_DELAY1;
             break;
         }
         case PHY_RECEIVE_DELAY2:
         {
-            phyParam.Value = EU868_RECEIVE_DELAY2;
+            phyParam.Value = IN865_RECEIVE_DELAY2;
             break;
         }
         case PHY_JOIN_ACCEPT_DELAY1:
         {
-            phyParam.Value = EU868_JOIN_ACCEPT_DELAY1;
+            phyParam.Value = IN865_JOIN_ACCEPT_DELAY1;
             break;
         }
         case PHY_JOIN_ACCEPT_DELAY2:
         {
-            phyParam.Value = EU868_JOIN_ACCEPT_DELAY2;
+            phyParam.Value = IN865_JOIN_ACCEPT_DELAY2;
             break;
         }
         case PHY_MAX_FCNT_GAP:
         {
-            phyParam.Value = EU868_MAX_FCNT_GAP;
+            phyParam.Value = IN865_MAX_FCNT_GAP;
             break;
         }
         case PHY_ACK_TIMEOUT:
         {
-            phyParam.Value = ( EU868_ACKTIMEOUT + randr( -EU868_ACK_TIMEOUT_RND, EU868_ACK_TIMEOUT_RND ) );
+            phyParam.Value = ( IN865_ACKTIMEOUT + randr( -IN865_ACK_TIMEOUT_RND, IN865_ACK_TIMEOUT_RND ) );
             break;
         }
         case PHY_DEF_DR1_OFFSET:
         {
-            phyParam.Value = EU868_DEFAULT_RX1_DR_OFFSET;
+            phyParam.Value = IN865_DEFAULT_RX1_DR_OFFSET;
             break;
         }
         case PHY_DEF_RX2_FREQUENCY:
         {
-            phyParam.Value = EU868_RX_WND_2_FREQ;
+            phyParam.Value = IN865_RX_WND_2_FREQ;
             break;
         }
         case PHY_DEF_RX2_DR:
         {
-            phyParam.Value = EU868_RX_WND_2_DR;
+            phyParam.Value = IN865_RX_WND_2_DR;
             break;
         }
         case PHY_CHANNELS_MASK:
@@ -298,7 +273,7 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
         }
         case PHY_MAX_NB_CHANNELS:
         {
-            phyParam.Value = EU868_MAX_NB_CHANNELS;
+            phyParam.Value = IN865_MAX_NB_CHANNELS;
             break;
         }
         case PHY_CHANNELS:
@@ -314,12 +289,12 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
         }
         case PHY_DEF_MAX_EIRP:
         {
-            phyParam.fValue = EU868_DEFAULT_MAX_EIRP;
+            phyParam.fValue = IN865_DEFAULT_MAX_EIRP;
             break;
         }
         case PHY_DEF_ANTENNA_GAIN:
         {
-            phyParam.fValue = EU868_DEFAULT_ANTENNA_GAIN;
+            phyParam.fValue = IN865_DEFAULT_ANTENNA_GAIN;
             break;
         }
         case PHY_NB_JOIN_TRIALS:
@@ -330,19 +305,19 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
         }
         case PHY_BEACON_CHANNEL_FREQ:
         {
-            phyParam.Value = EU868_BEACON_CHANNEL_FREQ;
+            phyParam.Value = IN865_BEACON_CHANNEL_FREQ;
             break;
         }
         case PHY_BEACON_FORMAT:
         {
-            phyParam.BeaconFormat.BeaconSize = EU868_BEACON_SIZE;
-            phyParam.BeaconFormat.Rfu1Size = EU868_RFU1_SIZE;
-            phyParam.BeaconFormat.Rfu2Size = EU868_RFU2_SIZE;
+            phyParam.BeaconFormat.BeaconSize = IN865_BEACON_SIZE;
+            phyParam.BeaconFormat.Rfu1Size = IN865_RFU1_SIZE;
+            phyParam.BeaconFormat.Rfu2Size = IN865_RFU2_SIZE;
             break;
         }
         case PHY_BEACON_CHANNEL_DR:
         {
-            phyParam.Value = EU868_BEACON_CHANNEL_DR;
+            phyParam.Value = IN865_BEACON_CHANNEL_DR;
             break;
         }
         default:
@@ -354,21 +329,21 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
     return phyParam;
 }
 
-void RegionEU868SetBandTxDone( SetBandTxDoneParams_t* txDone )
+void RegionIN865SetBandTxDone( SetBandTxDoneParams_t* txDone )
 {
     RegionCommonSetBandTxDone( txDone->Joined, &Bands[Channels[txDone->Channel].Band], txDone->LastTxDoneTime );
 }
 
-void RegionEU868InitDefaults( InitType_t type )
+void RegionIN865InitDefaults( InitType_t type )
 {
     switch( type )
     {
         case INIT_TYPE_INIT:
         {
             // Channels
-            Channels[0] = ( ChannelParams_t ) EU868_LC1;
-            Channels[1] = ( ChannelParams_t ) EU868_LC2;
-            Channels[2] = ( ChannelParams_t ) EU868_LC3;
+            Channels[0] = ( ChannelParams_t ) IN865_LC1;
+            Channels[1] = ( ChannelParams_t ) IN865_LC2;
+            Channels[2] = ( ChannelParams_t ) IN865_LC3;
 
             // Initialize the channels default mask
             ChannelsDefaultMask[0] = LC( 1 ) + LC( 2 ) + LC( 3 );
@@ -389,13 +364,13 @@ void RegionEU868InitDefaults( InitType_t type )
     }
 }
 
-bool RegionEU868Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
+bool RegionIN865Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
 {
     switch( phyAttribute )
     {
         case PHY_TX_DR:
         {
-            return RegionCommonValueInRange( verify->DatarateParams.Datarate, EU868_TX_MIN_DATARATE, EU868_TX_MAX_DATARATE );
+            return RegionCommonValueInRange( verify->DatarateParams.Datarate, IN865_TX_MIN_DATARATE, IN865_TX_MAX_DATARATE );
         }
         case PHY_DEF_TX_DR:
         {
@@ -403,17 +378,17 @@ bool RegionEU868Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
         }
         case PHY_RX_DR:
         {
-            return RegionCommonValueInRange( verify->DatarateParams.Datarate, EU868_RX_MIN_DATARATE, EU868_RX_MAX_DATARATE );
+            return RegionCommonValueInRange( verify->DatarateParams.Datarate, IN865_RX_MIN_DATARATE, IN865_RX_MAX_DATARATE );
         }
         case PHY_DEF_TX_POWER:
         case PHY_TX_POWER:
         {
             // Remark: switched min and max!
-            return RegionCommonValueInRange( verify->TxPower, EU868_MAX_TX_POWER, EU868_MIN_TX_POWER );
+            return RegionCommonValueInRange( verify->TxPower, IN865_MAX_TX_POWER, IN865_MIN_TX_POWER );
         }
         case PHY_DUTY_CYCLE:
         {
-            return EU868_DUTY_CYCLE_ENABLED;
+            return IN865_DUTY_CYCLE_ENABLED;
         }
         case PHY_NB_JOIN_TRIALS:
         {
@@ -429,7 +404,7 @@ bool RegionEU868Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
     return true;
 }
 
-void RegionEU868ApplyCFList( ApplyCFListParams_t* applyCFList )
+void RegionIN865ApplyCFList( ApplyCFListParams_t* applyCFList )
 {
     ChannelParams_t newChannel;
     ChannelAddParams_t channelAdd;
@@ -445,9 +420,9 @@ void RegionEU868ApplyCFList( ApplyCFListParams_t* applyCFList )
     }
 
     // Last byte is RFU, don't take it into account
-    for( uint8_t i = 0, chanIdx = EU868_NUMB_DEFAULT_CHANNELS; chanIdx < EU868_MAX_NB_CHANNELS; i+=3, chanIdx++ )
+    for( uint8_t i = 0, chanIdx = IN865_NUMB_DEFAULT_CHANNELS; chanIdx < IN865_MAX_NB_CHANNELS; i+=3, chanIdx++ )
     {
-        if( chanIdx < ( EU868_NUMB_CHANNELS_CF_LIST + EU868_NUMB_DEFAULT_CHANNELS ) )
+        if( chanIdx < ( IN865_NUMB_CHANNELS_CF_LIST + IN865_NUMB_DEFAULT_CHANNELS ) )
     {
         // Channel frequency
         newChannel.Frequency = (uint32_t) applyCFList->Payload[i];
@@ -471,18 +446,18 @@ void RegionEU868ApplyCFList( ApplyCFListParams_t* applyCFList )
             channelAdd.ChannelId = chanIdx;
 
             // Try to add all channels
-            RegionEU868ChannelAdd( &channelAdd );
+            RegionIN865ChannelAdd( &channelAdd );
         }
         else
         {
             channelRemove.ChannelId = chanIdx;
 
-            RegionEU868ChannelsRemove( &channelRemove );
+            RegionIN865ChannelsRemove( &channelRemove );
         }
     }
 }
 
-bool RegionEU868ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
+bool RegionIN865ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
 {
     switch( chanMaskSet->ChannelsMaskType )
     {
@@ -502,7 +477,7 @@ bool RegionEU868ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
     return true;
 }
 
-bool RegionEU868AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
+bool RegionIN865AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
 {
     bool adrAckReq = false;
     int8_t datarate = adrNext->Datarate;
@@ -515,34 +490,34 @@ bool RegionEU868AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
 
     if( adrNext->AdrEnabled == true )
     {
-        if( datarate == EU868_TX_MIN_DATARATE )
+        if( datarate == IN865_TX_MIN_DATARATE )
         {
             *adrAckCounter = 0;
             adrAckReq = false;
         }
         else
         {
-            if( adrNext->AdrAckCounter >= EU868_ADR_ACK_LIMIT )
+            if( adrNext->AdrAckCounter >= IN865_ADR_ACK_LIMIT )
             {
                 adrAckReq = true;
-                txPower = EU868_MAX_TX_POWER;
+                txPower = IN865_MAX_TX_POWER;
             }
             else
             {
                 adrAckReq = false;
             }
-            if( adrNext->AdrAckCounter >= ( EU868_ADR_ACK_LIMIT + EU868_ADR_ACK_DELAY ) )
+            if( adrNext->AdrAckCounter >= ( IN865_ADR_ACK_LIMIT + IN865_ADR_ACK_DELAY ) )
             {
-                if( ( adrNext->AdrAckCounter % EU868_ADR_ACK_DELAY ) == 1 )
+                if( ( adrNext->AdrAckCounter % IN865_ADR_ACK_DELAY ) == 1 )
                 {
                     // Decrease the datarate
                     getPhy.Attribute = PHY_NEXT_LOWER_TX_DR;
                     getPhy.Datarate = datarate;
                     getPhy.UplinkDwellTime = adrNext->UplinkDwellTime;
-                    phyParam = RegionEU868GetPhyParam( &getPhy );
+                    phyParam = RegionIN865GetPhyParam( &getPhy );
                     datarate = phyParam.Value;
 
-                    if( datarate == EU868_TX_MIN_DATARATE )
+                    if( datarate == IN865_TX_MIN_DATARATE )
                     {
                         // We must set adrAckReq to false as soon as we reach the lowest datarate
                         adrAckReq = false;
@@ -562,7 +537,7 @@ bool RegionEU868AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
     return adrAckReq;
 }
 
-void RegionEU868ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols, uint32_t rxError, RxConfigParams_t *rxConfigParams )
+void RegionIN865ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols, uint32_t rxError, RxConfigParams_t *rxConfigParams )
 {
     double tSymbol = 0.0;
     uint32_t radioWakeUpTime;
@@ -572,18 +547,18 @@ void RegionEU868ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols
 
     if( datarate == DR_7 )
     { // FSK
-        tSymbol = RegionCommonComputeSymbolTimeFsk( DataratesEU868[datarate] );
+        tSymbol = RegionCommonComputeSymbolTimeFsk( DataratesIN865[datarate] );
     }
     else
     { // LoRa
-        tSymbol = RegionCommonComputeSymbolTimeLoRa( DataratesEU868[datarate], BandwidthsEU868[datarate] );
+        tSymbol = RegionCommonComputeSymbolTimeLoRa( DataratesIN865[datarate], BandwidthsIN865[datarate] );
     }
 
-    radioWakeUpTime = Radio.GetWakeupTime();
+    radioWakeUpTime = Radio.GetWakeupTime( );
     RegionCommonComputeRxWindowParameters( tSymbol, minRxSymbols, rxError, radioWakeUpTime, &rxConfigParams->WindowTimeout, &rxConfigParams->WindowOffset );
 }
 
-bool RegionEU868RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
+bool RegionIN865RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 {
     RadioModems_t modem;
     int8_t dr = rxConfig->Datarate;
@@ -608,7 +583,7 @@ bool RegionEU868RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
     }
 
     // Read the physical datarate from the datarates table
-    phyDr = DataratesEU868[dr];
+    phyDr = DataratesIN865[dr];
 
     Radio.SetChannel( frequency );
 
@@ -626,24 +601,23 @@ bool RegionEU868RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 
     if( rxConfig->RepeaterSupport == true )
     {
-        maxPayload = MaxPayloadOfDatarateRepeaterEU868[dr];
+        maxPayload = MaxPayloadOfDatarateRepeaterIN865[dr];
     }
     else
     {
-        maxPayload = MaxPayloadOfDatarateEU868[dr];
+        maxPayload = MaxPayloadOfDatarateIN865[dr];
     }
-
     Radio.SetMaxPayloadLength( modem, maxPayload + LORA_MAC_FRMPAYLOAD_OVERHEAD );
-//    printf("RX on freq %u Hz at DR %d\r\n", (unsigned int)frequency, dr);
+    FREQ_PRINTF("RX on freq %u Hz at DR %d\r\n", (unsigned int)frequency, dr);
 
     *datarate = (uint8_t) dr;
     return true;
 }
 
-bool RegionEU868TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime_t* txTimeOnAir )
+bool RegionIN865TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime_t* txTimeOnAir )
 {
     RadioModems_t modem;
-    int8_t phyDr = DataratesEU868[txConfig->Datarate];
+    int8_t phyDr = DataratesIN865[txConfig->Datarate];
     int8_t txPowerLimited = LimitTxPower( txConfig->TxPower, Bands[Channels[txConfig->Channel].Band].TxMaxPower, txConfig->Datarate, ChannelsMask );
     uint32_t bandwidth = GetBandwidth( txConfig->Datarate );
     int8_t phyTxPower = 0;
@@ -662,9 +636,9 @@ bool RegionEU868TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     else
     {
         modem = MODEM_LORA;
-        Radio.SetTxConfig( modem, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 3000 );
+        Radio.SetTxConfig( modem, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 3e3 );
     }
-//    printf("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
+    FREQ_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
     // Setup maximum payload lenght of the radio driver
     Radio.SetMaxPayloadLength( modem, txConfig->PktLen );
     // Get the time-on-air of the next tx frame
@@ -674,7 +648,7 @@ bool RegionEU868TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     return true;
 }
 
-uint8_t RegionEU868LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, int8_t* txPowOut, uint8_t* nbRepOut, uint8_t* nbBytesParsed )
+uint8_t RegionIN865LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, int8_t* txPowOut, uint8_t* nbRepOut, uint8_t* nbBytesParsed )
 {
     uint8_t status = 0x07;
     LinkAdrParams_t linkAdrParams;
@@ -712,7 +686,7 @@ uint8_t RegionEU868LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, in
         }
         else
         {
-            for( uint8_t i = 0; i < EU868_MAX_NB_CHANNELS; i++ )
+            for( uint8_t i = 0; i < IN865_MAX_NB_CHANNELS; i++ )
             {
                 if( linkAdrParams.ChMaskCtrl == 6 )
                 {
@@ -734,18 +708,18 @@ uint8_t RegionEU868LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, in
     }
 
     // Verify datarate
-    if( RegionCommonChanVerifyDr( EU868_MAX_NB_CHANNELS, &chMask, linkAdrParams.Datarate, EU868_TX_MIN_DATARATE, EU868_TX_MAX_DATARATE, Channels  ) == false )
+    if( RegionCommonChanVerifyDr( IN865_MAX_NB_CHANNELS, &chMask, linkAdrParams.Datarate, IN865_TX_MIN_DATARATE, IN865_TX_MAX_DATARATE, Channels  ) == false )
     {
         status &= 0xFD; // Datarate KO
     }
 
     // Verify tx power
-    if( RegionCommonValueInRange( linkAdrParams.TxPower, EU868_MAX_TX_POWER, EU868_MIN_TX_POWER ) == 0 )
+    if( RegionCommonValueInRange( linkAdrParams.TxPower, IN865_MAX_TX_POWER, IN865_MIN_TX_POWER ) == 0 )
     {
         // Verify if the maximum TX power is exceeded
-        if( EU868_MAX_TX_POWER > linkAdrParams.TxPower )
+        if( IN865_MAX_TX_POWER > linkAdrParams.TxPower )
         { // Apply maximum TX power. Accept TX power.
-            linkAdrParams.TxPower = EU868_MAX_TX_POWER;
+            linkAdrParams.TxPower = IN865_MAX_TX_POWER;
         }
         else
         {
@@ -776,7 +750,7 @@ uint8_t RegionEU868LinkAdrReq( LinkAdrReqParams_t* linkAdrReq, int8_t* drOut, in
     return status;
 }
 
-uint8_t RegionEU868RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
+uint8_t RegionIN865RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
 {
     uint8_t status = 0x07;
 
@@ -787,13 +761,13 @@ uint8_t RegionEU868RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
     }
 
     // Verify datarate
-    if( RegionCommonValueInRange( rxParamSetupReq->Datarate, EU868_RX_MIN_DATARATE, EU868_RX_MAX_DATARATE ) == false )
+    if( RegionCommonValueInRange( rxParamSetupReq->Datarate, IN865_RX_MIN_DATARATE, IN865_RX_MAX_DATARATE ) == false )
     {
         status &= 0xFD; // Datarate KO
     }
 
     // Verify datarate offset
-    if( RegionCommonValueInRange( rxParamSetupReq->DrOffset, EU868_MIN_RX1_DR_OFFSET, EU868_MAX_RX1_DR_OFFSET ) == false )
+    if( RegionCommonValueInRange( rxParamSetupReq->DrOffset, IN865_MIN_RX1_DR_OFFSET, IN865_MAX_RX1_DR_OFFSET ) == false )
     {
         status &= 0xFB; // Rx1DrOffset range KO
     }
@@ -801,7 +775,7 @@ uint8_t RegionEU868RxParamSetupReq( RxParamSetupReqParams_t* rxParamSetupReq )
     return status;
 }
 
-uint8_t RegionEU868NewChannelReq( NewChannelReqParams_t* newChannelReq )
+uint8_t RegionIN865NewChannelReq( NewChannelReqParams_t* newChannelReq )
 {
     uint8_t status = 0x03;
     ChannelAddParams_t channelAdd;
@@ -812,7 +786,7 @@ uint8_t RegionEU868NewChannelReq( NewChannelReqParams_t* newChannelReq )
         channelRemove.ChannelId = newChannelReq->ChannelId;
 
         // Remove
-        if( RegionEU868ChannelsRemove( &channelRemove ) == false )
+        if( RegionIN865ChannelsRemove( &channelRemove ) == false )
         {
             status &= 0xFC;
         }
@@ -822,7 +796,7 @@ uint8_t RegionEU868NewChannelReq( NewChannelReqParams_t* newChannelReq )
         channelAdd.NewChannel = newChannelReq->NewChannel;
         channelAdd.ChannelId = newChannelReq->ChannelId;
 
-        switch( RegionEU868ChannelAdd( &channelAdd ) )
+        switch( RegionIN865ChannelAdd( &channelAdd ) )
         {
             case LORAMAC_STATUS_OK:
             {
@@ -854,12 +828,12 @@ uint8_t RegionEU868NewChannelReq( NewChannelReqParams_t* newChannelReq )
     return status;
 }
 
-int8_t RegionEU868TxParamSetupReq( TxParamSetupReqParams_t* txParamSetupReq )
+int8_t RegionIN865TxParamSetupReq( TxParamSetupReqParams_t* txParamSetupReq )
 {
     return -1;
 }
 
-uint8_t RegionEU868DlChannelReq( DlChannelReqParams_t* dlChannelReq )
+uint8_t RegionIN865DlChannelReq( DlChannelReqParams_t* dlChannelReq )
 {
     uint8_t status = 0x03;
     uint8_t band = 0;
@@ -885,7 +859,7 @@ uint8_t RegionEU868DlChannelReq( DlChannelReqParams_t* dlChannelReq )
     return status;
 }
 
-int8_t RegionEU868AlternateDr( AlternateDrParams_t* alternateDr )
+int8_t RegionIN865AlternateDr( AlternateDrParams_t* alternateDr )
 {
     int8_t datarate = 0;
 
@@ -916,7 +890,7 @@ int8_t RegionEU868AlternateDr( AlternateDrParams_t* alternateDr )
     return datarate;
 }
 
-void RegionEU868CalcBackOff( CalcBackOffParams_t* calcBackOff )
+void RegionIN865CalcBackOff( CalcBackOffParams_t* calcBackOff )
 {
     uint8_t channel = calcBackOff->Channel;
     uint16_t dutyCycle = Bands[Channels[channel].Band].DCycle;
@@ -943,11 +917,11 @@ void RegionEU868CalcBackOff( CalcBackOffParams_t* calcBackOff )
     }
 }
 
-bool RegionEU868NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel, TimerTime_t* time, TimerTime_t* aggregatedTimeOff )
+bool RegionIN865NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel, TimerTime_t* time, TimerTime_t* aggregatedTimeOff )
 {
     uint8_t nbEnabledChannels = 0;
     uint8_t delayTx = 0;
-    uint8_t enabledChannels[EU868_MAX_NB_CHANNELS] = { 0 };
+    uint8_t enabledChannels[IN865_MAX_NB_CHANNELS] = { 0 };
     TimerTime_t nextTxDelay = 0;
 
     if( RegionCommonCountChannels( ChannelsMask, 0, 1 ) == 0 )
@@ -961,7 +935,7 @@ bool RegionEU868NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
         *aggregatedTimeOff = 0;
 
         // Update bands Time OFF
-        nextTxDelay = RegionCommonUpdateBandTimeOff( nextChanParams->Joined, nextChanParams->DutyCycleEnabled, Bands, EU868_MAX_NB_BANDS );
+        nextTxDelay = RegionCommonUpdateBandTimeOff( nextChanParams->Joined, nextChanParams->DutyCycleEnabled, Bands, IN865_MAX_NB_BANDS );
 
         // Search how many channels are enabled
         nbEnabledChannels = CountNbOfEnabledChannels( nextChanParams->Joined, nextChanParams->Datarate,
@@ -997,24 +971,24 @@ bool RegionEU868NextChannel( NextChanParams_t* nextChanParams, uint8_t* channel,
     }
 }
 
-LoRaMacStatus_t RegionEU868ChannelAdd( ChannelAddParams_t* channelAdd )
+LoRaMacStatus_t RegionIN865ChannelAdd( ChannelAddParams_t* channelAdd )
 {
     uint8_t band = 0;
     bool drInvalid = false;
     bool freqInvalid = false;
     uint8_t id = channelAdd->ChannelId;
 
-    if( id >= EU868_MAX_NB_CHANNELS )
+    if( id >= IN865_MAX_NB_CHANNELS )
     {
         return LORAMAC_STATUS_PARAMETER_INVALID;
     }
 
     // Validate the datarate range
-    if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Min, EU868_TX_MIN_DATARATE, EU868_TX_MAX_DATARATE ) == false )
+    if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Min, IN865_TX_MIN_DATARATE, IN865_TX_MAX_DATARATE ) == false )
     {
         drInvalid = true;
     }
-    if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Max, EU868_TX_MIN_DATARATE, EU868_TX_MAX_DATARATE ) == false )
+    if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Max, IN865_TX_MIN_DATARATE, IN865_TX_MAX_DATARATE ) == false )
     {
         drInvalid = true;
     }
@@ -1024,7 +998,7 @@ LoRaMacStatus_t RegionEU868ChannelAdd( ChannelAddParams_t* channelAdd )
     }
 
     // Default channels don't accept all values
-    if( id < EU868_NUMB_DEFAULT_CHANNELS )
+    if( id < IN865_NUMB_DEFAULT_CHANNELS )
     {
         // Validate the datarate range for min: must be DR_0
         if( channelAdd->NewChannel->DrRange.Fields.Min > DR_0 )
@@ -1032,7 +1006,7 @@ LoRaMacStatus_t RegionEU868ChannelAdd( ChannelAddParams_t* channelAdd )
             drInvalid = true;
         }
         // Validate the datarate range for max: must be DR_5 <= Max <= TX_MAX_DATARATE
-        if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Max, DR_5, EU868_TX_MAX_DATARATE ) == false )
+        if( RegionCommonValueInRange( channelAdd->NewChannel->DrRange.Fields.Max, DR_5, IN865_TX_MAX_DATARATE ) == false )
         {
             drInvalid = true;
         }
@@ -1072,11 +1046,11 @@ LoRaMacStatus_t RegionEU868ChannelAdd( ChannelAddParams_t* channelAdd )
     return LORAMAC_STATUS_OK;
 }
 
-bool RegionEU868ChannelsRemove( ChannelRemoveParams_t* channelRemove  )
+bool RegionIN865ChannelsRemove( ChannelRemoveParams_t* channelRemove  )
 {
     uint8_t id = channelRemove->ChannelId;
 
-    if( id < EU868_NUMB_DEFAULT_CHANNELS )
+    if( id < IN865_NUMB_DEFAULT_CHANNELS )
     {
         return false;
     }
@@ -1084,10 +1058,10 @@ bool RegionEU868ChannelsRemove( ChannelRemoveParams_t* channelRemove  )
     // Remove the channel from the list of channels
     Channels[id] = ( ChannelParams_t ){ 0, 0, { 0 }, 0 };
 
-    return RegionCommonChanDisable( ChannelsMask, id, EU868_MAX_NB_CHANNELS );
+    return RegionCommonChanDisable( ChannelsMask, id, IN865_MAX_NB_CHANNELS );
 }
 
-void RegionEU868SetContinuousWave( ContinuousWaveParams_t* continuousWave )
+void RegionIN865SetContinuousWave( ContinuousWaveParams_t* continuousWave )
 {
     int8_t txPowerLimited = LimitTxPower( continuousWave->TxPower, Bands[Channels[continuousWave->Channel].Band].TxMaxPower, continuousWave->Datarate, ChannelsMask );
     int8_t phyTxPower = 0;
@@ -1099,31 +1073,26 @@ void RegionEU868SetContinuousWave( ContinuousWaveParams_t* continuousWave )
     Radio.SetTxContinuousWave( frequency, phyTxPower, continuousWave->Timeout );
 }
 
-uint8_t RegionEU868ApplyDrOffset( uint8_t downlinkDwellTime, int8_t dr, int8_t drOffset )
+uint8_t RegionIN865ApplyDrOffset( uint8_t downlinkDwellTime, int8_t dr, int8_t drOffset )
 {
-    int8_t datarate = dr - drOffset;
-
-    if( datarate < 0 )
-    {
-        datarate = DR_0;
-    }
-    return datarate;
+    // Apply offset formula
+    return MIN( DR_5, MAX( DR_0, dr - EffectiveRx1DrOffsetIN865[drOffset] ) );
 }
 
-void RegionEU868RxBeaconSetup( RxBeaconSetup_t* rxBeaconSetup, uint8_t* outDr )
+void RegionIN865RxBeaconSetup( RxBeaconSetup_t* rxBeaconSetup, uint8_t* outDr )
 {
     RegionCommonRxBeaconSetupParams_t regionCommonRxBeaconSetup;
 
-    regionCommonRxBeaconSetup.Datarates = DataratesEU868;
+    regionCommonRxBeaconSetup.Datarates = DataratesIN865;
     regionCommonRxBeaconSetup.Frequency = rxBeaconSetup->Frequency;
-    regionCommonRxBeaconSetup.BeaconSize = EU868_BEACON_SIZE;
-    regionCommonRxBeaconSetup.BeaconDatarate = EU868_BEACON_CHANNEL_DR;
-    regionCommonRxBeaconSetup.BeaconChannelBW = EU868_BEACON_CHANNEL_BW;
+    regionCommonRxBeaconSetup.BeaconSize = IN865_BEACON_SIZE;
+    regionCommonRxBeaconSetup.BeaconDatarate = IN865_BEACON_CHANNEL_DR;
+    regionCommonRxBeaconSetup.BeaconChannelBW = IN865_BEACON_CHANNEL_BW;
     regionCommonRxBeaconSetup.RxTime = rxBeaconSetup->RxTime;
     regionCommonRxBeaconSetup.SymbolTimeout = rxBeaconSetup->SymbolTimeout;
 
     RegionCommonRxBeaconSetup( &regionCommonRxBeaconSetup );
 
     // Store downlink datarate
-    *outDr = EU868_BEACON_CHANNEL_DR;
+    *outDr = IN865_BEACON_CHANNEL_DR;
 }

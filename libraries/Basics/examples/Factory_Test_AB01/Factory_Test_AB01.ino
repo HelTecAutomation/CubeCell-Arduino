@@ -1,6 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
-#include "SSD1306Wire.h"
+#include "cubecell_SSD1306Wire.h"
 #include "Wire.h"
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -44,7 +44,7 @@ void OnTxTimeout( void );
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
-void RGB_test(void);
+void testRGB(void);
 
 typedef enum
 {
@@ -53,15 +53,15 @@ typedef enum
     TX
 }States_t;
 
-int16_t txnumber;
+int16_t txNumber;
 States_t state;
-bool sleepmode = false;
-int16_t RSSI,rxSize;
+bool sleepMode = false;
+int16_t rssi,rxSize;
 
 
 
 void setup() {
-    BoardInitMcu( );
+    boardInitMcu( );
     Serial.begin(115200);
     pinMode(Vext, OUTPUT);
     digitalWrite(Vext, LOW); 
@@ -69,9 +69,9 @@ void setup() {
     display.init();
     //display.flipScreenVertically();
     
-    RGB_test();
-    txnumber=0;
-    RSSI=0;
+    testRGB();
+    txNumber=0;
+    rssi=0;
 
     pinMode(P3_3,INPUT);
     attachInterrupt(P3_3,sleep,FALLING);
@@ -102,12 +102,12 @@ void loop()
 	{
 		case TX:
 			delay(1000);
-			txnumber++;
+			txNumber++;
 		    sprintf(txpacket,"%s","hello");
-		    sprintf(txpacket+strlen(txpacket),"%d",txnumber);
+		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
-		    sprintf(txpacket+strlen(txpacket),"%d",RSSI);
-		    RGB_ON(0x100000,0);
+		    sprintf(txpacket+strlen(txpacket),"%d",rssi);
+		    turnOnRGB(0x100000,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
@@ -120,22 +120,22 @@ void loop()
 		    state=LOWPOWER;
 		    break;
 		case LOWPOWER:
-			if(sleepmode)
+			if(sleepMode)
 			{
 				Radio.Sleep( );
 				Wire.end();
 				detachInterrupt(RADIO_DIO_1);
-				RGB_OFF();
+				turnOffRGB();
 			    pinMode(GPIO0,ANALOG);
 			    pinMode(GPIO1,ANALOG);
 			    pinMode(GPIO2,ANALOG);
 			    pinMode(GPIO3,ANALOG);
-          pinMode(GPIO4,ANALOG);
+			    pinMode(GPIO4,ANALOG);
 			    pinMode(GPIO5,ANALOG);
-          pinMode(Vext,ANALOG);
+			    pinMode(Vext,ANALOG);
 			    pinMode(ADC,ANALOG);
 			}
-			LowPower_Handler();
+			lowPowerHandler();
 		    break;
         default:
             break;
@@ -147,7 +147,7 @@ void OnTxDone( void )
 {
 	Serial.print("TX done......");
     displayInof();
-	RGB_ON(0,0);
+	turnOnRGB(0,0);
 	state=RX;
 }
 
@@ -160,15 +160,15 @@ void OnTxTimeout( void )
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	gpioOn();
-    RSSI=rssi;
+    rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
-    RGB_ON(0x001000,100);
-    RGB_ON(0,0);
+    turnOnRGB(0x001000,100);
+    turnOnRGB(0,0);
     Radio.Sleep( );
 
-    Serial.printf("\r\nreceived packet \"%s\" with RSSI %d , length %d\r\n",rxpacket,RSSI,rxSize);
+    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
     Serial.println("wait to send next packet");
     displayInof();
 
@@ -178,10 +178,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 void displayInof()
 {
     display.clear();
-    display.drawString(0, 50, "Packet " + String(txnumber,DEC) + " sent done");
+    display.drawString(0, 50, "Packet " + String(txNumber,DEC) + " sent done");
     display.drawString(0, 0,  "Received Size" + String(rxSize,DEC) + " packages:");
     display.drawString(0, 15, rxpacket);
-    display.drawString(0, 30, "With RSSI " + String(RSSI,DEC));
+    display.drawString(0, 30, "With rssi " + String(rssi,DEC));
     display.display();
 }
 
@@ -191,27 +191,27 @@ void sleep(void)
 	delay(10);
 	if(digitalRead(P3_3)==0)
 	{
-		sleepmode = true;
+		sleepMode = true;
 	}
 }
 
-void RGB_test(void)
+void testRGB(void)
 {
 	display.drawString(0, 20, "RGB Testing");
-  display.display();
+	display.display();
 	for(uint32_t i=0;i<=30;i++)
 	{
-		RGB_ON(i<<16,10);
+		turnOnRGB(i<<16,10);
 	}
 	for(uint32_t i=0;i<=30;i++)
 	{
-		RGB_ON(i<<8,10);
+		turnOnRGB(i<<8,10);
 	}
 	for(uint32_t i=0;i<=30;i++)
 	{
-		RGB_ON(i,10);
+		turnOnRGB(i,10);
 	}
-	RGB_ON(0,0);
+	turnOnRGB(0,0);
 }
 
 void gpioOn(void)

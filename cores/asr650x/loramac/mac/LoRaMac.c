@@ -699,6 +699,7 @@ static void OpenContinuousRx2Window( void );
 
 static void OnRadioTxDone( void )
 {
+	DIO_PRINTF("Event : Tx Done\r\n");
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
     SetBandTxDoneParams_t txDone;
@@ -772,7 +773,7 @@ static void OnRadioTxDone( void )
 #endif
 
 #if (LoraWan_RGB==1)
-		RGB_OFF();
+		turnOffRGB();
 #endif
 
 }
@@ -795,6 +796,7 @@ static void PrepareRxDoneAbort( void )
 
 void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
+	DIO_PRINTF("Event : Rx Done\r\n");
 	uint8_t * temp = payload;
     LoRaMacHeader_t macHdr;
     LoRaMacFrameCtrl_t fCtrl;
@@ -932,7 +934,7 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 
                     LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_OK, MLME_JOIN );
                     IsLoRaMacNetworkJoined = true;
-                    SaveNetInfo(temp, size);
+                    saveNetInfo(temp, size);
                 	//Joined save its DR using LoRaMacParams.ChannelsDatarate, if set it will be default
 //                	LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
             	} else {
@@ -1088,7 +1090,7 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
                     }
                     DownLinkCounter = downLinkCounter;
                     if(DownLinkCounter%15000==0){
-                    	SaveDownCnt();
+                    	saveDownCnt();
                     }
                 }
 
@@ -1213,8 +1215,9 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 static void OnRadioTxTimeout( void )
 {
 #if (LoraWan_RGB==1)
-		RGB_OFF();
+    turnOffRGB();
 #endif
+    DIO_PRINTF("Event : Tx Timeout\r\n");
 
     if( LoRaMacDeviceClass != CLASS_C )
     {
@@ -1235,6 +1238,7 @@ static void OnRadioTxTimeout( void )
 
 static void OnRadioRxError( void )
 {
+	DIO_PRINTF("Event : Rx Error\r\n");
     bool classBRx = false;
 
     if( LoRaMacDeviceClass != CLASS_C )
@@ -1307,8 +1311,10 @@ static void OnRadioRxError( void )
 static void OnRadioRxTimeout( void )
 {
 #if (LoraWan_RGB==1)
-	RGB_OFF();
+	turnOffRGB();
 #endif
+    DIO_PRINTF("Event : Rx Timeout\r\n");
+
     bool classBRx = false;
 
     if( LoRaMacDeviceClass != CLASS_C )
@@ -1707,7 +1713,7 @@ static void OnRxWindow1TimerEvent( void )
     //printf("w1 dr:%d\r\n",McpsIndication.RxDatarate);
     RxWindowSetup( RxWindow1Config.RxContinuous, LoRaMacParams.MaxRxWindow );
 #if(LoraWan_RGB==1)
-    RGB_ON(COLOR_RXWINDOW1,0);
+    turnOnRGB(COLOR_RXWINDOW1,0);
 #endif
 }
 
@@ -1733,7 +1739,7 @@ static void OnRxWindow2TimerEvent( void )
         RxSlot = RX_SLOT_WIN_2;
     }
 #if(LoraWan_RGB==1)
-	RGB_ON(COLOR_RXWINDOW2,0);
+	turnOnRGB(COLOR_RXWINDOW2,0);
 #endif
 
 }
@@ -2843,7 +2849,7 @@ LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
     }
     // Send now
 #if (LoraWan_RGB==1)
-    RGB_ON(COLOR_SEND,0);
+    turnOnRGB(COLOR_SEND,0);
 #endif
     Radio.Send( LoRaMacBuffer, LoRaMacBufferPktLen );
 
@@ -3672,8 +3678,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
         case MLME_JOIN: {
             if ( ( mlmeRequest->Req.Join.DevEui == NULL ) ||
                  ( mlmeRequest->Req.Join.AppEui == NULL ) ||
-                 ( mlmeRequest->Req.Join.AppKey == NULL ) ||
-                 ( mlmeRequest->Req.Join.NbTrials == 0 ) ) {
+                 ( mlmeRequest->Req.Join.AppKey == NULL )) {
                 return LORAMAC_STATUS_PARAMETER_INVALID;
             }
 

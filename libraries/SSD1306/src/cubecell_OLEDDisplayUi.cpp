@@ -1,4 +1,4 @@
-#include "OLEDDisplayUi.h"
+#include <cubecell_OLEDDisplayUi.h>
 
 void LoadingDrawDefault(OLEDDisplay *display, LoadingStage* stage, uint8_t progress) {
       display->setTextAlignment(TEXT_ALIGN_CENTER);

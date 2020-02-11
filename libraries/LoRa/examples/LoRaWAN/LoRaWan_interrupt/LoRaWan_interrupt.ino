@@ -1,108 +1,111 @@
 #include "LoRaWan_APP.h"
-#include <Region.h>
 #include "Arduino.h"
 
-const char myDevEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-const char myAppKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+/* OTAA para*/
+uint8_t devEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+uint8_t appEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t appKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+
+/* ABP para*/
+uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
+uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
+uint32_t devAddr =  ( uint32_t )0x007e6ae1;
 
 // The interrupt pin is attached to D4/GPIO1
 #define INT_PIN GPIO1
 
-bool accelWoke = false;
-
-DeviceClass_t  CLASS = LORAWAN_CLASS;
-
-/*OTAA or ABP*/
-bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
-
-/* LoRaWAN Adaptive Data Rate */
-bool LORAWAN_ADR_ON = LORAWAN_ADR;
-
-/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
-bool KeepNet = LORAWAN_Net_Reserve;
-
-/*LoraWan REGION*/
-LoRaMacRegion_t REGION = ACTIVE_REGION;
-
-/* Indicates if the node is sending confirmed or unconfirmed messages */
-bool IsTxConfirmed = LORAWAN_UPLINKMODE;
-
-/*!
-  Number of trials to transmit the frame, if the LoRaMAC layer did not
-  receive an acknowledgment. The MAC performs a datarate adaptation,
-  according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
-  to the following table:
-
-  Transmission nb | Data Rate
-  ----------------|-----------
-  1 (first)       | DR
-  2               | DR
-  3               | max(DR-1,0)
-  4               | max(DR-1,0)
-  5               | max(DR-2,0)
-  6               | max(DR-2,0)
-  7               | max(DR-3,0)
-  8               | max(DR-3,0)
-
-  Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
-  the datarate, in case the LoRaMAC layer did not receive an acknowledgment
-*/
-uint8_t ConfirmedNbTrials = 8;
-
 /* Application port */
 #define DEVPORT 2
 #define APPPORT 1
-uint8_t AppPort = 1;
+
+bool accelWoke = false;
+
+/*LoraWan region, select in arduino IDE tools*/
+LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+
+/*LoraWan Class, Class A and Class C are supported*/
+DeviceClass_t  loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = (24 * 60 * 60 * 1000); // 24h
+uint32_t appTxDutyCycle = (24 * 60 * 60 * 1000); // 24h;
+
+/*OTAA or ABP*/
+bool overTheAirActivation = LORAWAN_NETMODE;
+
+/*ADR enable*/
+bool loraWanAdr = LORAWAN_ADR;
+
+/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
+bool keepNet = LORAWAN_NET_RESERVE;
+
+/* Indicates if the node is sending confirmed or unconfirmed messages */
+bool isTxConfirmed = LORAWAN_UPLINKMODE;
+
+/* Application port */
+uint8_t appPort = DEVPORT;
+/*!
+* Number of trials to transmit the frame, if the LoRaMAC layer did not
+* receive an acknowledgment. The MAC performs a datarate adaptation,
+* according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
+* to the following table:
+*
+* Transmission nb | Data Rate
+* ----------------|-----------
+* 1 (first)       | DR
+* 2               | DR
+* 3               | max(DR-1,0)
+* 4               | max(DR-1,0)
+* 5               | max(DR-2,0)
+* 6               | max(DR-2,0)
+* 7               | max(DR-3,0)
+* 8               | max(DR-3,0)
+*
+* Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
+* the datarate, in case the LoRaMAC layer did not receive an acknowledgment
+*/
+uint8_t confirmedNbTrials = 8;
+
 
 /* Prepares the payload of the frame */
 static bool prepareTxFrame( uint8_t port )
 {
   int head;
-  AppPort = port;
+  appPort = port;
   switch (port) {
     case 1: // woke up from interrupt
       Serial.println("Sending data packet");
-      AppDataSize = 1;//AppDataSize max value is 64
-      AppData[0] = 0xFF; // set to something useful  
+      appDataSize = 1;//AppDataSize max value is 64
+      appData[0] = 0xFF; // set to something useful  
       break;
     case 2: // daily wake up
       Serial.println("Sending dev status packet");
-      AppDataSize = 1;//AppDataSize max value is 64
-      AppData[0] = 0xA0; // set to something else useful
+      appDataSize = 1;//AppDataSize max value is 64
+      appData[0] = 0xA0; // set to something else useful
       break;
   }
   return true;
 }
 
-extern uint8_t DevEui[];
-extern uint8_t AppEui[];
-extern uint8_t AppKey[];
-extern bool IsLoRaMacNetworkJoined;
-
 void accelWakeup()
 {
-  accelWoke = true;
+  delay(10);
+  if(digitalRead(INT_PIN)==HIGH)
+  {
+    accelWoke = true;
+  }
 }
 
 void setup() {
+  boardInitMcu();
   Serial.begin(115200);
+#if(AT_SUPPORT)
+  enableAt();
+#endif
+  deviceState = DEVICE_STATE_INIT;
+  LoRaWAN.ifskipjoin();
 
-  delay(200); // wait for stable
   accelWoke = false;
-
-  memcpy(DevEui, myDevEui, sizeof(myDevEui));
-  memcpy(AppEui, myAppEui, sizeof(myAppEui));
-  memcpy(AppKey, myAppKey, sizeof(myAppKey));
-  BoardInitMcu();
-  
-  DeviceState = DEVICE_STATE_INIT;
-  LoRaWAN.Ifskipjoin();
-
-  pinMode(INT_PIN, INPUT);
+  PINMODE_INPUT_PULLDOWN(INT_PIN);
   attachInterrupt(INT_PIN, accelWakeup, RISING);
   Serial.println("Interrupts attached");
 }
@@ -114,58 +117,55 @@ void loop()
     Serial.print(now); Serial.println("accel woke");
   }
 
-  switch ( DeviceState )
+  switch( deviceState )
   {
     case DEVICE_STATE_INIT:
-      {
-        Serial.printf("LoRaWan Class%X test start! \r\n", CLASS + 10);
+    {
 #if(AT_SUPPORT)
-        Enable_AT();
-        getDevParam();
+      getDevParam();
 #endif
-        printDevParam();
-        LoRaWAN.Init(CLASS, REGION);
-        DeviceState = DEVICE_STATE_JOIN;
-        break;
-      }
+      printDevParam();
+      LoRaWAN.init(loraWanClass,loraWanRegion);
+      deviceState = DEVICE_STATE_JOIN;
+      break;
+    }
     case DEVICE_STATE_JOIN:
-      {
-        LoRaWAN.Join();
-        break;
-      }
-    case DEVICE_STATE_SEND: // a send is scheduled to occur, usu. daily status
-      {
-        prepareTxFrame( DEVPORT );
-        LoRaWAN.Send();
-        DeviceState = DEVICE_STATE_CYCLE;
-        break;
-      }
+    {
+      LoRaWAN.join();
+      break;
+    }
+    case DEVICE_STATE_SEND:
+    {
+      prepareTxFrame( appPort );
+      LoRaWAN.send();
+      deviceState = DEVICE_STATE_CYCLE;
+      break;
+    }
     case DEVICE_STATE_CYCLE:
-      {
-        // Schedule next packet transmission
-        TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-        LoRaWAN.Cycle(TxDutyCycleTime);
-        DeviceState = DEVICE_STATE_SLEEP;
-        break;
-      }
+    {
+      // Schedule next packet transmission
+      txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
+      LoRaWAN.cycle(txDutyCycleTime);
+      deviceState = DEVICE_STATE_SLEEP;
+      break;
+    }
     case DEVICE_STATE_SLEEP:
-      {
-        if (accelWoke) {
-          if (IsLoRaMacNetworkJoined) {
-            if(prepareTxFrame(APPPORT)) {
-              LoRaWAN.Send();
-            }
+    {
+      if (accelWoke) {
+        if (IsLoRaMacNetworkJoined) {
+          if(prepareTxFrame(APPPORT)) {
+            LoRaWAN.send();
           }
-          accelWoke = false;
         }
-        LoRaWAN.Sleep();
-        Serial.println("LoRaWAN.Sleep() finished");
-        break;
+        accelWoke = false;
       }
+      LoRaWAN.sleep();
+      break;
+    }
     default:
-      {
-        DeviceState = DEVICE_STATE_INIT;
-        break;
-      }
+    {
+      deviceState = DEVICE_STATE_INIT;
+      break;
+    }
   }
 }

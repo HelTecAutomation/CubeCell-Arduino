@@ -51,7 +51,7 @@
 #define RX_TIMEOUT_VALUE                            1000
 #define BUFFER_SIZE                                 30 // Define the payload size here
 
-char txpacket[BUFFER_SIZE];
+char txPacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 void OnTxDone( void );
@@ -67,17 +67,16 @@ typedef enum
 }States_t;
 
 States_t state;
-bool sleepmode = false;
-int16_t RSSI,rxSize;
+bool sleepMode = false;
+int16_t rssi,rxSize;
 uint16_t voltage;
 
 void setup() {
-    BoardInitMcu( );
+    boardInitMcu( );
     Serial.begin(115200);
 
-    // txnumber=0;
     voltage = 0;
-    RSSI=0;
+    rssi=0;
 
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.TxTimeout = OnTxTimeout;
@@ -100,19 +99,19 @@ void loop()
   {
     case TX:
     {
-      sprintf(txpacket,"%s","ADC_battery: ");
-      sprintf(txpacket+strlen(txpacket),"%d",voltage);
-      RGB_ON(COLOR_SEND,0);
-      Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
-      Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
+      sprintf(txPacket,"%s","ADC_battery: ");
+      sprintf(txPacket+strlen(txPacket),"%d",voltage);
+      turnOnRGB(COLOR_SEND,0);
+      Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txPacket, strlen(txPacket));
+      Radio.Send( (uint8_t *)txPacket, strlen(txPacket) );
       state=LOWPOWER;
       break;
     }
     case LOWPOWER:
     {
-      LowPower_Handler();
+      lowPowerHandler();
       delay(100);
-      RGB_OFF();
+      turnOffRGB();
       delay(2000);  //LowPower time
       state = ReadVoltage; 
       break;
@@ -134,7 +133,7 @@ void loop()
 void OnTxDone( void )
 {
   Serial.print("TX done!");
-  RGB_ON(0,0);
+  turnOnRGB(0,0);
   state=TX;
 }
 

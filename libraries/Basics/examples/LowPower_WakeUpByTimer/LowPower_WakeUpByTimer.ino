@@ -4,18 +4,18 @@
 #define timetosleep 5000
 #define timetowake 5000
 static TimerEvent_t sleep;
-static TimerEvent_t wakeup;
+static TimerEvent_t wakeUp;
 uint8_t lowpower=1;
 
-void OnSleep()
+void onSleep()
 {
   Serial.printf("into lowpower mode, %d ms later wake up.\r\n",timetowake);
   lowpower=1;
   //timetosleep ms later wake up;
-  TimerSetValue( &wakeup, timetowake );
-  TimerStart( &wakeup );
+  TimerSetValue( &wakeUp, timetowake );
+  TimerStart( &wakeUp );
 }
-void OnWakeup()
+void onWakeUp()
 {
   Serial.printf("wake up, %d ms later into lowpower mode.\r\n",timetosleep);
   lowpower=0;
@@ -27,17 +27,17 @@ void OnWakeup()
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  BoardInitMcu();
+  boardInitMcu();
   Radio.Sleep( );
   TimerInit( &sleep, OnSleep );
-  TimerInit( &wakeup, OnWakeup );
+  TimerInit( &wakeUp, onWakeUp );
   OnSleep();
 }
 
 void loop() {
   if(lowpower){
-    //note that LowPower_Handler() run six times the mcu into lowpower mode;
-    LowPower_Handler();
+    //note that lowPowerHandler() run six times the mcu into lowpower mode;
+    lowPowerHandler();
   }
   // put your main code here, to run repeatedly:
 }

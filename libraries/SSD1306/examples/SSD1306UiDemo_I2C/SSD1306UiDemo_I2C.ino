@@ -1,6 +1,6 @@
- #include <Wire.h> 
- #include "SSD1306Wire.h" // legacy include: `#include "SSD1306.h"`
-#include "OLEDDisplayUi.h"
+#include <Wire.h>
+#include "cubecell_SSD1306Wire.h" // legacy include: `#include "SSD1306.h"`
+#include "cubecell_OLEDDisplayUi.h"
 
 
 #include "images.h"
@@ -8,7 +8,7 @@
 SSD1306Wire display(0x3c, SDA, SCL);   // ADDRESS, SDA, SCL  
 
 
-OLEDDisplayUi ui     ( &display );
+OLEDDisplayUi ui( &display );
 
 void msOverlay(OLEDDisplay *display, OLEDDisplayUiState* state) {
   display->setTextAlignment(TEXT_ALIGN_RIGHT);

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 
-#include "OLEDDisplay.h"
+#include <cubecell_OLEDDisplay.h>
 
 //#define DEBUG_OLEDDISPLAYUI(...) Serial.printf( __VA_ARGS__ )
 

@@ -58,8 +58,6 @@ void OnTxDone( void );
 void OnTxTimeout( void );
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 
-
-
 typedef enum
 {
     LOWPOWER,
@@ -67,18 +65,18 @@ typedef enum
     TX
 }States_t;
 
-int16_t txnumber;
+int16_t txNumber;
 States_t state;
-bool sleepmode = false;
-int16_t RSSI,rxSize;
+bool sleepMode = false;
+int16_t rssi,rxSize;
 
 
 void setup() {
-    BoardInitMcu( );
+    boardInitMcu( );
     Serial.begin(115200);
 
-    txnumber=0;
-    RSSI=0;
+    txNumber=0;
+    rssi=0;
 
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.TxTimeout = OnTxTimeout;
@@ -106,12 +104,12 @@ void loop()
 	{
 		case TX:
 			delay(1000);
-			txnumber++;
+			txNumber++;
 		    sprintf(txpacket,"%s","hello");
-		    sprintf(txpacket+strlen(txpacket),"%d",txnumber);
+		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
-		    sprintf(txpacket+strlen(txpacket),"%d",RSSI);
-		    RGB_ON(COLOR_SEND,0);
+		    sprintf(txpacket+strlen(txpacket),"%d",rssi);
+		    turnOnRGB(COLOR_SEND,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
@@ -124,7 +122,7 @@ void loop()
 		    state=LOWPOWER;
 		    break;
 		case LOWPOWER:
-			LowPower_Handler();
+			lowPowerHandler();
 		    break;
         default:
             break;
@@ -135,7 +133,7 @@ void loop()
 void OnTxDone( void )
 {
 	Serial.print("TX done......");
-	RGB_ON(0,0);
+	turnOnRGB(0,0);
 	state=RX;
 }
 
@@ -147,14 +145,14 @@ void OnTxTimeout( void )
 }
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-    RSSI=rssi;
+    rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
-    RGB_ON(COLOR_RECEIVED,0);
+    turnOnRGB(COLOR_RECEIVED,0);
     Radio.Sleep( );
 
-    Serial.printf("\r\nreceived packet \"%s\" with RSSI %d , length %d\r\n",rxpacket,RSSI,rxSize);
+    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
     Serial.println("wait to send next packet");
 
     state=TX;

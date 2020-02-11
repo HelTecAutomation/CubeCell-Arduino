@@ -1,5 +1,5 @@
 #include <Wire.h>  
-#include "SSD1306Wire.h" 
+#include "cubecell_SSD1306Wire.h"
 
  SSD1306Wire  display(0x3c, SDA, SCL);
 

@@ -2449,8 +2449,8 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest );
  */
 LoRaMacStatus_t LoRaMacMcpsRequest( McpsReq_t *mcpsRequest );
 
-extern	void RGB_ON(uint32_t color,uint32_t time);
-extern	void RGB_OFF(void);
+extern	void turnOnRGB(uint32_t color,uint32_t time);
+extern	void turnOffRGB(void);
 
 
 #ifdef __cplusplus

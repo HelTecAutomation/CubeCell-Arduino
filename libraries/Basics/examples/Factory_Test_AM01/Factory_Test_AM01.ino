@@ -1,6 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
-#include "SSD1306Wire.h"
+#include "cubecell_SSD1306Wire.h"
 #include "Wire.h"
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -52,15 +52,15 @@ typedef enum
     TX
 }States_t;
 
-int16_t txnumber;
+int16_t txNumber;
 States_t state;
-bool sleepmode = false;
-int16_t RSSI,rxSize;
+bool sleepMode = false;
+int16_t rssi,rxSize;
 
 
 
 void setup() {
-    BoardInitMcu( );
+    boardInitMcu( );
     Serial.begin(115200);
     pinMode(ADC, OUTPUT);
     digitalWrite(ADC, HIGH); 
@@ -68,8 +68,8 @@ void setup() {
     display.init();
     //display.flipScreenVertically();
     
-    txnumber=0;
-    RSSI=0;
+    txNumber=0;
+    rssi=0;
 
     pinMode(GPIO7,INPUT);
     attachInterrupt(GPIO7,sleep,FALLING);
@@ -100,11 +100,11 @@ void loop()
 	{
 		case TX:
 			delay(1000);
-			txnumber++;
+			txNumber++;
 		    sprintf(txpacket,"%s","hello");
-		    sprintf(txpacket+strlen(txpacket),"%d",txnumber);
+		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
-		    sprintf(txpacket+strlen(txpacket),"%d",RSSI);
+		    sprintf(txpacket+strlen(txpacket),"%d",rssi);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
@@ -117,21 +117,21 @@ void loop()
 		    state=LOWPOWER;
 		    break;
 		case LOWPOWER:
-			if(sleepmode)
+			if(sleepMode)
 			{
 				Radio.Sleep( );
 				Wire.end();
-        Serial.end();
+				Serial.end();
 				detachInterrupt(RADIO_DIO_1);
 			    pinMode(GPIO0,ANALOG);
 			    pinMode(GPIO1,ANALOG);
 			    pinMode(GPIO2,ANALOG);
 			    pinMode(GPIO3,ANALOG);
-          pinMode(GPIO4,ANALOG);         
+				pinMode(GPIO4,ANALOG);         
 			    pinMode(GPIO5,ANALOG);
 			    pinMode(ADC,ANALOG);
 			}
-			LowPower_Handler();
+			lowPowerHandler();
 		    break;
         default:
             break;
@@ -155,13 +155,13 @@ void OnTxTimeout( void )
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	  gpioOn();
-    RSSI=rssi;
+    rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
     Radio.Sleep( );
 
-    Serial.printf("\r\nreceived packet \"%s\" with RSSI %d , length %d\r\n",rxpacket,RSSI,rxSize);
+    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
     Serial.println("wait to send next packet");
     displayInof();
 
@@ -171,10 +171,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 void displayInof()
 {
     display.clear();
-    display.drawString(0, 50, "Packet " + String(txnumber,DEC) + " sent done");
+    display.drawString(0, 50, "Packet " + String(txNumber,DEC) + " sent done");
     display.drawString(0, 0,  "Received Size" + String(rxSize,DEC) + " packages:");
     display.drawString(0, 15, rxpacket);
-    display.drawString(0, 30, "With RSSI " + String(RSSI,DEC));
+    display.drawString(0, 30, "With rssi " + String(rssi,DEC));
     display.display();
 }
 
@@ -184,7 +184,7 @@ void sleep(void)
 	delay(10);
 	if(digitalRead(P3_3)==0)
 	{
-		sleepmode = true;
+		sleepMode = true;
 	}
 }
 

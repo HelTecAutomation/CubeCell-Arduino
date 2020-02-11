@@ -458,7 +458,7 @@ static const double TWO52[2]={
 
 
 
-void BoardInitMcu( void )
+void boardInitMcu( void )
 {
     SpiInit();
     Asr_Timer_Init();

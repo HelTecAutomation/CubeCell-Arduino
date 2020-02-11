@@ -1,9 +1,9 @@
 #include <LoRa_APP.h>
 
 
-enum eDeviceState_Lora DeviceState_lora;
-extern uint8_t AppData[LORAWAN_APP_DATA_MAX_SIZE];
-extern uint8_t AppDataSize;
+enum eDeviceState_Lora deviceState_lora;
+extern uint8_t appData[LORAWAN_APP_DATA_MAX_SIZE];
+extern uint8_t appDataSize;
 
 //Tx Power
 uint8_t Lora_TXPW = 10;
@@ -66,7 +66,7 @@ static void OnLoraRxTimeout( void )
 }
 
 
-void LoRaClass::Init(uint32_t freq, uint8_t power,uint32_t datarate)
+void LoRaClass::init(uint32_t freq, uint8_t power,uint32_t datarate)
 {
 	LoraEvents.TxDone = OnLoraTxDone;
 	LoraEvents.TxTimeout = OnLoraTxTimeout;
@@ -78,19 +78,19 @@ void LoRaClass::Init(uint32_t freq, uint8_t power,uint32_t datarate)
 	Radio.SetRxConfig( MODEM_LORA, 0, datarate,1, 0, 8,0, false,0, true, 0, 0, false, true );
 }
 
-void LoRaClass::Send()
+void LoRaClass::send()
 {
-	Radio.Send( AppData, AppDataSize );
+	Radio.Send( appData, appDataSize );
 }
 
-void LoRaClass::Receive()
+void LoRaClass::receive()
 {
 	Radio.Rx(LoraRxTimeout);
 }
 
-void LoRaClass::LOWPOWER()
+void LoRaClass::lowpower()
 {
-	LowPower_Handler( );
+	lowPowerHandler( );
 	// Process Radio IRQ
 	Radio.IrqProcess( );
 }

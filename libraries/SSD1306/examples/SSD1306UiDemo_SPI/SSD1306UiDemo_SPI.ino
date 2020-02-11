@@ -1,10 +1,10 @@
-#include "SSD1306Spi.h"
-#include "OLEDDisplayUi.h"
+#include "cubecell_SSD1306Spi.h"
+#include "cubecell_OLEDDisplayUi.h"
 #include "images.h"
 	
 SSD1306Spi   display(GPIO1, GPIO2, GPIO3);//RST,DC,CS
 
-OLEDDisplayUi ui     ( &display );
+OLEDDisplayUi ui( &display );
 
 void msOverlay(OLEDDisplay *display, OLEDDisplayUiState* state) {
   display->setTextAlignment(TEXT_ALIGN_RIGHT);

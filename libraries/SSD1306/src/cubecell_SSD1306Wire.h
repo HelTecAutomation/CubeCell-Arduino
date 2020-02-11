@@ -1,7 +1,7 @@
 #ifndef SSD1306Wire_h
 #define SSD1306Wire_h
 
-#include "OLEDDisplay.h"
+#include <cubecell_OLEDDisplay.h>
 #include <Wire.h>
 
 

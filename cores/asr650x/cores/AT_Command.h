@@ -30,17 +30,17 @@ enum eDeviceState_Lora
 };
 
 
-void Enable_AT(void);
+void enableAt(void);
 void getDevParam(void);
 void printDevParam(void);
-void SaveNetInfo(uint8_t *joinpayload, uint16_t size);
-void SaveUpCnt(void);
-void SaveDownCnt(void);
-void GetNetInfo(void);
-void SaveDr(void);
-bool CheckNetInfo(void);
-void NetInfoDisable(void);
-extern bool AT_user_check(char * cmd, char * content);
+void saveNetInfo(uint8_t *joinpayload, uint16_t size);
+void saveUpCnt(void);
+void saveDownCnt(void);
+void getNetInfo(void);
+void saveDr(void);
+bool checkNetInfo(void);
+void netInfoDisable(void);
+extern bool checkUserAt(char * cmd, char * content);
 
 
 

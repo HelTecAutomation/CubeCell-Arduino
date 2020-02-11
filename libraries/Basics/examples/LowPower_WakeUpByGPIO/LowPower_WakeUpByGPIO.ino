@@ -5,12 +5,12 @@
 static TimerEvent_t sleep;
 uint8_t lowpower=1;
 
-void OnSleep()
+void onSleep()
 {
   Serial.println("into lowpower mode. press user key to wake up");
   lowpower=1;
 }
-void wakeup()
+void wakeUp()
 {
   delay(10);
   if(digitalRead(GPIO7)==0)
@@ -26,18 +26,18 @@ void wakeup()
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  BoardInitMcu();
+  boardInitMcu();
   Radio.Sleep( );
   pinMode(GPIO7,INPUT);
-  attachInterrupt(GPIO7,wakeup,FALLING);
-  TimerInit( &sleep, OnSleep );
+  attachInterrupt(GPIO7,wakeUp,FALLING);
+  TimerInit( &sleep, onSleep );
   Serial.println("into lowpower mode. press user key to wake up.");
 }
 
 void loop() {
   if(lowpower){
-    //note that LowPower_Handler() run six times the mcu into lowpower mode;
-    LowPower_Handler();
+    //note that lowPowerHandler() run six times the mcu into lowpower mode;
+    lowPowerHandler();
   }
   // put your main code here, to run repeatedly:
 }

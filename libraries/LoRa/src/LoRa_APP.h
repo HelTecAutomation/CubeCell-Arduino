@@ -19,7 +19,7 @@
 #include "AT_Command.h"
 #include "Arduino.h"
 
-extern enum eDeviceState_Lora DeviceState_lora;
+extern enum eDeviceState_Lora deviceState_lora;
 extern uint8_t Lora_TXPW;
 extern uint32_t Lora_SF; 
 extern uint32_t Lora_FREQ; 
@@ -28,10 +28,10 @@ extern bool PrintMode;
 
 class LoRaClass{
 public:
-  void Init(uint32_t freq, uint8_t power,uint32_t datarate);
-  void Send();
-  void Receive();
-  void LOWPOWER();
+  void init(uint32_t freq, uint8_t power,uint32_t datarate);
+  void send();
+  void receive();
+  void lowpower();
 };
 
 extern LoRaClass LoRa;

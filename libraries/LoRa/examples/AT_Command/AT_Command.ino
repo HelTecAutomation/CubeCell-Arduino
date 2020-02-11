@@ -11,20 +11,39 @@
  * RGB green means received done;
  */
 
-/*LoraWan Class*/
-DeviceClass_t  CLASS=LORAWAN_CLASS;
+/* OTAA para*/
+uint8_t devEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+uint8_t appEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+uint8_t appKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+
+/* ABP para*/
+uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
+uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
+uint32_t devAddr =  ( uint32_t )0x007e6ae1;
+
+/*LoraWan region, select in arduino IDE tools*/
+LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+
+/*LoraWan Class, Class A and Class C are supported*/
+DeviceClass_t  loraWanClass = LORAWAN_CLASS;
+
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t appTxDutyCycle = 15000;
+
 /*OTAA or ABP*/
-bool OVER_THE_AIR_ACTIVATION = LORAWAN_NETMODE;
+bool overTheAirActivation = LORAWAN_NETMODE;
+
 /*ADR enable*/
-bool LORAWAN_ADR_ON = LORAWAN_ADR;
+bool loraWanAdr = LORAWAN_ADR;
+
 /* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
-bool KeepNet = LORAWAN_Net_Reserve;
-/*LoraWan REGION*/
-LoRaMacRegion_t REGION = ACTIVE_REGION;
+bool keepNet = LORAWAN_NET_RESERVE;
 
 /* Indicates if the node is sending confirmed or unconfirmed messages */
-bool IsTxConfirmed = true;
+bool isTxConfirmed = LORAWAN_UPLINKMODE;
 
+/* Application port */
+uint8_t appPort = 2;
 /*!
 * Number of trials to transmit the frame, if the LoRaMAC layer did not
 * receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -45,114 +64,115 @@ bool IsTxConfirmed = true;
 * Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
 * the datarate, in case the LoRaMAC layer did not receive an acknowledgment
 */
-uint8_t ConfirmedNbTrials = 8;
-
-/* Application port */
-uint8_t AppPort = 2;
-
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t APP_TX_DUTYCYCLE = 15000;
+uint8_t confirmedNbTrials = 8;
 
 /* Prepares the payload of the frame */
-static void PrepareTxFrame( uint8_t port )
+static void prepareTxFrame( uint8_t port )
 {
-    AppDataSize = 4;//AppDataSize max value is 64
-    AppData[0] = 0x00;
-    AppData[1] = 0x01;
-    AppData[2] = 0x02;
-    AppData[3] = 0x03;
+	/*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
+	*appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
+	*if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
+	*if disabled AT, LORAWAN_APP_DATA_MAX_SIZE can be modified, the max value is reference to lorawan region and SF.
+	*for example, if use REGION_CN470, 
+	*the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
+	*/
+    appDataSize = 4;
+    appData[0] = 0x00;
+    appData[1] = 0x01;
+    appData[2] = 0x02;
+    appData[3] = 0x03;
 }
 
 
 void setup() {
-	BoardInitMcu();
+	boardInitMcu();
 	Serial.begin(115200);
-	PassthroughMode = true;
-	Enable_AT(); 
+	passthroughMode = true;
+	enableAt(); 
 	getDevParam();
 	printDevParam();
-	DeviceState = DEVICE_STATE_SLEEP;
-  	LoRaWAN.Ifskipjoin();
-	DeviceState_lora = LORA_INIT;
+	deviceState = DEVICE_STATE_SLEEP;
+	LoRaWAN.ifskipjoin();
+	deviceState_lora = LORA_INIT;
 }
 
 void loop()
 {
-	if(Mode_LoraWan)//loraWan mode(defalt;)
+	if(modeLoraWan)//loraWan mode(defalt;)
 	{
-	  switch( DeviceState )
+	  switch( deviceState )
 	  {
 	    case DEVICE_STATE_INIT:
 	    {
 	      //Serial.printf("LoRaWan PassthroughMode start!\r\n");
 	      //Serial.printf("please start with command\r\n");
 	      getDevParam();
-	      LoRaWAN.Init(CLASS,ACTIVE_REGION);
-	      DeviceState = DEVICE_STATE_JOIN;
+	      LoRaWAN.init(loraWanClass,loraWanRegion);
+	      deviceState = DEVICE_STATE_JOIN;
 	      break;
 	    }
 	    case DEVICE_STATE_JOIN:
 	    {
-	      LoRaWAN.Join();
+	      LoRaWAN.join();
 	      break;
 	    }
 	    case DEVICE_STATE_SEND:
 	    {
-	      LoRaWAN.Send();
-	      DeviceState = DEVICE_STATE_SLEEP;
+	      LoRaWAN.send();
+	      deviceState = DEVICE_STATE_SLEEP;
 	      break;
 	    }
 	    case DEVICE_STATE_CYCLE:
 	    {
 	      // only used while joining
-	      TxDutyCycleTime = APP_TX_DUTYCYCLE + randr( 0, APP_TX_DUTYCYCLE_RND );
-	      DeviceState = DEVICE_STATE_SLEEP;
-	      LoRaWAN.Cycle(TxDutyCycleTime);
+	      txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
+	      deviceState = DEVICE_STATE_SLEEP;
+	      LoRaWAN.cycle(txDutyCycleTime);
 	      break;
 	    }
 	    case DEVICE_STATE_SLEEP:
 	    {
-	      LoRaWAN.Sleep();
+	      LoRaWAN.sleep();
 	      break;
 	    }
 	    default:
 	    {
-	      DeviceState = DEVICE_STATE_SLEEP;
+	      deviceState = DEVICE_STATE_SLEEP;
 	      break;
 	    }
 	  }
 	}
 	else//lora mode
 	{
-	  switch( DeviceState_lora )
+	  switch( deviceState_lora )
 	  {
 	    case LORA_INIT:
 	    {
 	      getDevParam();
-	      LoRa.Init(Lora_FREQ, Lora_TXPW, Lora_SF);
-	      DeviceState_lora = MCU_SLEEP;
+	      LoRa.init(Lora_FREQ, Lora_TXPW, Lora_SF);
+	      deviceState_lora = MCU_SLEEP;
 	      break;
 	    }
 	    case LORA_SEND:
 	    {
-	      LoRa.Send();
-	      DeviceState_lora = MCU_SLEEP;
+	      LoRa.send();
+	      deviceState_lora = MCU_SLEEP;
 	      break;
 	    }
 	    case LORA_RECEIVE:
 	    {
-	      LoRa.Receive();
-	      DeviceState_lora = MCU_SLEEP;
+	      LoRa.receive();
+	      deviceState_lora = MCU_SLEEP;
 	      break;
 	    }
 	    case MCU_SLEEP:
 	    {
-	      LoRa.LOWPOWER();
+	      LoRa.lowpower();
 	      break;
 	    }
 	    default:
 	    {
-	      DeviceState_lora = MCU_SLEEP;
+	      deviceState_lora = MCU_SLEEP;
 	      break;
 	    }
 	  }

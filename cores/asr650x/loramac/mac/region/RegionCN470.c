@@ -134,7 +134,7 @@ static uint8_t CountNbOfEnabledChannels( uint8_t datarate, uint16_t* channelsMas
             }
         }
     }
-	//printf("nbEnabledChannels: %d  ",nbEnabledChannels);
+
     *delayTx = delayTransmission;
     return nbEnabledChannels;
 }
@@ -529,6 +529,7 @@ bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
         maxPayload = MaxPayloadOfDatarateCN470[dr];
     }
     Radio.SetMaxPayloadLength( MODEM_LORA, maxPayload + LORA_MAC_FRMPAYLOAD_OVERHEAD );
+    FREQ_PRINTF("RX on freq %u Hz at DR %d\r\n", (unsigned int)frequency, dr);
 
     *datarate = (uint8_t) dr;
     return true;
@@ -547,6 +548,8 @@ bool RegionCN470TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     Radio.SetChannel( Channels[txConfig->Channel].Frequency );
 
     Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, 0, phyDr, 1, 8, false, true, 0, 0, false, 3000 );
+    FREQ_PRINTF("TX on freq %u Hz at DR %d\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate);
+
     // Setup maximum payload lenght of the radio driver
     Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
     // Get the time-on-air of the next tx frame

@@ -1,9 +1,9 @@
- /*******************************************************************************
-  * @file    low_power.c
+ /******************************************************************************
+  * @file    low_power.h
   * @author  MCD Application Team
   * @version V1.1.1
   * @date    01-June-2017
-  * @brief   driver for low power
+  * @brief   Header for driver low_power.c module
   ******************************************************************************
   * @attention
   *
@@ -43,91 +43,56 @@
   *
   ******************************************************************************
   */
-  
+
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __LOW_POWER_H__
+#define __LOW_POWER_H__
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 /* Includes ------------------------------------------------------------------*/
-#include "hw.h"
-#include "low_power.h"
-#include "lorawan_port.h"
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* External variables --------------------------------------------------------*/
+/* Exported macros -----------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */ 
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-/**
- * \brief Flag to indicate if MCU can go to low power mode
- *        When 0, MCU is authorized to go in low power mode
- */
-static uint32_t LowPower_State = 0;
-
-/* Private function prototypes -----------------------------------------------*/
-extern bool WakeByUart;
-
-
-
-/* Exported functions ---------------------------------------------------------*/
-
-/**
- * \brief API to set flag allowing power mode
+/*!
+ * @brief API to set flag allowing power mode
  *
- * \param [IN] enum e_LOW_POWER_State_Id_t  
+ * @param [IN] enum e_LOW_POWER_State_Id_t
  */
-void LowPower_Disable( e_LOW_POWER_State_Id_t state )
-{
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    LowPower_State |= state;
-    RHINO_CPU_INTRPT_ENABLE();
-}
+void LowPower_Disable( e_LOW_POWER_State_Id_t state );
 
-/**
- * \brief API to reset flag allowing power mode
+/*!
+ * @brief API to reset flag allowing power mode
  *
- * \param [IN] enum e_LOW_POWER_State_Id_t 
+ * @param [IN] enum e_LOW_POWER_State_Id_t 
  */
-void LowPower_Enable( e_LOW_POWER_State_Id_t state )
-{
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    LowPower_State &= ~state;
-    RHINO_CPU_INTRPT_ENABLE();
-}
 
-/**
- * \brief API to get flag allowing power mode
- * \note When flag is 0, low power mode is allowed
- * \param [IN] state
- * \retval flag state 
+void LowPower_Enable( e_LOW_POWER_State_Id_t state );
+
+/*!
+ * @brief API to get flag allowing power mode
+ * @note When flag is 0, low power mode is allowed
+ * @param [IN] non
+ * @retval flag state 
  */
-uint32_t LowPower_GetState( void )
-{
-  return LowPower_State;
-}
+uint32_t LowPower_GetState( void );
 
-/**
- * @brief  Handle Low Power
- * @param  None
- * @retval None
+/*!
+ * @brief Manages the entry into ARM cortex deep-sleep mode
+ * @param none
+ * @retval none
  */
-void LowPower_Handler( void )
-{
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    if (LowPower_State == 0 && WakeByUart == false) {
-//    	printf("s");
-        DBG_PRINTF_CRITICAL("dz\n\r");
-        aos_lrwan_chg_mode.enter_stop_mode();
-        /* mcu dependent. to be implemented by user*/
-        aos_lrwan_chg_mode.exit_stop_mode();
-        aos_lrwan_time_itf.set_uc_wakeup_time();
-    } else {
-    	//printf("L");
-        //DBG_PRINTF_CRITICAL("z\n\r");
-        aos_lrwan_chg_mode.enter_sleep_mode();
-    }
+void lowPowerHandler( void );
 
-    RHINO_CPU_INTRPT_ENABLE();
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* __LOW_POWER_H__ */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
-
