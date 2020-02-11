@@ -6,6 +6,7 @@ menu.LORAWAN_UPLINKMODE=LORAWAN_UPLINKMODE
 menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
 menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
 menu.LORAWAN_RGB=LORAWAN_RGB
+menu.LORAWAN_DebugLevel=LoRaWan Debug Level
 ##############################################################
 
 CubeCell-Board.name=CubeCell-Board
@@ -76,6 +77,12 @@ CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Board.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Board.menu.LORAWAN_RGB.0.build.RGB=0
 
+CubeCell-Board.menu.LORAWAN_DebugLevel.0=None
+CubeCell-Board.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-Board.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-Board.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-Board.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-Board.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
 CubeCell-Capsule.name=CubeCell-Capsule
@@ -126,10 +133,10 @@ CubeCell-Capsule.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Capsule.menu.LORAWAN_ADR.1=OFF
 CubeCell-Capsule.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+CubeCell-Capsule.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-Capsule.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-Capsule.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-Capsule.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0=OFF
 CubeCell-Capsule.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
@@ -146,6 +153,13 @@ CubeCell-Capsule.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Capsule.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Capsule.menu.LORAWAN_RGB.0.build.RGB=0
 
+
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.0=None
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-Capsule.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
 CubeCell-Module.name=CubeCell-Module
@@ -196,10 +210,10 @@ CubeCell-Module.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
 CubeCell-Module.menu.LORAWAN_ADR.1=OFF
 CubeCell-Module.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
-CubeCell-Board.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+CubeCell-Module.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-Module.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-Module.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-Module.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
 CubeCell-Module.menu.LORAWAN_Net_Reserve.0=OFF
 CubeCell-Module.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
@@ -213,3 +227,10 @@ CubeCell-Module.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
 CubeCell-Module.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Module.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-Module.menu.LORAWAN_DebugLevel.0=None
+CubeCell-Module.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-Module.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-Module.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-Module.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-Module.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
