@@ -42,20 +42,13 @@ uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11
 uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
 uint32_t devAddr =  ( uint32_t )0x007e6ae1;
 
-/* the application data transmission duty cycle.  value in [ms]. */
-uint32_t APP_TX_DUTYCYCLE = 900000;
-
-/* Indicates if the node is sending confirmed or unconfirmed messages. */
-bool IsTxConfirmed = false;
-
-/* Number of trials to transmit the frame. */
-uint8_t ConfirmedNbTrials = 8;
-
+/*the application data transmission duty cycle.  value in [ms].*/
+uint32_t appTxDutyCycle = 90000;
 
 /*
   NO USER CHANGES NEEDED UNDER THIS LINE
 */
-#define ModularNode 1
+#define ModularNode 0
 
 String wasnver = "2.1.1";
 String wasnflash = "ModularNode"; //Board, Capsule, IndoorNode, ModularNode, TCA9548A
@@ -106,9 +99,6 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
 /*LoraWan Class, Class A and Class C are supported*/
 DeviceClass_t  loraWanClass = LORAWAN_CLASS;
-
-/*the application data transmission duty cycle.  value in [ms].*/
-uint32_t appTxDutyCycle = 15000;
 
 /*OTAA or ABP*/
 bool overTheAirActivation = LORAWAN_NETMODE;
@@ -1391,7 +1381,7 @@ void loop()
   case DEVICE_STATE_CYCLE:
   {
     // Schedule next packet transmission
-    txDutyCycleTime = APP_TX_DUTYCYCLE + randr(0, APP_TX_DUTYCYCLE_RND);
+    txDutyCycleTime = appTxDutyCycle + randr(0, APP_TX_DUTYCYCLE_RND);
     LoRaWAN.cycle(txDutyCycleTime);
     deviceState = DEVICE_STATE_SLEEP;
     break;
@@ -1514,9 +1504,9 @@ void DownLinkDataHandle(McpsIndication_t *mcpsIndication)
   Serial.println();
   for(uint8_t i=0;i<mcpsIndication->BufferSize;i++) {
     if (mcpsIndication->Buffer[i] == 220) { // DC for APP_TX_DUTYCYCLE; 0D BB A0  for 900000 (15min); 04 93 E0 for 300000 (5min)
-      APP_TX_DUTYCYCLE = mcpsIndication->Buffer[i++]<<32|mcpsIndication->Buffer[i++]<<16|mcpsIndication->Buffer[i++]<<8|mcpsIndication->Buffer[i++];
+      appTxDutyCycle = mcpsIndication->Buffer[i++]<<32|mcpsIndication->Buffer[i++]<<16|mcpsIndication->Buffer[i++]<<8|mcpsIndication->Buffer[i++];
       Serial.print("  new DutyCycle received: ");
-      Serial.print(APP_TX_DUTYCYCLE);
+      Serial.print(appTxDutyCycle);
       Serial.println("ms");
       saveDr();
     }
