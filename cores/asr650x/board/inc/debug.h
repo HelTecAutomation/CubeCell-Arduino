@@ -48,15 +48,9 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
-#include <stdio.h>
-#include "hw_conf.h"
-#include "timeServer.h"
+//#include <stdio.h>
 #include "utilities.h"
 
 /* Exported types ------------------------------------------------------------*/
@@ -72,71 +66,34 @@ typedef enum LOG_LEVEL_E {
     LL_ALL
 } LOG_LEVEL;
 
-#ifdef CONFIG_DEBUG_LINKWAN
-    extern LOG_LEVEL g_log_level;
-    #define ERR_PRINTF(format, ...)    do { \
-        if(g_log_level>=LL_ERR) { \
-            TimerTime_t ts = TimerGetCurrentTime(); \
-            printf("[%llu]", ts);  \
-            printf(format, ##__VA_ARGS__); \
-        } \
-    }while(0)
-    
-    #define WARN_PRINTF(format, ...)    do { \
-        if(g_log_level>=LL_WARN) { \
-            TimerTime_t ts = TimerGetCurrentTime(); \
-            printf("[%llu]", ts);  \
-            printf(format, ##__VA_ARGS__); \
-        } \
-    }while(0)
-    
-    #define DBG_PRINTF(format, ...)    do { \
-        if(g_log_level>=LL_DEBUG) { \
-            TimerTime_t ts = TimerGetCurrentTime(); \
-            printf("[%llu]", ts);  \
-            printf(format, ##__VA_ARGS__); \
-        } \
-    }while(0)
-    
-    #define VDBG_PRINTF(format, ...)    do { \
-        if(g_log_level>=LL_VDEBUG) { \
-            TimerTime_t ts = TimerGetCurrentTime(); \
-            printf("[%llu]", ts);  \
-            printf(format, ##__VA_ARGS__); \
-        } \
-    }while(0)
-    
-    #define PRINTF_RAW(...) do { \
-        if(g_log_level>=LL_DEBUG) printf(__VA_ARGS__); \
-    }while(0)
-    
-    #define PRINTF_AT(...) printf(__VA_ARGS__)
-    
-    #define DBG_PRINTF_CRITICAL(p)
-#else
-    #define ERR_PRINTF(format, ...)    do {}while(0)
-    #define WARN_PRINTF(format, ...)    do {}while(0)
-    #define DBG_PRINTF(format, ...)    do {}while(0)
-    #define VDBG_PRINTF(format, ...)    do {}while(0)
-    #define PRINTF_RAW(...)
-    #define PRINTF_AT(...) printf(__VA_ARGS__)
-    #define DBG_PRINTF_CRITICAL(p)
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 
-/* Exported functions ------------------------------------------------------- */
-
-/**
- * @brief  Initializes the debug
- * @param  None
- * @retval None
- */
-void DBG_Init(void);
-int DBG_LogLevelGet();
-void DBG_LogLevelSet(int level);
-
 #ifdef __cplusplus
 }
+#endif
+
+
+#define ERR_PRINTF(format, ...)    do {}while(0)
+#define WARN_PRINTF(format, ...)    do {}while(0)
+#define VDBG_PRINTF(format, ...)    do {}while(0)
+#define PRINTF_RAW(...)
+#define PRINTF_AT(...)
+#define DBG_PRINTF_CRITICAL(p)
+#define DBG_PRINTF(format, ...)		do {}while(0)
+
+#if LoRaWAN_DEBUG_LEVEL >= 2
+	#define FREQ_PRINTF(format, ...)    printf(format, ##__VA_ARGS__)
+	#define DIO_PRINTF(format, ...)     printf(format, ##__VA_ARGS__)
+#elif LoRaWAN_DEBUG_LEVEL == 1
+	#define FREQ_PRINTF(format, ...)    printf(format, ##__VA_ARGS__)
+	#define DIO_PRINTF(format, ...)
+#else
+	#define FREQ_PRINTF(format, ...)	do {}while(0)
+	#define DIO_PRINTF(format, ...)		do {}while(0)
 #endif
 
 #endif /* __DEBUG_H__*/
