@@ -62,7 +62,7 @@ public:
     int available(void);
     int availableForWrite(void);
     int peek(void);
-    uint32 read(void);
+    int read(void);
     void flush(void);
     size_t write(uint8_t);
     size_t write(const uint8_t *buffer, size_t size);
