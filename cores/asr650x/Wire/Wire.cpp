@@ -95,8 +95,8 @@ i2c_err_t TwoWire::writeTransmission(uint16_t address, uint8_t *buff, uint16_t s
 	 uint8_t Status=0;
 	 uint16_t i;
 	 flush();
-	 I2C_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
-     Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
+	 I2C_I2CMasterClearStatus();                                            //ï¿½ï¿½ï¿½I2C×´Ì¬ï¿½ï¿½ï¿½ï¿½
+     Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
      
     if(Status == I2C_I2C_MSTR_NO_ERROR)
     {    	
@@ -124,8 +124,8 @@ i2c_err_t TwoWire::readTransmission(uint16_t address, uint8_t *buff, uint16_t si
      uint8_t Status=0;
 	 uint16_t i;
 	 flush();
-	 I2C_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
-     Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
+	 I2C_I2CMasterClearStatus();                                            //ï¿½ï¿½ï¿½I2C×´Ì¬ï¿½ï¿½ï¿½ï¿½
+     Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     if(Status == I2C_I2C_MSTR_NO_ERROR)
     {    	
@@ -251,7 +251,7 @@ int TwoWire::available(void)
     return result;
 }
 
-uint32 TwoWire::read(void)
+int TwoWire::read(void)
 {
     int value = -1;
     if(rxIndex < rxLength) {

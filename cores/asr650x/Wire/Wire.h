@@ -115,7 +115,7 @@ public:
     size_t write(uint8_t);
     size_t write(const uint8_t *, size_t);
     int available(void);
-    uint32 read(void);
+    int read(void);
     int peek(void);
     void flush(void);
 

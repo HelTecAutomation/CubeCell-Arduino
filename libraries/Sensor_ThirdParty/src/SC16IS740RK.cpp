@@ -50,7 +50,7 @@ int SC16IS740Base::availableForWrite() {
 }
 
 
-uint32 SC16IS740Base::read() {
+int SC16IS740Base::read() {
 	if (hasPeek) {
 		hasPeek = false;
 		return peekByte;

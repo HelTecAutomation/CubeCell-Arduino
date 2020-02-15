@@ -78,7 +78,7 @@ public:
 	 *
 	 * This is a standard Arduino/Wiring method for Stream objects.
 	 */
-    virtual uint32 read();
+    virtual int read();
 
 	/**
 	 * @brief Read a single byte from the serial port, but do not remove it so it can be read again.

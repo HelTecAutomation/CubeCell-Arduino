@@ -85,7 +85,7 @@ int HardwareSerial::peek(void)
   return 0;
 }
 
-uint32 HardwareSerial::read(void)
+int HardwareSerial::read(void)
 {
     if(available()) {
         return UART_1_UartGetByte();
