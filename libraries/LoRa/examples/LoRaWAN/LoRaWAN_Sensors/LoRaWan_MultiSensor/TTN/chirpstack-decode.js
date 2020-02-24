@@ -12,7 +12,7 @@ function bytesToFloat(by) {
   return f;
 } 
 
-function Decoder(bytes, port) {
+function Decode(port, bytes) {
 
 var decoded = {};
 i = 0;

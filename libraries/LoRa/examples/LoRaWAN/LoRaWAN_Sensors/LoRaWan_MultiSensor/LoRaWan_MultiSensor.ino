@@ -25,8 +25,8 @@
 #define MPU_9250 0
 #define LR_VL53L1X 0
 #define HMC_5883L 0
+#define MLX_90614 0
 #define One_Wire 1
-//#define UART 1
   
 #define TCS9548 0      // TCS9548A I2C 8 port Switch
 #define minpnr 0       // TCS9548A first I2C Port
@@ -50,8 +50,8 @@ uint32_t appTxDutyCycle = 90000;
 */
 #define ModularNode 0
 
-String wasnver = "2.1.1";
-String wasnflash = "ModularNode"; //Board, Capsule, IndoorNode, ModularNode, TCA9548A
+String wasnver = "2.1.2";
+String wasnflash = "Board"; //Board, Capsule, IndoorNode, ModularNode, TCA9548A
 
 #include "BH1750.h"
 #include "BMP280.h"
@@ -68,7 +68,8 @@ String wasnflash = "ModularNode"; //Board, Capsule, IndoorNode, ModularNode, TCA
 #include "HMC5883L.h"
 #include "OneWire.h"
 #include "DallasTemperature.h"
-#include "SC16IS740RK.h"
+//#include "Adafruit_MLX90614.h"
+#include "MLX90614.h"
 
 bool BME_680_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   1
 bool BME_280_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};     //   2
@@ -82,8 +83,8 @@ bool ADS_1015_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};    //   9
 bool MPU_9250_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};    //  10
 bool LR_VL53L1X_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};  //  11
 bool HMC_5883L_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   //  12
+bool MLX_90614_e[8] = {0, 0, 0, 0, 0, 0, 0, 0};   //  13
 bool One_Wire_e = false;                          // 100-103
-bool UART_e = false;                              // 200
 
 /*
    set LoraWan_RGB to Active,the RGB active in loraWan
@@ -157,11 +158,11 @@ MPU9250 mpu9250;
 Adafruit_ADS1015 ads1015;
 SFEVL53L1X LRSVL53L1X;
 HMC5883L hmc5883;
+//Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+MLX90614 mlx = MLX90614(MLX90614_BROADCASTADDR);
 
 OneWire ds(GPIO1); // on pin GPIO1 PIN6 (a 4.7K resistor is necessary)
 DallasTemperature sensors(&ds);
-
-SC16IS740 extSerial(Wire, 0);
 
 /*!
    \brief   Prepares the payload of the frame
@@ -192,6 +193,9 @@ static void prepareTxFrame(uint8_t port)
     } else {
       Serial.print("Sensor Port ");
     }
+    #if (TCS9548 == 1) 
+      Serial.print("Sensor Port ");
+    #endif
     if (ModularNode == 1 && pnr == 7) {
       Serial.println("1");
     } else {
@@ -205,7 +209,6 @@ static void prepareTxFrame(uint8_t port)
 
     if (BME_680_e[pnr]) // 1
     {
-    
 #if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
@@ -224,6 +227,11 @@ static void prepareTxFrame(uint8_t port)
       bme680.getSensorData(temperature, humidity, pressure, gas);
       delay(500);
       bme680.getSensorData(temperature, humidity, pressure, gas);
+      while ((temperature > 6000 || humidity == 100 || humidity == 0) && count < maxtry)
+      {
+        bme680.getSensorData(temperature, humidity, pressure, gas);
+        delay(250);
+      }
 
       Temperature = temperature / 100.0;
       Humidity = humidity / 1000.0;
@@ -249,7 +257,6 @@ static void prepareTxFrame(uint8_t port)
       appData[appDataSize++] = (uint8_t)((int)(Humidity * 10.0));
 
       appData[appDataSize++] = (uint8_t)((int)(Pressure * 10.0) >> 8);
-      ;
       appData[appDataSize++] = (uint8_t)((int)(Pressure * 10.0));
 
       appData[appDataSize++] = (uint8_t)((int)co2 >> 8);
@@ -275,20 +282,24 @@ static void prepareTxFrame(uint8_t port)
     */
     if (BME_280_e[pnr]) // 2
     {
-
+      Serial.println("  BME280 - 0");
 #if (ModularNode == 1 || TCS9548 == 1)
       Wire.begin();
       tcaselect(pnr);
       delay(100);
 #endif
-
+      Serial.println("  BME280 - 1");
       if (!bme280.init())
       {
         Serial.println("  BME280 error!");
       }
-      delay(1000);
+      delay(250);
+      Serial.println("  BME280 - 2");
       Temperature = bme280.getTemperature();
+      Temperature = bme280.getTemperature();
+      Serial.println("  BME280 - 3");
       Pressure = bme280.getPressure() / 100.0;
+      Serial.println("  BME280 - 4");
       Humidity = bme280.getHumidity();
 
       Wire.end();
@@ -990,41 +1001,66 @@ static void prepareTxFrame(uint8_t port)
       appData[appDataSize++] = puc[2];
       appData[appDataSize++] = puc[3];
     }
+
+    /*
+        MLX90614
+    */
+
+    if (MLX_90614_e[pnr]) // 13
+    {
+
+#if (ModularNode == 1 || TCS9548 == 1)
+      Wire.begin();
+      tcaselect(pnr);
+      delay(100);
+#endif
+
+      Serial.print("  MLX90614: ");
+      Wire.begin();
+
+      if (mlx.begin() == 0) { //Begin returns 0 on a good init
+        Serial.println("Sensor failure!");
+      } else {
+        //double ambienttemp = mlx.readAmbientTempC();
+        //double objecttemp = mlx.readObjectTempC();
+        double ambienttemp = mlx.readTemp(MLX90614::MLX90614_SRCA, MLX90614::MLX90614_TK);
+        double objecttemp = mlx.readTemp(MLX90614::MLX90614_SRC01, MLX90614::MLX90614_TK);
+
+        Serial.print("Ambienttemp: ");
+        Serial.print(ambienttemp);
+        Serial.print("C, ObjectTemp: ");
+        Serial.print(objecttemp);
+        Serial.println("C");
+
+        Wire.end();
+
+        modnr = pnr;
+#if (ModularNode == 1)
+        if (modnr == 0 || modnr == 7) {
+          modnr += 200;
+        }
+#endif
+        appData[appDataSize++] = modnr;
+        appData[appDataSize++] = 13;
+
+        unsigned char *puc;
+        puc = (unsigned char *)(&ambienttemp);
+        appData[appDataSize++] = puc[0];
+        appData[appDataSize++] = puc[1];
+        appData[appDataSize++] = puc[2];
+        appData[appDataSize++] = puc[3];
+
+        puc = (unsigned char *)(&objecttemp);
+        appData[appDataSize++] = puc[0];
+        appData[appDataSize++] = puc[1];
+        appData[appDataSize++] = puc[2];
+        appData[appDataSize++] = puc[3];
+      }
+  }
+
 #if (ModularNode == 1 || TCS9548 == 1)
   }
 #endif
-
-  /*
-       UART
-  */
-  
-  if (UART_e) // 200
-  {
-
-#if (ModularNode == 1 || TCS9548 == 1)
-    Wire.begin();
-    tcaselect(0);
-    delay(100);
-#endif
-
-    Serial.print("  UART: ");    
-
-    extSerial.begin(9600);
-
-    while(extSerial.available()) {
-		  int c = extSerial.read();
-		  Serial.print(c);
-	  }
-    
-    Serial.println("");
-
-    Wire.end();
-
-    appData[appDataSize++] = 0;
-    appData[appDataSize++] = 200;
-
-  }
-  
 
   /*
     One_Wire
@@ -1091,6 +1127,7 @@ void setup()
     MPU_9250_e[xx] = 0;
     LR_VL53L1X_e[xx] = 0;
     HMC_5883L_e[xx] = 0;
+    MLX_90614_e[xx] = 0;
   }
 #endif
 
@@ -1140,6 +1177,10 @@ void setup()
 
 #if (HMC_5883L == 1)
   HMC_5883L_e[0] = 1;
+#endif
+
+#if (MLX_90614 == 1)
+  MLX_90614_e[0] = 1;
 #endif
 
 #if (One_Wire == 1)
@@ -1264,14 +1305,26 @@ Wire.begin();
           }
           case 82: //0x52 -- VL53L1X
           {
-            Serial.println("      Found VL53L1X");
+            Serial.println("      Found VL53L1X at 0x52");
             LR_VL53L1X_e[pnr] = true;
             break;
           }
-          case 90: //0x5A --CCS811
+          case 41: //0x29 -- VL53L1X
           {
-            Serial.println("      Found CCS811");
-            CCS_811_e[pnr] = true;
+            Serial.println("      Found VL53L1X at 0x29");
+            LR_VL53L1X_e[pnr] = true;
+            break;
+          }
+          case 90: //0x5A --CCS811 or MLX90614
+          {
+            if (ccs.begin()) {
+              Serial.println("      Found CCS811");
+              CCS_811_e[pnr] = true;
+            } 
+            if (mlx.begin()) {
+              Serial.println("      Found MLX90614");
+              MLX_90614_e[pnr] = true;
+            }
             break;
           }
           case 104: //0x68 -- MPU9250 9-axis sensor
@@ -1449,7 +1502,7 @@ void tcaselect(uint8_t i)
   Wire.endTransmission();
 }
 
-bool AT_user_check(char *cmd, char *content)
+bool checkUserAt(char *cmd, char *content)
 {
   if (strcmp(cmd, "VER") == 0) 
   {
