@@ -27,6 +27,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t  loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
+/*For this example, this is the frequency of the device status packets */
 uint32_t appTxDutyCycle = (24 * 60 * 60 * 1000); // 24h;
 
 /*OTAA or ABP*/
@@ -72,12 +73,12 @@ static bool prepareTxFrame( uint8_t port )
   int head;
   appPort = port;
   switch (port) {
-    case 1: // woke up from interrupt
+    case APPPORT: // woke up from interrupt
       Serial.println("Sending data packet");
       appDataSize = 1;//AppDataSize max value is 64
       appData[0] = 0xFF; // set to something useful  
       break;
-    case 2: // daily wake up
+    case DEVPORT: // daily wake up
       Serial.println("Sending dev status packet");
       appDataSize = 1;//AppDataSize max value is 64
       appData[0] = 0xA0; // set to something else useful
@@ -136,7 +137,7 @@ void loop()
     }
     case DEVICE_STATE_SEND:
     {
-      prepareTxFrame( appPort );
+      prepareTxFrame( DEVPORT );
       LoRaWAN.send();
       deviceState = DEVICE_STATE_CYCLE;
       break;
