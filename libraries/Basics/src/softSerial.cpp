@@ -1,11 +1,8 @@
 #include "softSerial.h"
 
-// #define IO_TX GPIO1
-// #define IO_RX GPIO2
-
 uint8_t timedelay = 0;
-uint8_t Recev[8]={0};
-uint8_t temp_bin = 0;
+uint8_t Recev[8]  ={0};
+uint8_t temp_bin  = 0;
 
 uint8_t TX_GPIO;
 uint8_t RX_GPIO;
@@ -13,9 +10,14 @@ uint8_t RX_GPIO;
 uint8_t print_Sign = 0;
 uint8_t IRREC_RX_BUF[64] = {0};
 uint16_t IRREC_RX_CNT = 0;
-uint8_t rebit = 10;
+uint8_t rebit = 0;
 
-softSerial::softSerial(uint8_t tx_GPIO, uint8_t rx_GPIO)
+softSerial::softSerial(uint8_t tx_GPIO, uint8_t rx_GPIO):
+pbuffer(0)
+// print_Sign(0),
+// IRREC_RX_BUF{0},
+// IRREC_RX_CNT(0),
+// rebit(0)
 {
 	TX_GPIO = tx_GPIO;
 	RX_GPIO = rx_GPIO;
@@ -43,7 +45,7 @@ void softSerial::begin(uint16_t Baudrate)
 	}
 	pinMode(RX_GPIO,INPUT);
     digitalWrite(RX_GPIO,HIGH);
-	attachInterrupt(RX_GPIO, &receiver, FALLING);
+	attachInterrupt(RX_GPIO, receiver, FALLING);
 
 	pinMode(TX_GPIO, OUTPUT);
 	digitalWrite(TX_GPIO,HIGH);   //TX为0是开始发送，所以需要拉高
@@ -51,14 +53,22 @@ void softSerial::begin(uint16_t Baudrate)
 
 int softSerial::available(void)
 {
-
+	if(IRREC_RX_CNT){
+		return IRREC_RX_CNT;
+	}
+	else
+	{
+		return 0;
+	}
+	
 }
 
 void softSerial::receiverBegin(void)
 {
 	uint8_t count;
+
 	delayMicroseconds(timedelay); 
-	for(count = 0;count <8; count++){
+	for(count = 0; count < 8; count++){
 		if(digitalRead(RX_GPIO)){
 			temp_bin = 1;//0
 		}
@@ -77,7 +87,7 @@ void softSerial::receiverBegin(void)
 			IRREC_RX_BUF[IRREC_RX_CNT++] = (Recev[7] << 7) | (Recev[6] << 6) | (Recev[5] << 5) | (Recev[4] << 4) | (Recev[3] << 3) | (Recev[2] << 2) | (Recev[1] << 1) | Recev[0];
 		}
 		rebit = 10;
-        print_Sign = 1;	
+        print_Sign = 1;
 	}
 }
 
@@ -87,7 +97,29 @@ void softSerial::receiver(void)
 	ClearPinInterrupt(RX_GPIO);
 	receiverBegin();
 	digitalWrite(RX_GPIO,HIGH);
-	attachInterrupt(RX_GPIO, &receiver, FALLING);
+	attachInterrupt(RX_GPIO, receiver, FALLING);
+}
+
+int softSerial::read(void)
+{
+	if(available())
+	{
+		IRREC_RX_CNT--;
+		uint8_t temp = IRREC_RX_BUF[pbuffer++];
+		if(IRREC_RX_CNT==0)
+		{
+			pbuffer = 0;
+		}
+		return temp;
+	}
+	return (-1);
+}
+
+void softSerial::flush()
+{
+	memset(IRREC_RX_BUF, 0, 64*sizeof(uint8_t));
+	IRREC_RX_CNT = 0;
+	pbuffer = 0;
 }
 
 void softSerial::sendByte(uint8_t val)//发送bit位

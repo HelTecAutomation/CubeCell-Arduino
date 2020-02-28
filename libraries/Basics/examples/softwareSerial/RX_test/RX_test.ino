@@ -22,16 +22,9 @@
  */
 
 #include "softSerial.h"
-#include <stdlib.h>
+// #include <stdlib.h>
 
 softSerial softwareSerial(GPIO1 /*TX pin*/, GPIO2 /*TX pin*/);
-
-extern uint8_t IRREC_RX_BUF[64];    //用于存放接收到的数据，所有数据都放到这个里面
-extern uint16_t IRREC_RX_CNT;       //接收到的字符个数
-extern uint8_t print_Sign;
-extern uint8_t rebit;
-
-softSerial softwareSerial;
 
 void setup()
 {
@@ -41,17 +34,23 @@ void setup()
 	softwareSerial.begin(9600);
 }
 
-void loop(){
-	delay(3000);
-	if(print_Sign)
+void loop()
+{
+	if(softwareSerial.available())
 	{
-		uint8_t num;
-		for(num = 0; num < IRREC_RX_CNT; num++)
+		char serialbuffer[64] = {0};
+		int i = 0;
+		while (softwareSerial.available() && i<63)
 		{
-			Serial.write(IRREC_RX_BUF[num]); 
+			serialbuffer[i] = (char)softwareSerial.read();
+			i++;
 		}
-		memset(IRREC_RX_BUF, 0, 64*sizeof(uint8_t));
-		IRREC_RX_CNT = 0;
-		print_Sign = 0;  //clear flag
+		serialbuffer[i] = '\0';
+		if(serialbuffer[0])
+		{
+			Serial.print("Received data from software Serial:");
+			Serial.println(serialbuffer);
+		}
 	}
+	 delay(1000);
 }
