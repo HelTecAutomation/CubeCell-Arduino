@@ -24,7 +24,7 @@
 #include "softSerial.h"
 // #include <stdlib.h>
 
-softSerial softwareSerial(GPIO1 /*TX pin*/, GPIO2 /*TX pin*/);
+softSerial softwareSerial(GPIO1 /*TX pin*/, GPIO2 /*RX pin*/);
 
 void setup()
 {
