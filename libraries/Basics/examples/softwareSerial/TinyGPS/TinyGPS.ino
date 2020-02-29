@@ -8,7 +8,7 @@
 */
 
 TinyGPS gps;
-softSerial ss(GPIO1 /*TX pin*/, GPIO2 /*RX pin*/);
+softSerial ss(GPIO5 /*TX pin*/, GPIO3 /*RX pin*/);
 
 void setup()
 {
