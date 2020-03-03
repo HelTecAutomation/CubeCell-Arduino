@@ -24,7 +24,6 @@ function Decoder(bytes, port) {
     decoded.speed = bytesToFloat(bytes.slice(i,i+=4));
     decoded.hdop = bytesToFloat(bytes.slice(i,i+=4));
   
-
     decoded.battery = ((bytes[i++] << 8) | bytes[i++]);
 
     return decoded;
