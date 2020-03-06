@@ -461,13 +461,11 @@ static const double TWO52[2]={
 void boardInitMcu( void )
 {
     SpiInit();
-    Asr_Timer_Init();
-    RtcInit();
 
     pinMode(Vext,OUTPUT);
     digitalWrite(Vext,HIGH);
-    pinMode(ADC_CTL,OUTPUT);
-    digitalWrite(ADC_CTL,HIGH);
+    pinMode(VBAT_ADC_CTL,OUTPUT);
+    digitalWrite(VBAT_ADC_CTL,HIGH);
     SX126xIoInit();
     delay(10);
     SX126xReset();

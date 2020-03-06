@@ -30,7 +30,7 @@
 
 #define RF_FREQUENCY                                868000000 // Hz
 
-#define TX_OUTPUT_POWER                             14        // dBm
+#define TX_OUTPUT_POWER                             5        // dBm
 
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
@@ -68,7 +68,7 @@ typedef enum
 int16_t txNumber;
 States_t state;
 bool sleepMode = false;
-int16_t rssi,rxSize;
+int16_t Rssi,rxSize;
 
 
 void setup() {
@@ -76,7 +76,7 @@ void setup() {
     Serial.begin(115200);
 
     txNumber=0;
-    rssi=0;
+    Rssi=0;
 
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.TxTimeout = OnTxTimeout;
@@ -107,8 +107,8 @@ void loop()
 			txNumber++;
 		    sprintf(txpacket,"%s","hello");
 		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
-		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
-		    sprintf(txpacket+strlen(txpacket),"%d",rssi);
+		    sprintf(txpacket+strlen(txpacket),"%s"," Rssi : ");
+		    sprintf(txpacket+strlen(txpacket),"%d",Rssi);
 		    turnOnRGB(COLOR_SEND,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
@@ -145,14 +145,14 @@ void OnTxTimeout( void )
 }
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-    rssi=rssi;
+    Rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
     turnOnRGB(COLOR_RECEIVED,0);
     Radio.Sleep( );
 
-    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
+    Serial.printf("\r\nreceived packet \"%s\" with Rssi %d , length %d\r\n",rxpacket,Rssi,rxSize);
     Serial.println("wait to send next packet");
 
     state=TX;

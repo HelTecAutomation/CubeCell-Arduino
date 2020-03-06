@@ -26,19 +26,86 @@
 #define spi_TIMEOUT	500
 
 
-SPIClass::SPIClass(uint8_t ss):_ss(ss),_inTransaction(false){}
+SPIClass::SPIClass(int8_t ss, int8_t spiNum)
+	:_freq(6000000),
+	_spi_num(spiNum),
+	_inTransaction(false)
+	{}
 
 
-void SPIClass::begin(uint8_t ss)
+void SPIClass::begin(int8_t ss, uint32_t freq, int8_t spiNum)
 {
-    _ss = ss;
-    pinMode(_ss,OUTPUT);
-    SPI_1_Start();
+	if(ss!=-1)
+	{
+		_ss = ss;
+	}
+	
+	if(spiNum != -1)
+	{
+		if(spiNum == 1)
+		{
+			_spi_num = spiNum;
+		}
+		else
+		{
+			_spi_num = 0;
+		}
+	}
+	
+	_freq = freq;
+	
+	if(_freq > 6000000)
+	{
+		_freq = 6000000;
+	}
+
+	pinMode(_ss,OUTPUT);
+	
+	if(_spi_num == 0)
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_1_SPI_OVS_FACTOR / _freq - 1;
+		SPI_1_SCBCLK_DIV_REG = div << 8 ;
+		SPI_1_Start();
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_2_SPI_OVS_FACTOR / _freq - 1;
+		SPI_2_SCBCLK_DIV_REG = div << 8 ;
+		SPI_2_Start();
+	}
 }
 
 void SPIClass::end()
 {
-	SPI_1_Stop();
+	if(_spi_num == 0)
+	{
+		SPI_1_Stop();
+	}
+	else
+	{
+		SPI_2_Stop();
+	}
+}
+
+void SPIClass::setFrequency(uint32_t freq)
+{
+	_freq = freq;
+	
+	if(_freq > 6000000)
+	{
+		_freq = 6000000;
+	}
+	
+	if(_spi_num == 0)
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_1_SPI_OVS_FACTOR / _freq - 1;
+		SPI_1_SCBCLK_DIV_REG = div << 8 ;
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_2_SPI_OVS_FACTOR / _freq - 1;
+		SPI_2_SCBCLK_DIV_REG = div << 8 ;
+	}
 }
 
 
@@ -52,18 +119,19 @@ void SPIClass::endTransaction()
 {
     if(_inTransaction){
         _inTransaction = false;
-//        spiEndTransaction(_spi);
     }
     digitalWrite(_ss,HIGH);
 }
 
 
 
-uint32_t SPIClass::transfer(uint32_t data)
+uint8_t SPIClass::transfer(uint8_t data)
 {
-		uint32 rxdata;
-		uint32 timeout = 0;
-		
+	uint32 rxdata;
+	uint32 timeout = 0;
+
+	if(_spi_num == 0)
+	{
 		while(SPI_1_SpiUartGetTxBufferSize() != 0);
 		SPI_1_SpiUartWriteTxData(data);
 		
@@ -73,17 +141,46 @@ uint32_t SPIClass::transfer(uint32_t data)
 			if(timeout > spi_TIMEOUT )break;
 		}
 		if(timeout > spi_TIMEOUT ){}
-//			DBG_PRINTF("Receive Data timeout!.\r\n");
 		else
 		{
 			rxdata = SPI_1_SpiUartReadRxData();
-			return rxdata;
+			return (uint8_t)rxdata;
 		}
+	}
+	else
+	{
+		while(SPI_2_SpiUartGetTxBufferSize() != 0);
+		SPI_2_SpiUartWriteTxData(data);
+		
+		while(SPI_2_SpiUartGetRxBufferSize() == 0)
+		{
+			timeout++;
+			if(timeout > spi_TIMEOUT )break;
+		}
+		if(timeout > spi_TIMEOUT ){}
+		else
+		{
+			rxdata = SPI_2_SpiUartReadRxData();
+			return (uint8_t)rxdata;
+		}
+	}
 }
 
 void SPIClass::transfer(uint8_t * data, uint32_t size) 
-{ 
-	//transferBytes(data, data, size); 
+{
+	for(uint32_t i;i<size;i++)
+	{
+		if(_spi_num == 0)
+		{
+			while(SPI_1_SpiUartGetTxBufferSize() != 0);
+			SPI_1_SpiUartWriteTxData(*data++);
+		}
+		else
+		{
+			while(SPI_2_SpiUartGetTxBufferSize() != 0);
+			SPI_2_SpiUartWriteTxData(*data++);
+		}
+	}
 }
 
 
@@ -93,8 +190,46 @@ void SPIClass::transfer(uint8_t * data, uint32_t size)
  */
 void SPIClass::transferBytes(uint8_t * data, uint8_t * out, uint32_t size)
 {
+	uint32 timeout = 0;
+	for(uint32_t i;i<size;i++)
+	{
+		if(_spi_num == 0)
+		{
+			while(SPI_1_SpiUartGetTxBufferSize() != 0);
+			SPI_1_SpiUartWriteTxData(*data++);
+			
+			while(SPI_1_SpiUartGetRxBufferSize() == 0)
+			{
+				timeout++;
+				if(timeout > spi_TIMEOUT )break;
+			}
+			
+			if(timeout > spi_TIMEOUT ){}
+			else
+			{
+				* out++ = (uint8_t)SPI_1_SpiUartReadRxData();
+			}
+		}
+		else
+		{
+			while(SPI_2_SpiUartGetTxBufferSize() != 0);
+			SPI_2_SpiUartWriteTxData(*data++);
 
+			while(SPI_2_SpiUartGetRxBufferSize() == 0)
+			{
+				timeout++;
+				if(timeout > spi_TIMEOUT )break;
+			}
+			
+			if(timeout > spi_TIMEOUT ){}
+			else
+			{
+				* out++ = (uint8_t)SPI_2_SpiUartReadRxData();
+			}
+		}
+	}
 }
 
+SPIClass SPI(-1,SPI_NUM_0);
+SPIClass SPI1(-1,SPI_NUM_1);
 
-SPIClass SPI(-1);

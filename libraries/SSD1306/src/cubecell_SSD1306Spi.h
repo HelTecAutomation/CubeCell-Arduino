@@ -15,22 +15,26 @@ class SSD1306Spi : public OLEDDisplay {
       uint8_t             _rst;
       uint8_t             _dc;
       uint8_t             _cs;
+      uint32_t            _freq;
+      uint8_t             _spi_num;
 
   public:
-    SSD1306Spi(uint8_t _rst, uint8_t _dc, uint8_t _cs, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+    SSD1306Spi(uint8_t _rst, uint8_t _dc, uint8_t _cs,  uint8_t _spi_num ,uint32_t _freq = 6000000, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
         setGeometry(g);
 
       this->_rst = _rst;
       this->_dc  = _dc;
       this->_cs  = _cs;
-    }
+      this->_freq  = _freq;
+      this->_spi_num  = _spi_num;
+      }
 
     bool connect(){
       pinMode(_dc, OUTPUT);
       pinMode(_cs, OUTPUT);
       pinMode(_rst, OUTPUT);
 
-      SPI.begin ();
+      SPI.begin (this->_cs,this->_freq,this->_spi_num);
 
       // Pulse Reset low for 10ms
       digitalWrite(_rst, HIGH);
@@ -80,16 +84,15 @@ class SSD1306Spi : public OLEDDisplay {
        sendCommand(minBoundY);
        sendCommand(maxBoundY);
 
-       digitalWrite(_cs, HIGH);
        digitalWrite(_dc, HIGH);   // data mode
-       digitalWrite(_cs, LOW);
+       SPI.beginTransaction();
        for (y = minBoundY; y <= maxBoundY; y++) {
          for (x = minBoundX; x <= maxBoundX; x++) {
            SPI.transfer(buffer[x + y * displayWidth]);
          }
          //yield();
        }
-       digitalWrite(_cs, HIGH);
+       SPI.endTransaction();
      #else
        // No double buffering
        sendCommand(COLUMNADDR);
@@ -105,14 +108,13 @@ class SSD1306Spi : public OLEDDisplay {
          sendCommand(0x3);
        }
 
-        digitalWrite(_cs, HIGH);
         digitalWrite(_dc, HIGH);   // data mode
-        digitalWrite(_cs, LOW);
+        SPI.beginTransaction();
         for (uint16_t i=0; i<displayBufferSize; i++) {
           SPI.transfer(buffer[i]);
           //yield();
         }
-        digitalWrite(_cs, HIGH);
+        SPI.endTransaction();
      #endif
     }
 
@@ -121,11 +123,10 @@ class SSD1306Spi : public OLEDDisplay {
 		return 0;
 	}
     inline void sendCommand(uint8_t com) __attribute__((always_inline)){
-      digitalWrite(_cs, HIGH);
       digitalWrite(_dc, LOW);
-      digitalWrite(_cs, LOW);
+      SPI.beginTransaction();
       SPI.transfer(com);
-      digitalWrite(_cs, HIGH);
+      SPI.endTransaction();
     }
 };
 

@@ -15,7 +15,7 @@
 * the software package with which this file was provided.
 *******************************************************************************/
 
-#include "ADC_SAR_Seq.h"
+#include "ADC_SAR_Seq.h" 
 #include "ASR_Arduino.h"
 #include "debug.h"
 /***************************************
@@ -510,8 +510,8 @@ int16 ADC_SAR_Seq_GetResult16(uint32 chan)
 
     if(chan < ADC_SAR_Seq_SEQUENCED_CHANNELS_NUM)
     {
-        result = (CY_GET_REG32((reg32 *)(ADC_SAR_Seq_SAR_CHAN_RESULT_IND + (uint32)(chan << 2u))) &
-                ADC_SAR_Seq_RESULT_MASK)+1 ;
+        result = CY_GET_REG32((reg32 *)(ADC_SAR_Seq_SAR_CHAN_RESULT_IND + (uint32)(chan << 2u))) &
+                ADC_SAR_Seq_RESULT_MASK;
     }
     else
     {

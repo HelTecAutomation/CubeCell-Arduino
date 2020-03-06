@@ -3,40 +3,76 @@
 #include <string.h>
 #include <inttypes.h>
 
-
+#include "Arduino.h"
 #include "HardwareSerial.h"
 #include "project.h"
 
 
-#if !defined(NO_GLOBAL_INSTANCES) && !defined(NO_GLOBAL_SERIAL)
-HardwareSerial Serial(0);
-#endif
+HardwareSerial Serial(UART_NUM_0);
+HardwareSerial Serial1(UART_NUM_1);
 
-HardwareSerial::HardwareSerial(int uart_nr) : _uart_nr(uart_nr) {}
+HardwareSerial::HardwareSerial(int8_t uart_num) 
+	:_uart_num(uart_num) 
+	{}
 
-void HardwareSerial::begin(unsigned long baud, uint32_t config, int8_t rxPin, int8_t txPin, bool invert, unsigned long timeout_ms)
+void HardwareSerial::begin(unsigned long baud , int8_t uart_num, uint32_t config, bool invert, unsigned long timeout_ms)
 {
-  uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/baud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
-  UART_1_SCBCLK_DIV_REG = div<<8;
-  UART_1_SCBCLK_CMD_REG = 0x8000FF41u;
-  if(digitalRead(UART_RX)==UART_RX_LEVEL)//uart start when uart chip powered
-  {
-	  UART_1_Start();
-  }
-  SerialBaud=baud;
+	if(uart_num!=-1)
+	{
+		if(uart_num == 1)
+		{
+			_uart_num = uart_num;
+		}
+		else
+		{
+			_uart_num = 0;
+		}
+	}
+
+	SerialBaud=baud;
+	
+	if( _uart_num == UART_NUM_0) 
+	{
+		if(digitalRead(UART_RX)==UART_RX_LEVEL)//uart start when uart chip powered
+		{
+			uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
+			UART_1_SCBCLK_DIV_REG = div<<8;
+			UART_1_Start();
+		}
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_2_UART_OVS_FACTOR + 0.5 - 1;
+		UART_2_SCBCLK_DIV_REG = div<<8;
+		UART_2_Start();
+	}
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
 {
-	uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/baud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
-	UART_1_SCBCLK_DIV_REG = div<<8;
-	UART_1_SCBCLK_CMD_REG = 0x8000FF41u;
-	SerialBaud=baud;
+	SerialBaud = baud;
+	if( _uart_num == UART_NUM_0)
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_2_UART_OVS_FACTOR + 0.5 - 1;
+		UART_2_SCBCLK_DIV_REG = div<<8;
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_2_UART_OVS_FACTOR + 0.5 - 1;
+		UART_2_SCBCLK_DIV_REG = div<<8;
+	}
 }
 
 void HardwareSerial::end()
 {
-  UART_1_Stop();
+	if( _uart_num == UART_NUM_0)
+	{
+		UART_1_Stop();
+	}
+	else
+	{
+		UART_2_Stop();
+	}
 }
 
 size_t HardwareSerial::setRxBufferSize(size_t new_size) {
@@ -63,7 +99,14 @@ int HardwareSerial::available(void)
 	uint8_t buffsize;
 	for(uint32_t i=0;i<(23040000/SerialBaud);i++)
 	{
-		buffsize=UART_1_SpiUartGetRxBufferSize();
+		if( _uart_num == UART_NUM_0)
+		{
+			buffsize=UART_1_SpiUartGetRxBufferSize();
+		}
+		else
+		{
+			buffsize=UART_2_SpiUartGetRxBufferSize();
+		}
 		if(buffsize){
 			return buffsize;
 		}
@@ -87,35 +130,64 @@ int HardwareSerial::peek(void)
 
 int HardwareSerial::read(void)
 {
-    if(available()) {
-        return UART_1_UartGetByte();
-    }
-    return (uint32)(-1);
+	if(available()) {
+		if( _uart_num == UART_NUM_0)
+		{
+			return UART_1_UartGetByte();
+		}
+		else
+		{
+			return UART_2_UartGetByte();
+		}
+	}
+	return (uint32)(-1);
 }
 
 void HardwareSerial::flush()
 {
-    UART_1_SpiUartClearRxBuffer();
-    UART_1_SpiUartClearTxBuffer();
+	if( _uart_num == UART_NUM_0)
+	{
+		UART_1_SpiUartClearRxBuffer();
+		UART_1_SpiUartClearTxBuffer();
+	}
+	else
+	{
+		UART_2_SpiUartClearRxBuffer();
+		UART_2_SpiUartClearTxBuffer();	
+	}
 }
 
 size_t HardwareSerial::write(uint8_t c)
 {
-    UART_1_UartPutChar(c);
-    return 1;
+	if( _uart_num == UART_NUM_0)
+	{
+		UART_1_UartPutChar(c);
+	}
+	else
+	{
+		UART_2_UartPutChar(c);
+	}
+	return 1;
 }
 
 size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 {
-   uint32 bufIndex;
-   bufIndex = 0u;
-   
-   while(bufIndex < size)
-   {
-      UART_1_UartPutChar( buffer[bufIndex] );
-      bufIndex++;
-    }  
-    return size;
+	uint32 bufIndex;
+	bufIndex = 0u;
+	   
+	while(bufIndex < size)
+	{
+		if( _uart_num == UART_NUM_0)
+		{
+			UART_1_UartPutChar( buffer[bufIndex] );
+		}
+		else
+		{
+			UART_2_UartPutChar( buffer[bufIndex] );
+		}
+		bufIndex++;
+	}
+	return size;
 }
 uint32_t  HardwareSerial::baudRate()
 {

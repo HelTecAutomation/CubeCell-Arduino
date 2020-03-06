@@ -17,7 +17,7 @@
 #ifdef __cplusplus 
 	extern "C" {
 #endif
-
+ 
 
 
 #if !defined(CY_ADC_SAR_SEQ_ADC_SAR_Seq_H)
@@ -204,14 +204,14 @@ typedef struct
 *    Initial Parameter Constants
 ***************************************/
 #define ADC_SAR_Seq_DEFAULT_SAMPLE_MODE_SEL        (1u)
-#define ADC_SAR_Seq_DEFAULT_VREF_SEL               (1u)
-#define ADC_SAR_Seq_DEFAULT_NEG_INPUT_SEL          (0u)
+#define ADC_SAR_Seq_DEFAULT_VREF_SEL               (4u)
+#define ADC_SAR_Seq_DEFAULT_NEG_INPUT_SEL          (1u)
 #define ADC_SAR_Seq_DEFAULT_ALT_RESOLUTION_SEL     (1u)
 #define ADC_SAR_Seq_DEFAULT_JUSTIFICATION_SEL      (0u)
 #define ADC_SAR_Seq_DEFAULT_DIFF_RESULT_FORMAT_SEL (1u)
 #define ADC_SAR_Seq_DEFAULT_SE_RESULT_FORMAT_SEL   (1u)
 #define ADC_SAR_Seq_DEFAULT_CLOCK_SOURCE           (1u)
-#define ADC_SAR_Seq_DEFAULT_VREF_MV_VALUE          (3300)
+#define ADC_SAR_Seq_DEFAULT_VREF_MV_VALUE          (1200)
 #define ADC_SAR_Seq_DEFAULT_BUFFER_GAIN            (0u)
 #define ADC_SAR_Seq_DEFAULT_AVG_SAMPLES_NUM        (7u)
 #define ADC_SAR_Seq_DEFAULT_AVG_SAMPLES_DIV        (7u < 4u) ? (int16)(0x100u >> (7u - 7u)) : (int16)(0x100u >> 4u)

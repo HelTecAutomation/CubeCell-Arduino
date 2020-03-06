@@ -28,6 +28,9 @@
 
 #include "Stream.h"
 
+#define I2C_NUM_0     0
+#define I2C_NUM_1     1
+
 
 #define STICKBREAKER 'V1.1.0'
 #define I2C_BUFFER_LENGTH 128
@@ -53,10 +56,8 @@ typedef enum {
 class TwoWire: public Stream
 {
 protected:
-    uint8_t num;
-    int8_t sda;
-    int8_t scl;
-
+    int8_t _i2c_num;
+	uint32_t _freq;
     uint8_t rxBuffer[I2C_BUFFER_LENGTH];
     uint16_t rxIndex;
     uint16_t rxLength;
@@ -79,13 +80,14 @@ protected:
     uint16_t _timeOutMillis;
 
 public:
-    TwoWire(uint8_t bus_num);
+    TwoWire(int8_t bus_num);
     ~TwoWire();
-    bool begin(int sda=-1, int scl=-1, uint32_t frequency=0); // returns true, if successful init of i2c bus
+    bool begin(uint32_t frequency = 100000 , int8_t bus_num = -1); // returns true, if successful init of i2c bus
       // calling will attemp to recover hung bus
     void end();
     void setClock(uint32_t frequency); // change bus clock without initing hardware
     size_t getClock(); // current bus clock rate in hz
+	void setFrequency(uint32_t freq);
 
     void setTimeOut(uint16_t timeOutMillis); // default timeout of i2c transactions is 50ms
     uint16_t getTimeOut();

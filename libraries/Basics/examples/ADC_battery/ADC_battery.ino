@@ -10,10 +10,10 @@ uint16_t voltage;
 
 void loop() {
   // put your main code here, to run repeatedly:
-  pinMode(ADC_CTL,OUTPUT);
-  digitalWrite(ADC_CTL,LOW);
+  pinMode(VBAT_ADC_CTL,OUTPUT);
+  digitalWrite(VBAT_ADC_CTL,LOW);
   uint16_t voltage=analogRead(ADC)*2;
-  digitalWrite(ADC_CTL,HIGH);
+  digitalWrite(VBAT_ADC_CTL,HIGH);
   Serial.print(millis());
   Serial.print("  ");
   Serial.println(voltage);

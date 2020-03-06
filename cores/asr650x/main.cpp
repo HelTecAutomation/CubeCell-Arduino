@@ -19,11 +19,18 @@
 #define ARDUINO_MAIN
 #include "Arduino.h"
 
+
+extern "C" void Asr_Timer_Init(void);
+extern "C"  void RtcInit( void );
+
 /*
  * \brief Main entry point of Arduino application
  */
 int main( void )
 {
+  Asr_Timer_Init();
+  RtcInit();
+
   setup();
 
   for (;;)

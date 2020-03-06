@@ -215,10 +215,10 @@ void turnOffRGB(void)
 /*  get the BatteryVoltage in mV. */
 uint16_t getBatteryVoltage(void)
 {
-	pinMode(ADC_CTL,OUTPUT);
-	digitalWrite(ADC_CTL,LOW);
+	pinMode(VBAT_ADC_CTL,OUTPUT);
+	digitalWrite(VBAT_ADC_CTL,LOW);
 	uint16_t volt=analogRead(ADC)*2;
-	digitalWrite(ADC_CTL,HIGH);
+	digitalWrite(VBAT_ADC_CTL,HIGH);
 	return volt;
 }
 
@@ -390,8 +390,8 @@ static void lwan_dev_params_update( void )
 
 	MibRequestConfirm_t mibReq;
 	uint16_t channelsMaskTemp[6];
-	channelsMaskTemp[0] = 0x00FF;
-	channelsMaskTemp[1] = 0x0000;
+	channelsMaskTemp[0] = 0x0000;
+	channelsMaskTemp[1] = 0x0003;
 	channelsMaskTemp[2] = 0x0000;
 	channelsMaskTemp[3] = 0x0000;
 	channelsMaskTemp[4] = 0x0000;
@@ -536,6 +536,7 @@ void LoRaWanClass::send()
 {
 	if( nextTx == true )
 	{
+	lwan_dev_params_update();
 		MibRequestConfirm_t mibReq;
 		mibReq.Type = MIB_DEVICE_CLASS;
 		LoRaMacMibGetRequestConfirm( &mibReq );

@@ -118,10 +118,10 @@ void loop()
     }
     case ReadVoltage:
     {
-      pinMode(ADC_CTL,OUTPUT);
-      digitalWrite(ADC_CTL,LOW);
+      pinMode(VBAT_ADC_CTL,OUTPUT);
+      digitalWrite(VBAT_ADC_CTL,LOW);
       voltage=analogRead(ADC)*2;
-      digitalWrite(ADC_CTL,HIGH);
+      digitalWrite(VBAT_ADC_CTL,HIGH);
       state = TX;
       break;
     }

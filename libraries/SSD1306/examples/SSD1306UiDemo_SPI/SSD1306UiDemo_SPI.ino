@@ -2,7 +2,7 @@
 #include "cubecell_OLEDDisplayUi.h"
 #include "images.h"
 	
-SSD1306Spi   display(GPIO1, GPIO2, GPIO3);//RST,DC,CS
+SSD1306Spi   display(GPIO1, GPIO2, GPIO3, SPI_NUM_0 , 6000000);//RST,DC,CS,spi group,frequency
 
 OLEDDisplayUi ui( &display );
 

@@ -8,21 +8,22 @@
 class SSD1306Wire : public OLEDDisplay {
   private:
       uint8_t             _address;
-      uint8_t             _sda;
-      uint8_t             _scl;
+      uint8_t             _i2c_num;
+      uint32_t             _freq;
       bool                _doI2cAutoInit = false;
 
   public:
-    SSD1306Wire(uint8_t _address, uint8_t _sda, uint8_t _scl, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+  public:
+    SSD1306Wire(uint8_t _address, uint32_t _freq, uint8_t _i2c_num, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
       setGeometry(g);
 
       this->_address = _address;
-      this->_sda = _sda;
-      this->_scl = _scl;
+      this->_i2c_num = _i2c_num;
+      this->_freq = _freq;
     }
 
     bool connect() {
-      Wire.begin(this->_sda, this->_scl);
+      Wire.begin(this->_freq,this->_i2c_num);
       return true;
     }
 
@@ -134,7 +135,7 @@ class SSD1306Wire : public OLEDDisplay {
 
     void initI2cIfNeccesary() {
       if (_doI2cAutoInit) {
-      	Wire.begin(this->_sda, this->_scl);
+      	Wire.begin(this->_freq,this->_i2c_num);
       }
     }
 

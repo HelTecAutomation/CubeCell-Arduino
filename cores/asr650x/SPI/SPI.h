@@ -25,26 +25,32 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#define SPI_NUM_0     0
+#define SPI_NUM_1     1
 
 class SPIClass
 {
 private:
     int8_t _ss;
+	int8_t _spi_num;
+    uint32_t _freq;
     bool _inTransaction;
 
 public:
-    SPIClass(uint8_t ss=-1);
-    void begin(uint8_t ss=-1);
+    SPIClass(int8_t ss,int8_t spiNum);
+    void begin(int8_t ss = -1, uint32_t freq = 6000000, int8_t spiNum = -1);
     void end();
+    void setFrequency(uint32_t freq);
     void beginTransaction(void);
     void endTransaction(void);
     void transfer(uint8_t * data, uint32_t size);
-    uint32_t transfer(uint32_t data);
+    uint8_t transfer(uint8_t data);
   
     void transferBytes(uint8_t * data, uint8_t * out, uint32_t size);
 };
 typedef SPIClass SPIC;
 
 extern SPIClass SPI;
+extern SPIClass SPI1;
 
 

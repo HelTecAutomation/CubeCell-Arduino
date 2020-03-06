@@ -3,7 +3,7 @@
 
 
 // Initialize the OLED display using Arduino Wire:
-SSD1306Spi display(GPIO1, GPIO2, GPIO3);  // RES, DC, CS
+SSD1306Spi   display(GPIO1, GPIO2, GPIO3, SPI_NUM_0 , 6000000);//RST,DC,CS,spi group,frequency
 
 
 

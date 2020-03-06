@@ -10,7 +10,9 @@ uint16_t voltage;
 
 void loop() {
   // put your main code here, to run repeatedly:
-  voltage=analogRead(ADC);//return the voltage in mV, max value can be read is 3300mV
+  
+  //ADC == ADC1
+  voltage=analogRead(ADC);//return the voltage in mV, max value can be read is 2400mV 
   Serial.print(millis());
   Serial.print("  ");
   Serial.println(voltage);

@@ -14,7 +14,7 @@
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
 *******************************************************************************/
-
+#include "ASR_Arduino.h"
 #include "SPI_1_PVT.h"
 
 #if (SPI_1_SCB_MODE_I2C_INC)

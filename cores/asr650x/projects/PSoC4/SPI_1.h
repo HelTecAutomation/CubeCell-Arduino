@@ -85,7 +85,7 @@ extern "C" {
 *       Includes
 ****************************************/
 
-#include "SPI_1_PINS.h"
+//#include "SPI_1_PINS.h"
 
 #if (SPI_1_SCB_CLK_INTERNAL)
     #include "SPI_1_SCBCLK.h"

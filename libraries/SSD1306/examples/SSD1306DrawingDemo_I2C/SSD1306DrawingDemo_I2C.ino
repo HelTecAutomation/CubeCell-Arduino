@@ -1,7 +1,7 @@
 #include <Wire.h>  
 #include "cubecell_SSD1306Wire.h"
 
- SSD1306Wire  display(0x3c, SDA, SCL);
+ SSD1306Wire  display(0x3c, 100000, I2C_NUM_0 ); //addr , freq , i2c group
 
 // Adapted from Adafruit_SSD1306
 void drawLines() {

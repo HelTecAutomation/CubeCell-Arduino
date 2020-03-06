@@ -32,13 +32,13 @@ extern "C" {
 #include "project.h"
 #include "HardwareSerial.h"
 #include "Arduino.h"
+#include <ASR_Arduino.h>
 
 
 
-TwoWire::TwoWire(uint8_t bus_num)
-    :num(bus_num & 1)
-    ,sda(-1)
-    ,scl(-1)
+TwoWire::TwoWire(int8_t bus_num)
+    :_i2c_num(bus_num)
+    ,_freq(100000)
     ,rxIndex(0)
     ,rxLength(0)
     ,rxQueued(0)
@@ -55,16 +55,74 @@ TwoWire::~TwoWire()
 {
 }
 
-bool TwoWire::begin(int sdaPin, int sclPin, uint32_t frequency)
+bool TwoWire::begin(uint32_t frequency , int8_t bus_num)
 {
-	delay(100);
-	I2C_Start();
+	if(bus_num != -1)
+	{
+		if(bus_num == 1)
+		{
+			_i2c_num = bus_num;
+		}
+		else
+		{
+			_i2c_num = 0;
+		}
+	}
+
+	_freq = frequency;
+
+	if(_freq > 1000000)
+	{
+		_freq = 1000000;
+	}
+
+	if(_i2c_num == I2C_NUM_0)
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / 8 / _freq / 3;
+		I2C_SCBCLK_DIV_REG = div << 8 ;
+		I2C_Start();
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / 8 / _freq / 3;
+		I2C_1_SCBCLK_DIV_REG = div << 8 ;
+		I2C_1_Start();
+	}
     return true;
 }
 
+void TwoWire::setFrequency(uint32_t freq)
+{
+	_freq = freq;
+	
+	if(_freq > 1000000)
+	{
+		_freq = 1000000;
+	}
+
+	if(_i2c_num == 0)
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_1_SPI_OVS_FACTOR / _freq - 1;
+		SPI_1_SCBCLK_DIV_REG = div << 8 ;
+	}
+	else
+	{
+		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_2_SPI_OVS_FACTOR / _freq - 1;
+		SPI_2_SCBCLK_DIV_REG = div << 8 ;
+	}
+}
+
+
 void TwoWire::end()
 {
-	I2C_Stop();
+	if(_i2c_num == I2C_NUM_0)
+	{
+		I2C_Stop();
+	}
+	else
+	{
+		I2C_1_Stop();
+	}
 }
 
 
@@ -94,20 +152,37 @@ i2c_err_t TwoWire::writeTransmission(uint16_t address, uint8_t *buff, uint16_t s
 {
 	 uint8_t Status=0;
 	 uint16_t i;
-	 flush();
-	 I2C_I2CMasterClearStatus();                                            //ï¿½ï¿½ï¿½I2C×´Ì¬ï¿½ï¿½ï¿½ï¿½
-     Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-     
-    if(Status == I2C_I2C_MSTR_NO_ERROR)
-    {    	
-    	for(i=0;i<size;i++)
-    	{
-    		I2C_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
-    	}
-    }
+	 if(_i2c_num == I2C_NUM_0)
+	 {
+		 flush();
+		 I2C_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
+	     Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
+	     
+	    if(Status == I2C_I2C_MSTR_NO_ERROR)
+	    {    	
+	    	for(i=0;i<size;i++)
+	    	{
+	    		I2C_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
+	    	}
+	    }
+	    I2C_I2CMasterSendStop(I2CTIMEOUT); 
+	}
+	else
+	{
+		 flush();
+		 I2C_1_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
+	     Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
+	     
+	    if(Status == I2C_1_I2C_MSTR_NO_ERROR)
+	    {    	
+	    	for(i=0;i<size;i++)
+	    	{
+	    		I2C_1_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
+	    	}
+	    }
 
-    I2C_I2CMasterSendStop(I2CTIMEOUT); 
-
+	    I2C_1_I2CMasterSendStop(I2CTIMEOUT); 
+	}
     if(Status==I2C_I2C_MSTR_NO_ERROR)
     {
     	last_error=I2C_ERROR_OK;
@@ -121,30 +196,48 @@ i2c_err_t TwoWire::writeTransmission(uint16_t address, uint8_t *buff, uint16_t s
 
 i2c_err_t TwoWire::readTransmission(uint16_t address, uint8_t *buff, uint16_t size, bool sendStop, uint32_t *readCount)
 {
-     uint8_t Status=0;
-	 uint16_t i;
-	 flush();
-	 I2C_I2CMasterClearStatus();                                            //ï¿½ï¿½ï¿½I2C×´Ì¬ï¿½ï¿½ï¿½ï¿½
-     Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //ï¿½ï¿½ï¿½Í¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	uint8_t Status=0;
+	uint16_t i;
+	flush();
+	if(_i2c_num == I2C_NUM_0)
+	{
+		I2C_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
+		Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
 
-    if(Status == I2C_I2C_MSTR_NO_ERROR)
-    {    	
-    	for(i=0;i<size;i++)
-    	{
-    		I2C_I2CMasterReadByte(I2C_I2C_ACK_DATA,&buff[i],I2CTIMEOUT);
-    		(* readCount)++;
-    	}
-    }
-    I2C_I2CMasterSendStop(I2CTIMEOUT); 
-    
-    if(Status==I2C_I2C_MSTR_NO_ERROR)
-    {
-    	last_error=I2C_ERROR_OK;
-    }
-    else
-    {
-    	last_error=I2C_ERROR_TIMEOUT;
-    }
+		if(Status == I2C_I2C_MSTR_NO_ERROR)
+		{    	
+			for(i=0;i<size;i++)
+			{
+				I2C_I2CMasterReadByte(I2C_I2C_ACK_DATA,&buff[i],I2CTIMEOUT);
+				(* readCount)++;
+			}
+		}
+		I2C_I2CMasterSendStop(I2CTIMEOUT); 
+	}
+	else
+	{
+		I2C_1_I2CMasterClearStatus();                                            //Çå³ýI2C×´Ì¬Êý¾Ý
+		Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_READ_XFER_MODE,I2CTIMEOUT);      //·¢ËÍ¶ÁÊý¾ÝÃüÁî
+
+		if(Status == I2C_1_I2C_MSTR_NO_ERROR)
+		{    	
+			for(i=0;i<size;i++)
+			{
+				I2C_1_I2CMasterReadByte(I2C_1_I2C_ACK_DATA,&buff[i],I2CTIMEOUT);
+				(* readCount)++;
+			}
+		}
+		I2C_1_I2CMasterSendStop(I2CTIMEOUT); 
+	}
+	
+	if(Status==I2C_I2C_MSTR_NO_ERROR)
+	{
+		last_error=I2C_ERROR_OK;
+	}
+	else
+	{
+		last_error=I2C_ERROR_TIMEOUT;
+	}
     return last_error;	  
 }
 
@@ -278,12 +371,24 @@ void TwoWire::flush(void)
     txLength = 0;
     rxQueued = 0;
     txQueued = 0;
-    I2C_I2CMasterClearReadBuf();
-	I2C_I2CMasterClearWriteBuf();
-	I2C_RX_FIFO_CTRL_REG=I2C_RX_FIFO_CTRL_REG|I2C_RX_FIFO_CTRL_CLEAR;
-	I2C_RX_FIFO_CTRL_REG=I2C_RX_FIFO_CTRL_REG&(~I2C_RX_FIFO_CTRL_CLEAR);
-	I2C_TX_FIFO_CTRL_REG=I2C_TX_FIFO_CTRL_REG|I2C_TX_FIFO_CTRL_CLEAR;
-	I2C_TX_FIFO_CTRL_REG=I2C_TX_FIFO_CTRL_REG&(~I2C_TX_FIFO_CTRL_CLEAR);
+	if(_i2c_num == I2C_NUM_0)
+    {
+	    I2C_I2CMasterClearReadBuf();
+		I2C_I2CMasterClearWriteBuf();
+		I2C_RX_FIFO_CTRL_REG=I2C_RX_FIFO_CTRL_REG|I2C_RX_FIFO_CTRL_CLEAR;
+		I2C_RX_FIFO_CTRL_REG=I2C_RX_FIFO_CTRL_REG&(~I2C_RX_FIFO_CTRL_CLEAR);
+		I2C_TX_FIFO_CTRL_REG=I2C_TX_FIFO_CTRL_REG|I2C_TX_FIFO_CTRL_CLEAR;
+		I2C_TX_FIFO_CTRL_REG=I2C_TX_FIFO_CTRL_REG&(~I2C_TX_FIFO_CTRL_CLEAR);
+	}
+    else
+    {
+	    I2C_1_I2CMasterClearReadBuf();
+		I2C_1_I2CMasterClearWriteBuf();
+		I2C_1_RX_FIFO_CTRL_REG=I2C_1_RX_FIFO_CTRL_REG|I2C_1_RX_FIFO_CTRL_CLEAR;
+		I2C_1_RX_FIFO_CTRL_REG=I2C_1_RX_FIFO_CTRL_REG&(~I2C_1_RX_FIFO_CTRL_CLEAR);
+		I2C_1_TX_FIFO_CTRL_REG=I2C_1_TX_FIFO_CTRL_REG|I2C_1_TX_FIFO_CTRL_CLEAR;
+		I2C_1_TX_FIFO_CTRL_REG=I2C_1_TX_FIFO_CTRL_REG&(~I2C_1_TX_FIFO_CTRL_CLEAR);
+	}
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop)
@@ -382,5 +487,5 @@ bool TwoWire::busy(void){
 //  return ((i2cGetStatus(i2c) & 16 )==16);
 }
 
-TwoWire Wire = TwoWire(0);
-TwoWire Wire1 = TwoWire(1);
+TwoWire Wire = TwoWire(I2C_NUM_0);
+TwoWire Wire1 = TwoWire(I2C_NUM_1);

@@ -14,7 +14,6 @@
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
 *******************************************************************************/
-
 #include "UART_1_PVT.h"
 
 #if (UART_1_SCB_MODE_I2C_INC)
@@ -239,7 +238,7 @@ void UART_1_Start(void)
 *******************************************************************************/
 void UART_1_Stop(void)
 {
-#if (UART_1_SCB_IRQ_INTERNAL)
+#if (UART_1_SCB_IRQ_INTERNAL) 
     UART_1_DisableInt();
 #endif /* (UART_1_SCB_IRQ_INTERNAL) */
 
