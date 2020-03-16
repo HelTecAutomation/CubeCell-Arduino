@@ -3,7 +3,7 @@
 
 #include "cytypes.h"
 #include "pins_arduino.h"
-
+#include "stdbool.h"
 #ifdef __cplusplus 
 		extern "C" {
 #endif
@@ -52,8 +52,8 @@ typedef enum
 
 typedef void( *GpioIrqHandler )( void );
 extern GpioIrqHandler GpioIrqHandlerCallback[P7_7];
-
-void globalGpioIsrEntry (void);
+extern bool lowPowerEnabled;
+void globalGpioIsrEntry (void); 
 void pinMode(uint8_t pin_name,PINMODE mode);
 void digitalWrite(uint8_t pin_name,PINLEVEL level);
 uint8 digitalRead(uint8_t pin_name);
@@ -67,7 +67,7 @@ void analogWrite (uint8_t pin, uint8_t value) ;
 void delay(uint32_t milliseconds);
 void delayMicroseconds(uint16 microseconds);
 uint32_t millis(void);
-
+uint32_t micros(void);
 
 #ifdef __cplusplus 
 }
