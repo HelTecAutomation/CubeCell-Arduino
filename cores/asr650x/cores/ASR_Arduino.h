@@ -68,7 +68,7 @@ void delay(uint32_t milliseconds);
 void delayMicroseconds(uint16 microseconds);
 uint32_t millis(void);
 uint32_t micros(void);
-
+uint64_t getID(void);
 #ifdef __cplusplus 
 }
 #endif
