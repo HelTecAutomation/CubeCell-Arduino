@@ -22,6 +22,17 @@ OLEDDisplay::~OLEDDisplay() {
 
 bool OLEDDisplay::init() {
 
+	if(this->rst!=-1)
+	{
+		pinMode(this->rst,OUTPUT);
+		digitalWrite(this->rst,HIGH);
+		delay(20);
+		digitalWrite(this->rst,LOW);
+		delay(20);
+		digitalWrite(this->rst,HIGH);
+		delay(20);
+	}
+
 	logBufferSize = 0;
 	logBufferFilled = 0;
 	logBufferLine = 0;
@@ -144,7 +155,7 @@ void OLEDDisplay::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
   }
 
   for (; x0<=x1; x0++) {
-    if (steep) {
+    if (steep) {  
       setPixel(y0, x0);
     } else {
       setPixel(x0, y0);
@@ -257,36 +268,38 @@ void OLEDDisplay::fillCircle(int16_t x0, int16_t y0, int16_t radius) {
 }
 
 void OLEDDisplay::drawHorizontalLine(int16_t x, int16_t y, int16_t length) {
+
   if (y < 0 || y >= this->height()) { return; }
+  
+   if (x < 0) {
+	 length += x;
+	 x = 0;
+   }
+  
+   if ( (x + length) > this->width()) {
+	 length = (this->width() - x);
+   }
+  
+   if (length <= 0) { return; }
+  
+   uint8_t * bufferPtr = buffer;
+   bufferPtr += (y >> 3) * this->width();
+   bufferPtr += x;
+  
+   uint8_t drawBit = 1 << (y & 7);
+  
+   switch (color) {
+	 case WHITE:   while (length--) {
+		 *bufferPtr++ |= drawBit;
+	   }; break;
+	 case BLACK:   drawBit = ~drawBit;	 while (length--) {
+		 *bufferPtr++ &= drawBit;
+	   }; break;
+	 case INVERSE: while (length--) {
+		 *bufferPtr++ ^= drawBit;
+	   }; break;
+   }
 
-  if (x < 0) {
-    length += x;
-    x = 0;
-  }
-
-  if ( (x + length) > this->width()) {
-    length = (this->width() - x);
-  }
-
-  if (length <= 0) { return; }
-
-  uint8_t * bufferPtr = buffer;
-  bufferPtr += (y >> 3) * this->width();
-  bufferPtr += x;
-
-  uint8_t drawBit = 1 << (y & 7);
-
-  switch (color) {
-    case WHITE:   while (length--) {
-        *bufferPtr++ |= drawBit;
-      }; break;
-    case BLACK:   drawBit = ~drawBit;   while (length--) {
-        *bufferPtr++ &= drawBit;
-      }; break;
-    case INVERSE: while (length--) {
-        *bufferPtr++ ^= drawBit;
-      }; break;
-  }
 }
 
 void OLEDDisplay::drawVerticalLine(int16_t x, int16_t y, int16_t length) {
@@ -629,18 +642,125 @@ void OLEDDisplay::setBrightness(uint8_t brightness) {
 }
 
 void OLEDDisplay::resetOrientation() {
-  sendCommand(SEGREMAP);
-  sendCommand(COMSCANINC);           //Reset screen rotation or mirroring
+   screenRotate(ANGLE_0_DEGREE);
+}
+
+void OLEDDisplay::screenRotate(OLEDDISPLAY_ANGLE angle)
+{
+	this->rotate_angle=angle;
+	if(this->rotate_angle==ANGLE_90_DEGREE||this->rotate_angle==ANGLE_270_DEGREE)
+	{
+		switch (this->geometry) {
+		  case GEOMETRY_128_64:
+			  this->displayWidth = 64;
+			  this->displayHeight = 128;
+			  break;
+		  case GEOMETRY_128_32:
+			  this->displayWidth = 32;
+			  this->displayHeight = 128;
+			  break;
+		  case GEOMETRY_RAWMODE:
+			  this->displayWidth = 64;
+			  this->displayHeight = 128;
+			  break;
+		}
+	}
+	else
+	{
+		switch (this->geometry) {
+		  case GEOMETRY_128_64:
+			  this->displayWidth = 128;
+			  this->displayHeight = 64;
+			  break;
+		  case GEOMETRY_128_32:
+			  this->displayWidth = 128;
+			  this->displayHeight = 32;
+			  break;
+		  case GEOMETRY_RAWMODE:
+			  this->displayWidth = 128;
+			  this->displayHeight = 64;
+			  break;
+		}
+	}
+	
+	switch(this->drivemode)
+	{
+		case DRIVE_SH1107:
+			switch(this->rotate_angle)
+			{
+				case ANGLE_0_DEGREE:
+					sendCommand(SEGREMAP|0x01); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc0); // Set Common scan direction
+					sendCommand(0xd3); // Set Display Offset
+					sendCommand(0x60);
+					break;
+				case ANGLE_90_DEGREE:
+					sendCommand(SEGREMAP); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc0); // Set Common scan direction
+					sendCommand(0xd3); // Set Display Offset
+					sendCommand(0x60);
+					break;
+				case ANGLE_180_DEGREE:
+					sendCommand(SEGREMAP); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc8); // Set Common scan direction
+					sendCommand(0xd3); // Set Display Offset
+					sendCommand(0x20);
+					break;
+				case ANGLE_270_DEGREE:
+					sendCommand(SEGREMAP|0x01); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc8); // Set Common scan direction
+					sendCommand(0xd3); // Set Display Offset
+					sendCommand(0x20);
+					break;
+				default:
+					break;
+			}
+			break;
+		case DRIVE_SSD1306:
+			switch(this->rotate_angle)
+			{
+				case ANGLE_0_DEGREE:
+					sendCommand(SEGREMAP|0x01); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc8); // Set Common scan direction
+					break;
+				case ANGLE_90_DEGREE:
+					sendCommand(SEGREMAP); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc8); // Set Common scan direction
+					break;
+				case ANGLE_180_DEGREE:
+					sendCommand(SEGREMAP); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc0); // Set Common scan direction
+					break;
+				case ANGLE_270_DEGREE:
+					sendCommand(SEGREMAP|0x01); // Set Segment Re-map   //a1 mirror
+					sendCommand(0xc0); // Set Common scan direction
+					break;
+				default:
+					break;
+			}
+			break;
+		default:
+			break;
+	}
+	
+}
+void OLEDDisplay::resetScreenRotate()
+{
+	screenRotate(ANGLE_0_DEGREE);
 }
 
 void OLEDDisplay::flipScreenVertically() {
-  sendCommand(SEGREMAP | 0x01);
-  sendCommand(COMSCANDEC);           //Rotate screen 180 Deg
+	screenRotate(ANGLE_180_DEGREE);
 }
 
 void OLEDDisplay::mirrorScreen() {
-  sendCommand(SEGREMAP);
-  sendCommand(COMSCANDEC);           //Mirror screen
+	  sendCommand(SEGREMAP);
+	  sendCommand(COMSCANDEC);//Mirror screen
+	if(this->drivemode == DRIVE_SH1107)
+	{
+		sendCommand(0xd3); // Set Display Offset
+		sendCommand(0x20);
+	}
 }
 
 void OLEDDisplay::clear(void) {
@@ -787,47 +907,91 @@ void OLEDDisplay::setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width, uint16_t h
   this->displayBufferSize = displayWidth * displayHeight /8;
 }
 
+void OLEDDisplay::setDrivemode(OLEDDISPLAY_DRIVE mode)
+{
+	this->drivemode = mode;
+}
+
+void OLEDDisplay::setRst(int8_t rst)
+{
+	this->rst = rst;
+}
+
 void OLEDDisplay::sendInitCommands(void) {
-  if (geometry == GEOMETRY_RAWMODE)
-  	return;
-  sendCommand(DISPLAYOFF);
-  sendCommand(SETDISPLAYCLOCKDIV);
-  sendCommand(0xF0); // Increase speed of the display max ~96Hz
-  sendCommand(SETMULTIPLEX);
-  sendCommand(this->height() - 1);
-  sendCommand(SETDISPLAYOFFSET);
-  sendCommand(0x00);
-  sendCommand(SETSTARTLINE);
-  sendCommand(CHARGEPUMP);
-  sendCommand(0x14);
-  sendCommand(MEMORYMODE);
-  sendCommand(0x00);
-  sendCommand(SEGREMAP);
-  sendCommand(COMSCANINC);
-  sendCommand(SETCOMPINS);
+	switch(this->drivemode)
+	{
+	  case DRIVE_SSD1306:
+		  if (geometry == GEOMETRY_RAWMODE)
+		  	return;
+		  sendCommand(DISPLAYOFF);
+		  sendCommand(SETDISPLAYCLOCKDIV);
+		  sendCommand(0xF0); // Increase speed of the display max ~96Hz
+		  sendCommand(SETMULTIPLEX);
+		  sendCommand(this->height() - 1);
+		  sendCommand(SETDISPLAYOFFSET);
+		  sendCommand(0x00);
+		  sendCommand(SETSTARTLINE);
+		  sendCommand(CHARGEPUMP);
+		  sendCommand(0x14);
+		  sendCommand(MEMORYMODE);
+		  sendCommand(0x00);
+		  sendCommand(SEGREMAP|0x01);
+		  sendCommand(COMSCANDEC);
+		  sendCommand(SETCOMPINS);
 
-  if (geometry == GEOMETRY_128_64) {
-    sendCommand(0x12);
-  } else if (geometry == GEOMETRY_128_32) {
-    sendCommand(0x02);
-  }
+		  if (geometry == GEOMETRY_128_64) {
+		    sendCommand(0x12);
+		  } else if (geometry == GEOMETRY_128_32) {
+		    sendCommand(0x02);
+		  }
 
-  sendCommand(SETCONTRAST);
+		  sendCommand(SETCONTRAST);
 
-  if (geometry == GEOMETRY_128_64) {
-    sendCommand(0xCF);
-  } else if (geometry == GEOMETRY_128_32) {
-    sendCommand(0x8F);
-  }
+		  if (geometry == GEOMETRY_128_64) {
+		    sendCommand(0xCF);
+		  } else if (geometry == GEOMETRY_128_32) {
+		    sendCommand(0x8F);
+		  }
 
-  sendCommand(SETPRECHARGE);
-  sendCommand(0xF1);
-  sendCommand(SETVCOMDETECT); //0xDB, (additionally needed to lower the contrast)
-  sendCommand(0x40);	        //0x40 default, to lower the contrast, put 0
-  sendCommand(DISPLAYALLON_RESUME);
-  sendCommand(NORMALDISPLAY);
-  sendCommand(0x2e);            // stop scroll
-  sendCommand(DISPLAYON);
+		  sendCommand(SETPRECHARGE);
+		  sendCommand(0xF1);
+		  sendCommand(SETVCOMDETECT); //0xDB, (additionally needed to lower the contrast)
+		  sendCommand(0x40);	        //0x40 default, to lower the contrast, put 0
+		  sendCommand(DISPLAYALLON_RESUME);
+		  sendCommand(NORMALDISPLAY);
+		  sendCommand(0x2e);            // stop scroll
+		  sendCommand(DISPLAYON);
+		  break;
+	  case DRIVE_SH1107:
+		sendCommand(0xae); // Display OFF
+
+		sendCommand(SEGREMAP|0x01); // Set Segment Re-map   //a1 mirror
+		sendCommand(0xc0); // Set Common scan direction
+		sendCommand(0xd3); // Set Display Offset
+		sendCommand(0x60);
+
+		sendCommand(0xa8); // Set Multiplex Ration
+		sendCommand(0x3f);
+		sendCommand(0xd5); // Set Frame Frequency
+		sendCommand(0x51); // 104Hz
+		sendCommand(0xdc); // Set Display Start Line
+		sendCommand(0x00);
+		sendCommand(0x20); // Set Page Addressing Mode
+		sendCommand(0x81); // Set Contrast Control
+		sendCommand(0x90);
+		sendCommand(0xa4); // Set Entire Display OFF/ON
+		sendCommand(0xa6); // Set Normal/Reverse Display
+		sendCommand(0xad); // Set External VPP
+		sendCommand(0x8a);
+		sendCommand(0xd9); // Set Phase Leghth
+		sendCommand(0x22);
+		sendCommand(0xdb); // Set Vcomh voltage
+		sendCommand(0x35);
+		sendCommand(0xaf); //Display ON
+		break;
+	  default:
+	    break;
+	}
 }
 
 void inline OLEDDisplay::drawInternal(int16_t xMove, int16_t yMove, int16_t width, int16_t height, const uint8_t *data, uint16_t offset, uint16_t bytesInData) {

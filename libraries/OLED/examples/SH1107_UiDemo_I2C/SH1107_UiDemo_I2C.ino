@@ -1,11 +1,9 @@
 #include <Wire.h>
-#include "cubecell_SSD1306Wire.h" // legacy include: `#include "SSD1306.h"`
+#include "cubecell_SH1107Wire.h"
 #include "cubecell_OLEDDisplayUi.h"
-
-
 #include "images.h"
 
- SSD1306Wire  display(0x3c, 100000, I2C_NUM_0 ); //addr , freq , i2c group
+  SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , ratio , rst
 
 
 OLEDDisplayUi ui( &display );
@@ -126,9 +124,6 @@ void setup() {
 
   // Initialising the UI will init the display too.
   ui.init();
-
-  display.flipScreenVertically();
-
 }
 
 

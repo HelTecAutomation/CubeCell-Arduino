@@ -1,9 +1,9 @@
-#include "cubecell_SSD1306Spi.h"
+#include <Wire.h>  
+#include "cubecell_SH1107Wire.h"
 
-SSD1306Spi   display(GPIO1, GPIO2, GPIO3, SPI_NUM_0 , 6000000);//RST,DC,CS,spi group,frequency
+ SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , ratio , rst
 
 
-// Adapted from Adafruit_SSD1306
 void drawLines() {
   for (int16_t i=0; i<display.getWidth(); i+=4) {
     display.drawLine(0, 0, i, display.getHeight()-1);
@@ -156,10 +156,11 @@ void setup() {
 
   VextON();
   delay(100);
-  
-  display.init();
-  display.flipScreenVertically();
 
+  display.init();
+  display.clear();
+  display.display();
+  
   display.setContrast(255);
 
   drawLines();
@@ -177,10 +178,43 @@ void setup() {
   drawCircle();
   delay(1000);
   display.clear();
-
+  
   printBuffer();
   delay(1000);
+
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.clear();
+  display.display();
+  display.screenRotate(ANGLE_0_DEGREE);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(64, 32-16/2, "ROTATE_0");
+  display.display();
+  delay(2000);
+
+  display.clear();
+  display.display();
+  display.screenRotate(ANGLE_90_DEGREE);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(32, 64-10/2, "ROTATE_90");
+  display.display();
+  delay(2000);
+
+  display.clear();
+  display.display();
+  display.screenRotate(ANGLE_180_DEGREE);
+  display.setFont(ArialMT_Plain_16);
+  display.drawString(64, 32-16/2, "ROTATE_180");
+  display.display();
+  delay(2000);
+
+  display.clear();
+  display.display();
+  display.screenRotate(ANGLE_270_DEGREE);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(32, 64-10/2, "ROTATE_270");
+  display.display();
+  delay(2000);
+
 }
 
 void loop() { }

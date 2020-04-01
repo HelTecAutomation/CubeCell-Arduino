@@ -61,6 +61,8 @@
 
 #ifndef _swap_int16_t
 #define _swap_int16_t(a, b) { int16_t t = a; a = b; b = t; }
+#define _swap_uint16_t(a, b) { uint16_t t = a; a = b; b = t; }
+
 #endif
 
 enum OLEDDISPLAY_COLOR {
@@ -68,6 +70,12 @@ enum OLEDDISPLAY_COLOR {
   WHITE = 1,
   INVERSE = 2
 };
+
+enum OLEDDISPLAY_DRIVE {
+  DRIVE_SSD1306   = 0,
+  DRIVE_SH1107,
+};
+
 
 enum OLEDDISPLAY_TEXT_ALIGNMENT {
   TEXT_ALIGN_LEFT = 0,
@@ -82,6 +90,15 @@ enum OLEDDISPLAY_GEOMETRY {
   GEOMETRY_128_32,
   GEOMETRY_RAWMODE,
 };
+
+
+enum OLEDDISPLAY_ANGLE {
+  ANGLE_0_DEGREE = 0,
+  ANGLE_90_DEGREE,
+  ANGLE_180_DEGREE,
+  ANGLE_270_DEGREE,
+};
+
 
 typedef char (*FontTableLookupFunction)(const uint8_t ch);
 char DefaultFontTableLookup(const uint8_t ch);
@@ -211,6 +228,8 @@ class OLEDDisplay : public Print  {
     // Reset display rotation or mirroring
     void resetOrientation();
 
+    void screenRotate(OLEDDISPLAY_ANGLE angle);
+    void resetScreenRotate();
     // Turn the display upside down
     void flipScreenVertically();
 
@@ -245,7 +264,6 @@ class OLEDDisplay : public Print  {
 
 
     uint8_t            *buffer;
-
     #ifdef OLEDDISPLAY_DOUBLE_BUFFER
     uint8_t            *buffer_back;
     #endif
@@ -253,14 +271,18 @@ class OLEDDisplay : public Print  {
   protected:
 
     OLEDDISPLAY_GEOMETRY geometry;
+    OLEDDISPLAY_DRIVE drivemode;
 
+    int8_t   rst=-1;
     uint16_t  displayWidth;
     uint16_t  displayHeight;
     uint16_t  displayBufferSize;
-
+    OLEDDISPLAY_ANGLE rotate_angle = ANGLE_0_DEGREE;
     // Set the correct height, width and buffer for the geometry
     void setGeometry(OLEDDISPLAY_GEOMETRY g, uint16_t width = 0, uint16_t height = 0);
-
+    void setDrivemode(OLEDDISPLAY_DRIVE mode);
+    void setRst(int8_t rst);
+    
     OLEDDISPLAY_TEXT_ALIGNMENT   textAlignment;
     OLEDDISPLAY_COLOR            color;
 

@@ -1,9 +1,9 @@
 // For a connection via I2C using the Arduino Wire include:
 #include <Wire.h>               
-#include "cubecell_SSD1306Wire.h"
+#include "cubecell_SH1107Wire.h"
 #include "images.h"
 
- SSD1306Wire  display(0x3c, 100000, I2C_NUM_0 ); //addr , freq , i2c group
+SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , ratio , rst
 
 
 #define DEMO_DURATION 3000
@@ -21,8 +21,6 @@ void setup() {
 
   // Initialising the UI will init the display too.
   display.init();
-
-  display.flipScreenVertically();
   display.setFont(ArialMT_Plain_10);
 
 }
