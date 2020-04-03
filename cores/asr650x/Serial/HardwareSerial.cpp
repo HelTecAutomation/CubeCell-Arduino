@@ -199,3 +199,21 @@ HardwareSerial::operator bool() const
     //return true;
     return 0;
 }
+
+uint16_t HardwareSerial::readBytesUntil(char terminator, char *buffer, uint16_t length)
+{
+	if(length < 1) {
+		return 0;
+	}
+	uint16_t index = 0;
+	while(index < length && available()) {
+		uint8_t c = (uint8_t)read();
+		if(c == terminator) {
+			break;
+		}
+		*buffer++ = c;
+		index++;
+	}
+	return index; // return number of characters, not including null terminator
+}
+

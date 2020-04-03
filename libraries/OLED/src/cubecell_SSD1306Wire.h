@@ -14,9 +14,10 @@ class SSD1306Wire : public OLEDDisplay {
 
   public:
   public:
-    SSD1306Wire(uint8_t _address, uint32_t _freq, uint8_t _i2c_num, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
+    SSD1306Wire(uint8_t _address, uint32_t _freq, uint8_t _i2c_num, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64,int8_t _rst=-1) {
       setGeometry(g);
       setDrivemode(DRIVE_SSD1306);
+      setRst(_rst);
       this->_address = _address;
       this->_i2c_num = _i2c_num;
       this->_freq = _freq;
