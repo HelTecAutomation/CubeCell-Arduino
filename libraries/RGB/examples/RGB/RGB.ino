@@ -1,5 +1,5 @@
-#include "Adafruit_NeoPixel.h"
-Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
+#include "CubeCell_NeoPixel.h"
+CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 
 void setup() {
   // put your setup code here, to run once:

@@ -1,7 +1,7 @@
 #include <LoRaWan_APP.h>
 #if(LoraWan_RGB==1)
-#include "Adafruit_NeoPixel.h"
-Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
+#include "CubeCell_NeoPixel.h"
+CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 #if REGION_EU868

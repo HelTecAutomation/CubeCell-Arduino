@@ -39,9 +39,9 @@ Distributed as-is; no warranty is given.
 
 #include <Wire.h>
 #include <SparkFun_APDS9960.h>
-#include "Adafruit_NeoPixel.h"
+#include "CubeCell_NeoPixel.h"
 
-Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
+CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 
 // Pins
 #define APDS9960_INT    GPIO1 // Needs to be an interrupt pin

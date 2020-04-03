@@ -1,5 +1,5 @@
 /*!
- * @file Adafruit_NeoPixel.h
+ * @file CubeCell_NeoPixel.h
  *
  * This is part of Adafruit's NeoPixel library for the Arduino platform,
  * allowing a broad range of microcontroller boards (most AVR boards,
@@ -15,14 +15,14 @@
  * with contributions by PJRC, Michael Miller and other members of the
  * open source community.
  *
- * This file is part of the Adafruit_NeoPixel library.
+ * This file is part of the CubeCell_NeoPixel library.
  *
- * Adafruit_NeoPixel is free software: you can redistribute it and/or
+ * CubeCell_NeoPixel is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * Adafruit_NeoPixel is distributed in the hope that it will be useful,
+ * CubeCell_NeoPixel is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
@@ -33,8 +33,8 @@
  *
  */
 
-#ifndef ADAFRUIT_NEOPIXEL_H
-#define ADAFRUIT_NEOPIXEL_H
+#ifndef CubeCell_NeoPixel_H
+#define CubeCell_NeoPixel_H
 
 
  #include <Arduino.h>
@@ -42,7 +42,7 @@
 
 // The order of primary colors in the NeoPixel data stream can vary among
 // device types, manufacturers and even different revisions of the same
-// item.  The third parameter to the Adafruit_NeoPixel constructor encodes
+// item.  The third parameter to the CubeCell_NeoPixel constructor encodes
 // the per-pixel byte offsets of the red, green and blue primaries (plus
 // white, if present) in the data stream -- the following #defines provide
 // an easier-to-use named version for each permutation. e.g. NEO_GRB
@@ -123,12 +123,12 @@
 // is sufficient to encode pixel color order, saving some space.
 
 #ifdef NEO_KHZ400
-typedef uint16_t neoPixelType; ///< 3rd arg to Adafruit_NeoPixel constructor
+typedef uint16_t neoPixelType; ///< 3rd arg to CubeCell_NeoPixel constructor
 #else
-typedef uint8_t  neoPixelType; ///< 3rd arg to Adafruit_NeoPixel constructor
+typedef uint8_t  neoPixelType; ///< 3rd arg to CubeCell_NeoPixel constructor
 #endif
 
-// These two tables are declared outside the Adafruit_NeoPixel class
+// These two tables are declared outside the CubeCell_NeoPixel class
 // because some boards may require oldschool compilers that don't
 // handle the C++11 constexpr keyword.
 
@@ -187,15 +187,15 @@ static const uint8_t PROGMEM _NeoPixelGammaTable[256] = {
     @brief  Class that stores state and functions for interacting with
             Adafruit NeoPixels and compatible devices.
 */
-class Adafruit_NeoPixel {
+class CubeCell_NeoPixel {
 
  public:
 
   // Constructor: number of LEDs, pin number, LED type
-  Adafruit_NeoPixel(uint16_t n, uint8_t pin=6,
+  CubeCell_NeoPixel(uint16_t n, uint8_t pin=6,
     neoPixelType type=NEO_GRB + NEO_KHZ800);
-  Adafruit_NeoPixel(void);
-  ~Adafruit_NeoPixel();
+  CubeCell_NeoPixel(void);
+  ~CubeCell_NeoPixel();
 
   void              begin(void);
   void              show(void);
@@ -245,7 +245,7 @@ class Adafruit_NeoPixel {
   */
   int8_t            getPin(void) const { return pin; };
   /*!
-    @brief   Return the number of pixels in an Adafruit_NeoPixel strip object.
+    @brief   Return the number of pixels in an CubeCell_NeoPixel strip object.
     @return  Pixel count (0 if not set).
   */
   uint16_t          numPixels(void) const { return numLEDs; }
@@ -342,4 +342,4 @@ class Adafruit_NeoPixel {
 
 };
 
-#endif // ADAFRUIT_NEOPIXEL_H
+#endif // CubeCell_NeoPixel_H

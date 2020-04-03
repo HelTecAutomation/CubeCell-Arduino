@@ -1,5 +1,5 @@
 /*!
- * @file Adafruit_NeoPixel.cpp
+ * @file CubeCell_NeoPixel.cpp
  *
  * @mainpage Arduino Library for driving Adafruit NeoPixel addressable LEDs,
  * FLORA RGB Smart Pixels and compatible devicess -- WS2811, WS2812, WS2812B,
@@ -25,14 +25,14 @@
  *
  * @section license License
  *
- * This file is part of the Adafruit_NeoPixel library.
+ * This file is part of the CubeCell_NeoPixel library.
  *
- * Adafruit_NeoPixel is free software: you can redistribute it and/or
+ * CubeCell_NeoPixel is free software: you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
- * Adafruit_NeoPixel is distributed in the hope that it will be useful,
+ * CubeCell_NeoPixel is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
@@ -43,7 +43,7 @@
  *
  */
 
-#include "Adafruit_NeoPixel.h"
+#include "CubeCell_NeoPixel.h"
 #include "project.h"
 
 /*!
@@ -52,13 +52,13 @@
   @param   n  Number of NeoPixels in strand.
   @param   p  Arduino pin number which will drive the NeoPixel data in.
   @param   t  Pixel type -- add together NEO_* constants defined in
-              Adafruit_NeoPixel.h, for example NEO_GRB+NEO_KHZ800 for
+              CubeCell_NeoPixel.h, for example NEO_GRB+NEO_KHZ800 for
               NeoPixels expecting an 800 KHz (vs 400 KHz) data stream
               with color bytes expressed in green, red, blue order per
               pixel.
-  @return  Adafruit_NeoPixel object. Call the begin() function before use.
+  @return  CubeCell_NeoPixel object. Call the begin() function before use.
 */
-Adafruit_NeoPixel::Adafruit_NeoPixel(uint16_t n, uint8_t p, neoPixelType t) :
+CubeCell_NeoPixel::CubeCell_NeoPixel(uint16_t n, uint8_t p, neoPixelType t) :
   begun(false), brightness(0), pixels(NULL), endTime(0) {
   updateType(t);
   updateLength(n);
@@ -69,13 +69,13 @@ Adafruit_NeoPixel::Adafruit_NeoPixel(uint16_t n, uint8_t p, neoPixelType t) :
   @brief   "Empty" NeoPixel constructor when length, pin and/or pixel type
            are not known at compile-time, and must be initialized later with
            updateType(), updateLength() and setPin().
-  @return  Adafruit_NeoPixel object. Call the begin() function before use.
+  @return  CubeCell_NeoPixel object. Call the begin() function before use.
   @note    This function is deprecated, here only for old projects that
            may still be calling it. New projects should instead use the
            'new' keyword with the first constructor syntax (length, pin,
            type).
 */
-Adafruit_NeoPixel::Adafruit_NeoPixel() :
+CubeCell_NeoPixel::CubeCell_NeoPixel() :
 #ifdef NEO_KHZ400
   is800KHz(true),
 #endif
@@ -84,9 +84,9 @@ Adafruit_NeoPixel::Adafruit_NeoPixel() :
 }
 
 /*!
-  @brief   Deallocate Adafruit_NeoPixel object, set data pin back to INPUT.
+  @brief   Deallocate CubeCell_NeoPixel object, set data pin back to INPUT.
 */
-Adafruit_NeoPixel::~Adafruit_NeoPixel() {
+CubeCell_NeoPixel::~CubeCell_NeoPixel() {
   free(pixels);
   if(pin >= 0) pinMode(pin, INPUT);
 }
@@ -94,7 +94,7 @@ Adafruit_NeoPixel::~Adafruit_NeoPixel() {
 /*!
   @brief   Configure NeoPixel pin for output.
 */
-void Adafruit_NeoPixel::begin(void) {
+void CubeCell_NeoPixel::begin(void) {
   if(pin >= 0) {
     pinMode(pin, OUTPUT);
     digitalWrite(pin, LOW);
@@ -103,7 +103,7 @@ void Adafruit_NeoPixel::begin(void) {
 }
 
 /*!
-  @brief   Change the length of a previously-declared Adafruit_NeoPixel
+  @brief   Change the length of a previously-declared CubeCell_NeoPixel
            strip object. Old data is deallocated and new data is cleared.
            Pin number and pixel format are unchanged.
   @param   n  New length of strip, in pixels.
@@ -112,7 +112,7 @@ void Adafruit_NeoPixel::begin(void) {
            'new' keyword with the first constructor syntax (length, pin,
            type).
 */
-void Adafruit_NeoPixel::updateLength(uint16_t n) {
+void CubeCell_NeoPixel::updateLength(uint16_t n) {
   free(pixels); // Free existing data (if any)
 
   // Allocate new data -- note: ALL PIXELS ARE CLEARED
@@ -127,13 +127,13 @@ void Adafruit_NeoPixel::updateLength(uint16_t n) {
 
 /*!
   @brief   Change the pixel format of a previously-declared
-           Adafruit_NeoPixel strip object. If format changes from one of
+           CubeCell_NeoPixel strip object. If format changes from one of
            the RGB variants to an RGBW variant (or RGBW to RGB), the old
            data will be deallocated and new data is cleared. Otherwise,
            the old data will remain in RAM and is not reordered to the
            new format, so it's advisable to follow up with clear().
   @param   t  Pixel type -- add together NEO_* constants defined in
-              Adafruit_NeoPixel.h, for example NEO_GRB+NEO_KHZ800 for
+              CubeCell_NeoPixel.h, for example NEO_GRB+NEO_KHZ800 for
               NeoPixels expecting an 800 KHz (vs 400 KHz) data stream
               with color bytes expressed in green, red, blue order per
               pixel.
@@ -142,7 +142,7 @@ void Adafruit_NeoPixel::updateLength(uint16_t n) {
            'new' keyword with the first constructor syntax
            (length, pin, type).
 */
-void Adafruit_NeoPixel::updateType(neoPixelType t) {
+void CubeCell_NeoPixel::updateType(neoPixelType t) {
   boolean oldThreeBytesPerPixel = (wOffset == rOffset); // false if RGBW
 
   wOffset = (t >> 6) & 0b11; // See notes in header file
@@ -175,7 +175,7 @@ extern "C" void ASR_NeoPixelShow(
            specialized alternative or companion libraries exist that use
            very device-specific peripherals to work around it.
 */
-void Adafruit_NeoPixel::show(void) {
+void CubeCell_NeoPixel::show(void) {
 
   if(!pixels) return;
 
@@ -213,7 +213,7 @@ void Adafruit_NeoPixel::show(void) {
            if any, is set to INPUT and the new pin is set to OUTPUT.
   @param   p  Arduino pin number (-1 = no pin).
 */
-void Adafruit_NeoPixel::setPin(uint8_t p) {
+void CubeCell_NeoPixel::setPin(uint8_t p) {
   if(begun && (pin >= 0)) pinMode(pin, INPUT);
     pin = p;
     if(begun) {
@@ -231,7 +231,7 @@ void Adafruit_NeoPixel::setPin(uint8_t p) {
   @param   g  Green brightness, 0 = minimum (off), 255 = maximum.
   @param   b  Blue brightness, 0 = minimum (off), 255 = maximum.
 */
-void Adafruit_NeoPixel::setPixelColor(
+void CubeCell_NeoPixel::setPixelColor(
  uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
 
   if(n < numLEDs) {
@@ -263,7 +263,7 @@ void Adafruit_NeoPixel::setPixelColor(
   @param   w  White brightness, 0 = minimum (off), 255 = maximum, ignored
               if using RGB pixels.
 */
-void Adafruit_NeoPixel::setPixelColor(
+void CubeCell_NeoPixel::setPixelColor(
  uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w) {
 
   if(n < numLEDs) {
@@ -293,7 +293,7 @@ void Adafruit_NeoPixel::setPixelColor(
               pixels) or ignored (for RGB pixels), next is red, then green,
               and least significant byte is blue.
 */
-void Adafruit_NeoPixel::setPixelColor(uint16_t n, uint32_t c) {
+void CubeCell_NeoPixel::setPixelColor(uint16_t n, uint32_t c) {
   if(n < numLEDs) {
     uint8_t *p,
       r = (uint8_t)(c >> 16),
@@ -328,7 +328,7 @@ void Adafruit_NeoPixel::setPixelColor(uint16_t n, uint32_t c) {
   @param   count  Number of pixels to fill, as a positive value. Passing
                   0 or leaving unspecified will fill to end of strip.
 */
-void Adafruit_NeoPixel::fill(uint32_t c, uint16_t first, uint16_t count) {
+void CubeCell_NeoPixel::fill(uint32_t c, uint16_t first, uint16_t count) {
   uint16_t i, end;
 
   if(first >= numLEDs) {
@@ -373,7 +373,7 @@ void Adafruit_NeoPixel::fill(uint32_t c, uint16_t first, uint16_t count) {
            one-size-fits-all operation of gamma32(). Diffusing the LEDs also
            really seems to help when using low-saturation colors.
 */
-uint32_t Adafruit_NeoPixel::ColorHSV(uint16_t hue, uint8_t sat, uint8_t val) {
+uint32_t CubeCell_NeoPixel::ColorHSV(uint16_t hue, uint8_t sat, uint8_t val) {
 
   uint8_t r, g, b;
 
@@ -460,7 +460,7 @@ uint32_t Adafruit_NeoPixel::ColorHSV(uint16_t hue, uint8_t sat, uint8_t val) {
            was previously written with one of the setPixelColor() functions.
            This gets more pronounced at lower brightness levels.
 */
-uint32_t Adafruit_NeoPixel::getPixelColor(uint16_t n) const {
+uint32_t CubeCell_NeoPixel::getPixelColor(uint16_t n) const {
   if(n >= numLEDs) return 0; // Out of bounds, return no color.
 
   uint8_t *p;
@@ -514,7 +514,7 @@ uint32_t Adafruit_NeoPixel::getPixelColor(uint16_t n) const {
            write-only resource, maintaining their own state to render each
            frame of an animation, not relying on read-modify-write.
 */
-void Adafruit_NeoPixel::setBrightness(uint8_t b) {
+void CubeCell_NeoPixel::setBrightness(uint8_t b) {
   // Stored brightness value is different than what's passed.
   // This simplifies the actual scaling math later, allowing a fast
   // 8x8-bit multiply and taking the MSB. 'brightness' is a uint8_t,
@@ -552,20 +552,20 @@ void Adafruit_NeoPixel::setBrightness(uint8_t b) {
   @brief   Retrieve the last-set brightness value for the strip.
   @return  Brightness value: 0 = minimum (off), 255 = maximum.
 */
-uint8_t Adafruit_NeoPixel::getBrightness(void) const {
+uint8_t CubeCell_NeoPixel::getBrightness(void) const {
   return brightness - 1;
 }
 
 /*!
   @brief   Fill the whole NeoPixel strip with 0 / black / off.
 */
-void Adafruit_NeoPixel::clear(void) {
+void CubeCell_NeoPixel::clear(void) {
   memset(pixels, 0, numBytes);
 }
 
 // A 32-bit variant of gamma8() that applies the same function
 // to all components of a packed RGB or WRGB value.
-uint32_t Adafruit_NeoPixel::gamma32(uint32_t x) {
+uint32_t CubeCell_NeoPixel::gamma32(uint32_t x) {
   uint8_t *y = (uint8_t *)&x;
   // All four bytes of a 32-bit value are filtered even if RGB (not WRGB),
   // to avoid a bunch of shifting and masking that would be necessary for

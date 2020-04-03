@@ -41,7 +41,7 @@ Distributed as-is; no warranty is given.
 
 #include <Wire.h>
 #include <SparkFun_APDS9960.h>
-#include "Adafruit_NeoPixel.h"
+#include "CubeCell_NeoPixel.h"
 
 // Pins
 #define APDS9960_INT    GPIO1  // Needs to be an interrupt pin
@@ -51,7 +51,7 @@ Distributed as-is; no warranty is given.
 #define LIGHT_INT_LOW   10   // Low light level for interrupt
 
 // Global variables
-Adafruit_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
+CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 SparkFun_APDS9960 apds = SparkFun_APDS9960();
 uint16_t ambient_light = 0;
 uint16_t red_light = 0;
