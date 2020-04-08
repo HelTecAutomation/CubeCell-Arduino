@@ -56,8 +56,8 @@ extern bool lowPowerEnabled;
 void globalGpioIsrEntry (void); 
 void pinMode(uint8_t pin_name,PINMODE mode);
 void digitalWrite(uint8_t pin_name,PINLEVEL level);
-uint8 digitalRead(uint8_t pin_name);
-uint8 digitalReadOutPut(uint8_t pin_name);
+uint8_t digitalRead(uint8_t pin_name);
+uint8_t digitalReadOutPut(uint8_t pin_name);
 void pinToggle(uint8_t pin_name);
 void ClearPinInterrupt(uint8_t pin_name);
 void attachInterrupt(uint8_t pin_name, GpioIrqHandler GpioIrqHandlerCallback, IrqModes interrupt_mode);
@@ -69,6 +69,8 @@ void delayMicroseconds(uint16 microseconds);
 uint32_t millis(void);
 uint32_t micros(void);
 uint64_t getID(void);
+int cubecell_random(int r);
+uint32_t pulseIn(uint8_t pin_name,PINLEVEL mode,uint32_t timeout);
 #ifdef __cplusplus 
 }
 #endif
