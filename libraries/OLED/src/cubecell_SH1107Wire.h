@@ -13,7 +13,6 @@ class SH1107Wire : public OLEDDisplay {
       bool                _doI2cAutoInit = false;
 
   public:
-  public:
     SH1107Wire(uint8_t _address, uint32_t _freq, uint8_t _i2c_num, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64,int8_t _rst=-1) {
       setGeometry(g);
       setDrivemode(DRIVE_SH1107);

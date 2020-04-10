@@ -2,36 +2,35 @@
 
 
 #define timetosleep 5000
+#define timetowake 5000
 static TimerEvent_t sleep;
+static TimerEvent_t wakeUp;
 uint8_t lowpower=1;
 
 void onSleep()
 {
-  Serial.println("into lowpower mode. press user key to wake up");
+  Serial.printf("into lowpower mode, %d ms later wake up.\r\n",timetowake);
   lowpower=1;
+  //timetosleep ms later wake up;
+  TimerSetValue( &wakeUp, timetowake );
+  TimerStart( &wakeUp );
 }
-void wakeUp()
+void onWakeUp()
 {
-  delay(10);
-  if(digitalRead(GPIO7)==0)
-  {
-    Serial.printf("wake up, %d ms later into lowpower mode.\r\n",timetosleep);
-    lowpower=0;
-    //timetosleep ms later into lowpower mode;
-    TimerSetValue( &sleep, timetosleep );
-    TimerStart( &sleep );
-  }
+  Serial.printf("wake up, %d ms later into lowpower mode.\r\n",timetosleep);
+  lowpower=0;
+  //timetosleep ms later into lowpower mode;
+  TimerSetValue( &sleep, timetosleep );
+  TimerStart( &sleep );
 }
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  boardInitMcu();
   Radio.Sleep( );
-  pinMode(GPIO7,INPUT);
-  attachInterrupt(GPIO7,wakeUp,FALLING);
   TimerInit( &sleep, onSleep );
-  Serial.println("into lowpower mode. press user key to wake up.");
+  TimerInit( &wakeUp, onWakeUp );
+  onSleep();
 }
 
 void loop() {
