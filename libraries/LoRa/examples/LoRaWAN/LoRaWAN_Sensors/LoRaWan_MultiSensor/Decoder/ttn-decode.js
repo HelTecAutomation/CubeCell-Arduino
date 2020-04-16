@@ -19,7 +19,7 @@ i = 0;
 //decoded.AppDataSize = bytes.length;
 
 if (port === 2) {
-  while (i < bytes.length-2) {
+  while (i < bytes.length-3) {
     iicport = bytes[i++].toFixed(0);
     sensor = bytes[i++].toFixed(0);
     if (sensor === "1") { // BME680
@@ -116,7 +116,7 @@ if (port === 2) {
         decoded.P6_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
         decoded.P6_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
       }
-      if (iicport === "8") {
+      if (iicport === "7") {
         decoded.P7_BME280_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
         decoded.P7_BME280_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
         decoded.P7_BME280_pressure = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
@@ -576,6 +576,40 @@ if (port === 2) {
         decoded.P7_VMLX90614_objecttemp = bytesToFloat(bytes.slice(i,i+=4));
       }
     }
+    else if (sensor === "14") { // SHT31
+      if (iicport === "0") {
+        decoded.P0_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P0_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "1") {
+        decoded.P1_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P1_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "2") {
+        decoded.P2_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P2_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "3") {
+        decoded.P3_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P3_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "4") {
+        decoded.P4_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P4_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "5") {
+        decoded.P5_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P5_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "6") {
+        decoded.P6_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P6_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+      if (iicport === "7") {
+        decoded.P7_SHT31_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);
+        decoded.P7_SHT31_humidity = (((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10);
+      }
+    }
     else if (sensor === "100") { // OneWire
       decoded.OW_01_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);   
     }
@@ -588,8 +622,17 @@ if (port === 2) {
     else if (sensor === "103") { // OneWire
       decoded.OW_04_temperature = ((((bytes[i++] << 8) | bytes[i++]).toFixed(0) / 10) - 100);   
     }
+    else if (sensor == "200") { // GPS_SER
+      decoded.latitude = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.longitude = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.altitude = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.course = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.speed = bytesToFloat(bytes.slice(i,i+=4));
+      decoded.hdop = bytesToFloat(bytes.slice(i,i+=4));
+    }
   } 
   decoded.battery = ((bytes[i++] << 8) | bytes[i++]);
+  decoded.trigger = bytes[i++];
 }
 
 return decoded;

@@ -1,5 +1,5 @@
 # LoRaWan_MultiSensor
-# v2.1.2 by [WASN.eu](https://www.wasn.eu)
+# v3.0.7 by [WASN.eu](https://www.wasn.eu)
 
 
 This sketch allows you to use a number of sensors.
@@ -24,8 +24,20 @@ Please select the sensor for saving battery power, for maximum flexibility choos
     #define LR_VL53L1X 0
     #define HMC_5883L 0
     #define MLX_90614 0
-    #define One_Wire 1
+    #define SHT_31 0
+
+If you need the OneWire Interface on GPIO1 set the following to 1
+
+    #define One_Wire 0     // OneWire on GPIO1
+
+If you have a serial GPS connected to GPIO3 TX and GPIO5 RX st the following to 1
  
+    #define GPS_SER 0      // serial GPS on GPIO3 TX, GPIO5 RX
+
+For sending all data triggered by an interrupt on GPIO2 set the following to 1
+
+    #define TriggerInt 0    // Interrupt on GPIO2, high for trigger
+
 set if you have the I2C Switch installed and if you only want to use some ports of it
  
     #define TCS9548 0      // TCS9548A I2C 8 port Switch
@@ -35,20 +47,29 @@ set if you have the I2C Switch installed and if you only want to use some ports 
 and set your keys:
 
     * OTAA para*/
-    uint8_t devEui[] = { 0x22, 0x32, 0x33, 0x00, 0x00, 0x88, 0x88, 0x02 };
+    uint8_t devEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00 };
     uint8_t appEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-    uint8_t appKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
+    uint8_t appKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
     /* ABP para*/
-    uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
-    uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
-    uint32_t devAddr =  ( uint32_t )0x007e6ae1;
+    uint8_t nwkSKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    uint8_t appSKey[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+    uint32_t devAddr =  ( uint32_t )0x00000000;
 
 and set the DutyCycle in ms:
 
     /*the application data transmission duty cycle.  value in [ms].*/
     uint32_t appTxDutyCycle = 90000;
 
+Set the string wasnflash according to what you are using. IndoorNode and ModularNode are only useable with the original WASN hardware.
+
+    String wasnflash = "Board"; //Board, Capsule, TCA9548A, IndoorNode, ModularNode
+
+Please let all things below this text unchanged:
+
+    /*
+    NO USER CHANGES NEEDED UNDER THIS LINE
+    */
 
 By default are uplinks send unconfirmed. 
 
