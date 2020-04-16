@@ -52,7 +52,6 @@ typedef enum
 
 typedef void( *GpioIrqHandler )( void );
 extern GpioIrqHandler GpioIrqHandlerCallback[P7_7];
-extern bool lowPowerEnabled;
 void globalGpioIsrEntry (void); 
 void pinMode(uint8_t pin_name,PINMODE mode);
 void digitalWrite(uint8_t pin_name,PINLEVEL level);

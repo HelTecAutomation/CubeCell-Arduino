@@ -536,7 +536,7 @@ void LoRaWanClass::send()
 {
 	if( nextTx == true )
 	{
-	lwan_dev_params_update();
+		lwan_dev_params_update();
 		MibRequestConfirm_t mibReq;
 		mibReq.Type = MIB_DEVICE_CLASS;
 		LoRaMacMibGetRequestConfirm( &mibReq );
