@@ -1,6 +1,6 @@
 #include "softSerial.h"
 
-uint8_t timedelay = 0;
+uint16_t timedelay = 0;
 uint8_t Recev[8]  ={0};
 uint8_t temp_bin  = 0;
 
