@@ -12,7 +12,7 @@
 #include <HX711_ADC.h>
 
 //HX711 constructor (dout pin, sck pin):
-HX711_ADC LoadCell(4, 5);
+HX711_ADC LoadCell(GPIO1, GPIO2);
 
 long t;
 
@@ -56,7 +56,7 @@ void loop() {
   LoadCell.update();
 
   //get smoothed value from data set + current calibration factor
-  if (millis() > t + 250) {
+  if (millis() > t + 1000) {
     float i = LoadCell.getData();
     Serial.print("Load_cell output val: ");
     Serial.println(i);
