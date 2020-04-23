@@ -3,7 +3,7 @@
 #include "cubecell_OLEDDisplayUi.h"
 #include "images.h"
 
-  SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , ratio , rst
+  SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , resolution , rst
 
 
 OLEDDisplayUi ui( &display );

@@ -3,7 +3,7 @@
 #include "cubecell_SSD1306Wire.h"
 #include "images.h"
 
- SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , ratio , rst
+ SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , resolution , rst
 
 
 #define DEMO_DURATION 3000

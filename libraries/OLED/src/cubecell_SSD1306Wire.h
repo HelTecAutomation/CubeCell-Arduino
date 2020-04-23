@@ -240,6 +240,10 @@ class SSD1306Wire : public OLEDDisplay {
       _doI2cAutoInit = doI2cAutoInit;
     }
 
+	void stop(){
+		end();
+		Wire.end();
+	}
   private:
 	int getBufferOffset(void) {
 		return 0;

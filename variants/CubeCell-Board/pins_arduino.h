@@ -23,6 +23,7 @@ typedef enum
 #define UART_TX P3_1
 #define Vext P3_2 //gpio6
 #define VBAT_ADC_CTL P3_3 //gpio7
+#define USER_KEY P3_3 //gpio7
 #define GPIO0 P0_2
 #define GPIO1 P6_1
 #define GPIO2 P6_2 //can be used in PWM mode

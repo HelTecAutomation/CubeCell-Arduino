@@ -4,7 +4,7 @@
 
 void setup() {
   Serial.begin(115200);
-  GPS.begin();
+  Air530.begin();
   
   /*three modes supported: 
   * GPS        :    MODE_GPS
@@ -15,9 +15,9 @@ void setup() {
   //GPS.setmode(MODE_GPS_BEIDOU);
   
   /*supported nmea sentence :
-  * GLL, RMC, VTG, GGA, GSA, GST
+  * GLL, RMC, VTG, GGA, GSA, GSV
   */
-  GPS.setNMEA(NMEA_GGA|NMEA_GSA|NMEA_RMC|NMEA_VTG);
+//  GPS.setNMEA(NMEA_GGA|NMEA_GSA|NMEA_RMC|NMEA_VTG);
   
   /* set PPS mode and pulse width.
   *  void setPPS(uint8_t mode, uint16_t pulse_width = 500);
@@ -28,36 +28,23 @@ void setup() {
   *         4, always on;
   *  width : max value is 998 ms, default value is 500ms;
   */
-  GPS.setPPS(3,200);
+//  GPS.setPPS(3,200);
 }
 
 void loop()
 {
-  //get all nmea sentence
-  String NMEA = GPS.getNMEA();
+  /*get nmea sentence
+  * GPS.getNMEA() to get an any kind of nmea sentence;
+  * GPS.getRMC() to get RMC sentence;
+  * GPS.getGGA() to get GGA sentence;
+  * GPS.getGSA() to get GSA sentence;
+  * GPS.getGSV() to get GSV sentence;
+  * GPS.getGLL() to get GLL sentence;
+  * GPS.getVTG() to get VTG sentence;
+  */
+  String NMEA = Air530.getNMEA(); 
   if(NMEA != "0")
   {
     Serial.println(NMEA);
   }
-  
-  //only get VTG sentence
-  String VTG = GPS.getVTG();
-  if(VTG != "0")
-  {
-    Serial.println(VTG);
-  }  
-  
-  //only get RMC sentence
-  String RMC = GPS.getRMC();
-  if(RMC != "0")
-  {
-    Serial.println(RMC);
-  }
-  
-  //only get GGA sentence
-  String GGA = GPS.getGGA();
-  if(GGA != "0")
-  {
-    Serial.println(GGA);
-  } 
 }

@@ -16,7 +16,7 @@ CubeCell-Board.upload.maximum_size=131072
 CubeCell-Board.upload.maximum_data_size=131072
 CubeCell-Board.upload.wait_for_upload_port=true
 
-CubeCell-Board.build.board=CubeCell-Board
+CubeCell-Board.build.board=CubeCell_Board
 CubeCell-Board.build.core=asr650x
 CubeCell-Board.build.variant=CubeCell-Board
 
@@ -93,7 +93,7 @@ CubeCell-Capsule.upload.maximum_size=131072
 CubeCell-Capsule.upload.maximum_data_size=131072
 CubeCell-Capsule.upload.wait_for_upload_port=true
 
-CubeCell-Capsule.build.board=CubeCell-Capsule
+CubeCell-Capsule.build.board=CubeCell_Capsule
 CubeCell-Capsule.build.core=asr650x
 CubeCell-Capsule.build.variant=CubeCell-Capsule
 
@@ -171,7 +171,7 @@ CubeCell-Module.upload.maximum_size=131072
 CubeCell-Module.upload.maximum_data_size=131072
 CubeCell-Module.upload.wait_for_upload_port=true
 
-CubeCell-Module.build.board=CubeCell-Module
+CubeCell-Module.build.board=CubeCell_Module
 CubeCell-Module.build.core=asr650x
 CubeCell-Module.build.variant=CubeCell-Module
 
@@ -240,231 +240,231 @@ CubeCell-Module.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 
 ###############################
 
-CubeCell-6502-1.name=CubeCell-6502-1
+CubeCell-BoardPlus.name=CubeCell-BoardPlus
 
-CubeCell-6502-1.upload.tool=CubeCellflash
-CubeCell-6502-1.upload.maximum_size=131072
-CubeCell-6502-1.upload.maximum_data_size=131072
-CubeCell-6502-1.upload.wait_for_upload_port=true
+CubeCell-BoardPlus.upload.tool=CubeCellflash
+CubeCell-BoardPlus.upload.maximum_size=131072
+CubeCell-BoardPlus.upload.maximum_data_size=131072
+CubeCell-BoardPlus.upload.wait_for_upload_port=true
 
-CubeCell-6502-1.build.board=CubeCell-6502-1
-CubeCell-6502-1.build.core=asr650x
-CubeCell-6502-1.build.variant=CubeCell-6502-1
+CubeCell-BoardPlus.build.board=CubeCell_BoardPlus
+CubeCell-BoardPlus.build.core=asr650x
+CubeCell-BoardPlus.build.variant=CubeCell-BoardPlus
 
-CubeCell-6502-1.menu.LORAWAN_REGION.0=REGION_AS923
-CubeCell-6502-1.menu.LORAWAN_REGION.0.build.band=REGION_AS923
-CubeCell-6502-1.menu.LORAWAN_REGION.1=REGION_AU915
-CubeCell-6502-1.menu.LORAWAN_REGION.1.build.band=REGION_AU915
-CubeCell-6502-1.menu.LORAWAN_REGION.2=REGION_CN470
-CubeCell-6502-1.menu.LORAWAN_REGION.2.build.band=REGION_CN470
-CubeCell-6502-1.menu.LORAWAN_REGION.3=REGION_CN779
-CubeCell-6502-1.menu.LORAWAN_REGION.3.build.band=REGION_CN779
-CubeCell-6502-1.menu.LORAWAN_REGION.4=REGION_EU433
-CubeCell-6502-1.menu.LORAWAN_REGION.4.build.band=REGION_EU433
-CubeCell-6502-1.menu.LORAWAN_REGION.5=REGION_EU868
-CubeCell-6502-1.menu.LORAWAN_REGION.5.build.band=REGION_EU868
-CubeCell-6502-1.menu.LORAWAN_REGION.6=REGION_KR920
-CubeCell-6502-1.menu.LORAWAN_REGION.6.build.band=REGION_KR920
-CubeCell-6502-1.menu.LORAWAN_REGION.7=REGION_IN865
-CubeCell-6502-1.menu.LORAWAN_REGION.7.build.band=REGION_IN865
-CubeCell-6502-1.menu.LORAWAN_REGION.8=REGION_US915
-CubeCell-6502-1.menu.LORAWAN_REGION.8.build.band=REGION_US915
-CubeCell-6502-1.menu.LORAWAN_REGION.9=REGION_US915_HYBRID
-CubeCell-6502-1.menu.LORAWAN_REGION.9.build.band=REGION_US915_HYBRID
+CubeCell-BoardPlus.menu.LORAWAN_REGION.0=REGION_AS923
+CubeCell-BoardPlus.menu.LORAWAN_REGION.0.build.band=REGION_AS923
+CubeCell-BoardPlus.menu.LORAWAN_REGION.1=REGION_AU915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.1.build.band=REGION_AU915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.2=REGION_CN470
+CubeCell-BoardPlus.menu.LORAWAN_REGION.2.build.band=REGION_CN470
+CubeCell-BoardPlus.menu.LORAWAN_REGION.3=REGION_CN779
+CubeCell-BoardPlus.menu.LORAWAN_REGION.3.build.band=REGION_CN779
+CubeCell-BoardPlus.menu.LORAWAN_REGION.4=REGION_EU433
+CubeCell-BoardPlus.menu.LORAWAN_REGION.4.build.band=REGION_EU433
+CubeCell-BoardPlus.menu.LORAWAN_REGION.5=REGION_EU868
+CubeCell-BoardPlus.menu.LORAWAN_REGION.5.build.band=REGION_EU868
+CubeCell-BoardPlus.menu.LORAWAN_REGION.6=REGION_KR920
+CubeCell-BoardPlus.menu.LORAWAN_REGION.6.build.band=REGION_KR920
+CubeCell-BoardPlus.menu.LORAWAN_REGION.7=REGION_IN865
+CubeCell-BoardPlus.menu.LORAWAN_REGION.7.build.band=REGION_IN865
+CubeCell-BoardPlus.menu.LORAWAN_REGION.8=REGION_US915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.8.build.band=REGION_US915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.9=REGION_US915_HYBRID
+CubeCell-BoardPlus.menu.LORAWAN_REGION.9.build.band=REGION_US915_HYBRID
 
-CubeCell-6502-1.menu.LORAWAN_CLASS.0=CLASS_A
-CubeCell-6502-1.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
-##CubeCell-6502-1.menu.LORAWAN_CLASS.1=CLASS_B
-##CubeCell-6502-1.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
-CubeCell-6502-1.menu.LORAWAN_CLASS.2=CLASS_C
-CubeCell-6502-1.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+CubeCell-BoardPlus.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-BoardPlus.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-BoardPlus.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-BoardPlus.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-BoardPlus.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-BoardPlus.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
 
-CubeCell-6502-1.menu.LORAWAN_NETMODE.0=OTAA
-CubeCell-6502-1.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
-CubeCell-6502-1.menu.LORAWAN_NETMODE.1=ABP
-CubeCell-6502-1.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
 
-CubeCell-6502-1.menu.LORAWAN_ADR.0=ON
-CubeCell-6502-1.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
-CubeCell-6502-1.menu.LORAWAN_ADR.1=OFF
-CubeCell-6502-1.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+CubeCell-BoardPlus.menu.LORAWAN_ADR.0=ON
+CubeCell-BoardPlus.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-BoardPlus.menu.LORAWAN_ADR.1=OFF
+CubeCell-BoardPlus.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-6502-1.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
-CubeCell-6502-1.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
-CubeCell-6502-1.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
-CubeCell-6502-1.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+CubeCell-BoardPlus.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-BoardPlus.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-BoardPlus.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-BoardPlus.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
-CubeCell-6502-1.menu.LORAWAN_Net_Reserve.0=OFF
-CubeCell-6502-1.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
-CubeCell-6502-1.menu.LORAWAN_Net_Reserve.1=ON
-CubeCell-6502-1.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
+CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
-CubeCell-6502-1.menu.LORAWAN_AT_SUPPORT.0=ON
-CubeCell-6502-1.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
-CubeCell-6502-1.menu.LORAWAN_AT_SUPPORT.1=OFF
-CubeCell-6502-1.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
-CubeCell-6502-1.menu.LORAWAN_RGB.1=ACTIVE
-CubeCell-6502-1.menu.LORAWAN_RGB.1.build.RGB=1
-CubeCell-6502-1.menu.LORAWAN_RGB.0=DEACTIVE
-CubeCell-6502-1.menu.LORAWAN_RGB.0.build.RGB=0
+CubeCell-BoardPlus.menu.LORAWAN_RGB.1=ACTIVE
+CubeCell-BoardPlus.menu.LORAWAN_RGB.1.build.RGB=1
+CubeCell-BoardPlus.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-BoardPlus.menu.LORAWAN_RGB.0.build.RGB=0
 
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.0=None
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.1=Freq
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.2=Freq && DIO
-CubeCell-6502-1.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.0=None
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-6502-2.name=CubeCell-6502-2
+CubeCell-GPS.name=CubeCell-GPS
 
-CubeCell-6502-2.upload.tool=CubeCellflash
-CubeCell-6502-2.upload.maximum_size=131072
-CubeCell-6502-2.upload.maximum_data_size=131072
-CubeCell-6502-2.upload.wait_for_upload_port=true
+CubeCell-GPS.upload.tool=CubeCellflash
+CubeCell-GPS.upload.maximum_size=131072
+CubeCell-GPS.upload.maximum_data_size=131072
+CubeCell-GPS.upload.wait_for_upload_port=true
 
-CubeCell-6502-2.build.board=CubeCell-6502-2
-CubeCell-6502-2.build.core=asr650x
-CubeCell-6502-2.build.variant=CubeCell-6502-2
+CubeCell-GPS.build.board=CubeCell_GPS
+CubeCell-GPS.build.core=asr650x
+CubeCell-GPS.build.variant=CubeCell-GPS
 
-CubeCell-6502-2.menu.LORAWAN_REGION.923AS=REGION_AS923
-CubeCell-6502-2.menu.LORAWAN_REGION.923AS.build.band=REGION_AS923
-CubeCell-6502-2.menu.LORAWAN_REGION.915AU=REGION_AU915
-CubeCell-6502-2.menu.LORAWAN_REGION.915AU.build.band=REGION_AU915
-CubeCell-6502-2.menu.LORAWAN_REGION.470CN=REGION_CN470
-CubeCell-6502-2.menu.LORAWAN_REGION.470CN.build.band=REGION_CN470
-CubeCell-6502-2.menu.LORAWAN_REGION.779CN=REGION_CN779
-CubeCell-6502-2.menu.LORAWAN_REGION.779CN.build.band=REGION_CN779
-CubeCell-6502-2.menu.LORAWAN_REGION.433EU=REGION_EU433
-CubeCell-6502-2.menu.LORAWAN_REGION.433EU.build.band=REGION_EU433
-CubeCell-6502-2.menu.LORAWAN_REGION.868EU=REGION_EU868
-CubeCell-6502-2.menu.LORAWAN_REGION.868EU.build.band=REGION_EU868
-CubeCell-6502-2.menu.LORAWAN_REGION.920KR=REGION_KR920
-CubeCell-6502-2.menu.LORAWAN_REGION.920KR.build.band=REGION_KR920
-CubeCell-6502-2.menu.LORAWAN_REGION.865IN=REGION_IN865
-CubeCell-6502-2.menu.LORAWAN_REGION.865IN.build.band=REGION_IN865
-CubeCell-6502-2.menu.LORAWAN_REGION.915US=REGION_US915
-CubeCell-6502-2.menu.LORAWAN_REGION.915US.build.band=REGION_US915
-CubeCell-6502-2.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
-CubeCell-6502-2.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
+CubeCell-GPS.menu.LORAWAN_REGION.923AS=REGION_AS923
+CubeCell-GPS.menu.LORAWAN_REGION.923AS.build.band=REGION_AS923
+CubeCell-GPS.menu.LORAWAN_REGION.915AU=REGION_AU915
+CubeCell-GPS.menu.LORAWAN_REGION.915AU.build.band=REGION_AU915
+CubeCell-GPS.menu.LORAWAN_REGION.470CN=REGION_CN470
+CubeCell-GPS.menu.LORAWAN_REGION.470CN.build.band=REGION_CN470
+CubeCell-GPS.menu.LORAWAN_REGION.779CN=REGION_CN779
+CubeCell-GPS.menu.LORAWAN_REGION.779CN.build.band=REGION_CN779
+CubeCell-GPS.menu.LORAWAN_REGION.433EU=REGION_EU433
+CubeCell-GPS.menu.LORAWAN_REGION.433EU.build.band=REGION_EU433
+CubeCell-GPS.menu.LORAWAN_REGION.868EU=REGION_EU868
+CubeCell-GPS.menu.LORAWAN_REGION.868EU.build.band=REGION_EU868
+CubeCell-GPS.menu.LORAWAN_REGION.920KR=REGION_KR920
+CubeCell-GPS.menu.LORAWAN_REGION.920KR.build.band=REGION_KR920
+CubeCell-GPS.menu.LORAWAN_REGION.865IN=REGION_IN865
+CubeCell-GPS.menu.LORAWAN_REGION.865IN.build.band=REGION_IN865
+CubeCell-GPS.menu.LORAWAN_REGION.915US=REGION_US915
+CubeCell-GPS.menu.LORAWAN_REGION.915US.build.band=REGION_US915
+CubeCell-GPS.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
+CubeCell-GPS.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
 
-CubeCell-6502-2.menu.LORAWAN_CLASS.0=CLASS_A
-CubeCell-6502-2.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
-##CubeCell-6502-2.menu.LORAWAN_CLASS.1=CLASS_B
-##CubeCell-6502-2.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
-CubeCell-6502-2.menu.LORAWAN_CLASS.2=CLASS_C
-CubeCell-6502-2.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+CubeCell-GPS.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-GPS.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-GPS.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-GPS.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-GPS.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-GPS.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
 
-CubeCell-6502-2.menu.LORAWAN_NETMODE.0=OTAA
-CubeCell-6502-2.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
-CubeCell-6502-2.menu.LORAWAN_NETMODE.1=ABP
-CubeCell-6502-2.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+CubeCell-GPS.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-GPS.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-GPS.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-GPS.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
 
-CubeCell-6502-2.menu.LORAWAN_ADR.0=ON
-CubeCell-6502-2.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
-CubeCell-6502-2.menu.LORAWAN_ADR.1=OFF
-CubeCell-6502-2.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+CubeCell-GPS.menu.LORAWAN_ADR.0=ON
+CubeCell-GPS.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-GPS.menu.LORAWAN_ADR.1=OFF
+CubeCell-GPS.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-6502-2.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
-CubeCell-6502-2.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
-CubeCell-6502-2.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
-CubeCell-6502-2.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+CubeCell-GPS.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-GPS.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-GPS.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-GPS.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
-CubeCell-6502-2.menu.LORAWAN_Net_Reserve.0=OFF
-CubeCell-6502-2.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
-CubeCell-6502-2.menu.LORAWAN_Net_Reserve.1=ON
-CubeCell-6502-2.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
+CubeCell-GPS.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-GPS.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-GPS.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-GPS.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
-CubeCell-6502-2.menu.LORAWAN_AT_SUPPORT.0=ON
-CubeCell-6502-2.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
-CubeCell-6502-2.menu.LORAWAN_AT_SUPPORT.1=OFF
-CubeCell-6502-2.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+CubeCell-GPS.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-GPS.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-GPS.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-GPS.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
-CubeCell-6502-2.menu.LORAWAN_RGB.1=ACTIVE
-CubeCell-6502-2.menu.LORAWAN_RGB.1.build.RGB=1
-CubeCell-6502-2.menu.LORAWAN_RGB.0=DEACTIVE
-CubeCell-6502-2.menu.LORAWAN_RGB.0.build.RGB=0
+CubeCell-GPS.menu.LORAWAN_RGB.1=ACTIVE
+CubeCell-GPS.menu.LORAWAN_RGB.1.build.RGB=1
+CubeCell-GPS.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-GPS.menu.LORAWAN_RGB.0.build.RGB=0
 
 
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.0=None
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.1=Freq
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.2=Freq && DIO
-CubeCell-6502-2.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
+CubeCell-GPS.menu.LORAWAN_DebugLevel.0=None
+CubeCell-GPS.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-GPS.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-GPS.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-GPS.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-GPS.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-6502-3.name=CubeCell-6502-3
+CubeCell-ModulePlus.name=CubeCell-ModulePlus
 
-CubeCell-6502-3.upload.tool=CubeCellflash
-CubeCell-6502-3.upload.maximum_size=131072
-CubeCell-6502-3.upload.maximum_data_size=131072
-CubeCell-6502-3.upload.wait_for_upload_port=true
+CubeCell-ModulePlus.upload.tool=CubeCellflash
+CubeCell-ModulePlus.upload.maximum_size=131072
+CubeCell-ModulePlus.upload.maximum_data_size=131072
+CubeCell-ModulePlus.upload.wait_for_upload_port=true
 
-CubeCell-6502-3.build.board=CubeCell-6502-3
-CubeCell-6502-3.build.core=asr650x
-CubeCell-6502-3.build.variant=CubeCell-6502-3
+CubeCell-ModulePlus.build.board=CubeCell_ModulePlus
+CubeCell-ModulePlus.build.core=asr650x
+CubeCell-ModulePlus.build.variant=CubeCell-ModulePlus
 
-CubeCell-6502-3.menu.LORAWAN_REGION.923AS=REGION_AS923
-CubeCell-6502-3.menu.LORAWAN_REGION.923AS.build.band=REGION_AS923
-CubeCell-6502-3.menu.LORAWAN_REGION.915AU=REGION_AU915
-CubeCell-6502-3.menu.LORAWAN_REGION.915AU.build.band=REGION_AU915
-CubeCell-6502-3.menu.LORAWAN_REGION.470CN=REGION_CN470
-CubeCell-6502-3.menu.LORAWAN_REGION.470CN.build.band=REGION_CN470
-CubeCell-6502-3.menu.LORAWAN_REGION.779CN=REGION_CN779
-CubeCell-6502-3.menu.LORAWAN_REGION.779CN.build.band=REGION_CN779
-CubeCell-6502-3.menu.LORAWAN_REGION.433EU=REGION_EU433
-CubeCell-6502-3.menu.LORAWAN_REGION.433EU.build.band=REGION_EU433
-CubeCell-6502-3.menu.LORAWAN_REGION.868EU=REGION_EU868
-CubeCell-6502-3.menu.LORAWAN_REGION.868EU.build.band=REGION_EU868
-CubeCell-6502-3.menu.LORAWAN_REGION.920KR=REGION_KR920
-CubeCell-6502-3.menu.LORAWAN_REGION.920KR.build.band=REGION_KR920
-CubeCell-6502-3.menu.LORAWAN_REGION.865IN=REGION_IN865
-CubeCell-6502-3.menu.LORAWAN_REGION.865IN.build.band=REGION_IN865
-CubeCell-6502-3.menu.LORAWAN_REGION.915US=REGION_US915
-CubeCell-6502-3.menu.LORAWAN_REGION.915US.build.band=REGION_US915
-CubeCell-6502-3.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
-CubeCell-6502-3.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
+CubeCell-ModulePlus.menu.LORAWAN_REGION.923AS=REGION_AS923
+CubeCell-ModulePlus.menu.LORAWAN_REGION.923AS.build.band=REGION_AS923
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915AU=REGION_AU915
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915AU.build.band=REGION_AU915
+CubeCell-ModulePlus.menu.LORAWAN_REGION.470CN=REGION_CN470
+CubeCell-ModulePlus.menu.LORAWAN_REGION.470CN.build.band=REGION_CN470
+CubeCell-ModulePlus.menu.LORAWAN_REGION.779CN=REGION_CN779
+CubeCell-ModulePlus.menu.LORAWAN_REGION.779CN.build.band=REGION_CN779
+CubeCell-ModulePlus.menu.LORAWAN_REGION.433EU=REGION_EU433
+CubeCell-ModulePlus.menu.LORAWAN_REGION.433EU.build.band=REGION_EU433
+CubeCell-ModulePlus.menu.LORAWAN_REGION.868EU=REGION_EU868
+CubeCell-ModulePlus.menu.LORAWAN_REGION.868EU.build.band=REGION_EU868
+CubeCell-ModulePlus.menu.LORAWAN_REGION.920KR=REGION_KR920
+CubeCell-ModulePlus.menu.LORAWAN_REGION.920KR.build.band=REGION_KR920
+CubeCell-ModulePlus.menu.LORAWAN_REGION.865IN=REGION_IN865
+CubeCell-ModulePlus.menu.LORAWAN_REGION.865IN.build.band=REGION_IN865
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915US=REGION_US915
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915US.build.band=REGION_US915
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
+CubeCell-ModulePlus.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
 
-CubeCell-6502-3.menu.LORAWAN_CLASS.0=CLASS_A
-CubeCell-6502-3.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
-##CubeCell-6502-2.menu.LORAWAN_CLASS.1=CLASS_B
-##CubeCell-6502-2.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
-CubeCell-6502-3.menu.LORAWAN_CLASS.2=CLASS_C
-CubeCell-6502-3.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+CubeCell-ModulePlus.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-ModulePlus.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-GPS.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-GPS.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-ModulePlus.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-ModulePlus.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
 
-CubeCell-6502-3.menu.LORAWAN_NETMODE.0=OTAA
-CubeCell-6502-3.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
-CubeCell-6502-3.menu.LORAWAN_NETMODE.1=ABP
-CubeCell-6502-3.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+CubeCell-ModulePlus.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-ModulePlus.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-ModulePlus.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-ModulePlus.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
 
-CubeCell-6502-3.menu.LORAWAN_ADR.0=ON
-CubeCell-6502-3.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
-CubeCell-6502-3.menu.LORAWAN_ADR.1=OFF
-CubeCell-6502-3.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+CubeCell-ModulePlus.menu.LORAWAN_ADR.0=ON
+CubeCell-ModulePlus.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-ModulePlus.menu.LORAWAN_ADR.1=OFF
+CubeCell-ModulePlus.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
 
-CubeCell-6502-3.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
-CubeCell-6502-3.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
-CubeCell-6502-3.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
-CubeCell-6502-3.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+CubeCell-ModulePlus.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-ModulePlus.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-ModulePlus.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-ModulePlus.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
 
-CubeCell-6502-3.menu.LORAWAN_Net_Reserve.0=OFF
-CubeCell-6502-3.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
-CubeCell-6502-3.menu.LORAWAN_Net_Reserve.1=ON
-CubeCell-6502-3.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
+CubeCell-ModulePlus.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-ModulePlus.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-ModulePlus.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-ModulePlus.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
-CubeCell-6502-3.menu.LORAWAN_AT_SUPPORT.0=ON
-CubeCell-6502-3.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
-CubeCell-6502-3.menu.LORAWAN_AT_SUPPORT.1=OFF
-CubeCell-6502-3.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+CubeCell-ModulePlus.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-ModulePlus.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-ModulePlus.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-ModulePlus.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
-CubeCell-6502-3.menu.LORAWAN_RGB.0=DEACTIVE
-CubeCell-6502-3.menu.LORAWAN_RGB.0.build.RGB=0
+CubeCell-ModulePlus.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-ModulePlus.menu.LORAWAN_RGB.0.build.RGB=0
 
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.0=None
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.1=Freq
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.2=Freq && DIO
-CubeCell-6502-3.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.0=None
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2

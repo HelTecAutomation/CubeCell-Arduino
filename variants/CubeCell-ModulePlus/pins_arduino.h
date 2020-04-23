@@ -27,6 +27,7 @@ typedef enum
 #define UART_TX2 P4_5
 #define Vext P3_2 
 #define VBAT_ADC_CTL P3_3 
+#define USER_KEY P3_3
 #define SDA P0_1
 #define SCL P0_0
 #define RGB P0_6  //GPIO13

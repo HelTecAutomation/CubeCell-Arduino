@@ -12,6 +12,26 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #include "RegionEU433.h"
 #endif
 
+#ifdef CubeCell_BoardPlus
+#include <Wire.h>  
+#include "cubecell_SH1107Wire.h"
+
+  SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , resolution , rst
+
+  uint8_t ifDisplayAck=0;
+  uint8_t isDispayOn=0;
+#endif
+
+#ifdef CubeCell_GPS
+#include <Wire.h>  
+#include "cubecell_SSD1306Wire.h"
+
+  SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , resolution , rst
+
+  uint8_t ifDisplayAck=0;
+  uint8_t isDispayOn=0;
+#endif
+
 /*!
  * Default datarate
  */
@@ -66,6 +86,8 @@ enum eDeviceState_LoraWan deviceState;
  */
 bool SendFrame( void )
 {
+	lwan_dev_params_update();
+	
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
 
@@ -208,7 +230,14 @@ void turnOnRGB(uint32_t color,uint32_t time)
 void turnOffRGB(void)
 {
 	turnOnRGB(0,0);
+#if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
+	if(isDispayOn == 0)
+	{
+		digitalWrite(Vext,HIGH);
+	}
+#else
 	digitalWrite(Vext,HIGH);
+#endif
 }
 #endif
 
@@ -246,8 +275,9 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		return;
 	}
-
-
+#if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
+	ifDisplayAck=1;
+#endif
 	printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 
 #if (LoraWan_RGB==1)
@@ -317,6 +347,12 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 				turnOnRGB(COLOR_JOINED,500);
 				turnOffRGB();
 #endif
+#if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
+				if(isDispayOn)
+				{
+					LoRaWAN.displayJoined();
+				}
+#endif
 				printf("joined\r\n");
 				
 				//in PassthroughMode,do nothing while joined
@@ -370,7 +406,7 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 }
 
 
-static void lwan_dev_params_update( void )
+void lwan_dev_params_update( void )
 {
 #ifdef REGION_EU868
 	LoRaMacChannelAdd( 3, ( ChannelParams_t )EU868_LC4 );
@@ -389,23 +425,14 @@ static void lwan_dev_params_update( void )
 #endif
 
 	MibRequestConfirm_t mibReq;
-	uint16_t channelsMaskTemp[6];
-	channelsMaskTemp[0] = 0x00FF;
-	channelsMaskTemp[1] = 0x0000;
-	channelsMaskTemp[2] = 0x0000;
-	channelsMaskTemp[3] = 0x0000;
-	channelsMaskTemp[4] = 0x0000;
-	channelsMaskTemp[5] = 0x0000;
 
 	mibReq.Type = MIB_CHANNELS_DEFAULT_MASK;
-	mibReq.Param.ChannelsMask = channelsMaskTemp;
+	mibReq.Param.ChannelsMask = userChannelsMask;
 	LoRaMacMibSetRequestConfirm(&mibReq);
 
 	mibReq.Type = MIB_CHANNELS_MASK;
-	mibReq.Param.ChannelsMask = channelsMaskTemp;
+	mibReq.Param.ChannelsMask = userChannelsMask;
 	LoRaMacMibSetRequestConfirm(&mibReq);
-
-
 }
 
 uint8_t BoardGetBatteryLevel()
@@ -482,7 +509,7 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 
 
 void LoRaWanClass::join()
-{	
+{
 	if( overTheAirActivation )
 	{
 		Serial.print("joining...");
@@ -536,7 +563,6 @@ void LoRaWanClass::send()
 {
 	if( nextTx == true )
 	{
-		lwan_dev_params_update();
 		MibRequestConfirm_t mibReq;
 		mibReq.Type = MIB_DEVICE_CLASS;
 		LoRaMacMibGetRequestConfirm( &mibReq );
@@ -613,6 +639,72 @@ void LoRaWanClass::ifskipjoin()
 	}
 }
 
+#if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
+void LoRaWanClass::displayJoining()
+{
+	display.setFont(ArialMT_Plain_16);
+	display.setTextAlignment(TEXT_ALIGN_CENTER);
+	display.clear();
+	display.drawString(58, 22, "JOINING...");
+	display.display();
+}
+void LoRaWanClass::displayJoined()
+{
+	display.clear();
+	display.drawString(64, 22, "JOINED");
+	display.display();
+	delay(1000);
+}
+void LoRaWanClass::displaySending()
+{
+    isDispayOn = 1;
+	digitalWrite(Vext,LOW);
+	display.init();
+	display.setFont(ArialMT_Plain_16);
+	display.setTextAlignment(TEXT_ALIGN_CENTER);
+	display.clear();
+	display.drawString(58, 22, "SENDING...");
+	display.display();
+	delay(1000);
+}
+void LoRaWanClass::displayAck()
+{
+    if(ifDisplayAck==0)
+    {
+    	return;
+    }
+    ifDisplayAck--;
+	display.clear();
+	display.drawString(64, 22, "ACK RECEIVED");
+	if(loraWanClass==CLASS_A)
+	{
+		display.setFont(ArialMT_Plain_10);
+		display.setTextAlignment(TEXT_ALIGN_LEFT);
+		display.drawString(28, 50, "Into deep sleep in 2S");
+	}
+	display.display();
+	if(loraWanClass==CLASS_A)
+	{
+		delay(2000);
+		isDispayOn = 0;
+		digitalWrite(Vext,HIGH);
+		display.stop();
+	}
+}
+void LoRaWanClass::displayMcuInit()
+{
+	isDispayOn = 1;
+	digitalWrite(Vext,LOW);
+	display.init();
+	display.setFont(ArialMT_Plain_16);
+	display.setTextAlignment(TEXT_ALIGN_CENTER);
+	display.clear();
+	display.drawString(64, 11, "LORAWAN");
+	display.drawString(64, 33, "STARTING");
+	display.display();
+	delay(2000);
+}
+#endif
 
 LoRaWanClass LoRaWAN;
 

@@ -26,6 +26,9 @@ uint8_t mulNwkSKey[]={0x5c,0x1d,0xce,0x81,0xd8,0x19,0x40,0xb9,0xe0,0xfb,0x1e,0x0
 uint8_t mulAppSKey[]={0x6b,0x5b,0x47,0x6f,0x73,0xb6,0xc3,0x98,0xc8,0x11,0xa8,0xd0,0xd9,0x9f,0x25,0xc7};
 uint32_t multicastAddress=0x00638f9e;
 
+/*LoraWan channelsmask, default channels 0-7*/ 
+uint16_t userChannelsMask[6]={ 0x00FF,0x0000,0x0000,0x0000,0x0000,0x0000 };
+
 /*LoraWan region, select in arduino IDE tools*/
 LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 
@@ -69,7 +72,7 @@ uint8_t appPort = 2;
 * Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
 * the datarate, in case the LoRaMAC layer did not receive an acknowledgment
 */
-uint8_t confirmedNbTrials = 8;
+uint8_t confirmedNbTrials = 4;
 
 /* Prepares the payload of the frame */
 static void prepareTxFrame( uint8_t port )

@@ -61,10 +61,6 @@ void Air530Class::begin()
 	digitalWrite(_powerCtl, LOW);
 	GPSSerial.begin(9600);
 	delay(1000);
-	//setNMEA(NMEA_GGA|NMEA_GSA|NMEA_RMC|NMEA_VTG);
-	//setPPS(3);
-	//delay(1000);
-	//while(getNMEA()=="0"){}//wait for gps started
 }
 
 
@@ -131,9 +127,18 @@ void Air530Class::setNMEA(uint8_t nmeamode)
 
 void Air530Class::reset()
 {
-	//String cmd = "$PGKC030,4,1*29\r\n";
 	String cmd = "$PGKC030,3,1*2E\r\n";
 	sendcmd(cmd);
+}
+
+int Air530Class::available(void)
+{
+	return GPSSerial.available();
+}
+
+int Air530Class::read(void)
+{
+	return GPSSerial.read();
 }
 
 void Air530Class::clear()
@@ -160,6 +165,21 @@ void Air530Class::setPPS(uint8_t mode, uint16_t pulse_width)
 	sendcmd(cmd);
 }
 
+void Air530Class::end()
+{
+	digitalWrite(_powerCtl, HIGH);
+	GPSSerial.end();
+}
+
+void Air530Class::sendcmd(String cmd)
+{
+
+	while(GPSSerial.available())//wait for gps serial idel
+	{
+		GPSSerial.readStringUntil('\n');
+	}
+	GPSSerial.print(cmd);
+}
 
 String Air530Class::getNMEA()
 {
@@ -173,35 +193,12 @@ String Air530Class::getNMEA()
 			if(c=='$')
 			{
 				nmea += c;
-				while(GPSSerial.available())
-				{
-					nmea += (char)GPSSerial.read();
-				}
+				nmea += GPSSerial.readStringUntil('\n');
 				return nmea;
 			}
 		}
 	}
 	return "0";
-}
-
-
-void Air530Class::end()
-{
-	digitalWrite(_powerCtl, HIGH);
-	pinMode(_powerCtl,ANALOG);
-	GPSSerial.end();
-}
-
-void Air530Class::sendcmd(String cmd)
-{
-
-	while(GPSSerial.available())//wait for gps serial idel
-	{
-		//GPSSerial.read();
-		GPSSerial.readStringUntil('\n');
-	}
-	//Serial.println(cmd);
-	GPSSerial.print(cmd);
 }
 
 String Air530Class::getRMC()
@@ -274,80 +271,74 @@ String Air530Class::getVTG()
 	return "0";
 }
 
-gps_status_t Air530Class::status()
+String Air530Class::getGSA()
 {
-	String GGA = getGGA();
-	String RMC = getRMC();
-	String VTG = getVTG();
-	char *ptr;
-	int num;
-	uint8_t str_index[30];
-	if(GGA != "0")
+	String nmea = "";
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
 	{
-		ptr = (char *)GGA.c_str();
-		num = str_chop( ptr, GGA.length(), ',', str_index, sizeof(str_index) );
-		String lat = GGA.substring(str_index[2]);
-		char gps_ola = *( ptr + str_index[3] );
-		String lon = GGA.substring(str_index[4]);
-		char gps_olo = *( ptr + str_index[5] );
-		char status = *( ptr + str_index[6] );
-		String hdop = GGA.substring(str_index[8]);
-		String alt = GGA.substring(str_index[9]);
-
-		int gps_dla = lat.toInt()/100;
-		double gps_mla = lat.toFloat() - gps_dla*100;
-		int gps_dlo = lon.toInt()/100;
-		double gps_mlo = lon.toFloat() - gps_dlo*100;
-
-		gps_status.latitude = ((double)gps_dla + (gps_mla/60.0)) * ((gps_ola == 'N')?1.0:-1.0);
-		gps_status.longitude = ((double)gps_dlo + (gps_mlo/60.0)) * ((gps_olo == 'E')?1.0:-1.0);
-		gps_status.altitude = alt.toInt();
-		gps_status.hdop = hdop.toFloat();
-		if(status != '0')
+		if ( GPSSerial.available())
 		{
-			gps_status.validation = 1;
-			gps_status.hdop = hdop.toFloat();
-		}
-		else
-		{
-			gps_status.validation = 0;
-			gps_status.hdop = 0;
+			char c = GPSSerial.read();
+			if(c=='$')
+			{
+				nmea = GPSSerial.readStringUntil('\n');
+				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'A')
+				{
+					nmea = c + nmea;
+					return nmea;
+				}
+			}
 		}
 	}
-	else
-	{
-		gps_status.validation = 0;
-	}
-	
-	if(RMC != "0")
-	{
-		ptr = (char *)RMC.c_str();
-		num = str_chop( ptr, RMC.length(), ',', str_index, sizeof(str_index) );
-		String strtime = RMC.substring(str_index[1]);
-		String strday = RMC.substring(str_index[9]);
+	return "0";
+}
 
-		int year,month,day,hour,minute,second;
-		sscanf((char *)strtime.c_str(),"%2d%2d%2d",&hour,&minute,&second);
-		sscanf((char *)strday.c_str(),"%2d%2d%2d",&day,&month,&year);
 
-		gps_status.time.year = (uint8_t)year;
-		gps_status.time.month = (uint8_t)month;
-		gps_status.time.day = (uint8_t)day;
-		gps_status.time.hour = (uint8_t)hour;
-		gps_status.time.minute = (uint8_t)minute;
-		gps_status.time.second = (uint8_t)second;
-		
-		//Serial.printf("%02d-%02d-%02d %02d:%02d:%02d\r\n",gps_status.time.year,gps_status.time.month,gps_status.time.day,gps_status.time.hour,gps_status.time.minute,gps_status.time.second);
-	}
-
-	if(VTG != "0")
+String Air530Class::getGSV()
+{
+	String nmea = "";
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
 	{
-		ptr = (char *)VTG.c_str();
-		num = str_chop( ptr, VTG.length(), ',', str_index, sizeof(str_index) );
-		String speed = VTG.substring(str_index[7]);
-		gps_status.validation == 1 ? gps_status.speed = speed.toFloat() : gps_status.speed = 0;
+		if ( GPSSerial.available())
+		{
+			char c = GPSSerial.read();
+			if(c=='$')
+			{
+				nmea = GPSSerial.readStringUntil('\n');
+				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'V')
+				{
+					nmea = c + nmea;
+					return nmea;
+				}
+			}
+		}
 	}
-	return gps_status;
+	return "0";
+}
+
+String Air530Class::getGLL()
+{
+	String nmea = "";
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
+	{
+		if ( GPSSerial.available())
+		{
+			char c = GPSSerial.read();
+			if(c=='$')
+			{
+				nmea = GPSSerial.readStringUntil('\n');
+				if(nmea[2] == 'G' && nmea[3] == 'L' && nmea[4] == 'L')
+				{
+					nmea = c + nmea;
+					return nmea;
+				}
+			}
+		}
+	}
+	return "0";
 }
 
 
@@ -358,6 +349,7 @@ gps_status_t Air530Class::status()
 */
 
 //WGS-84 to GCJ-02
+/*
 gps_status_t Air530Class::WGSToGCJ(gps_status_t status) {
 	if (outOfChina(status.latitude, status.longitude)) {
 		return status;
@@ -395,6 +387,7 @@ gps_status_t Air530Class::WGSToBD(gps_status_t status)
 	status = GCJToBD(status);
 	return status;
 }
+*/
 
 int str_chop(char *s, int buff_size, char separator, uint8_t *idx_ary, int max_idx) {
     int i = 0; /* index in the string */
@@ -427,6 +420,7 @@ int str_chop(char *s, int buff_size, char separator, uint8_t *idx_ary, int max_i
 }
 
 
-Air530Class GPS(Vext);
+//Air530Class GPS(GPIO14);
+Air530Class Air530(GPIO14);
 
 

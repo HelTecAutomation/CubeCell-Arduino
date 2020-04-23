@@ -117,6 +117,9 @@ class OLEDDisplay : public Print  {
 
     // Free the memory used by the display
     void end();
+    void sleep();
+
+    void wakeup();
 
     // Cycle through the initialization
     void resetDisplay(void);

@@ -2,6 +2,7 @@
 #define GPS_Air530_H
 
 #include "Arduino.h"
+#include <CubeCell_TinyGPS++.h>
 
 typedef enum
 {
@@ -9,28 +10,6 @@ typedef enum
 	MODE_GPS_BEIDOU,
 	MODE_GPS_GLONASS,
 }GPSMODE;
-
-typedef struct gpsTime_s
-{
-	uint8_t year;
-	uint8_t month;
-	uint8_t day;
-	uint8_t hour;
-	uint8_t minute;
-	uint8_t second;
-}gpsTime_t;
-
-typedef struct gps_status_s
-{
-	int validation;
-	double latitude;
-	double longitude;
-	int altitude;
-	float hdop;
-	float speed;
-	gpsTime_t time;
-}gps_status_t;
-
 
 #define NMEA_GLL 0x01
 #define NMEA_RMC 0x02
@@ -41,7 +20,7 @@ typedef struct gps_status_s
 #define NMEA_GRS 0x40
 #define NMEA_GST 0x80
 
-class Air530Class{
+class Air530Class:public TinyGPSPlus{
 public:
 	Air530Class(int8_t powerCtl);
 	void begin();
@@ -50,23 +29,26 @@ public:
 	void setPPS(uint8_t mode, uint16_t pulse_width = 500);
 	void setNMEA(uint8_t nmeamode);
 	void clear();
+	int available(void);
+	int read(void);
 	String getNMEA();
 	String getRMC();
 	String getGGA();
 	String getVTG();
-	gps_status_t status();
-	gps_status_t WGSToGCJ(gps_status_t status);
+	String getGSV();
+	String getGSA();
+	String getGLL();
+/*	gps_status_t WGSToGCJ(gps_status_t status);
 	gps_status_t GCJToBD(gps_status_t status);
-	gps_status_t WGSToBD(gps_status_t status);
+	gps_status_t WGSToBD(gps_status_t status);*/
 	void sendcmd(String cmd);
 	void end();
 
 private:
 	uint8_t _powerCtl;
-	gps_status_t gps_status;
 };
 
-extern Air530Class GPS;
+extern Air530Class Air530;
 
 #endif
 

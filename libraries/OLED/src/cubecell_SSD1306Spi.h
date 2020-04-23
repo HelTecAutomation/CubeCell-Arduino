@@ -216,6 +216,10 @@ class SSD1306Spi : public OLEDDisplay {
 		#endif
 		}
 	}
+	
+    void stop(){
+       end();
+    }
 
   private:
 	int getBufferOffset(void) {

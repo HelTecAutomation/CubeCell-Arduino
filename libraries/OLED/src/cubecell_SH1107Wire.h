@@ -180,6 +180,11 @@ class SH1107Wire : public OLEDDisplay {
     void setI2cAutoInit(bool doI2cAutoInit) {
       _doI2cAutoInit = doI2cAutoInit;
     }
+    
+    void stop(){
+	  end();
+	  Wire.end();
+    }
 
   private:
 	int getBufferOffset(void) {

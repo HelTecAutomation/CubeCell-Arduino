@@ -41,6 +41,9 @@ extern uint8_t confirmedNbTrials;
 extern bool modeLoraWan;
 extern bool keepNet;
 extern bool IsLoRaMacNetworkJoined;
+extern uint16_t userChannelsMask[6];
+
+
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
  * value in [ms].
@@ -57,6 +60,14 @@ public:
   void cycle(uint32_t dutyCycle);
   void sleep();
   void ifskipjoin();
+
+#if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
+  void displayJoining();
+  void displayJoined();
+  void displaySending();
+  void displayAck();
+  void displayMcuInit();
+#endif
 };
 
 
@@ -66,7 +77,7 @@ extern "C" void turnOffRGB(void);
 extern "C" uint16_t getBatteryVoltage(void);
 extern "C" bool checkUserAt(char * cmd, char * content);
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);
-
+extern "C" void lwan_dev_params_update( void );
 
 
 extern LoRaWanClass LoRaWAN;
