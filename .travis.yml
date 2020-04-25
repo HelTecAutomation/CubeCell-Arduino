@@ -1,0 +1,41 @@
+language: c
+env:
+  global:
+    - ARDUINO_IDE_VERSION=1.8.5
+  matrix:
+  - BOARD=CubeCell:CubeCell:CubeCell-Module
+before_install:
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
+  - sleep 3
+  - export DISPLAY=:1.0
+  - wget http://downloads.arduino.cc/arduino-$ARDUINO_IDE_VERSION-linux64.tar.xz ;
+  - tar xf arduino-$ARDUINO_IDE_VERSION-linux64.tar.xz ;
+  - rm arduino-$ARDUINO_IDE_VERSION-linux64.tar.xz ;
+  - sudo mv arduino-$ARDUINO_IDE_VERSION /usr/local/share/arduino ;
+  - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino ;
+install:
+  - if [[ "$BOARD" =~ "CubeCell:CubeCell:" ]]; then
+      arduino --pref "boardsmanager.additional.urls=http://resource.heltec.cn/download/package_CubeCell_index.json" --save-prefs ;
+      arduino --install-boards CubeCell:CubeCell ;
+      arduino --board $BOARD --save-prefs ;
+      arduino --pref "custom_LORAWAN_ADR=CubeCell-Module_1"         --save-prefs ;
+      arduino --pref "custom_LORAWAN_AT_SUPPORT=CubeCell-Module_1"  --save-prefs ;
+      arduino --pref "custom_LORAWAN_CLASS=CubeCell-Module_0"       --save-prefs ;
+      arduino --pref "custom_LORAWAN_DebugLevel=CubeCell-Module_0"  --save-prefs ;
+      arduino --pref "custom_LORAWAN_NETMODE=CubeCell-Module_1"     --save-prefs ;
+      arduino --pref "custom_LORAWAN_Net_Reserve=CubeCell-Module_0" --save-prefs ;
+      arduino --pref "custom_LORAWAN_REGION=CubeCell-Module_868EU"  --save-prefs ;
+      arduino --pref "custom_LORAWAN_RGB=CubeCell-Module_0"         --save-prefs ;
+      arduino --pref "custom_LORAWAN_UPLINKMODE=CubeCell-Module_0"  --save-prefs ;
+      cd $TRAVIS_BUILD_DIR ;
+    fi
+
+script:
+  - if [[ "$BOARD" =~ "CubeCell:CubeCell:"     ]]; then
+      arduino --verify --verbose-build --board $BOARD $PWD/libraries/LoRa/examples/LoRaWAN/LoRaWan/LoRaWan.ino ;
+    fi ;
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
