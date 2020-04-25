@@ -1,6 +1,6 @@
 # Heltec ASR650x Series Arduino Development Environment
 
-English | [简体中文](#简体中文) &nbsp;&nbsp; [![Build Status](https://travis-ci.org/lyusupov/ASR650x-Arduino.png?branch=Travis_CI)](https://travis-ci.org/lyusupov/ASR650x-Arduino "Build Status")
+English | [简体中文](#简体中文) &nbsp;&nbsp; [![Build Status](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino.png?branch=master)](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino "Build Status")
 
 This project makes ASR650x (ASR6501, ASR6502) series fully Arduino-Compatible. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
 
