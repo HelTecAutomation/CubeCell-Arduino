@@ -57,17 +57,17 @@
 #define  bit(b)   (1 << (b))
 #define  _BV(b)   (1UL << (b))
 
-#ifdef __cplusplus
-#include <algorithm>
+//#ifdef __cplusplus
+//#include <algorithm>
 
-using std::abs;
-using std::max;
-using std::min;
-#else
+//using std::abs;
+//using std::max;
+//using std::min;
+//#else
 #define min(a, b) ((a)<(b)?(a):(b))
 #define max(a, b) ((a)>(b)?(a):(b))
 #define abs(x)   ((x)>0?(x):-(x))
-#endif /* __cplusplus */
+//#endif /* __cplusplus */
 
 #define constrain(amt, low, high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 #define radians(deg) ((deg)*DEG_TO_RAD)
