@@ -4,7 +4,7 @@
 #include "CCS811.h"
 #include "hal/soc/flash.h"
 #include "BME680.h"
-#include "BME280.h"
+#include "Seeed_BME280.h"
 #include "BMP180.h"
 #include "SHT2x.h"
 #include "Adafruit_ADS1015.h"
