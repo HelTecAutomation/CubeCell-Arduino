@@ -6,6 +6,18 @@ This sketch allows you to use a number of sensors.
 All you have to do is to set the number to a 1 beside the sensor you would like to use.
 You can choose more than one sensor.
 
+You need to install these libraries:
+
+|                   | Where to get                                 |
+|-------------------|----------------------------------------------|
+| Seeed_BME280      | library manager                              |
+| Adafruit_ADS1015  | library manager                              |
+| Seeed_HMC5883L    | library manager                              |
+| DallasTemperature | library manager                              |
+| Adafruit_SHT31    | library manager                              |
+| TinyGPS++         | http://arduiniana.org/libraries/tinygpsplus/ |
+
+
 Selecting AUTO_SCAN the Firmware will try to identify the connected I2C Sensor by its address.
 AUTO_SCAN takes its time, it is not very battery friendly. 
 Please select the sensor for saving battery power, for maximum flexibility choose AUTO_SCAN.
