@@ -29,9 +29,9 @@ void setup() {
   Serial.begin(115200);
   boardInitMcu();
   Radio.Sleep( );
-  TimerInit( &sleep, OnSleep );
+  TimerInit( &sleep, onSleep );
   TimerInit( &wakeUp, onWakeUp );
-  OnSleep();
+  onSleep();
 }
 
 void loop() {
