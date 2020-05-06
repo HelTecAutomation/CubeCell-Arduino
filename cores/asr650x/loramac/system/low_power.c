@@ -114,10 +114,12 @@ void lowPowerHandler( void )
     RHINO_CPU_INTRPT_DISABLE();
     if (LowPower_State == 0 && wakeByUart == false) {
         DBG_PRINTF_CRITICAL("dz\n\r");
+        pinMode(P4_1,ANALOG);// SPI0  MISO;
         aos_lrwan_chg_mode.enter_stop_mode();
         /* mcu dependent. to be implemented by user*/
         aos_lrwan_chg_mode.exit_stop_mode();
         aos_lrwan_time_itf.set_uc_wakeup_time();
+        pinMode(P4_1,INPUT);
     } else {
         //DBG_PRINTF_CRITICAL("z\n\r");
         aos_lrwan_chg_mode.enter_sleep_mode();
