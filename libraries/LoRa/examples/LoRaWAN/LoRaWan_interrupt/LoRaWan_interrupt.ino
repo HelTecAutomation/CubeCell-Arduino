@@ -109,7 +109,7 @@ void setup() {
   LoRaWAN.ifskipjoin();
 
   accelWoke = false;
-  PINMODE_INPUT_PULLDOWN(INT_PIN);
+  pinMode(INT_PIN,INPUT);
   attachInterrupt(INT_PIN, accelWakeup, RISING);
   Serial.println("Interrupts attached");
 }
