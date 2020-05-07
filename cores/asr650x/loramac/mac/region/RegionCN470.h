@@ -47,9 +47,14 @@
 #define CN470_MAX_NB_CHANNELS                        96
 
 /*!
- * Minimal datarate that can be used by the node
+ * The default number of join trials.
  */
-#define CN470_TX_MIN_DATARATE                       DR_0
+#define CN470_DEFAULT_PHY_NB_JOIN_TRIALS             48
+
+/*!
+ * Minimal datarate The number of join trials.
+ */
+#define CN470_TX_MIN_DATARATE                       DR_1
 
 /*!
  * Maximal datarate that can be used by the node
@@ -69,7 +74,7 @@
 /*!
  * Default datarate used by the node
  */
-#define CN470_DEFAULT_DATARATE                      DR_0
+#define CN470_DEFAULT_DATARATE                      DR_5
 
 /*!
  * Minimal Rx1 receive datarate offset

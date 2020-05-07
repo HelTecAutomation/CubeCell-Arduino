@@ -274,7 +274,7 @@ PhyParam_t RegionCN470GetPhyParam( GetPhyParams_t* getPhy )
         case PHY_NB_JOIN_TRIALS:
         case PHY_DEF_NB_JOIN_TRIALS:
         {
-            phyParam.Value = 48;
+            phyParam.Value = CN470_DEFAULT_PHY_NB_JOIN_TRIALS;
             break;
         }
         case PHY_BEACON_FORMAT:
@@ -378,7 +378,7 @@ bool RegionCN470Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
         }
         case PHY_NB_JOIN_TRIALS:
         {
-            if( verify->NbJoinTrials < 48 )
+            if( verify->NbJoinTrials < CN470_DEFAULT_PHY_NB_JOIN_TRIALS )
             {
                 return false;
             }
