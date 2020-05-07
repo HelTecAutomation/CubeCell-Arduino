@@ -47,6 +47,11 @@
 #define US915_MAX_NB_CHANNELS                       72
 
 /*!
+ * The default number of join trials.
+ */
+#define US915_DEFAULT_PHY_NB_JOIN_TRIALS             16
+
+/*!
  * Minimal datarate that can be used by the node
  */
 #define US915_TX_MIN_DATARATE                       DR_0
@@ -69,7 +74,7 @@
 /*!
  * Default datarate used by the node
  */
-#define US915_DEFAULT_DATARATE                      DR_0
+#define US915_DEFAULT_DATARATE                      DR_3
 
 /*!
  * Minimal Rx1 receive datarate offset

@@ -47,6 +47,11 @@
 #define EU868_MAX_NB_CHANNELS                       16
 
 /*!
+ * The default number of join trials.
+ */
+#define EU868_DEFAULT_PHY_NB_JOIN_TRIALS             48
+
+/*!
  * Number of default channels
  */
 #define EU868_NUMB_DEFAULT_CHANNELS                 3
@@ -59,7 +64,7 @@
 /*!
  * Minimal datarate that can be used by the node
  */
-#define EU868_TX_MIN_DATARATE                       DR_0
+#define EU868_TX_MIN_DATARATE                       DR_1
 
 /*!
  * Maximal datarate that can be used by the node
@@ -79,7 +84,7 @@
 /*!
  * Default datarate used by the node
  */
-#define EU868_DEFAULT_DATARATE                      DR_0
+#define EU868_DEFAULT_DATARATE                      DR_5
 
 /*!
  * Minimal Rx1 receive datarate offset

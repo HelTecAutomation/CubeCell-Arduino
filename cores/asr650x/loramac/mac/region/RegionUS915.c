@@ -286,7 +286,7 @@ PhyParam_t RegionUS915GetPhyParam( GetPhyParams_t* getPhy )
         case PHY_NB_JOIN_TRIALS:
         case PHY_DEF_NB_JOIN_TRIALS:
         {
-            phyParam.Value = 2;
+            phyParam.Value = US915_DEFAULT_PHY_NB_JOIN_TRIALS;
             break;
         }
 
@@ -414,7 +414,7 @@ bool RegionUS915Verify( VerifyParams_t* verify, PhyAttribute_t phyAttribute )
         }
         case PHY_NB_JOIN_TRIALS:
         {
-            if( verify->NbJoinTrials < 2 )
+            if( verify->NbJoinTrials < US915_DEFAULT_PHY_NB_JOIN_TRIALS )
             {
                 return false;
             }
@@ -778,7 +778,7 @@ int8_t RegionUS915AlternateDr( AlternateDrParams_t* alternateDr )
     int8_t datarate = 0;
 
     // Re-enable 500 kHz default channels
-    ChannelsMask[4] = 0x00FF;
+    //ChannelsMask[4] = 0x00FF;
 
     if( ( alternateDr->NbTrials & 0x01 ) == 0x01 )
     {
