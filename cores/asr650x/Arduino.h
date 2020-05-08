@@ -102,6 +102,14 @@ typedef uint16_t word;
 // assuming Arduino.h or WProgram.h automatically includes it...
 //
 
+uint16_t makeWord(uint16_t w);
+uint16_t makeWord(byte h, byte l);
+
+#define word(...) makeWord(__VA_ARGS__)
+
+uint32_t pulseIn(uint8_t pin_name,uint8_t mode,uint32_t timeout = 1000000);
+
+long random(long howbig);
 
 // Include Atmel headers
 

@@ -6,6 +6,6 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  Serial.println(cubecell_random(100));
+  Serial.println(random(100));
   delay(1000);
 }
