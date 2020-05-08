@@ -24,8 +24,8 @@ The currently supported ASR650x chip product models are:
 
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cupsule](https://heltec.org/project/htcc-ac01/) |
-| ASR6502 |                         Coming soon                          |
+| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Capsule](https://heltec.org/project/htcc-ac01/) |
+| ASR6502 | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/)  |
 
 &nbsp;
 
@@ -79,7 +79,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cupsule](https://heltec.org/project/htcc-ac01/) |
+| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cuapsule](https://heltec.org/project/htcc-ac01/) |
 | ASR6502 |                         Coming soon                          |
 
 
