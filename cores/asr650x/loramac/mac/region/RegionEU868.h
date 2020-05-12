@@ -281,11 +281,11 @@
  */
 #define EU868_LC3                                   { 868500000, 0, { ( ( DR_5 << 4 ) | DR_0 ) }, 1 }
 
-#define EU868_LC4                { 867100000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
-#define EU868_LC5                { 867300000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
-#define EU868_LC6                { 867500000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
-#define EU868_LC7                { 867700000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
-#define EU868_LC8                { 867900000,0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+#define EU868_LC4                { 867100000,0, { ( ( DR_5 << 4 ) | EU868_TX_MIN_DATARATE ) }, 0 }
+#define EU868_LC5                { 867300000,0, { ( ( DR_5 << 4 ) | EU868_TX_MIN_DATARATE ) }, 0 }
+#define EU868_LC6                { 867500000,0, { ( ( DR_5 << 4 ) | EU868_TX_MIN_DATARATE ) }, 0 }
+#define EU868_LC7                { 867700000,0, { ( ( DR_5 << 4 ) | EU868_TX_MIN_DATARATE ) }, 0 }
+#define EU868_LC8                { 867900000,0, { ( ( DR_5 << 4 ) | EU868_TX_MIN_DATARATE ) }, 0 }
 
 
 /*!
