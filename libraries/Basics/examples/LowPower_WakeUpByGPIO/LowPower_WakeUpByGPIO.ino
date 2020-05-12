@@ -1,36 +1,36 @@
 #include "Arduino.h"
 
+#define INT_GPIO USER_KEY
 
 #define timetosleep 5000
-#define timetowake 5000
 static TimerEvent_t sleep;
-static TimerEvent_t wakeUp;
 uint8_t lowpower=1;
 
 void onSleep()
 {
-  Serial.printf("into lowpower mode, %d ms later wake up.\r\n",timetowake);
+  Serial.printf("into lowpower mode. Press user key to wake up\r\n");
   lowpower=1;
-  //timetosleep ms later wake up;
-  TimerSetValue( &wakeUp, timetowake );
-  TimerStart( &wakeUp );
 }
 void onWakeUp()
 {
-  Serial.printf("wake up, %d ms later into lowpower mode.\r\n",timetosleep);
-  lowpower=0;
-  //timetosleep ms later into lowpower mode;
-  TimerSetValue( &sleep, timetosleep );
-  TimerStart( &sleep );
+  delay(10);
+  if(digitalRead(INT_GPIO) == 0)
+  {
+	  Serial.printf("wake up by GPIO, %d ms later into lowpower mode.\r\n",timetosleep);
+	  lowpower=0;
+	  //timetosleep ms later into lowpower mode;
+	  TimerSetValue( &sleep, timetosleep );
+	  TimerStart( &sleep );
+  }
 }
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  Radio.Sleep( );
+  pinMode(INT_GPIO,INPUT);
+  attachInterrupt(INT_GPIO,onWakeUp,FALLING);
   TimerInit( &sleep, onSleep );
-  TimerInit( &wakeUp, onWakeUp );
-  onSleep();
+  Serial.printf("into lowpower mode. Press user key to wake up\r\n");
 }
 
 void loop() {

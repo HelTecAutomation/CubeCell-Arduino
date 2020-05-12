@@ -28,9 +28,7 @@ extern "C"  void RtcInit( void );
  */
 int main( void )
 {
-  Asr_Timer_Init();
-  RtcInit();
-
+  boardInitMcu();
   setup();
 
   for (;;)
