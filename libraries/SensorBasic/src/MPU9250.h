@@ -59,6 +59,10 @@ class MPU9250 {
   float magY();
   float magZ();
   float magHorizDirection();
+  float pitch();
+  float roll();
+  float yaw();
+  void computeEulerAngles(bool degrees = true);
 
   private:
   TwoWire* myWire;
@@ -78,6 +82,7 @@ class MPU9250 {
   void magWakeup();
   uint8_t i2cRead(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data);
   uint8_t i2cWriteByte(uint8_t Address, uint8_t Register, uint8_t Data);
+  float pitchp, rollp, yawp;
 };
 
 #endif

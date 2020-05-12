@@ -217,3 +217,30 @@ float MPU9250::gyroY() {
 float MPU9250::gyroZ() {
   return gyroGet(4, 5);
 }
+
+void MPU9250::computeEulerAngles(bool degrees)
+{
+  pitchp = atan2 (accelY() ,( sqrt ((accelX() * accelX()) + (accelZ() * accelZ()))));
+  rollp = atan2(-accelX() ,( sqrt((accelY() * accelY()) + (accelZ() * accelZ()))));
+
+  float Yh = (magY() * cos(rollp)) - (magZ() * sin(rollp));
+  float Xh = (magX() * cos(pitchp))+(magY() * sin(rollp)*sin(pitchp)) + (magZ() * cos(rollp) * sin(pitchp));
+  yawp =  atan2(Yh, Xh);
+
+  rollp = rollp*57.3;
+  pitchp = pitchp*57.3;
+  yawp = yawp*57.3;
+}
+
+float MPU9250::pitch() {
+  return pitchp;
+}
+
+float MPU9250::roll() {
+  return rollp;
+}
+
+float MPU9250::yaw() {
+  return yawp;
+}
+
