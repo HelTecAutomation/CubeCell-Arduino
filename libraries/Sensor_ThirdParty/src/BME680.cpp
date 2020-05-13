@@ -1,43 +1,44 @@
 /*! @file BME680.cpp
- @section BME680_intro_section Description
-
-Arduino Library for the Bosch BME680 sensor\n\n
-See main library header file for details
+    @section Zanshin_BME680_intro_section Description
+    Arduino Library for the Bosch BME680 sensor\n\n
+    See the main library header file for all details
 */
-#include "BME680.h" // Include the header definition
 
-/*!
-* @brief   Class constructor
-* @details Currently empty and unused
-*/
-BME680_Class::BME680_Class() {}
+#include "BME680.h" // Include the library header definition
 
-/*!
-* @brief   Class destructor
-* @details Currently empty and unused
-*/
-BME680_Class::~BME680_Class() {}
-
-/*!
-* @brief   starts communications with device (overloaded)
-* @details When called with no parameters the I2C protocol with I2C_STANDARD_MODE speed is selected. The I2C network
-           is searched for the first BME680 device.
-* return "true" if successful otherwise false
-*/
+BME680_Class::BME680_Class()
+{
+  /*!
+  * @brief   Class constructor
+  * @details Currently empty and unused
+  */
+} // of class constructor
+BME680_Class::~BME680_Class() 
+{
+  /*!
+  * @brief   Class destructor
+  * @details Currently empty and unused
+  */
+} // of class destructor
 bool BME680_Class::begin() 
 {
+  /*!
+  * @brief   starts communications with device (overloaded)
+  * @details When called with no parameters the I2C protocol with I2C_STANDARD_MODE speed is selected. The I2C network
+  *          is searched for the first BME680 device.
+  * return "true" if successful otherwise false
+  */  
   return begin(I2C_STANDARD_MODE); // Initialize I2C with standard speed
 } // of method begin()
-
-/*!
-* @brief   starts communications with device (overloaded)
-* @details When called with a 32-bit parameter it is assumed that the I2C protocol is to be used and the speed
-*          setting is determined by the parameter.
-* @param[in] i2cSpeed I2C Speed value
-* return "true" if successful otherwise false
-*/
 bool BME680_Class::begin(const uint32_t i2cSpeed)
 {
+  /*!
+  * @brief   starts communications with device (overloaded)
+  * @details When called with a 32-bit parameter it is assumed that the I2C protocol is to be used and the speed
+  *          setting is determined by the parameter.
+  * @param[in] i2cSpeed I2C Speed value
+  * return "true" if successful otherwise false
+  */
   Wire.begin();                                          // Start I2C as master device
   Wire.setClock(i2cSpeed);                               // Set I2C bus speed
   for (_I2CAddress=0x76;_I2CAddress<=0x77;_I2CAddress++) // loop all possible addresses
@@ -51,56 +52,58 @@ bool BME680_Class::begin(const uint32_t i2cSpeed)
   _I2CAddress = 0; // Set to 0 to denote no I2C found
   return false;    // return failure if we get here 
 } // of method begin()
-
-/*!
-* @brief   starts communications with device (overloaded)
-* @details When called with a single 8-bit parameter is assumed that hardware SPI is to be used
-* @param[in] chipSelect Arduino Pin number for the Slave-Select pin
-* return "true" if successful otherwise false
-*/
-
 bool BME680_Class::commonInitialization() 
 {
+  /*!
+  * @brief   Common BME680 initialization function
+  * @details Called from all of the overloaded "begin()" functions once protocol has been selected
+  * return "true" if successful otherwise false
+  */
+  if (_I2CAddress==0 && readByte(BME680_SPI_REGISTER)!=0) 
+  {
+    putData(BME680_SPI_REGISTER,(uint8_t)0); // We are in the wrong mode for SPI so return to correct SPI page
+  } // of if-then we are in SPI mode
   if (readByte(BME680_CHIPID_REGISTER)==BME680_CHIPID) // check for correct chip id
   {
-    getCalibration();                                       // get the calibration value
+    getCalibration();                                       // get the calibration values
+    if (_I2CAddress==0) 
+    {
+      putData(BME680_SPI_REGISTER|0x80,(uint8_t)B00010000); // Switch to correct register bank
+    } // of if-then SPI mode
     return true;
   } // of if-then device is really a BME680
   else return false;
 } // of method commonInitialization
-
-/*!
-* @brief   Read a single byte from the give address
-* @details interlude function to the "getData()" function
-* param[in] addr Address of device
-* return    single byte read
-*/
 uint8_t BME680_Class::readByte(const uint8_t addr) 
 {
+  /*!
+  * @brief   Read a single byte from the give address
+  * @details interlude function to the "getData()" function
+  * param[in] addr Address of device
+  * return    single byte read
+  */
   uint8_t returnValue;       // Storage for returned value
   getData(addr,returnValue); // Read just one byte
   return (returnValue);      // Return byte just read
 } // of method readByte()
-
-/*!
-* @brief   Performs a device reset
-*/
 void BME680_Class::reset()
 {
-  putData(BME680_SOFTRESET_REGISTER,BME680_RESET_CODE); // write reset code to device
-  begin();                             // Start device again if I2C
-} // of method reset()
-
   /*!
-* @brief   reads the calibration register data into local variables for use in converting readings
-* @details The calibration registers are read into a temporary array and then parsed into the appropriate calibration
-*          variables, this was taken from the example BOSCH software and minimizes register reads, but makes it 
-*          rather difficult to read. This will be redone for legibility at some point in the future
-* param[in] addr Address of device
-* return    single byte read
-*/
+  * @brief   Performs a device reset
+  */
+  putData(BME680_SOFTRESET_REGISTER,BME680_RESET_CODE); // write reset code to device
+  if (_I2CAddress) begin();                             // Start device again if I2C
+} // of method reset()
 void BME680_Class::getCalibration()
 {
+  /*!
+  * @brief    reads the calibration register data into local variables for use in converting readings
+  * @details  The calibration registers are read into a temporary array and then parsed into the appropriate 
+  *           calibration variables, this was taken from the example BOSCH software and minimizes register reads, 
+  *           but makes it rather difficult to read. This will be redone for legibility at some point in the future
+  * param[in] addr Address of device
+  * return    single byte read
+  */
   const uint8_t BME680_COEFF_SIZE1              =    25; // First array with coefficients
   const uint8_t BME680_COEFF_SIZE2              =    16; // Second array with coefficients
   const uint8_t BME680_COEFF_START_ADDRESS1     =  0x89; // start address for array 1
@@ -195,37 +198,36 @@ void BME680_Class::getCalibration()
   getData(BME680_ADDR_RANGE_SW_ERR_ADDR,temp_var);
   _range_sw_error = ((int8_t) temp_var & (int8_t) BME680_RSERROR_MSK) / 16;
 } // of method getCalibration()
-
-/*!
-* @brief   sets the oversampling mode for the sensor
-* @details See enumerated "sensorTypes" for a list of values. Set to a valid oversampling rate as defined in the 
-*          enumerated type oversamplingTypes. If either value is out of range or another error occurs then the 
-*          return value is false.
-* param[in] sensor Enumerated sensor type
-* param[in] sampling Sampling rate
-* return "true" if successful otherwise false
-*/
 bool BME680_Class::setOversampling(const uint8_t sensor, const uint8_t sampling) 
 {
+  /*!
+  * @brief   sets the oversampling mode for the sensor
+  * @details See enumerated "sensorTypes" for a list of values. Set to a valid oversampling rate as defined in the 
+  *          enumerated type oversamplingTypes. If either value is out of range or another error occurs then the 
+  *          return value is false.
+  * param[in] sensor Enumerated sensor type
+  * param[in] sampling Sampling rate
+  * return "true" if successful otherwise false
+  */
   if (sensor>=UnknownSensor || sampling>=UnknownOversample) return(false); // return error if out of range
   uint8_t tempRegister;
   switch (sensor) 
   {
     case HumiditySensor :
     {
-      tempRegister = readByte(BME680_CONTROL_HUMIDITY_REGISTER) & 11111000;  // Get contents, mask bits 3-7
+      tempRegister = readByte(BME680_CONTROL_HUMIDITY_REGISTER) & B11111000;  // Get contents, mask bits 3-7
       putData(BME680_CONTROL_HUMIDITY_REGISTER,(uint8_t)(tempRegister|sampling));// Update humidity bits 0:2
       break;
     } // of HumiditySensor
     case PressureSensor : 
     {
-      tempRegister = readByte(BME680_CONTROL_MEASURE_REGISTER) & 11000111; // Get contents, mask unused bits
+      tempRegister = readByte(BME680_CONTROL_MEASURE_REGISTER) & B11100011; // Get contents, mask unused bits
       putData(BME680_CONTROL_MEASURE_REGISTER,(uint8_t)(tempRegister|(sampling<<2))); // Update pressure bits
       break;
     } // of PressureSensor
     case TemperatureSensor : 
     {
-      tempRegister = readByte(BME680_CONTROL_MEASURE_REGISTER) & 00011111; // Get contents, mask bits 0-4
+      tempRegister = readByte(BME680_CONTROL_MEASURE_REGISTER) & B00011111; // Get contents, mask bits 0-4
       putData(BME680_CONTROL_MEASURE_REGISTER,(uint8_t)(tempRegister|(sampling<<5)));// Update humidity bits 5:7
       break;
     } // of TemperatureSensor
@@ -233,52 +235,49 @@ bool BME680_Class::setOversampling(const uint8_t sensor, const uint8_t sampling)
   } // of switch the sensor type
   return(true);
 } // of method setOversampling()
-
-/*!
-* @brief   Set or return the current IIR filter setting
-* @details When called with no parameters returns the current IIR Filter setting, otherwise when called with one 
-*          parameter will set the IIR filter value and return the new setting
-* param[in] iirFilterSetting New setting
-* return   IIR Filter setting
-*/
 uint8_t BME680_Class::setIIRFilter(const uint8_t iirFilterSetting ) 
 {
+  /*!
+  * @brief   Set or return the current IIR filter setting
+  * @details When called with no parameters returns the current IIR Filter setting, otherwise when called with one 
+  *          parameter will set the IIR filter value and return the new setting
+  * param[in] iirFilterSetting New setting
+  * return   IIR Filter setting
+  */
   uint8_t returnValue = readByte(BME680_CONFIG_REGISTER);              // Get control register byte
-  if (iirFilterSetting==UINT8_MAX) return((returnValue>>2) & 00000111); // return the current setting
-  returnValue = returnValue&11100011;                                 // Get control reg, mask IIR bits
-  returnValue |= (iirFilterSetting&00000111)<<2;                      // use 3 bits of iirFilterSetting
+  if (iirFilterSetting==UINT8_MAX) return((returnValue>>2)&B00000111); // return the current setting
+  returnValue = returnValue&B11100011;                                 // Get control reg, mask IIR bits
+  returnValue |= (iirFilterSetting&B00000111)<<2;                      // use 3 bits of iirFilterSetting
   putData(BME680_CONFIG_REGISTER,returnValue);                         // Write new control register value
-  returnValue = (returnValue>>2)&00000111;                            // Extract IIR filter setting
+  returnValue = (returnValue>>2)&B00000111;                            // Extract IIR filter setting
   return(returnValue);                                                 // Return IIR Filter setting
 } // of method setIIRFilter()
-
-/*!
-* @brief   Returns the most recent temperature, humidity and pressure readings
-* param[out] temp  Temperature reading
-* param[out] hum   Humidity reading
-* param[out] press Pressure reading
-* param[out] gas   Gas reading
-* param[in] waitSwitch Optional switch that, when set to "true" will not return until reading is finished
-*/
 void BME680_Class::getSensorData(int32_t &temp, int32_t &hum, int32_t &press, int32_t &gas, const bool waitSwitch )
 {
+  /*!
+  * @brief   Returns the most recent temperature, humidity and pressure readings
+  * param[out] temp  Temperature reading
+  * param[out] hum   Humidity reading
+  * param[out] press Pressure reading
+  * param[out] gas   Gas reading
+  * param[in] waitSwitch Optional switch that, when set to "true" will not return until reading is finished
+  */
   readSensors(waitSwitch); // Get compensated data from BME680
   temp  = _Temperature;    // Copy global variables to parameters
-  hum   = _Humidity;
-  press = _Pressure;
-  gas   = _Gas;
+  hum   = _Humidity;       // Copy global variables to parameters
+  press = _Pressure;       // Copy global variables to parameters
+  gas   = _Gas;            // Copy global variables to parameters
 } // of method getSensorData()
-
-/*!
-* @brief   reads all 4 sensor values from the registers in one operation and then proceeds to convert the raw 
-*          temperature, pressure and humidity readings into standard metric units
-* @details The formula is written in the BME680's documentation but the math used below was taken from Adafruit's 
-*          Adafruit_BME680_Library at https://github.com/adafruit/Adafruit_BME680. I think it can be refactored 
-*          into more efficient code at some point in the future, but it does work correctly.
-* param[in] waitSwitch Optional switch that, when set to "true" will not return until reading is finished
-*/
 void BME680_Class::readSensors(const bool waitSwitch) 
 {
+  /*!
+  * @brief   reads all 4 sensor values from the registers in one operation and then proceeds to convert the raw 
+  *          temperature, pressure and humidity readings into standard metric units
+  * @details The formula is written in the BME680's documentation but the math used below was taken from Adafruit's 
+  *          Adafruit_BME680_Library at https://github.com/adafruit/Adafruit_BME680. I think it can be refactored 
+  *          into more efficient code at some point in the future, but it does work correctly.
+  * param[in] waitSwitch Optional switch that, when set to "true" will not return until reading is finished
+  */
   /*! Lookup table for the possible gas range values */
 const  uint32_t lookupTable1[16] = {
   UINT32_C(2147483647), UINT32_C(2147483647), UINT32_C(2147483647), UINT32_C(2147483647), UINT32_C(2147483647), 
@@ -326,7 +325,7 @@ const uint32_t lookupTable2[16]  = {
 	var1      = ((32768 + var1) * (int32_t)_P1) >> 15;
 	_Pressure = 1048576 - adc_pres;
 	_Pressure = (int32_t)((_Pressure - (var2 >> 12)) * ((uint32_t)3125));
-	var4      = (1 << 31);
+	var4      = ((int32_t)1 << 31);
 	if (_Pressure >= var4)
     _Pressure = ((_Pressure / (uint32_t)var1) << 1);
 	else
@@ -367,29 +366,27 @@ const uint32_t lookupTable2[16]  = {
   uint8_t workRegister = readByte(BME680_CONTROL_MEASURE_REGISTER);   // Read the control measure
   putData(BME680_CONTROL_MEASURE_REGISTER,(uint8_t)(workRegister|1)); // Trigger start of next measurement
 } // of method readSensors()
-
-/*!
-* @brief   Only returns once a measurement on the BME680 has completed
-*/
 void BME680_Class::waitForReadings() 
 {
-  while ((readByte(BME680_STATUS_REGISTER)&00100000)!=0); // Loop until readings bit is cleared by BME680
+  /*!
+  * @brief   Only returns once a measurement on the BME680 has completed
+  */
+  while ((readByte(BME680_STATUS_REGISTER)&B00100000)!=0); // Loop until readings bit is cleared by BME680
 } // of method waitForReadings
-
-/*!
-* @brief    sets the gas measurement target temperature and heating time
-* param[in] GasTemp  Target temperature in Celsius
-* param[in] GasMillis Milliseconds to turn on heater
-* return Always returns "true"
-*/
 bool BME680_Class::setGas(uint16_t GasTemp,  uint16_t GasMillis) 
 {
+  /*!
+  * @brief    sets the gas measurement target temperature and heating time
+  * param[in] GasTemp  Target temperature in Celsius
+  * param[in] GasMillis Milliseconds to turn on heater
+  * return Always returns "true"
+  */
   uint8_t gasRegister = readByte(BME680_CONTROL_GAS_REGISTER2); // Read current register values
   if ( GasTemp==0 || GasMillis==0 ) 
   {
     // If either input variable is zero //
-    putData(BME680_CONTROL_GAS_REGISTER1,(uint8_t)00001000);               // Turn off gas heater
-    putData(BME680_CONTROL_GAS_REGISTER2,(uint8_t)(gasRegister&11101111)); // Turn off gas measurements
+    putData(BME680_CONTROL_GAS_REGISTER1,(uint8_t)B00001000);               // Turn off gas heater
+    putData(BME680_CONTROL_GAS_REGISTER2,(uint8_t)(gasRegister&B11101111)); // Turn off gas measurements
   }
   else 
   {
@@ -419,7 +416,7 @@ bool BME680_Class::setGas(uint16_t GasTemp,  uint16_t GasMillis)
   	} // of if-then-else duration exceeds max
     putData(BME680_CONTROL_GAS_REGISTER1,(uint8_t)0); // then turn off gas heater
     putData(BME680_GAS_DURATION_REGISTER0,durval);
-    putData(BME680_CONTROL_GAS_REGISTER2,(uint8_t)(gasRegister|00010000));
+    putData(BME680_CONTROL_GAS_REGISTER2,(uint8_t)(gasRegister|B00010000));
   } // of if-then-else turn gas measurements on or off
   return true;
 } // of method setGas()
