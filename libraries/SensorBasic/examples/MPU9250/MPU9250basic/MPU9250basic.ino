@@ -10,11 +10,11 @@
  *  2. Data can be exchanged via the Integrated Circuit Bus (IIC) interface 
  * and the microcontroller with a transfer rate of up to 400 kHz / s.
  *
- *  3. The accelerometer's measurement range is up to ¡À16g (g is gravitational
+ *  3. The accelerometer's measurement range is up to ï¿½ï¿½16g (g is gravitational
  * acceleration), and the static measurement accuracy is high.
  *
  *  4. The magnetometer uses a high-intensity Hall-type sensor for data acquisition. 
- * The magnetic induction measurement range is ¡À4800¦ÌT, which can be used for auxiliary
+ * The magnetic induction measurement range is ï¿½ï¿½4800ï¿½ï¿½T, which can be used for auxiliary
  * measurement of yaw angle.
  *
  *  5.The MPU9250's built-in digital motion processor (DMP: Hardware Motion Processor)
@@ -100,6 +100,11 @@ void loop() {
   } else {
     Serial.println("Cannot read mag values");
   }
+
+  mySensor.computeEulerAngles();
+  Serial.println("pitch: " + String(mySensor.pitch()));
+  Serial.println("roll: " + String(mySensor.roll()));
+  Serial.println("yaw: " + String(mySensor.yaw()));
 
   Serial.println("at " + String(millis()) + "ms");
   Serial.println(""); // Add an empty line
