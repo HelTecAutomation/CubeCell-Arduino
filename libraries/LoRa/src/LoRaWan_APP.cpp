@@ -244,10 +244,14 @@ void turnOffRGB(void)
 /*  get the BatteryVoltage in mV. */
 uint16_t getBatteryVoltage(void)
 {
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
 	pinMode(VBAT_ADC_CTL,OUTPUT);
 	digitalWrite(VBAT_ADC_CTL,LOW);
 	uint16_t volt=analogRead(ADC)*2;
 	digitalWrite(VBAT_ADC_CTL,HIGH);
+#else
+	uint16_t volt=analogRead(ADC)*2;
+#endif
 	return volt;
 }
 

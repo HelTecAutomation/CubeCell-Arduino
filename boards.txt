@@ -9,7 +9,7 @@ menu.LORAWAN_RGB=LORAWAN_RGB
 menu.LORAWAN_DebugLevel=LoRaWan Debug Level
 ##############################################################
 
-CubeCell-Board.name=CubeCell-Board
+CubeCell-Board.name=CubeCell-Board（HTCC-AB01）
 
 CubeCell-Board.upload.tool=CubeCellflash
 CubeCell-Board.upload.maximum_size=131072
@@ -86,7 +86,7 @@ CubeCell-Board.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-Board.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-Capsule.name=CubeCell-Capsule
+CubeCell-Capsule.name=CubeCell-Capsule（HTCC-AC0X）
 
 CubeCell-Capsule.upload.tool=CubeCellflash
 CubeCell-Capsule.upload.maximum_size=131072
@@ -164,7 +164,7 @@ CubeCell-Capsule.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-Capsule.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-Module.name=CubeCell-Module
+CubeCell-Module.name=CubeCell-Module（HTCC-AM01）
 
 CubeCell-Module.upload.tool=CubeCellflash
 CubeCell-Module.upload.maximum_size=131072
@@ -240,7 +240,7 @@ CubeCell-Module.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 
 ###############################
 
-CubeCell-BoardPlus.name=CubeCell-BoardPlus
+CubeCell-BoardPlus.name=CubeCell-Board Plus（HTCC-AB02）
 
 CubeCell-BoardPlus.upload.tool=CubeCellflash
 CubeCell-BoardPlus.upload.maximum_size=131072
@@ -317,7 +317,7 @@ CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-GPS.name=CubeCell-GPS
+CubeCell-GPS.name=CubeCell-GPS（HTCC-AB02S）
 
 CubeCell-GPS.upload.tool=CubeCellflash
 CubeCell-GPS.upload.maximum_size=131072
@@ -395,7 +395,7 @@ CubeCell-GPS.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-GPS.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-ModulePlus.name=CubeCell-ModulePlus
+CubeCell-ModulePlus.name=CubeCell-Module Plus（HTCC-AM02）
 
 CubeCell-ModulePlus.upload.tool=CubeCellflash
 CubeCell-ModulePlus.upload.maximum_size=131072
@@ -468,3 +468,77 @@ CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1=Freq
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
+###############################
+CubeCell-1/2AA.name=CubeCell-1/2AA Node（HTCC-AB02A）
+
+CubeCell-1/2AA.upload.tool=CubeCellflash
+CubeCell-1/2AA.upload.maximum_size=131072
+CubeCell-1/2AA.upload.maximum_data_size=131072
+CubeCell-1/2AA.upload.wait_for_upload_port=true
+
+CubeCell-1/2AA.build.board=CubeCell_HalfAA
+CubeCell-1/2AA.build.core=asr650x
+CubeCell-1/2AA.build.variant=CubeCell-HalfAA
+
+CubeCell-1/2AA.menu.LORAWAN_REGION.923AS=REGION_AS923
+CubeCell-1/2AA.menu.LORAWAN_REGION.923AS.build.band=REGION_AS923
+CubeCell-1/2AA.menu.LORAWAN_REGION.915AU=REGION_AU915
+CubeCell-1/2AA.menu.LORAWAN_REGION.915AU.build.band=REGION_AU915
+CubeCell-1/2AA.menu.LORAWAN_REGION.470CN=REGION_CN470
+CubeCell-1/2AA.menu.LORAWAN_REGION.470CN.build.band=REGION_CN470
+CubeCell-1/2AA.menu.LORAWAN_REGION.779CN=REGION_CN779
+CubeCell-1/2AA.menu.LORAWAN_REGION.779CN.build.band=REGION_CN779
+CubeCell-1/2AA.menu.LORAWAN_REGION.433EU=REGION_EU433
+CubeCell-1/2AA.menu.LORAWAN_REGION.433EU.build.band=REGION_EU433
+CubeCell-1/2AA.menu.LORAWAN_REGION.868EU=REGION_EU868
+CubeCell-1/2AA.menu.LORAWAN_REGION.868EU.build.band=REGION_EU868
+CubeCell-1/2AA.menu.LORAWAN_REGION.920KR=REGION_KR920
+CubeCell-1/2AA.menu.LORAWAN_REGION.920KR.build.band=REGION_KR920
+CubeCell-1/2AA.menu.LORAWAN_REGION.865IN=REGION_IN865
+CubeCell-1/2AA.menu.LORAWAN_REGION.865IN.build.band=REGION_IN865
+CubeCell-1/2AA.menu.LORAWAN_REGION.915US=REGION_US915
+CubeCell-1/2AA.menu.LORAWAN_REGION.915US.build.band=REGION_US915
+CubeCell-1/2AA.menu.LORAWAN_REGION.915_HYBRID=REGION_US915_HYBRID
+CubeCell-1/2AA.menu.LORAWAN_REGION.915_HYBRID.build.band=REGION_US915_HYBRID
+
+CubeCell-1/2AA.menu.LORAWAN_CLASS.0=CLASS_A
+CubeCell-1/2AA.menu.LORAWAN_CLASS.0.build.LORAWAN_CLASS=CLASS_A
+##CubeCell-GPS.menu.LORAWAN_CLASS.1=CLASS_B
+##CubeCell-GPS.menu.LORAWAN_CLASS.1.build.LORAWAN_CLASS=CLASS_B
+CubeCell-1/2AA.menu.LORAWAN_CLASS.2=CLASS_C
+CubeCell-1/2AA.menu.LORAWAN_CLASS.2.build.LORAWAN_CLASS=CLASS_C
+
+CubeCell-1/2AA.menu.LORAWAN_NETMODE.0=OTAA
+CubeCell-1/2AA.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
+CubeCell-1/2AA.menu.LORAWAN_NETMODE.1=ABP
+CubeCell-1/2AA.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+
+CubeCell-1/2AA.menu.LORAWAN_ADR.0=ON
+CubeCell-1/2AA.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
+CubeCell-1/2AA.menu.LORAWAN_ADR.1=OFF
+CubeCell-1/2AA.menu.LORAWAN_ADR.1.build.LORAWAN_ADR=false
+
+CubeCell-1/2AA.menu.LORAWAN_UPLINKMODE.0=CONFIRMED
+CubeCell-1/2AA.menu.LORAWAN_UPLINKMODE.0.build.LORAWAN_UPLINKMODE=true
+CubeCell-1/2AA.menu.LORAWAN_UPLINKMODE.1=UNCONFIRMED
+CubeCell-1/2AA.menu.LORAWAN_UPLINKMODE.1.build.LORAWAN_UPLINKMODE=false
+
+CubeCell-1/2AA.menu.LORAWAN_Net_Reserve.0=OFF
+CubeCell-1/2AA.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
+CubeCell-1/2AA.menu.LORAWAN_Net_Reserve.1=ON
+CubeCell-1/2AA.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
+
+CubeCell-1/2AA.menu.LORAWAN_AT_SUPPORT.0=ON
+CubeCell-1/2AA.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
+CubeCell-1/2AA.menu.LORAWAN_AT_SUPPORT.1=OFF
+CubeCell-1/2AA.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+
+CubeCell-1/2AA.menu.LORAWAN_RGB.0=DEACTIVE
+CubeCell-1/2AA.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.0=None
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.1=Freq
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.2=Freq && DIO
+CubeCell-1/2AA.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2

@@ -463,11 +463,12 @@ void boardInitMcu( void )
     SpiInit();
     Asr_Timer_Init();
     RtcInit();
-
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
     pinMode(Vext,OUTPUT);
     digitalWrite(Vext,HIGH);
     pinMode(VBAT_ADC_CTL,OUTPUT);
     digitalWrite(VBAT_ADC_CTL,HIGH);
+#endif
     SX126xIoInit();
     delay(10);
     SX126xReset();
