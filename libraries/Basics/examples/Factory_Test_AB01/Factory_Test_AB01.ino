@@ -56,7 +56,7 @@ typedef enum
 int16_t txNumber;
 States_t state;
 bool sleepMode = false;
-int16_t rssi,rxSize;
+int16_t Rssi,rxSize;
 
 
 
@@ -71,7 +71,7 @@ void setup() {
     
     testRGB();
     txNumber=0;
-    rssi=0;
+    Rssi=0;
 
     pinMode(P3_3,INPUT);
     attachInterrupt(P3_3,sleep,FALLING);
@@ -106,7 +106,7 @@ void loop()
 		    sprintf(txpacket,"%s","hello");
 		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
-		    sprintf(txpacket+strlen(txpacket),"%d",rssi);
+		    sprintf(txpacket+strlen(txpacket),"%d",Rssi);
 		    turnOnRGB(0x100000,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
@@ -160,7 +160,7 @@ void OnTxTimeout( void )
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	gpioOn();
-    rssi=rssi;
+    Rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
@@ -168,7 +168,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
     turnOnRGB(0,0);
     Radio.Sleep( );
 
-    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
+    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,Rssi,rxSize);
     Serial.println("wait to send next packet");
     displayInof();
 
@@ -181,7 +181,7 @@ void displayInof()
     display.drawString(0, 50, "Packet " + String(txNumber,DEC) + " sent done");
     display.drawString(0, 0,  "Received Size" + String(rxSize,DEC) + " packages:");
     display.drawString(0, 15, rxpacket);
-    display.drawString(0, 30, "With rssi " + String(rssi,DEC));
+    display.drawString(0, 30, "With rssi " + String(Rssi,DEC));
     display.display();
 }
 

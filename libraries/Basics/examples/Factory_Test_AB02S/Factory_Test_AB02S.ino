@@ -2,6 +2,7 @@
 #include "Arduino.h"
 #include "cubecell_SSD1306Wire.h"
 #include "Wire.h"
+#include "GPS_Air530.h"
 /*
  * set LoraWan_RGB to 1,the RGB active
  * RGB red means sending;
@@ -11,7 +12,7 @@
 #define LoraWan_RGB 0
 #endif
 
-SSD1306Wire display(0x3c, SDA, SCL);
+extern SSD1306Wire  display; 
 
 #define RF_FREQUENCY                                868000000 // Hz
 
@@ -44,12 +45,14 @@ void OnTxTimeout( void );
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
+void testRGB(void);
 
 typedef enum
 {
     LOWPOWER,
     RX,
-    TX
+    TX,
+    GPSTEST
 }States_t;
 
 int16_t txNumber;
@@ -62,17 +65,18 @@ int16_t Rssi,rxSize;
 void setup() {
     boardInitMcu( );
     Serial.begin(115200);
-    pinMode(ADC, OUTPUT);
-    digitalWrite(ADC, HIGH); 
+    pinMode(Vext, OUTPUT);
+    digitalWrite(Vext, LOW); 
     delay(100);
     display.init();
     //display.flipScreenVertically();
     
+    testRGB();
     txNumber=0;
     Rssi=0;
 
-    pinMode(GPIO7,INPUT);
-    attachInterrupt(GPIO7,sleep,FALLING);
+    pinMode(P3_3,INPUT);
+    attachInterrupt(P3_3,userKey,FALLING);
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.TxTimeout = OnTxTimeout;
     RadioEvents.RxDone = OnRxDone;
@@ -105,6 +109,7 @@ void loop()
 		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
 		    sprintf(txpacket+strlen(txpacket),"%d",Rssi);
+		    turnOnRGB(0x100000,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
@@ -119,22 +124,21 @@ void loop()
 		case LOWPOWER:
 			if(sleepMode)
 			{
+        Air530.end();
 				Radio.Sleep( );
-				Wire.end();
-				Serial.end();
+				display.stop();
 				detachInterrupt(RADIO_DIO_1);
-			    pinMode(GPIO0,ANALOG);
-			    pinMode(GPIO1,ANALOG);
-			    pinMode(GPIO2,ANALOG);
-			    pinMode(GPIO3,ANALOG);
-				pinMode(GPIO4,ANALOG);         
-			    pinMode(GPIO5,ANALOG);
+				turnOffRGB();
+			    pinMode(Vext,ANALOG);
 			    pinMode(ADC,ANALOG);
 			}
 			lowPowerHandler();
-		    break;
-        default:
-            break;
+		  break;
+    case GPSTEST:
+      showGpsInfo();
+      break;
+    default:
+      break;
 	}
     Radio.IrqProcess( );
 }
@@ -143,6 +147,7 @@ void OnTxDone( void )
 {
 	Serial.print("TX done......");
   displayInof();
+	turnOnRGB(0,0);
 	state=RX;
 }
 
@@ -154,11 +159,12 @@ void OnTxTimeout( void )
 }
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-	  gpioOn();
     Rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
+    turnOnRGB(0x001000,100);
+    turnOnRGB(0,0);
     Radio.Sleep( );
 
     Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,Rssi,rxSize);
@@ -179,27 +185,104 @@ void displayInof()
 }
 
 
-void sleep(void)
+void userKey(void)
 {
 	delay(10);
 	if(digitalRead(P3_3)==0)
 	{
-		sleepMode = true;
+    uint16_t keyDownTime = 0;
+    while(digitalRead(P3_3)==0)
+    {
+      delay(1);
+      keyDownTime++;
+      if(keyDownTime>=1500)
+        break;
+    }
+    if(keyDownTime<1500)
+    {
+      state = LOWPOWER;
+      sleepMode = true;
+    }
+    else
+    {
+      state = GPSTEST;
+      Air530.begin();
+    }
 	}
 }
 
-void gpioOn(void)
+void testRGB(void)
 {
-    pinMode(GPIO0,OUTPUT);
-    pinMode(GPIO1,OUTPUT);
-    pinMode(GPIO2,OUTPUT);
-    pinMode(GPIO3,OUTPUT);
-    pinMode(GPIO4,OUTPUT);
-    pinMode(GPIO5,OUTPUT);
-    digitalWrite(GPIO0,HIGH);
-    digitalWrite(GPIO1,HIGH);
-    digitalWrite(GPIO2,HIGH);
-    digitalWrite(GPIO3,HIGH); 
-    digitalWrite(GPIO4,HIGH); 
-    digitalWrite(GPIO5,HIGH);
+	display.drawString(0, 20, "RGB Testing");
+	display.display();
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i<<16,10);
+	}
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i<<8,10);
+	}
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i,10);
+	}
+	turnOnRGB(0,0);
+}
+
+void showGpsInfo()
+{  uint32_t starttime = millis();
+  while( (millis()-starttime) < 1000 )
+  {
+    while (Air530.available() > 0)
+    {
+      Air530.encode(Air530.read());
+    }
+  }
+  
+  char str[30];
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+  int index = sprintf(str,"%02d-%02d-%02d",Air530.date.year(),Air530.date.day(),Air530.date.month());
+  str[index] = 0;
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.drawString(0, 0, str);
+  
+  index = sprintf(str,"%02d:%02d:%02d",Air530.time.hour(),Air530.time.minute(),Air530.time.second(),Air530.time.centisecond());
+  str[index] = 0;
+  display.drawString(60, 0, str);
+
+  if( Air530.location.age() < 1000 )
+  {
+    display.drawString(120, 0, "A");
+  }
+  else
+  {
+    display.drawString(120, 0, "V");
+  }
+  
+  index = sprintf(str,"alt: %d.%d",(int)Air530.altitude.meters(),fracPart(Air530.altitude.meters(),2));
+  str[index] = 0;
+  display.drawString(0, 16, str);
+   
+  index = sprintf(str,"hdop: %d.%d",(int)Air530.hdop.hdop(),fracPart(Air530.hdop.hdop(),2));
+  str[index] = 0;
+  display.drawString(0, 32, str); 
+ 
+  index = sprintf(str,"lat :  %d.%d",(int)Air530.location.lat(),fracPart(Air530.location.lat(),4));
+  str[index] = 0;
+  display.drawString(60, 16, str);   
+  
+  index = sprintf(str,"lon:%d.%d",(int)Air530.location.lng(),fracPart(Air530.location.lng(),4));
+  str[index] = 0;
+  display.drawString(60, 32, str);
+
+  index = sprintf(str,"speed: %d.%d km/h",(int)Air530.speed.kmph(),fracPart(Air530.speed.kmph(),3));
+  str[index] = 0;
+  display.drawString(0, 48, str);
+  display.display();
+}
+int fracPart(double val, int n)
+{
+  return (int)((val - (int)(val))*pow(10,n));
 }

@@ -1,7 +1,8 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
-#include "cubecell_SSD1306Wire.h"
+#include "cubecell_SH1107Wire.h"
 #include "Wire.h"
+
 /*
  * set LoraWan_RGB to 1,the RGB active
  * RGB red means sending;
@@ -11,7 +12,7 @@
 #define LoraWan_RGB 0
 #endif
 
-SSD1306Wire display(0x3c, SDA, SCL);
+extern SH1107Wire  display; 
 
 #define RF_FREQUENCY                                868000000 // Hz
 
@@ -44,6 +45,7 @@ void OnTxTimeout( void );
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
+void testRGB(void);
 
 typedef enum
 {
@@ -62,17 +64,18 @@ int16_t Rssi,rxSize;
 void setup() {
     boardInitMcu( );
     Serial.begin(115200);
-    pinMode(ADC, OUTPUT);
-    digitalWrite(ADC, HIGH); 
+    pinMode(Vext, OUTPUT);
+    digitalWrite(Vext, LOW); 
     delay(100);
     display.init();
     //display.flipScreenVertically();
     
+    testRGB();
     txNumber=0;
     Rssi=0;
 
-    pinMode(GPIO7,INPUT);
-    attachInterrupt(GPIO7,sleep,FALLING);
+    pinMode(P3_3,INPUT);
+    attachInterrupt(P3_3,userKey,FALLING);
     RadioEvents.TxDone = OnTxDone;
     RadioEvents.TxTimeout = OnTxTimeout;
     RadioEvents.RxDone = OnRxDone;
@@ -105,6 +108,7 @@ void loop()
 		    sprintf(txpacket+strlen(txpacket),"%d",txNumber);
 		    sprintf(txpacket+strlen(txpacket),"%s"," rssi : ");
 		    sprintf(txpacket+strlen(txpacket),"%d",Rssi);
+		    turnOnRGB(0x100000,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
 
@@ -120,21 +124,16 @@ void loop()
 			if(sleepMode)
 			{
 				Radio.Sleep( );
-				Wire.end();
-				Serial.end();
+				display.stop();
 				detachInterrupt(RADIO_DIO_1);
-			    pinMode(GPIO0,ANALOG);
-			    pinMode(GPIO1,ANALOG);
-			    pinMode(GPIO2,ANALOG);
-			    pinMode(GPIO3,ANALOG);
-				pinMode(GPIO4,ANALOG);         
-			    pinMode(GPIO5,ANALOG);
+				turnOffRGB();
+			    pinMode(Vext,ANALOG);
 			    pinMode(ADC,ANALOG);
 			}
 			lowPowerHandler();
-		    break;
-        default:
-            break;
+		  break;
+    default:
+      break;
 	}
     Radio.IrqProcess( );
 }
@@ -143,6 +142,7 @@ void OnTxDone( void )
 {
 	Serial.print("TX done......");
   displayInof();
+	turnOnRGB(0,0);
 	state=RX;
 }
 
@@ -154,11 +154,12 @@ void OnTxTimeout( void )
 }
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-	  gpioOn();
     Rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
+    turnOnRGB(0x001000,100);
+    turnOnRGB(0,0);
     Radio.Sleep( );
 
     Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,Rssi,rxSize);
@@ -179,27 +180,30 @@ void displayInof()
 }
 
 
-void sleep(void)
+void userKey(void)
 {
 	delay(10);
 	if(digitalRead(P3_3)==0)
 	{
-		sleepMode = true;
+    sleepMode = true;
 	}
 }
 
-void gpioOn(void)
+void testRGB(void)
 {
-    pinMode(GPIO0,OUTPUT);
-    pinMode(GPIO1,OUTPUT);
-    pinMode(GPIO2,OUTPUT);
-    pinMode(GPIO3,OUTPUT);
-    pinMode(GPIO4,OUTPUT);
-    pinMode(GPIO5,OUTPUT);
-    digitalWrite(GPIO0,HIGH);
-    digitalWrite(GPIO1,HIGH);
-    digitalWrite(GPIO2,HIGH);
-    digitalWrite(GPIO3,HIGH); 
-    digitalWrite(GPIO4,HIGH); 
-    digitalWrite(GPIO5,HIGH);
+	display.drawString(0, 20, "RGB Testing");
+	display.display();
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i<<16,10);
+	}
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i<<8,10);
+	}
+	for(uint32_t i=0;i<=30;i++)
+	{
+		turnOnRGB(i,10);
+	}
+	turnOnRGB(0,0);
 }
