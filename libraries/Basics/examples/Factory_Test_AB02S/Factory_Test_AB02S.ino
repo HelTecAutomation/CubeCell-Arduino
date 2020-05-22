@@ -60,8 +60,6 @@ States_t state;
 bool sleepMode = false;
 int16_t Rssi,rxSize;
 
-
-
 void setup() {
     boardInitMcu( );
     Serial.begin(115200);
@@ -195,10 +193,10 @@ void userKey(void)
     {
       delay(1);
       keyDownTime++;
-      if(keyDownTime>=1500)
+      if(keyDownTime>=700)
         break;
     }
-    if(keyDownTime<1500)
+    if(keyDownTime<700)
     {
       state = LOWPOWER;
       sleepMode = true;
@@ -206,6 +204,10 @@ void userKey(void)
     else
     {
       state = GPSTEST;
+      detachInterrupt(RADIO_DIO_1);
+      Radio.Sleep( );
+      turnOnRGB(0,0);
+      showGpsInfo();
       Air530.begin();
     }
 	}
