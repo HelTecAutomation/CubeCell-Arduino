@@ -79,7 +79,7 @@
 /*!
  * Default datarate used by the node
  */
-#define KR920_DEFAULT_DATARATE                      DR_0
+#define KR920_DEFAULT_DATARATE                      DR_5
 
 /*!
  * Minimal Rx1 receive datarate offset
@@ -256,6 +256,14 @@
  * Channel = { Frequency [Hz], RX1 Frequency [Hz], { ( ( DrMax << 4 ) | DrMin ) }, Band }
  */
 #define KR920_LC3                                   { 922500000, 0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+
+
+#define KR920_LC4                { 921100000,0, { ( ( DR_5 << 4 ) | KR920_TX_MIN_DATARATE ) }, 0 }
+#define KR920_LC5                { 921300000,0, { ( ( DR_5 << 4 ) | KR920_TX_MIN_DATARATE ) }, 0 }
+#define KR920_LC6                { 921500000,0, { ( ( DR_5 << 4 ) | KR920_TX_MIN_DATARATE ) }, 0 }
+#define KR920_LC7                { 921700000,0, { ( ( DR_5 << 4 ) | KR920_TX_MIN_DATARATE ) }, 0 }
+#define KR920_LC8                { 921900000,0, { ( ( DR_5 << 4 ) | KR920_TX_MIN_DATARATE ) }, 0 }
+
 
 /*!
  * LoRaMac channels which are allowed for the join procedure

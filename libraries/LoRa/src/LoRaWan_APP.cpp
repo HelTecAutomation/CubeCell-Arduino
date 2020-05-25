@@ -12,6 +12,10 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #include "RegionEU433.h"
 #endif
 
+#if REGION_KR920
+#include "RegionKR920.h"
+#endif
+
 #ifdef CubeCell_BoardPlus
 #include <Wire.h>  
 #include "cubecell_SH1107Wire.h"
@@ -426,6 +430,14 @@ void lwan_dev_params_update( void )
 		LoRaMacChannelAdd( 5, ( ChannelParams_t )EU433_LC6 );
 		LoRaMacChannelAdd( 6, ( ChannelParams_t )EU433_LC7 );
 		LoRaMacChannelAdd( 7, ( ChannelParams_t )EU433_LC8 );
+#endif
+
+#ifdef REGION_KR920
+		LoRaMacChannelAdd( 3, ( ChannelParams_t )KR920_LC4 );
+		LoRaMacChannelAdd( 4, ( ChannelParams_t )KR920_LC5 );
+		LoRaMacChannelAdd( 5, ( ChannelParams_t )KR920_LC6 );
+		LoRaMacChannelAdd( 6, ( ChannelParams_t )KR920_LC7 );
+		LoRaMacChannelAdd( 7, ( ChannelParams_t )KR920_LC8 );
 #endif
 
 	MibRequestConfirm_t mibReq;
