@@ -48,5 +48,6 @@ typedef enum
 #define GPIO12 P0_3
 #define GPIO13 P0_6
 #define GPIO14 P0_7
-
+#define GPIO15 P3_2
+#define GPIO16 P3_3
 #endif /* Pins_Arduino_h */
