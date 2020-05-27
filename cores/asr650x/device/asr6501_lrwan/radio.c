@@ -573,7 +573,7 @@ bool RadioIsChannelFree( RadioModems_t modem, uint32_t freq, int16_t rssiThresh,
     {
         rssi = RadioRssi( modem );
 
-        if( rssi > rssiThresh )
+        if( rssi > rssiThresh &&  rssi != 0)
         {
             status = false;
             break;

@@ -127,14 +127,16 @@ static bool VerifyTxFreq( uint32_t freq )
 
     // Verify if the frequency is valid. The frequency must be in a specified
     // range and can be set to specific values.
-    if( ( tmpFreq >= 920900000 ) && ( tmpFreq <=923300000 ) )
+    //if( ( tmpFreq >= 920900000 ) && ( tmpFreq <=923300000 ) )
+    if( ( tmpFreq >= 920000000 ) && ( tmpFreq <=924000000 ) )
     {
+    	return true;
         // Range ok, check for specific value
-        tmpFreq -= 920900000;
-        if( ( tmpFreq % 200000 ) == 0 )
-        {
-            return true;
-        }
+        //tmpFreq -= 920900000;
+        //if( ( tmpFreq % 200000 ) == 0 )
+        //{
+        //    return true;
+        //}
     }
     return false;
 }

@@ -152,7 +152,7 @@ void loop()
 	    case LORA_INIT:
 	    {
 	      getDevParam();
-	      LoRa.init(Lora_FREQ, Lora_TXPW, Lora_SF);
+	      LoRa.init();
 	      deviceState_lora = MCU_SLEEP;
 	      break;
 	    }

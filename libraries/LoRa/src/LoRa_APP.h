@@ -25,10 +25,15 @@ extern uint32_t Lora_SF;
 extern uint32_t Lora_FREQ; 
 extern uint32_t LoraRxTimeout;
 extern bool PrintMode;
+extern uint32_t Lora_BW;
+extern uint32_t Lora_coderate; 
+extern uint16_t lora_preamblelth;
+extern bool lora_iqInvert;
+extern bool lora_crc;
 
 class LoRaClass{
 public:
-  void init(uint32_t freq, uint8_t power,uint32_t datarate);
+  void init();
   void send();
   void receive();
   void lowpower();

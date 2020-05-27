@@ -14,6 +14,18 @@ uint32_t Lora_SF = 7;
 //LORA FREQUENCY
 uint32_t Lora_FREQ = 470000000; 
 
+//bandwidth:[0:125KHz;1:250KHz;2:500KHz]
+uint32_t Lora_BW = 0;
+
+//coderate:[1:4/5; 2:4/6; 3:4/7; 4:4/8]
+uint32_t Lora_coderate = 1; 
+
+uint16_t lora_preamblelth = 8;
+
+bool lora_iqInvert = false;
+
+bool lora_crc = true;
+
 /*  receive date print mode
  *  true: hex
  *  false: string;
@@ -38,8 +50,10 @@ static void OnLoraTxDone( void )
 static void OnLoraTxTimeout( void )
 {
 	Radio.Sleep();
-	Serial.println("TX Timeout");
+	Serial.println("TX timeout");
 }
+
+
 static void OnLoraRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	Radio.Sleep( );
@@ -65,17 +79,24 @@ static void OnLoraRxTimeout( void )
 	Serial.println("RX Timeout");
 }
 
+static void OnLoraRxError( void )
+{
+	Radio.Sleep();
+	Serial.println("Rx error");
+}
 
-void LoRaClass::init(uint32_t freq, uint8_t power,uint32_t datarate)
+void LoRaClass::init()
 {
 	LoraEvents.TxDone = OnLoraTxDone;
 	LoraEvents.TxTimeout = OnLoraTxTimeout;
 	LoraEvents.RxDone = OnLoraRxDone;
 	LoraEvents.RxTimeout = OnLoraRxTimeout;
+	LoraEvents.RxError = OnLoraRxError;
 	Radio.Init( &LoraEvents );
-	Radio.SetChannel( freq );
-	Radio.SetTxConfig( MODEM_LORA, (int8_t)power, 0, 0,datarate, 1,8, false,true, 0, 0, false, 3000 );
-	Radio.SetRxConfig( MODEM_LORA, 0, datarate,1, 0, 8,0, false,0, true, 0, 0, false, true );
+	Radio.SetChannel( Lora_FREQ );
+	Radio.SetTxConfig( MODEM_LORA, (int8_t)Lora_TXPW, 0, Lora_BW,Lora_SF, Lora_coderate,lora_preamblelth, false,lora_crc, 0, 0, lora_iqInvert, 5000 );
+	Radio.SetRxConfig( MODEM_LORA, Lora_BW, Lora_SF,Lora_coderate, 0, lora_preamblelth,0, false,0, lora_crc, 0, 0, lora_iqInvert, true );
+	Radio.Sleep();
 }
 
 void LoRaClass::send()
