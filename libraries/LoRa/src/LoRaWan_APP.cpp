@@ -453,7 +453,15 @@ void lwan_dev_params_update( void )
 
 uint8_t BoardGetBatteryLevel()
 {
-	int8 batlevel = ((getBatteryVoltage()-3.7)/(4.2-3.7))*100;
+	// 5.5 End-Device Status (DevStatusReq, DevStatusAns)
+	// 0      The end-device is connected to an external power source.
+	// 1..254 The battery level, 1 being at minimum and 254 being at maximum
+	// 255    The end-device was not able to measure the battery level.
+	const double maxBattery = 4.212;
+	const double minBattery = 3.7;
+	const double batVoltage = fmax(minBattery, fmin(maxBattery, getBatteryVoltage() / 1000.0));
+	const uint8_t batlevel = BAT_LEVEL_EMPTY + ((batVoltage - minBattery) / (maxBattery - minBattery)) * (BAT_LEVEL_FULL - BAT_LEVEL_EMPTY);
+	//printf("battery level (1-254): %u\n", batlevel);
 	return batlevel;
 }
 
