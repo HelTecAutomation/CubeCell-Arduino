@@ -63,6 +63,7 @@ public:
     void end();
     void updateBaudRate(unsigned long baud);
     int available(void);
+    void delayByte(void);
     int availableForWrite(void);
     int peek(void);
     int read(void);

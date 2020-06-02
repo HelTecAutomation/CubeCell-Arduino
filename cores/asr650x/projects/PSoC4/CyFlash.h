@@ -14,11 +14,18 @@
 * disclaimers, and limitations in the end user license agreement accompanying
 * the software package with which this file was provided.
 *******************************************************************************/
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
 
 #if !defined(CY_BOOT_CYFLASH_H)
 #define CY_BOOT_CYFLASH_H
 
 #include "CyLib.h"
+
+
+
 
 /**
 * \addtogroup group_flash
@@ -288,6 +295,10 @@ typedef struct cySysFlashClockBackupStruct
 
 
 #endif  /* (CY_BOOT_CYFLASH_H) */
+
+#ifdef __cplusplus 
+}
+#endif
 
 
 /* [] END OF FILE */
