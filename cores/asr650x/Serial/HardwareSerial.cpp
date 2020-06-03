@@ -115,7 +115,7 @@ int HardwareSerial::available(void)
 }
 void HardwareSerial::delayByte(void)
 {
-	delayMicroseconds(10000000/SerialBaud);
+	delayMicroseconds(11000000/SerialBaud);
 }
 
 
