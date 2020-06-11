@@ -47,6 +47,11 @@
 #define AS923_MAX_NB_CHANNELS                       16
 
 /*!
+ * The default number of join trials.
+ */
+#define AS923_DEFAULT_PHY_NB_JOIN_TRIALS            8
+
+/*!
  * Number of default channels
  */
 #define AS923_NUMB_DEFAULT_CHANNELS                 2
@@ -248,7 +253,7 @@
  * Band 0 definition
  * { DutyCycle, TxMaxPower, LastTxDoneTime, TimeOff }
  */
-#define AS923_BAND0                                 { 100, AS923_MAX_TX_POWER, 0,  0 } //  1.0 %
+#define AS923_BAND0                                 { 1, AS923_MAX_TX_POWER, 0,  0 } //  1.0 %
 
 /*!
  * LoRaMac default channel 1
@@ -261,6 +266,15 @@
  * Channel = { Frequency [Hz], RX1 Frequency [Hz], { ( ( DrMax << 4 ) | DrMin ) }, Band }
  */
 #define AS923_LC2                                   { 923400000, 0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
+
+
+#define AS923_LC3                { 922000000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC4                { 922200000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC5                { 922400000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC6                { 922600000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC7                { 922800000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC8                { 923000000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+
 
 /*!
  * LoRaMac channels which are allowed for the join procedure

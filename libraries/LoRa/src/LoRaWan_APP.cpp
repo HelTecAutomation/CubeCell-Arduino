@@ -4,16 +4,14 @@
 CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
-#if REGION_EU868
+#if defined( REGION_EU868 )
 #include "RegionEU868.h"
-#endif
-
-#if REGION_EU433
+#elif defined( REGION_EU433 )
 #include "RegionEU433.h"
-#endif
-
-#if REGION_KR920
+#elif defined( REGION_KR920 )
 #include "RegionKR920.h"
+#elif defined( REGION_AS923 )
+#include "RegionAS923.h"
 #endif
 
 #ifdef CubeCell_BoardPlus
@@ -416,28 +414,31 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 
 void lwan_dev_params_update( void )
 {
-#ifdef REGION_EU868
+#if defined( REGION_EU868 )
 	LoRaMacChannelAdd( 3, ( ChannelParams_t )EU868_LC4 );
 	LoRaMacChannelAdd( 4, ( ChannelParams_t )EU868_LC5 );
 	LoRaMacChannelAdd( 5, ( ChannelParams_t )EU868_LC6 );
 	LoRaMacChannelAdd( 6, ( ChannelParams_t )EU868_LC7 );
 	LoRaMacChannelAdd( 7, ( ChannelParams_t )EU868_LC8 );
-#endif
-
-#ifdef REGION_EU433
-		LoRaMacChannelAdd( 3, ( ChannelParams_t )EU433_LC4 );
-		LoRaMacChannelAdd( 4, ( ChannelParams_t )EU433_LC5 );
-		LoRaMacChannelAdd( 5, ( ChannelParams_t )EU433_LC6 );
-		LoRaMacChannelAdd( 6, ( ChannelParams_t )EU433_LC7 );
-		LoRaMacChannelAdd( 7, ( ChannelParams_t )EU433_LC8 );
-#endif
-
-#ifdef REGION_KR920
-		LoRaMacChannelAdd( 3, ( ChannelParams_t )KR920_LC4 );
-		LoRaMacChannelAdd( 4, ( ChannelParams_t )KR920_LC5 );
-		LoRaMacChannelAdd( 5, ( ChannelParams_t )KR920_LC6 );
-		LoRaMacChannelAdd( 6, ( ChannelParams_t )KR920_LC7 );
-		LoRaMacChannelAdd( 7, ( ChannelParams_t )KR920_LC8 );
+#elif defined( REGION_EU433 )
+	LoRaMacChannelAdd( 3, ( ChannelParams_t )EU433_LC4 );
+	LoRaMacChannelAdd( 4, ( ChannelParams_t )EU433_LC5 );
+	LoRaMacChannelAdd( 5, ( ChannelParams_t )EU433_LC6 );
+	LoRaMacChannelAdd( 6, ( ChannelParams_t )EU433_LC7 );
+	LoRaMacChannelAdd( 7, ( ChannelParams_t )EU433_LC8 );
+#elif defined( REGION_KR920 )
+	LoRaMacChannelAdd( 3, ( ChannelParams_t )KR920_LC4 );
+	LoRaMacChannelAdd( 4, ( ChannelParams_t )KR920_LC5 );
+	LoRaMacChannelAdd( 5, ( ChannelParams_t )KR920_LC6 );
+	LoRaMacChannelAdd( 6, ( ChannelParams_t )KR920_LC7 );
+	LoRaMacChannelAdd( 7, ( ChannelParams_t )KR920_LC8 );
+#elif defined( REGION_AS923 )
+	LoRaMacChannelAdd( 2, ( ChannelParams_t )AS923_LC3 );
+	LoRaMacChannelAdd( 3, ( ChannelParams_t )AS923_LC4 );
+	LoRaMacChannelAdd( 4, ( ChannelParams_t )AS923_LC5 );
+	LoRaMacChannelAdd( 5, ( ChannelParams_t )AS923_LC6 );
+	LoRaMacChannelAdd( 6, ( ChannelParams_t )AS923_LC7 );
+	LoRaMacChannelAdd( 7, ( ChannelParams_t )AS923_LC8 );
 #endif
 
 	MibRequestConfirm_t mibReq;
