@@ -417,7 +417,7 @@ void RegionAU915ApplyCFList( ApplyCFListParams_t* applyCFList )
 
 bool RegionAU915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
 {
-    uint8_t nbChannels = RegionCommonCountChannels( chanMaskSet->ChannelsMaskIn, 0, 4 );
+    uint8_t nbChannels = RegionCommonCountChannels( chanMaskSet->ChannelsMaskIn, 0, 5 );
 
     // Check the number of active channels
     // According to ACMA regulation, we require at least 20 125KHz channels, if
@@ -427,6 +427,7 @@ bool RegionAU915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
 //    {
 //        return false;
 //    }
+    if(nbChannels==0)return false;
 
     switch( chanMaskSet->ChannelsMaskType )
     {

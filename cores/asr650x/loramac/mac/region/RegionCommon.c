@@ -144,7 +144,18 @@ uint8_t RegionCommonCountChannels( uint16_t* channelsMask, uint8_t startIdx, uin
 
     for( uint8_t i = startIdx; i < stopIdx; i++ )
     {
+#if defined(REGION_US915)||defined(REGION_AU915)
+        if(i<4)
+        {
+            nbChannels += CountChannels( channelsMask[i], 16 );
+        }
+        else
+        {
+            nbChannels += CountChannels( channelsMask[i], 8 );
+        }
+#else
         nbChannels += CountChannels( channelsMask[i], 16 );
+#endif
     }
 
     return nbChannels;
