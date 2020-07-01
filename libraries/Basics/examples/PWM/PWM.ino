@@ -7,14 +7,14 @@ void setup() {
 	pinMode(PWM2,OUTPUT);
 }
 
-uint8_t a=0;
-uint8_t b=0;
+uint16_t a=0;
+uint16_t b=0;
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  analogWrite(PWM1,a);//GPIO2
-  analogWrite(PWM2,b);//GPIO3
+  // PWM frequency is 65535
+  analogWrite(PWM1,a);
+  analogWrite(PWM2,b);
   delay(10);
-  a++;
-  b--;
+  a+=255;
+  b-=255;
 }
