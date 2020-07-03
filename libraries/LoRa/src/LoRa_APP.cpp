@@ -70,7 +70,7 @@ static void OnLoraRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t 
 		}
 		Serial.println();
 	}
-	Serial.printf("RSSI:%d, Size:%d\r\n",rssi,size);
+	Serial.printf("RSSI:%d, SNR:%d, Size:%d\r\n",rssi,snr,size);
 }
 
 static void OnLoraRxTimeout( void )
