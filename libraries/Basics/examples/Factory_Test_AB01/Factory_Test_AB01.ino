@@ -59,6 +59,8 @@ States_t state;
 bool sleepMode = false;
 int16_t Rssi,rxSize;
 
+
+
 void setup() {
     boardInitMcu( );
     Serial.begin(115200);
