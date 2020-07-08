@@ -58,7 +58,21 @@ States_t state;
 bool sleepMode = false;
 int16_t Rssi,rxSize;
 
-
+void gpioOn()
+{
+    pinMode(GPIO0,OUTPUT);
+    pinMode(GPIO1,OUTPUT);
+    pinMode(GPIO2,OUTPUT);
+    pinMode(GPIO3,OUTPUT);
+    pinMode(GPIO4,OUTPUT);
+    pinMode(GPIO5,OUTPUT);
+    digitalWrite(GPIO0,HIGH);
+    digitalWrite(GPIO1,HIGH);
+    digitalWrite(GPIO2,HIGH);
+    digitalWrite(GPIO3,HIGH);
+    digitalWrite(GPIO4,HIGH);    
+    digitalWrite(GPIO5,HIGH);
+}
 
 void setup() {
     boardInitMcu( );
@@ -212,20 +226,4 @@ void testRGB(void)
 		turnOnRGB(i,10);
 	}
 	turnOnRGB(0,0);
-}
-
-void gpioOn(void)
-{
-    pinMode(GPIO0,OUTPUT);
-    pinMode(GPIO1,OUTPUT);
-    pinMode(GPIO2,OUTPUT);
-    pinMode(GPIO3,OUTPUT);
-    pinMode(GPIO4,OUTPUT);
-    pinMode(GPIO5,OUTPUT);
-    digitalWrite(GPIO0,HIGH);
-    digitalWrite(GPIO1,HIGH);
-    digitalWrite(GPIO2,HIGH);
-    digitalWrite(GPIO3,HIGH);
-    digitalWrite(GPIO4,HIGH);    
-    digitalWrite(GPIO5,HIGH);
 }
