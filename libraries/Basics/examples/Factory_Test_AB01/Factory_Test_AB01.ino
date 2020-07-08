@@ -213,7 +213,7 @@ void testRGB(void)
 	turnOnRGB(0,0);
 }
 
-void gpioOn()
+void gpioOn(void)
 {
     pinMode(GPIO0,OUTPUT);
     pinMode(GPIO1,OUTPUT);
