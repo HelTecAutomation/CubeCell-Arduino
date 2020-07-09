@@ -59,7 +59,7 @@
 /*!
  * Minimal datarate that can be used by the node
  */
-#define IN865_TX_MIN_DATARATE                       DR_1
+#define IN865_TX_MIN_DATARATE                       DR_0
 
 /*!
  * Maximal datarate that can be used by the node

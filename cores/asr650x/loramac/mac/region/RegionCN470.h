@@ -54,7 +54,7 @@
 /*!
  * Minimal datarate The number of join trials.
  */
-#define CN470_TX_MIN_DATARATE                       DR_1
+#define CN470_TX_MIN_DATARATE                       DR_0
 
 /*!
  * Maximal datarate that can be used by the node

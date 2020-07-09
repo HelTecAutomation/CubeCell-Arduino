@@ -59,7 +59,7 @@
 /*!
  * Minimal datarate that can be used by the node
  */
-#define CN779_TX_MIN_DATARATE                       DR_1
+#define CN779_TX_MIN_DATARATE                       DR_0
 
 /*!
  * Maximal datarate that can be used by the node

@@ -64,7 +64,7 @@
 /*!
  * Minimal datarate that can be used by the node
  */
-#define AS923_TX_MIN_DATARATE                       DR_1
+#define AS923_TX_MIN_DATARATE                       DR_0
 
 /*!
  * Maximal datarate that can be used by the node
