@@ -1,7 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include "cubecell_SSD1306Wire.h"
-#include "Wire.h"
 #include "GPS_Air530.h"
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -179,7 +178,7 @@ void displayInof()
 {
     display.clear();
     display.drawString(0, 50, "Packet " + String(txNumber,DEC) + " sent done");
-    display.drawString(0, 0,  "Received Size" + String(rxSize,DEC) + " packages:");
+    display.drawString(0, 0,  "Received Size " + String(rxSize,DEC) + " packages:");
     display.drawString(0, 15, rxpacket);
     display.drawString(0, 30, "With rssi " + String(Rssi,DEC));
     display.display();
