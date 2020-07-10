@@ -1,7 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include "cubecell_SH1107Wire.h"
-#include "Wire.h"
 
 /*
  * set LoraWan_RGB to 1,the RGB active
