@@ -46,6 +46,9 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
 void testRGB(void);
+void showGpsInfo(void);
+int  fracPart(double val, int n);
+void userKey(void);
 
 typedef enum
 {
@@ -207,8 +210,8 @@ void userKey(void)
       detachInterrupt(RADIO_DIO_1);
       Radio.Sleep( );
       turnOnRGB(0,0);
-      showGpsInfo();
       Air530.begin();
+      showGpsInfo();
     }
 	}
 }
