@@ -1,7 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include "cubecell_SH1107Wire.h"
-#include "Wire.h"
 
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -46,6 +45,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
 void testRGB(void);
+void userKey(void);
 
 typedef enum
 {
