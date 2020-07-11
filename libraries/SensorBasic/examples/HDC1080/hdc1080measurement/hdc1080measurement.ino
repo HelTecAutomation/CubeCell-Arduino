@@ -11,10 +11,12 @@
  * 
  */
  
-#include <Wire.h>
 #include "HDC1080.h"
 
 HDC1080 hdc1080;
+
+void printTandRH(HDC1080_MeasurementResolution humidity, HDC1080_MeasurementResolution temperature);
+void printRegister(HDC1080_Registers reg);
 
 void setup()
 {
