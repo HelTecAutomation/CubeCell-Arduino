@@ -1,7 +1,6 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include "cubecell_SSD1306Wire.h"
-#include "Wire.h"
 #include "GPS_Air530.h"
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -46,6 +45,9 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr );
 void displayInof();
 void sleep(void);
 void testRGB(void);
+void showGpsInfo(void);
+int  fracPart(double val, int n);
+void userKey(void);
 
 typedef enum
 {
@@ -176,7 +178,7 @@ void displayInof()
 {
     display.clear();
     display.drawString(0, 50, "Packet " + String(txNumber,DEC) + " sent done");
-    display.drawString(0, 0,  "Received Size" + String(rxSize,DEC) + " packages:");
+    display.drawString(0, 0,  "Received Size " + String(rxSize,DEC) + " packages:");
     display.drawString(0, 15, rxpacket);
     display.drawString(0, 30, "With rssi " + String(Rssi,DEC));
     display.display();
@@ -207,8 +209,8 @@ void userKey(void)
       detachInterrupt(RADIO_DIO_1);
       Radio.Sleep( );
       turnOnRGB(0,0);
-      showGpsInfo();
       Air530.begin();
+      showGpsInfo();
     }
 	}
 }
