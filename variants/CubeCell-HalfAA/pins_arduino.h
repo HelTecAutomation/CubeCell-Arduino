@@ -36,9 +36,9 @@ typedef enum
 #define ADC ADC1
 #define ADC2 P2_1
 #define ADC3 P2_2
-#define GPIO1 P6_1
-#define GPIO2 P6_2
-#define GPIO3 P6_3
+#define GPIO1 P6_0
+#define GPIO2 P6_1
+#define GPIO3 P6_2
 #define GPIO4 P6_4
 #define GPIO5 P3_4
 #define GPIO6 P3_6
