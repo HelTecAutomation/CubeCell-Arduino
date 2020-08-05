@@ -456,6 +456,7 @@ static const double TWO52[2]={
 // 	return w-TWO52[sx];
 // }
 
+extern uint32_t systime;
 
 
 void boardInitMcu( void )
@@ -463,6 +464,7 @@ void boardInitMcu( void )
     SpiInit();
     Asr_Timer_Init();
     RtcInit();
+    systime = millis();
 #if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
     pinMode(Vext,OUTPUT);
     digitalWrite(Vext,HIGH);

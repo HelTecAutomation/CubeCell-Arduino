@@ -108,6 +108,9 @@ uint32_t LowPower_GetState( void )
  * @param  None
  * @retval None
  */
+extern uint32_t systime;
+extern void systemTimer();
+
 void lowPowerHandler( void )
 {
     CPSR_ALLOC();
@@ -119,6 +122,8 @@ void lowPowerHandler( void )
         /* mcu dependent. to be implemented by user*/
         aos_lrwan_chg_mode.exit_stop_mode();
         aos_lrwan_time_itf.set_uc_wakeup_time();
+        CySysTickSetCallback(4,systemTimer);
+        systime = millis();
         pinMode(P4_1,INPUT);
     } else {
         //DBG_PRINTF_CRITICAL("z\n\r");
