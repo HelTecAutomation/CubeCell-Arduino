@@ -123,7 +123,7 @@ void lowPowerHandler( void )
         aos_lrwan_chg_mode.exit_stop_mode();
         aos_lrwan_time_itf.set_uc_wakeup_time();
         CySysTickSetCallback(4,systemTimer);
-        systime = millis();
+        systime = (uint32_t)TimerGetCurrentTime();
         pinMode(P4_1,INPUT);
     } else {
         //DBG_PRINTF_CRITICAL("z\n\r");
