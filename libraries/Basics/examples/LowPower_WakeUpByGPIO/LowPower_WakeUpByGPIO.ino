@@ -26,6 +26,7 @@ void onWakeUp()
 
 void setup() {
   // put your setup code here, to run once:
+  boardInitMcu();
   Serial.begin(115200);
   pinMode(INT_GPIO,INPUT);
   attachInterrupt(INT_GPIO,onWakeUp,FALLING);
