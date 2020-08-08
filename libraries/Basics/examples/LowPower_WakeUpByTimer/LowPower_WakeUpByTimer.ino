@@ -9,7 +9,7 @@ uint8_t lowpower=1;
 
 void onSleep()
 {
-  Serial.printf("going into lowpower mode, %d ms later wake up.\r\n",timetowake);
+  Serial.printf("Going into lowpower mode, %d ms later wake up.\r\n",timetowake);
   lowpower=1;
   //timetowake ms later wake up;
   TimerSetValue( &wakeUp, timetowake );
@@ -17,7 +17,7 @@ void onSleep()
 }
 void onWakeUp()
 {
-  Serial.printf("woke up, %d ms later into lowpower mode.\r\n",timetosleep);
+  Serial.printf("Woke up, %d ms later into lowpower mode.\r\n",timetosleep);
   lowpower=0;
   //timetosleep ms later into lowpower mode;
   TimerSetValue( &sleep, timetosleep );

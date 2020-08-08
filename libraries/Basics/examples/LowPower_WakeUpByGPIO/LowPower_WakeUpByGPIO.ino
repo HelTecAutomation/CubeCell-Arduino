@@ -8,7 +8,7 @@ uint8_t lowpower=1;
 
 void onSleep()
 {
-  Serial.printf("into lowpower mode. Press user key to wake up\r\n");
+  Serial.printf("Going into lowpower mode. Press user key to wake up\r\n");
   lowpower=1;
 }
 void onWakeUp()
@@ -16,7 +16,7 @@ void onWakeUp()
   delay(10);
   if(digitalRead(INT_GPIO) == 0)
   {
-	  Serial.printf("wake up by GPIO, %d ms later into lowpower mode.\r\n",timetosleep);
+	  Serial.printf("Woke up by GPIO, %d ms later into lowpower mode.\r\n",timetosleep);
 	  lowpower=0;
 	  //timetosleep ms later into lowpower mode;
 	  TimerSetValue( &sleep, timetosleep );
@@ -31,7 +31,7 @@ void setup() {
   pinMode(INT_GPIO,INPUT);
   attachInterrupt(INT_GPIO,onWakeUp,FALLING);
   TimerInit( &sleep, onSleep );
-  Serial.printf("into lowpower mode. Press user key to wake up\r\n");
+  Serial.printf("Going into lowpower mode. Press user key to wake up\r\n");
 }
 
 void loop() {
