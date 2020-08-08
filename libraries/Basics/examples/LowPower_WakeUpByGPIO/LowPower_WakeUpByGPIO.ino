@@ -2,7 +2,7 @@
 
 #define INT_GPIO USER_KEY
 
-#define timetosleep 5000
+#define timetillsleep 5000
 static TimerEvent_t sleep;
 uint8_t lowpower=1;
 
@@ -16,10 +16,10 @@ void onWakeUp()
   delay(10);
   if(digitalRead(INT_GPIO) == 0)
   {
-	  Serial.printf("Woke up by GPIO, %d ms later into lowpower mode.\r\n",timetosleep);
+	  Serial.printf("Woke up by GPIO, %d ms later into lowpower mode.\r\n",timetillsleep);
 	  lowpower=0;
-	  //timetosleep ms later into lowpower mode;
-	  TimerSetValue( &sleep, timetosleep );
+	  //timetillsleep ms later into lowpower mode;
+	  TimerSetValue( &sleep, timetillsleep );
 	  TimerStart( &sleep );
   }
 }
