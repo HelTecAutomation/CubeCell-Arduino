@@ -9,15 +9,15 @@ uint8_t lowpower=1;
 
 void onSleep()
 {
-  Serial.printf("into lowpower mode, %d ms later wake up.\r\n",timetowake);
+  Serial.printf("going into lowpower mode, %d ms later wake up.\r\n",timetowake);
   lowpower=1;
-  //timetosleep ms later wake up;
+  //timetowake ms later wake up;
   TimerSetValue( &wakeUp, timetowake );
   TimerStart( &wakeUp );
 }
 void onWakeUp()
 {
-  Serial.printf("wake up, %d ms later into lowpower mode.\r\n",timetosleep);
+  Serial.printf("woke up, %d ms later into lowpower mode.\r\n",timetosleep);
   lowpower=0;
   //timetosleep ms later into lowpower mode;
   TimerSetValue( &sleep, timetosleep );
@@ -36,7 +36,7 @@ void setup() {
 
 void loop() {
   if(lowpower){
-    //note that lowPowerHandler() run six times the mcu into lowpower mode;
+    //note that lowPowerHandler() runs six times before the mcu goes into lowpower mode;
     lowPowerHandler();
   }
   // put your main code here, to run repeatedly:
