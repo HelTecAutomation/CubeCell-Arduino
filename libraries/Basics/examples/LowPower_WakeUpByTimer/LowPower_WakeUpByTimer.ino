@@ -26,7 +26,6 @@ void onWakeUp()
 
 void setup() {
   // put your setup code here, to run once:
-  boardInitMcu();
   Serial.begin(115200);
   Radio.Sleep( );
   TimerInit( &sleep, onSleep );
