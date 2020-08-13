@@ -21,7 +21,7 @@
 
 #include "SPI.h"
 #include "project.h"
-
+#include "HardwareSerial.h"
 
 #define spi_TIMEOUT	500
 
@@ -29,7 +29,9 @@
 SPIClass::SPIClass(int8_t ss, int8_t spiNum)
 	:_freq(6000000),
 	_spi_num(spiNum),
-	_inTransaction(false)
+	_inTransaction(false),
+	_bitOrder(SPI_MSBFIRST),
+	_dataMode(SPI_MODE0)
 	{}
 
 
@@ -109,10 +111,52 @@ void SPIClass::setFrequency(uint32_t freq)
 }
 
 
-void SPIClass::beginTransaction(void)
+void SPIClass:: beginTransaction(SPISettings settings)
 {
-    _inTransaction = true;
-    digitalWrite(_ss,LOW);
+	if(_spi_num == 0)
+	{
+		if(_freq!=settings._clock)
+		{
+			setFrequency(settings._clock);
+		}
+		if(_bitOrder!=settings._bitOrder)
+		{
+			_bitOrder = settings._bitOrder;
+			uint32_t temp = SPI_1_RX_CTRL_REG;
+			SPI_1_RX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+			temp = SPI_1_TX_CTRL_REG;
+			SPI_1_TX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+		}
+		if(_dataMode!=settings._dataMode)
+		{
+			_dataMode = settings._dataMode;
+			uint32_t temp = SPI_1_SPI_CTRL_REG;
+			SPI_1_SPI_CTRL_REG = temp & ~(0x03<<2) | (_dataMode << 2);
+		}
+	}
+	if(_spi_num == 1)
+	{
+		if(_freq!=settings._clock)
+		{
+			setFrequency(settings._clock);
+		}
+		if(_bitOrder!=settings._bitOrder)
+		{
+			_bitOrder = settings._bitOrder;
+			uint32_t temp = SPI_2_RX_CTRL_REG;
+			SPI_2_RX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+			temp = SPI_2_TX_CTRL_REG;
+			SPI_2_TX_CTRL_REG = temp & ~(0x01<<8) | (_bitOrder<<8);
+		}
+		if(_dataMode!=settings._dataMode)
+		{
+			_dataMode = settings._dataMode;
+			uint32_t temp = SPI_2_SPI_CTRL_REG;
+			SPI_2_SPI_CTRL_REG = temp & ~(0x03<<2) | (_dataMode << 2);
+		}
+	}
+	_inTransaction = true;
+	digitalWrite(_ss,LOW);
 }
 
 void SPIClass::endTransaction()

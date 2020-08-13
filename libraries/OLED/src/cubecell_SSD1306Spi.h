@@ -17,6 +17,7 @@ class SSD1306Spi : public OLEDDisplay {
       uint8_t             _cs;
       uint32_t            _freq;
       uint8_t             _spi_num;
+      SPISettings         _spiSettings;
 
   public:
     SSD1306Spi(uint8_t _rst, uint8_t _dc, uint8_t _cs,  uint8_t _spi_num ,uint32_t _freq = 6000000, OLEDDISPLAY_GEOMETRY g = GEOMETRY_128_64) {
@@ -90,7 +91,7 @@ class SSD1306Spi : public OLEDDisplay {
 			sendCommand(maxBoundY);
 
 			digitalWrite(_dc, HIGH);   // data mode
-			SPI.beginTransaction();
+			SPI.beginTransaction(_spiSettings);
 			for (y = minBoundY; y <= maxBoundY; y++) 
 			{
 				for (x = minBoundX; x <= maxBoundX; x++)
@@ -119,7 +120,7 @@ class SSD1306Spi : public OLEDDisplay {
 			}
 
 			digitalWrite(_dc, HIGH);   // data mode
-			SPI.beginTransaction();
+			SPI.beginTransaction(_spiSettings);
 			for (uint16_t i=0; i<displayBufferSize; i++) 
 			{
 				SPI.transfer(buffer[i]);
@@ -177,7 +178,7 @@ class SSD1306Spi : public OLEDDisplay {
 			sendCommand(maxBoundY);
 
 			digitalWrite(_dc, HIGH);   // data mode
-			SPI.beginTransaction();
+			SPI.beginTransaction(_spiSettings);
 			for (y = minBoundY; y <= maxBoundY; y++) 
 			{
 				for (x = minBoundX; x <= maxBoundX; x++)
@@ -227,7 +228,7 @@ class SSD1306Spi : public OLEDDisplay {
 	}
     inline void sendCommand(uint8_t com) __attribute__((always_inline)){
       digitalWrite(_dc, LOW);
-      SPI.beginTransaction();
+      SPI.beginTransaction(_spiSettings);
       SPI.transfer(com);
       SPI.endTransaction();
     }
