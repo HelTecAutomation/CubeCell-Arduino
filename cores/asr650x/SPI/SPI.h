@@ -19,6 +19,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#ifndef _SPI_H_INCLUDED
+#define _SPI_H_INCLUDED
 
 #include <string.h>
 #include <stdbool.h>
@@ -73,4 +75,5 @@ typedef SPIClass SPIC;
 extern SPIClass SPI;
 extern SPIClass SPI1;
 
+#endif
 

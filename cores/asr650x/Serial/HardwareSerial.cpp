@@ -198,12 +198,12 @@ size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 uint32_t  HardwareSerial::baudRate()
 {
 	//return uartGetBaudRate(_uart);
-	return 0;
+	return SerialBaud;
 }
 HardwareSerial::operator bool() const
 {
-    //return true;
-    return 0;
+    return true;
+    //return 0;
 }
 
 
