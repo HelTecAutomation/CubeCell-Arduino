@@ -1,5 +1,5 @@
 name=CubeCell
-version=0.0.1
+version=1.0.0
 
 tools.CubeCellflash.cmd.windows={runtime.platform.path}/tools/CubeCellflash/CubeCellflash.exe
 tools.CubeCellflash.cmd.linux={runtime.platform.path}/tools/CubeCellflash/CubeCellflash
@@ -26,8 +26,10 @@ compiler.c.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-fra
 compiler.cpp.cmd=arm-none-eabi-g++
 compiler.cpp.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c   -fno-exceptions   -fexceptions  -fno-rtti
 
-compiler.S.cmd=arm-none-eabi-as
-compiler.S.flags=-mcpu=cortex-m0plus -mthumb  -g -w --gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
+compiler.S.cmd=arm-none-eabi-gcc
+compiler.S.flags=-mcpu=cortex-m0plus -mthumb -c -x assembler-with-cpp -g -w -gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
+#compiler.S.cmd=arm-none-eabi-as
+#compiler.S.flags=-mcpu=cortex-m0plus -mthumb  -g -w --gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
 
 compiler.c.elf.cmd=arm-none-eabi-gcc
 compiler.c.elf.flags=-mcpu=cortex-m0plus -mthumb "-L{compiler.sdk.path}/projects/Generated_Source/PSoC4" "{compiler.sdk.path}/projects/AsrLib.a"   "-T{compiler.sdk.path}/projects/Generated_Source\PSoC4\cm0plusgcc.ld" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects
