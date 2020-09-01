@@ -214,6 +214,9 @@ void loop()
   {
     case DEVICE_STATE_INIT:
       {
+#if(LORAWAN_DEVEUI_AUTO)
+        LoRaWAN.generateDeveuiByChipID();
+#endif
 #if(AT_SUPPORT)
         getDevParam();
 #endif

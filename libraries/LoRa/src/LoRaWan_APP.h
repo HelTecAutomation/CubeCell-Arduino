@@ -60,6 +60,7 @@ public:
   void cycle(uint32_t dutyCycle);
   void sleep();
   void ifskipjoin();
+  void generateDeveuiByChipID();
 
 #if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
   void displayJoining();

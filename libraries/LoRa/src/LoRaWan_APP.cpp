@@ -469,6 +469,16 @@ uint8_t BoardGetBatteryLevel()
 LoRaMacPrimitives_t LoRaMacPrimitive;
 LoRaMacCallback_t LoRaMacCallback;
 
+void LoRaWanClass::generateDeveuiByChipID()
+{
+	uint64_t chipID=getID();
+	for(int i=7;i>=0;i--)
+	{
+		devEui[i] = (chipID>>(8*(7-i)))&0xFF;
+	}
+}
+
+
 void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 {
 	Serial.print("\r\nLoRaWAN ");
