@@ -38,6 +38,8 @@
 #define SPI_LSBFIRST 0
 #define SPI_MSBFIRST 1
 
+#define SPI_HAS_TRANSACTION 1
+
 class SPISettings
 {
 public:
