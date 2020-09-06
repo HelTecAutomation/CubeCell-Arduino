@@ -468,8 +468,13 @@ void boardInitMcu( void )
 #if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
     pinMode(Vext,OUTPUT);
     digitalWrite(Vext,HIGH);
-    pinMode(VBAT_ADC_CTL,OUTPUT);
-    digitalWrite(VBAT_ADC_CTL,HIGH);
+
+    /*
+     * Board, BoardPlus, Capsule, GPS and HalfAA variants
+     * have external 10K VDD pullup resistor
+     * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
+     */
+    pinMode(VBAT_ADC_CTL, INPUT);
 #endif
     SX126xIoInit();
     delay(10);

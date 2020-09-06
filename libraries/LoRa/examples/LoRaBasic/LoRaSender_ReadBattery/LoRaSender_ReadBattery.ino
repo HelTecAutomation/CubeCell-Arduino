@@ -121,7 +121,14 @@ void loop()
       pinMode(VBAT_ADC_CTL,OUTPUT);
       digitalWrite(VBAT_ADC_CTL,LOW);
       voltage=analogRead(ADC)*2;
-      digitalWrite(VBAT_ADC_CTL,HIGH);
+
+      /*
+       * Board, BoardPlus, Capsule, GPS and HalfAA variants
+       * have external 10K VDD pullup resistor
+       * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
+       */
+      pinMode(VBAT_ADC_CTL, INPUT);
+
       state = TX;
       break;
     }
