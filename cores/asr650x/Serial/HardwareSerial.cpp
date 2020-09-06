@@ -154,11 +154,13 @@ void HardwareSerial::flush()
 	if( _uart_num == UART_NUM_0)
 	{
 		UART_1_SpiUartClearRxBuffer();
+		while (UART_1_SpiUartGetTxBufferSize());
 		UART_1_SpiUartClearTxBuffer();
 	}
 	else
 	{
 		UART_2_SpiUartClearRxBuffer();
+		while (UART_2_SpiUartGetTxBufferSize());
 		UART_2_SpiUartClearTxBuffer();	
 	}
 }
