@@ -340,6 +340,12 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	}
 }
 
+
+void __attribute__((weak)) dev_time_updated()
+{
+	printf("device time updated\r\n");
+}
+
 /*!
  * \brief   MLME-Confirm event function
  *
@@ -389,6 +395,14 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 			{
 				// Check DemodMargin
 				// Check NbGateways
+			}
+			break;
+		}
+		case MLME_DEVICE_TIME:
+		{
+			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
+			{
+				dev_time_updated();
 			}
 			break;
 		}

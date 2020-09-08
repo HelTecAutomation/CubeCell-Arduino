@@ -88,6 +88,11 @@ static void prepareTxFrame( uint8_t port )
 //if true, next uplink will add MOTE_MAC_DEVICE_TIME_REQ 
 bool timeReq = true;
 
+void dev_time_updated()
+{
+  printf("Once device time updated, this function run\r\n");
+}
+
 void setup() {
 	boardInitMcu();
 	Serial.begin(115200);

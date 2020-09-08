@@ -79,6 +79,7 @@ extern "C" uint16_t getBatteryVoltage(void);
 extern "C" bool checkUserAt(char * cmd, char * content);
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);
 extern "C" void lwan_dev_params_update( void );
+extern "C" void dev_time_updated( void );
 
 
 extern LoRaWanClass LoRaWAN;
