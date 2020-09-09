@@ -37,7 +37,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 /*!
  * Default datarate when adr disabled
  */
-#ifdef REGION_US915
+#if defined(REGION_US915) || defined(REGION_US915_HYBRID)
 #define LORAWAN_DEFAULT_DATARATE                    DR_3
 #else
 #define LORAWAN_DEFAULT_DATARATE                    DR_5
