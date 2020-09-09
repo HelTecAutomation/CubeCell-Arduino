@@ -37,7 +37,11 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 /*!
  * Default datarate when adr disabled
  */
+#ifdef REGION_US915
+#define LORAWAN_DEFAULT_DATARATE                    DR_3
+#else
 #define LORAWAN_DEFAULT_DATARATE                    DR_5
+#endif
 
 /*!
  * User application data size
