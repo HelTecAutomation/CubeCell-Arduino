@@ -191,6 +191,11 @@ PhyParam_t RegionAS923GetPhyParam( GetPhyParams_t* getPhy )
             }
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = AS923_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = AS923_DEFAULT_DATARATE;

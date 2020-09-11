@@ -198,6 +198,11 @@ PhyParam_t RegionKR920GetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = KR920_TX_MIN_DATARATE;
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = KR920_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = KR920_DEFAULT_DATARATE;

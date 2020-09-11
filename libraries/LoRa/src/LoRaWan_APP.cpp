@@ -34,14 +34,8 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   uint8_t isDispayOn=0;
 #endif
 
-/*!
- * Default datarate when adr disabled
- */
-#if defined(REGION_US915) || defined(REGION_US915_HYBRID)
-#define LORAWAN_DEFAULT_DATARATE                    DR_3
-#else
-#define LORAWAN_DEFAULT_DATARATE                    DR_5
-#endif
+/*loraWan default Dr for ADR when adr disabled*/
+int8_t default_DR = 5;
 
 /*!
  * User application data size
@@ -103,7 +97,7 @@ bool SendFrame( void )
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
-		mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+		mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 	}
 	else
 	{
@@ -114,7 +108,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
 			mcpsReq.Req.Unconfirmed.fBufferSize = appDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 		}
 		else
 		{
@@ -124,7 +118,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.fBuffer = appData;
 			mcpsReq.Req.Confirmed.fBufferSize = appDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = confirmedNbTrials;
-			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			mcpsReq.Req.Confirmed.Datarate = default_DR;
 		}
 	}
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
@@ -647,6 +641,10 @@ void LoRaWanClass::sleep()
 	lowPowerHandler( );
 	// Process Radio IRQ
 	Radio.IrqProcess( );
+}
+void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
+{
+	default_DR = dataRate;
 }
 
 void LoRaWanClass::ifskipjoin()
