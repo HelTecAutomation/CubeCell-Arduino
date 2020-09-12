@@ -206,6 +206,11 @@ PhyParam_t RegionEU868GetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = EU868_TX_MIN_DATARATE;
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = EU868_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = EU868_DEFAULT_DATARATE;

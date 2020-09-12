@@ -34,10 +34,8 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   uint8_t isDispayOn=0;
 #endif
 
-/*!
- * Default datarate when adr disabled
- */
-#define LORAWAN_DEFAULT_DATARATE                    DR_5
+/*loraWan default Dr for ADR when adr disabled*/
+int8_t default_DR = 5;
 
 /*!
  * User application data size
@@ -99,7 +97,7 @@ bool SendFrame( void )
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
-		mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+		mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 	}
 	else
 	{
@@ -110,7 +108,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
 			mcpsReq.Req.Unconfirmed.fBufferSize = appDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 		}
 		else
 		{
@@ -120,7 +118,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.fBuffer = appData;
 			mcpsReq.Req.Confirmed.fBufferSize = appDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = confirmedNbTrials;
-			mcpsReq.Req.Confirmed.Datarate = LORAWAN_DEFAULT_DATARATE;
+			mcpsReq.Req.Confirmed.Datarate = default_DR;
 		}
 	}
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
@@ -250,7 +248,13 @@ uint16_t getBatteryVoltage(void)
 	pinMode(VBAT_ADC_CTL,OUTPUT);
 	digitalWrite(VBAT_ADC_CTL,LOW);
 	uint16_t volt=analogRead(ADC)*2;
-	digitalWrite(VBAT_ADC_CTL,HIGH);
+
+	/*
+	 * Board, BoardPlus, Capsule, GPS and HalfAA variants
+	 * have external 10K VDD pullup resistor
+	 * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
+	 */
+	pinMode(VBAT_ADC_CTL, INPUT);
 #else
 	uint16_t volt=analogRead(ADC)*2;
 #endif
@@ -334,6 +338,12 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	}
 }
 
+
+void __attribute__((weak)) dev_time_updated()
+{
+	printf("device time updated\r\n");
+}
+
 /*!
  * \brief   MLME-Confirm event function
  *
@@ -383,6 +393,14 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 			{
 				// Check DemodMargin
 				// Check NbGateways
+			}
+			break;
+		}
+		case MLME_DEVICE_TIME:
+		{
+			if( mlmeConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
+			{
+				dev_time_updated();
 			}
 			break;
 		}
@@ -623,6 +641,10 @@ void LoRaWanClass::sleep()
 	lowPowerHandler( );
 	// Process Radio IRQ
 	Radio.IrqProcess( );
+}
+void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
+{
+	default_DR = dataRate;
 }
 
 void LoRaWanClass::ifskipjoin()

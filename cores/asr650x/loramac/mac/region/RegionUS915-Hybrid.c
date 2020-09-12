@@ -260,6 +260,11 @@ PhyParam_t RegionUS915HybridGetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = US915_HYBRID_TX_MIN_DATARATE;
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = US915_HYBRID_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = US915_HYBRID_DEFAULT_DATARATE;

@@ -160,6 +160,11 @@ PhyParam_t RegionAU915GetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = AU915_TX_MIN_DATARATE;
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = AU915_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = AU915_DEFAULT_DATARATE;

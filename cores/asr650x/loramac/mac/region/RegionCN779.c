@@ -177,6 +177,11 @@ PhyParam_t RegionCN779GetPhyParam( GetPhyParams_t* getPhy )
             phyParam.Value = CN779_TX_MIN_DATARATE;
             break;
         }
+        case PHY_MAX_TX_DR:
+        {
+            phyParam.Value = CN779_TX_MAX_DATARATE;
+            break;
+        }
         case PHY_DEF_TX_DR:
         {
             phyParam.Value = CN779_DEFAULT_DATARATE;
