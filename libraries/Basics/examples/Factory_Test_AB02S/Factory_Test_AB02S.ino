@@ -210,7 +210,6 @@ void userKey(void)
       Radio.Sleep( );
       turnOnRGB(0,0);
       Air530.begin();
-      showGpsInfo();
     }
 	}
 }
