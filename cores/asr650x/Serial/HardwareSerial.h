@@ -53,13 +53,12 @@
 #define UART_NUM_0     0
 #define UART_NUM_1     1
 
-
 class HardwareSerial: public Stream
 {
 public:
     HardwareSerial(int8_t uart_nr);
 
-    void begin(unsigned long baud = 115200, int8_t uart_num =-1, uint32_t config=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
+    void begin(unsigned long baud = 115200, uint32_t config=SERIAL_8N1, int8_t uart_num =-1, bool invert=false, unsigned long timeout_ms = 20000UL);
     void end();
     void updateBaudRate(unsigned long baud);
     int available(void);

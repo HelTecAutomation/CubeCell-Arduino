@@ -15,8 +15,36 @@ HardwareSerial::HardwareSerial(int8_t uart_num)
 	:_uart_num(uart_num) 
 	{}
 
-void HardwareSerial::begin(unsigned long baud , int8_t uart_num, uint32_t config, bool invert, unsigned long timeout_ms)
+void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num, bool invert, unsigned long timeout_ms)
 {
+	uint32_t stop_bits,parity_ctrl,data_bits,parity;
+
+	stop_bits = config & 0x0F;
+	parity = (config>>4) & 0x0F;
+	data_bits = (config>>8) & 0x0F;
+
+	parity_ctrl = ((UART_1_UART_PARITY_NONE != parity) ?	 \
+					(UART_1_GET_UART_RX_CTRL_PARITY(parity) | \
+					UART_1_UART_RX_CTRL_PARITY_ENABLED) : (0u));
+
+	uint32_t rx_ctrl0 = (UART_1_GET_UART_RX_CTRL_MODE(stop_bits)			| \
+					 UART_1_GET_UART_RX_CTRL_POLARITY(UART_1_UART_IRDA_POLARITY)				| \
+					 UART_1_GET_UART_RX_CTRL_MP_MODE(UART_1_UART_MP_MODE_ENABLE)				| \
+					 UART_1_GET_UART_RX_CTRL_DROP_ON_PARITY_ERR(UART_1_UART_DROP_ON_PARITY_ERR) | \
+					 UART_1_GET_UART_RX_CTRL_DROP_ON_FRAME_ERR(UART_1_UART_DROP_ON_FRAME_ERR)	| \
+					 UART_1_GET_UART_RX_CTRL_BREAK_WIDTH(UART_1_UART_RX_BREAK_WIDTH)			| \
+					 parity_ctrl);
+
+	uint32_t rx_ctrl1 =(UART_1_GET_RX_CTRL_DATA_WIDTH(data_bits)		 | \
+						UART_1_GET_RX_CTRL_MEDIAN	  (UART_1_UART_MEDIAN_FILTER_ENABLE) | \
+						UART_1_GET_UART_RX_CTRL_ENABLED(UART_1_UART_DIRECTION));
+
+	uint32_t tx_ctrl0 = (UART_1_GET_UART_TX_CTRL_MODE(stop_bits)	   | \
+							 UART_1_GET_UART_TX_CTRL_RETRY_NACK(UART_1_UART_RETRY_ON_NACK) | \
+							 parity_ctrl);
+
+	uint32_t tx_ctrl1 = (UART_1_GET_TX_CTRL_DATA_WIDTH(data_bits) | \
+							 UART_1_GET_UART_TX_CTRL_ENABLED(UART_1_UART_DIRECTION));
 	if(uart_num!=-1)
 	{
 		if(uart_num == 1)
@@ -36,16 +64,29 @@ void HardwareSerial::begin(unsigned long baud , int8_t uart_num, uint32_t config
 		if(digitalRead(UART_RX)==UART_RX_LEVEL)//uart start when uart chip powered
 		{
 			uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
-			UART_1_SCBCLK_DIV_REG = div<<8;
 			UART_1_Start();
+			UART_1_SCBCLK_DIV_REG = div<<8;
+			UART_1_UART_RX_CTRL_REG = rx_ctrl0;
+			UART_1_RX_CTRL_REG =rx_ctrl1;
+			UART_1_UART_TX_CTRL_REG =tx_ctrl0;
+			UART_1_TX_CTRL_REG = tx_ctrl1;
 		}
 	}
 	else
 	{
 		uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_2_UART_OVS_FACTOR + 0.5 - 1;
-		UART_2_SCBCLK_DIV_REG = div<<8;
 		UART_2_Start();
+		UART_2_SCBCLK_DIV_REG = div<<8;
+		UART_2_UART_RX_CTRL_REG = rx_ctrl0;
+		UART_2_RX_CTRL_REG =rx_ctrl1;
+		UART_2_UART_TX_CTRL_REG =tx_ctrl0;
+		UART_2_TX_CTRL_REG = tx_ctrl1;
 	}
+
+	printf("config %d\r\n",config);
+	printf("stop_bits %d\r\n",stop_bits);
+	printf("parity %d\r\n",parity);
+	printf("data_bits %d\r\n",data_bits);
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
