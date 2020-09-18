@@ -381,13 +381,6 @@ const FskBandwidth_t FskBandwidths[] =
 
 const RadioLoRaBandwidths_t Bandwidths[] = { LORA_BW_125, LORA_BW_250, LORA_BW_500, LORA_BW_062,LORA_BW_041, LORA_BW_031, LORA_BW_020, LORA_BW_015, LORA_BW_010, LORA_BW_007 };
 
-#if 0
-//                                          SF12    SF11    SF10    SF9    SF8    SF7
-static double RadioLoRaSymbTime[3][6] = {{ 32.768, 16.384, 8.192, 4.096, 2.048, 1.024 },  // 125 KHz
-                                         { 16.384, 8.192,  4.096, 2.048, 1.024, 0.512 },  // 250 KHz
-                                         { 8.192,  4.096,  2.048, 1.024, 0.512, 0.256 }}; // 500 KHz
-#endif
-
 uint8_t MaxPayloadLength = 0xFF;
 
 uint32_t TxTimeout = 0;
@@ -674,8 +667,7 @@ void RadioSetRxConfig( RadioModems_t modem, uint32_t bandwidth,
             SX126x.ModulationParams.Params.LoRa.Bandwidth = Bandwidths[bandwidth];
             SX126x.ModulationParams.Params.LoRa.CodingRate = ( RadioLoRaCodingRates_t )coderate;
 
-            if( ( ( bandwidth == 0 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
-            ( ( bandwidth == 1 ) && ( datarate == 12 ) ) || (RadioSymbTime(Bandwidths[bandwidth], coderate) >= 16.38) )
+            if( RadioSymbTime(Bandwidths[bandwidth], coderate) > 16.3 )
             {
                 SX126x.ModulationParams.Params.LoRa.LowDatarateOptimize = 0x01;
             }
@@ -768,8 +760,7 @@ void RadioSetTxConfig( RadioModems_t modem, int8_t power, uint32_t fdev,
             SX126x.ModulationParams.Params.LoRa.Bandwidth =  Bandwidths[bandwidth];
             SX126x.ModulationParams.Params.LoRa.CodingRate= ( RadioLoRaCodingRates_t )coderate;
 
-            if( ( ( bandwidth == 0 ) && ( ( datarate == 11 ) || ( datarate == 12 ) ) ) ||
-            ( ( bandwidth == 1 ) && ( datarate == 12 ) ) || (RadioSymbTime(Bandwidths[bandwidth], coderate) >= 16.38) )
+            if( RadioSymbTime(Bandwidths[bandwidth], coderate) > 16.3 )
             {
                 SX126x.ModulationParams.Params.LoRa.LowDatarateOptimize = 0x01;
             }
