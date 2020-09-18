@@ -557,6 +557,15 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 
 	lwan_dev_params_update();
 
+	mibReq.Type = MIB_DEVICE_CLASS;
+	LoRaMacMibGetRequestConfirm( &mibReq );
+	
+	if(loraWanClass != mibReq.Param.Class)
+	{
+		mibReq.Param.Class = loraWanClass;
+		LoRaMacMibSetRequestConfirm( &mibReq );
+	}
+
 	deviceState = DEVICE_STATE_JOIN;
 }
 

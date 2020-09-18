@@ -82,11 +82,12 @@ void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num
 		UART_2_UART_TX_CTRL_REG =tx_ctrl0;
 		UART_2_TX_CTRL_REG = tx_ctrl1;
 	}
-
+/*
 	printf("config %d\r\n",config);
 	printf("stop_bits %d\r\n",stop_bits);
 	printf("parity %d\r\n",parity);
 	printf("data_bits %d\r\n",data_bits);
+*/
 }
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
