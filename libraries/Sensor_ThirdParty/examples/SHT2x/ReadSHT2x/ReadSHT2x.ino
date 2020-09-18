@@ -10,12 +10,12 @@
 
 void setup()
 {
-    pinMode(Vext, OUTPUT);
     Serial.begin(115200);
 }
 
 void loop()
 {
+    pinMode(Vext, OUTPUT);
     digitalWrite(Vext, LOW);
     delay(50);
 
