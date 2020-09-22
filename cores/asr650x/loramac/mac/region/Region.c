@@ -37,7 +37,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 
 
 // Setup regions
-#ifdef REGION_AS923
+#if defined (REGION_AS923) || defined( REGION_AS923_AS1) || defined( REGION_AS923_AS2)
 #include "RegionAS923.h"
 #define AS923_CASE                                 case LORAMAC_REGION_AS923:
 #define AS923_IS_ACTIVE( )                         AS923_CASE { return true; }

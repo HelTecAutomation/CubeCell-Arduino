@@ -10,7 +10,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #include "RegionEU433.h"
 #elif defined( REGION_KR920 )
 #include "RegionKR920.h"
-#elif defined( REGION_AS923 )
+#elif defined( REGION_AS923) || defined( REGION_AS923_AS1) || defined( REGION_AS923_AS2)
 #include "RegionAS923.h"
 #endif
 
@@ -289,7 +289,6 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	ifDisplayAck=1;
 #endif
 	printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
-
 #if (LoraWan_RGB==1)
 	turnOnRGB(COLOR_RECEIVED, 200);
 	turnOffRGB();
@@ -450,7 +449,7 @@ void lwan_dev_params_update( void )
 	LoRaMacChannelAdd( 5, ( ChannelParams_t )KR920_LC6 );
 	LoRaMacChannelAdd( 6, ( ChannelParams_t )KR920_LC7 );
 	LoRaMacChannelAdd( 7, ( ChannelParams_t )KR920_LC8 );
-#elif defined( REGION_AS923 )
+#elif defined( REGION_AS923 ) || defined( REGION_AS923_AS1 ) || defined( REGION_AS923_AS2 )
 	LoRaMacChannelAdd( 2, ( ChannelParams_t )AS923_LC3 );
 	LoRaMacChannelAdd( 3, ( ChannelParams_t )AS923_LC4 );
 	LoRaMacChannelAdd( 4, ( ChannelParams_t )AS923_LC5 );
@@ -502,8 +501,11 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 	Serial.print("\r\nLoRaWAN ");
 	switch(region)
 	{
-		case LORAMAC_REGION_AS923:
-			Serial.print("AS923");
+		case LORAMAC_REGION_AS923_AS1:
+			Serial.print("AS923(AS1:922.0-923.4MHz)");
+			break;
+		case LORAMAC_REGION_AS923_AS2:
+			Serial.print("AS923(AS2:923.2-924.6MHz)");
 			break;
 		case LORAMAC_REGION_AU915:
 			Serial.print("AU915");
@@ -535,6 +537,8 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 	}
 	Serial.printf(" Class %X start!\r\n\r\n",loraWanClass+10);
 
+	if(region == LORAMAC_REGION_AS923_AS1 || region == LORAMAC_REGION_AS923_AS2)
+		region = LORAMAC_REGION_AS923;
 	MibRequestConfirm_t mibReq;
 
 	LoRaMacPrimitive.MacMcpsConfirm = McpsConfirm;

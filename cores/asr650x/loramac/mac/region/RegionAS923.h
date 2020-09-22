@@ -267,14 +267,23 @@
  */
 #define AS923_LC2                                   { 923400000, 0, { ( ( DR_5 << 4 ) | DR_0 ) }, 0 }
 
-
+#if defined( REGION_AS923_AS1) 
 #define AS923_LC3                { 922000000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
 #define AS923_LC4                { 922200000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
 #define AS923_LC5                { 922400000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
 #define AS923_LC6                { 922600000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
 #define AS923_LC7                { 922800000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
 #define AS923_LC8                { 923000000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#endif
 
+#if defined( REGION_AS923_AS2) 
+#define AS923_LC3                { 923600000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC4                { 923800000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC5                { 924000000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC6                { 924200000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC7                { 924400000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#define AS923_LC8                { 924600000,0, { ( ( DR_5 << 4 ) | AS923_TX_MIN_DATARATE ) }, 0 }
+#endif
 
 /*!
  * LoRaMac channels which are allowed for the join procedure
