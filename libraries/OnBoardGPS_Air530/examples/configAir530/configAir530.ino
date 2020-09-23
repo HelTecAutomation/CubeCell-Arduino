@@ -12,12 +12,12 @@ void setup() {
   * GSP+GLONASS:    MODE_GPS_GLONASS
   * default mode is GPS+BEIDOU.
   */
-  //GPS.setmode(MODE_GPS_BEIDOU);
+  //Air530.setmode(MODE_GPS_BEIDOU);
   
   /*supported nmea sentence :
   * GLL, RMC, VTG, GGA, GSA, GSV
   */
-//  GPS.setNMEA(NMEA_GGA|NMEA_GSA|NMEA_RMC|NMEA_VTG);
+//  Air530.setNMEA(NMEA_GGA|NMEA_GSA|NMEA_RMC|NMEA_VTG);
   
   /* set PPS mode and pulse width.
   *  void setPPS(uint8_t mode, uint16_t pulse_width = 500);
@@ -28,7 +28,7 @@ void setup() {
   *         4, always on;
   *  width : max value is 998 ms, default value is 500ms;
   */
-//  GPS.setPPS(3,200);
+//  Air530.setPPS(3,200);
 }
 
 void loop()
