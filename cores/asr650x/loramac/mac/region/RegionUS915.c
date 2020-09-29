@@ -466,7 +466,9 @@ bool RegionUS915ChanMaskSet( ChanMaskSetParams_t* chanMaskSet )
     return true;
 }
 
-bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
+// HELTEC NOTE: ADR ON test = Make this is API a true info only
+// if called from LoRaMacQueryTxPossible()
+bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter, bool infoOnly)
 {
     bool adrAckReq = false;
     int8_t datarate = adrNext->Datarate;
@@ -479,6 +481,9 @@ bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
 
     if( adrNext->AdrEnabled == true )
     {
+        // // useful for ADR ON testing
+        // printf("adrAckCounter: %d\r\n", *adrAckCounter);
+
         if( datarate == US915_TX_MIN_DATARATE )
         {
             *adrAckCounter = 0;
@@ -486,7 +491,9 @@ bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
         }
         else
         {
-            if( adrNext->AdrAckCounter >= US915_ADR_ACK_LIMIT )
+            // HELTEC NOTE: ADR ON test = Make this is API a true info only
+            // if called from LoRaMacQueryTxPossible()
+            if( (adrNext->AdrAckCounter >= US915_ADR_ACK_LIMIT) && (infoOnly == false) )
             {
                 adrAckReq = true;
                 txPower = US915_MAX_TX_POWER;
@@ -500,13 +507,23 @@ bool RegionUS915AdrNext( AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowO
                 if( ( adrNext->AdrAckCounter % US915_ADR_ACK_DELAY ) == 1 )
                 {
                     // Decrease the datarate
+                    // useful for ADR ON testing
+                    // printf("Decrease the datarate\r\n");
                     getPhy.Attribute = PHY_NEXT_LOWER_TX_DR;
                     getPhy.Datarate = datarate;
                     getPhy.UplinkDwellTime = adrNext->UplinkDwellTime;
                     phyParam = RegionUS915GetPhyParam( &getPhy );
                     datarate = phyParam.Value;
 
-                    if( datarate == US915_TX_MIN_DATARATE )
+                    // Useful for ADR ON testing
+                    //  if(infoOnly == false)
+                    // {
+                    //     *adrAckCounter = 96;
+                    // }
+
+                    // HELTEC NOTE: ADR ON test - Make this is API a true info only 
+                    // if called from LoRaMacQueryTxPossible()
+                    if( (datarate == US915_TX_MIN_DATARATE) && (infoOnly == false))
                     {
                         // We must set adrAckReq to false as soon as we reach the lowest datarate
                         adrAckReq = false;
@@ -606,7 +623,10 @@ bool RegionUS915TxConfig( TxConfigParams_t* txConfig, int8_t* txPower, TimerTime
     Radio.SetChannel( Channels[txConfig->Channel].Frequency );
 
     Radio.SetMaxPayloadLength( MODEM_LORA, txConfig->PktLen );
-    Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 14, false, true, 0, 0, false, 3e3 );
+    // HELTEC NOTE: We really do need this for LoRaWan
+    // unless you can show where 8 is incorrect or where  14/16 
+    // does work in a LoRaWan network, it does not in Helium network
+    Radio.SetTxConfig( MODEM_LORA, phyTxPower, 0, bandwidth, phyDr, 1, 8, false, true, 0, 0, false, 3e3 );
     FREQ_PRINTF("TX on freq %u Hz at DR %d power %d dBm\r\n", (unsigned int)Channels[txConfig->Channel].Frequency, txConfig->Datarate,phyTxPower);
 
     *txTimeOnAir = Radio.TimeOnAir( MODEM_LORA,  txConfig->PktLen );
