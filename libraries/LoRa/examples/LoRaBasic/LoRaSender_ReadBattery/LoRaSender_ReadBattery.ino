@@ -88,7 +88,7 @@ void setup() {
                                    LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
                                    true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
 
-    state=TX;
+    state=ReadVoltage;
 }
 
 
@@ -135,18 +135,18 @@ void loop()
      default:
           break;
   }
+  Radio.IrqProcess();
 }
 
 void OnTxDone( void )
 {
   Serial.print("TX done!");
   turnOnRGB(0,0);
-  state=TX;
 }
 
 void OnTxTimeout( void )
 {
     Radio.Sleep( );
     Serial.print("TX Timeout......");
-    state=TX;
+    state=ReadVoltage;
 }
