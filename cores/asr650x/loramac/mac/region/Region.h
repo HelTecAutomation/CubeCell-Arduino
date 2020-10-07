@@ -1410,10 +1410,12 @@ bool RegionChanMaskSet( LoRaMacRegion_t region, ChanMaskSetParams_t *chanMaskSet
  *
  * \param [OUT] adrAckCounter The calculated ADR acknowledgement counter.
  *
+ * \param [IN] infoOnly boolean. == true info only no ADR changes are made,
+ *                               ==  false update ADR as required
  * \retval Returns true, if an ADR request should be performed.
  */
 bool RegionAdrNext( LoRaMacRegion_t region, AdrNextParams_t *adrNext, int8_t *drOut, int8_t *txPowOut,
-                    uint32_t *adrAckCounter );
+                    uint32_t *adrAckCounter, bool infoOnly );
 
 /*!
  * \brief Configuration of the RX windows.

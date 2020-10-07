@@ -480,7 +480,10 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #define US915_VERIFY( )                            US915_CASE { return RegionUS915Verify( verify, phyAttribute ); }
 #define US915_APPLY_CF_LIST( )                     US915_CASE { RegionUS915ApplyCFList( applyCFList ); break; }
 #define US915_CHAN_MASK_SET( )                     US915_CASE { return RegionUS915ChanMaskSet( chanMaskSet ); }
-#define US915_ADR_NEXT( )                          US915_CASE { return RegionUS915AdrNext( adrNext, drOut, txPowOut, adrAckCounter ); }
+// HELTEC NOTE: Need for true info only call to API
+// NOTE only US915 has been modifed, probably needs to
+// be added to other regions as well
+#define US915_ADR_NEXT( )                          US915_CASE { return RegionUS915AdrNext( adrNext, drOut, txPowOut, adrAckCounter, infoOnly ); }
 #define US915_COMPUTE_RX_WINDOW_PARAMETERS( )      US915_CASE { RegionUS915ComputeRxWindowParameters( datarate, minRxSymbols, rxError, rxConfigParams ); break; }
 #define US915_RX_CONFIG( )                         US915_CASE { return RegionUS915RxConfig( rxConfig, datarate ); }
 #define US915_TX_CONFIG( )                         US915_CASE { return RegionUS915TxConfig( txConfig, txPower, txTimeOnAir ); }
@@ -726,7 +729,7 @@ bool RegionChanMaskSet( LoRaMacRegion_t region, ChanMaskSetParams_t* chanMaskSet
     }
 }
 
-bool RegionAdrNext( LoRaMacRegion_t region, AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter )
+bool RegionAdrNext( LoRaMacRegion_t region, AdrNextParams_t* adrNext, int8_t* drOut, int8_t* txPowOut, uint32_t* adrAckCounter, bool infoOnly )
 {
     switch( region )
     {

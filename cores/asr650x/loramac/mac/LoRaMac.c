@@ -425,6 +425,12 @@ static MlmeConfirm_t MlmeConfirm;
  */
 static LoRaMacRxSlot_t RxSlot;
 
+// HELTEC NOTE: DR Change 1 of 8
+/*!
+ * Holds the current user data rate override, if there is one
+ */
+static UserOverrideDataRate = -1;
+
 /*!
  * LoRaMac tx/rx operation state
  */
@@ -935,9 +941,23 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
                     LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_OK, MLME_JOIN );
                     IsLoRaMacNetworkJoined = true;
                     saveNetInfo(temp, size);
-                	//Joined save its DR using LoRaMacParams.ChannelsDatarate, if set it will be default
-                	LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
-                	//printf("LoRaMacParams.ChannelsDatarate %d\r\n",LoRaMacParams.ChannelsDatarate);
+                
+                    // HELTEC NOTE: DR Change 2 of 8
+                    // If within LoRaWan_APP.cpp we store the user modified DR into
+                    // the MAC layer, we must update the MAC layer here as well
+                    // rather than use the Default.
+                    // 
+                	//Joined, save the app defined override DR using LoRaMacParams.ChannelsDatarate, if override 
+                    // is not set use default
+                    // printf("Join Accept data rates: MacParams: %d, Mac default: %d\r\n",
+                	//             LoRaMacParams.ChannelsDatarate, LoRaMacParams.ChannelsDatarate);
+                    if (UserOverrideDataRate != (int8_t) -1)
+                    {
+                        //printf("Overriding default date rate with app level defined data rate: %d\r\n", UserOverrideDataRate);
+                        LoRaMacParams.ChannelsDatarate = UserOverrideDataRate;
+                    } else {
+                        LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
+                    }
             	} else {
                     LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_JOIN_FAIL, MLME_JOIN );
                 }
@@ -2138,6 +2158,7 @@ static void ProcessMacCommands( uint8_t *payload, uint8_t macIndex, uint8_t comm
                 }
                 break;
             case SRV_MAC_LINK_ADR_REQ: {
+                // printf("Process SRV_MAC_LINK_ADR_REQ\r\n");
                 LinkAdrReqParams_t linkAdrReq;
                 int8_t linkAdrDatarate = DR_0;
                 int8_t linkAdrTxPower = TX_POWER_0;
@@ -2498,7 +2519,8 @@ static LoRaMacStatus_t ScheduleTx( void )
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
         LoRaMacParams.ChannelsDatarate --;
-        if(LoRaMacParams.ChannelsDatarate == minDatarate)
+        if(LoRaMacParams.ChannelsDatarate == minDatarate)
+
         {
             LoRaMacParams.ChannelsDatarate = maxDatarate;
         }
@@ -2701,7 +2723,7 @@ LoRaMacStatus_t PrepareFrame( LoRaMacHeader_t *macHdr, LoRaMacFrameCtrl_t *fCtrl
             adrNext.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
 
             fCtrl->Bits.AdrAckReq = RegionAdrNext( LoRaMacRegion, &adrNext,
-                                                   &LoRaMacParams.ChannelsDatarate, &LoRaMacParams.ChannelsTxPower, &AdrAckCounter );
+                                                   &LoRaMacParams.ChannelsDatarate, &LoRaMacParams.ChannelsTxPower, &AdrAckCounter, false );
 
             if ( SrvAckRequested == true ) {
                 SrvAckRequested = false;
@@ -2743,6 +2765,25 @@ LoRaMacStatus_t PrepareFrame( LoRaMacHeader_t *macHdr, LoRaMacFrameCtrl_t *fCtrl
                     LoRaMacTxPayloadLen = MacCommandsBufferIndex;
                     payload = MacCommandsBuffer;
                     framePort = 0;
+                }
+                else {
+                    // HELTEC NOTE:
+                    // This appears to be the root of sending a zero length packet when there
+                    // is no MAC command response pending
+                    // 
+                    // In this test senario we are passing in a device app packet that exceeds the DR defined maximum and
+                    // there is no MAC command response pending
+                    //  if we get here
+                    //  This is false    ( both are zero'd )
+                    //      ( payload != NULL ) && ( LoRaMacTxPayloadLen > 0 ) )
+                    // and this is false  ( both are zero )
+                    //  ( MacCommandsBufferIndex > 0 ) && ( MacCommandsInNextTx == true )
+                    //
+                    // we have no user packet data and no MAC response pending. So, why did we 
+                    // continue to send an empty packet each time.
+                    // Here we now abort the send
+                    
+                    return LORAMAC_STATUS_LENGTH_ERROR;
                 }
             }
             MacCommandsInNextTx = false;
@@ -3089,18 +3130,34 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     return LORAMAC_STATUS_OK;
 }
 
+// Useful for ADR ON testing, 
+// extern uint16_t sendCount;  // set in device app main()
 LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
 {
     AdrNextParams_t adrNext;
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
-    int8_t datarate = LoRaMacParamsDefaults.ChannelsDatarate;
-    int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
+
+    // HELTEC NOTE: DR Change 3 of 8
+    // Now that the LoRaWan layer has stored the app override DR
+    // value into the MAC layer we can get the current value from
+    // LoRaMacParams rather than use Defaults
+    //int8_t datarate = LoRaMacParamsDefaults.ChannelsDatarate;
+    //int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
+    int8_t datarate = LoRaMacParams.ChannelsDatarate;
+    int8_t txPower = LoRaMacParams.ChannelsTxPower;
+
     uint8_t fOptLen = MacCommandsBufferIndex + MacCommandsBufferToRepeatIndex;
 
     if ( txInfo == NULL ) {
         return LORAMAC_STATUS_PARAMETER_INVALID;
     }
+
+    // Useful for ADR ON testing, force the count high to force ADR change
+    // if( (AdrCtrlOn == true) && ((sendCount == 4) || (sendCount == 8) || (sendCount == 13)) )
+    // {
+    //     AdrAckCounter = 96;
+    // } 
 
     // Setup ADR request
     adrNext.UpdateChanMask = false;
@@ -3110,9 +3167,23 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
     adrNext.TxPower = LoRaMacParams.ChannelsTxPower;
     adrNext.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
 
+    // HELTEC NOTE:
+    // Problem with this RegionAdrNext() call:
+    // this call is negating the decrease in data rate within RegionAdrNext() if ArdAckCounter
+    //  is too large this causes a reset of the DR and the Ack count but the DR is
+    //  not stored back into LoRaMacParams, thus when the call to
+    //  RegionAdrNext in PrepareFrame() is called the ADR Ack count has already been
+    //  reset, thus "that" call does not change the DR
+    //  
+    //  the infoOnly parameter is an attempt to eliminate any side effect
+    //  witin RegionAdrNext() if this call is truly intended to be for information only.
+    //
+    //  HELTEC NOTE: this is only implemented within/for RegionUS915.c
+    // 
+
     // We call the function for information purposes only. We don't want to
     // apply the datarate, the tx power and the ADR ack counter.
-    RegionAdrNext( LoRaMacRegion, &adrNext, &datarate, &txPower, &AdrAckCounter );
+    RegionAdrNext( LoRaMacRegion, &adrNext, &datarate, &txPower, &AdrAckCounter, true );
 
     // Setup PHY request
     getPhy.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
@@ -4003,6 +4074,53 @@ void LoRaMacTestSetDutyCycleOn( bool enable )
 void LoRaMacTestSetChannel( uint8_t channel )
 {
     Channel = channel;
+}
+
+// HELTEC NOTE: DR Change 4 of 8
+/**
+ * this will set the data rate into the LoRaMacParams.ChannelsDatarate
+ * provided datarate is valid for current region
+ * 
+ */
+LoRaMacStatus_t LoRaMacSetDataRate( int8_t datarate )
+{
+    // this will set the data rate into the LoRaMacParams.ChannelsDatarate
+    // provided datarate is valid for current region
+    MibRequestConfirm_t mibReq;
+	mibReq.Type = MIB_CHANNELS_DATARATE;
+	mibReq.Param.ChannelsDatarate = datarate;
+
+	LoRaMacStatus_t status  = LoRaMacMibSetRequestConfirm( &mibReq );
+	if( status == LORAMAC_STATUS_OK )
+	{
+        // validation of new rate suceeded, this is used to set the data rate
+        // override just after a join accept, otherwise DR used during
+        // join accept is used
+        UserOverrideDataRate = datarate;
+
+		printf("** Data rate changed\r\n");
+	} else {
+        // validation of the user attempt to change data rate failed, leave as is
+		printf("** Data rate change failed: %d\r\n", status);
+	}
+    return status;
+}
+
+// HELTEC NOTE: DR Change 5 of 8
+LoRaMacStatus_t LoRaMacGetDataRate(int8_t *dataRate)
+{
+    MibRequestConfirm_t mibReq;
+	mibReq.Type = MIB_CHANNELS_DATARATE;
+
+	LoRaMacStatus_t status  = LoRaMacMibGetRequestConfirm( &mibReq );
+    if (status == LORAMAC_STATUS_OK)
+    {
+        *dataRate =  mibReq.Param.ChannelsDatarate;
+        return LORAMAC_STATUS_OK;
+    }
+    else {
+        LORAMAC_STATUS_DATARATE_INVALID;
+    }
 }
 
 #if 0
