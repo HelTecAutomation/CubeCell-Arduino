@@ -35,11 +35,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 /*loraWan default Dr for ADR when adr disabled*/
-#if defined(REGION_US915) || defined(REGION_US915_HYBRID)
-int8_t default_DR = 3;
-#else
 int8_t default_DR = 5;
-#endif
 
 /*!
  * User application data size
@@ -86,90 +82,49 @@ enum eDeviceState_LoraWan deviceState;
 /*!
  * \brief   Prepares the payload of the frame
  *
- * \param   [IN] sendStatus - Pointer to an instance of LoRaMacStatus_t
- *               for returning status of send
- *
  * \retval  [0: frame could be send, 1: error]
  */
-bool SendFrame( LoRaMacStatus_t * sendStatus)
+bool SendFrame( void )
 {
 	lwan_dev_params_update();
-	int8_t currentDataRate;
 	
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
-	// HELTEC NOTE: send() API return code changes 
-	LoRaMacStatus_t macStatus = LORAMAC_STATUS_OK;
-    LoRaMacStatus_t packetLenStatus;
 
-	// HELTEC NOTE: DR Change 6 of 8
-	// make sure we have the latest data rate from the MAC layer in case
-	// ADR ON and network has suggested DR change.
-	// if error we use #idef defined default
-
-	LoRaMacStatus_t drGetStatus = LoRaMacGetDataRate(&currentDataRate);
-	if (drGetStatus != LORAMAC_STATUS_OK)
-	{
-		currentDataRate = default_DR;
-	}
-	 
-	//HELTEC NOTE: send() API return code changes 
-	*sendStatus = LORAMAC_STATUS_OK;
-	packetLenStatus = LoRaMacQueryTxPossible( appDataSize, &txInfo );
-
-	if( packetLenStatus != LORAMAC_STATUS_OK )
+	if( LoRaMacQueryTxPossible( appDataSize, &txInfo ) != LORAMAC_STATUS_OK )
 	{
 		// Send empty frame in order to flush MAC commands
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
-		mcpsReq.Req.Unconfirmed.Datarate = currentDataRate;
+		mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 	}
 	else
 	{
 		if( isTxConfirmed == false )
 		{
-			printf("unconfirmed uplink send attempt ... size: %d\r\n", appDataSize);
+			printf("unconfirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_UNCONFIRMED;
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
 			mcpsReq.Req.Unconfirmed.fBufferSize = appDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = currentDataRate;
+			mcpsReq.Req.Unconfirmed.Datarate = default_DR;
 		}
 		else
 		{
-			printf("confirmed uplink send attempt ... size: %d\r\n", appDataSize);
+			printf("confirmed uplink sending ...\r\n");
 			mcpsReq.Type = MCPS_CONFIRMED;
 			mcpsReq.Req.Confirmed.fPort = appPort;
 			mcpsReq.Req.Confirmed.fBuffer = appData;
 			mcpsReq.Req.Confirmed.fBufferSize = appDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = confirmedNbTrials;
-			mcpsReq.Req.Confirmed.Datarate = currentDataRate;
+			mcpsReq.Req.Confirmed.Datarate = default_DR;
 		}
 	}
-
-	macStatus = LoRaMacMcpsRequest( &mcpsReq );
-
-	// HELTEC NOTE: send() API return code changes 
-	//  Here we return send status up to device app layer. This would
-	//  not work if ever the send() is done asychronously,
-	//  but seems there should be some mechanism to notify the
-	//  device app of a send failure???  
-	// 
-	if (packetLenStatus != LORAMAC_STATUS_OK) {
-			*sendStatus = packetLenStatus;
-	} else if (macStatus != LORAMAC_STATUS_OK) {
-			*sendStatus = macStatus;
-	}
-	// return false after good transmission so that we adhere
-	// to duty cycle and do not send next transmission too soon
-	// a periodic timer will re-enable the next send time
-	if( macStatus == LORAMAC_STATUS_OK )
+	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
 	{
 		return false;
 	}
-	// return true indicates send failed, we can immediately attempt
-	// another send
 	return true;
 }
 
@@ -670,11 +625,8 @@ void LoRaWanClass::join()
 	}
 }
 
-// HELTEC NOTE: send() API return code changes 
-LoRaMacStatus_t LoRaWanClass::send()
+void LoRaWanClass::send()
 {
-	LoRaMacStatus_t sendStatus;
-
 	if( nextTx == true )
 	{
 		MibRequestConfirm_t mibReq;
@@ -687,13 +639,7 @@ LoRaMacStatus_t LoRaWanClass::send()
 			LoRaMacMibSetRequestConfirm( &mibReq );
 		}
 		
-		// HELTEC NOTE: send() API return code changes 
-		nextTx = SendFrame(&sendStatus);
-		if (sendStatus != LORAMAC_STATUS_OK)
-		{
-			printf("send failed: Error code ...  %d\r\n", sendStatus);
-		}
-		return sendStatus;
+		nextTx = SendFrame( );
 	}
 }
 
@@ -709,30 +655,9 @@ void LoRaWanClass::sleep()
 	// Process Radio IRQ
 	Radio.IrqProcess( );
 }
-
-// HELTEC NOTE: DR Change 7 of 8
-// inform the MAC layer of the user override of DR
 void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
 {
-	LoRaMacSetDataRate(dataRate);
-}
-
-
-// HELTEC NOTE: DR Change 8 of 8
-// get the current DR setting from the MAC layer 
-/**
- * Returns data rate or -1 if the call fails
-*/
-int8_t LoRaWanClass::getDataRateForNoADR()
-{
-	
-	int8_t dataRate = -1;
-	if (LoRaMacGetDataRate(&dataRate) == LORAMAC_STATUS_OK)
-	{ 
-		return dataRate;
-	}
-
-	return -1;
+	default_DR = dataRate;
 }
 
 void LoRaWanClass::ifskipjoin()

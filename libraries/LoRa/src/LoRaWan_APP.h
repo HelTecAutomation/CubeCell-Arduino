@@ -56,11 +56,10 @@ class LoRaWanClass{
 public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
-  LoRaMacStatus_t send();
+  void send();
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);
-  int8_t getDataRateForNoADR();
   void ifskipjoin();
   void generateDeveuiByChipID();
 
@@ -74,7 +73,7 @@ public:
 };
 
 extern "C" uint16_t getBatteryVoltage(void);
-extern "C" bool SendFrame( LoRaMacStatus_t * sendStatus );
+extern "C" bool SendFrame( void );
 extern "C" void turnOnRGB(uint32_t color,uint32_t time);
 extern "C" void turnOffRGB(void);
 extern "C" uint16_t getBatteryVoltage(void);
