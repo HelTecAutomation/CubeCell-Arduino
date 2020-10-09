@@ -127,10 +127,32 @@ void SX126xSendPayload( uint8_t *payload, uint8_t size, uint32_t timeout )
     SX126xSetTx( timeout );
 }
 
+void SX126xSetNodeAddress(uint8_t nodeAddress) 
+{
+    SX126xWriteRegister(REG_LR_NODEADDRESS, nodeAddress);
+}
+
+void SX126xSetBroadcastAddress(uint8_t broadcastAddress)
+{
+    SX126xWriteRegister(REG_LR_BROADCASTRADDRESS, SX126xSetNodeAddress);
+}
+
 uint8_t SX126xSetSyncWord( uint8_t *syncWord )
 {
+  switch ( SX126xGetPacketType( ) )
+  {
+  case PACKET_TYPE_GFSK:
+    for (uint8_t i = 0; i < 8; i++) {
+      SX126xWriteRegister(REG_LR_SYNCWORDBASEADDRESS + i, syncWord[i]);
+    }
+    break;
+  case PACKET_TYPE_LORA:
     SX126xWriteRegister(REG_LR_SYNCWORD, *syncWord);
-    return 0;
+    break;
+  default:
+    break;
+  }
+  return 0;
 }
 
 void SX126xSetCrcSeed( uint16_t seed )

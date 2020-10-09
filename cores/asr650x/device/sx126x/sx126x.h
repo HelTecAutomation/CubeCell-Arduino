@@ -103,6 +103,16 @@ extern "C" {
 #define REG_LR_SYNCWORDBASEADDRESS                  0x06C0
 
 /*!
+* \brief The addresses of the register holding node address
+*/
+#define REG_LR_NODEADDRESS                          0x06CD
+
+/*!
+ * \brief The addresses of the register holding broadcast address
+ */
+#define REG_LR_BROADCASTRADDRESS                    0x06CE
+
+/*!
  * \brief The addresses of the register holding LoRa Modem SyncWord value
  */
 #define REG_LR_SYNCWORD                             0x0740
@@ -763,6 +773,20 @@ uint8_t SX126xGetPayload( uint8_t *payload, uint8_t *size, uint8_t maxSize );
  * \param [in]  timeout       The timeout for Tx operation
  */
 void SX126xSendPayload( uint8_t *payload, uint8_t size, uint32_t timeout );
+
+/*!
+ * \brief Sets the node address used in GFSK
+ *
+ * \param [in]  nodeAddress      nodeAddress
+ */
+void SX126xSetNodeAddress(uint8_t nodeAddress);
+
+/*!
+ * \brief Sets the broadcast address used in GFSK
+ *
+ * \param [in]  nodeAddress      nodeAddress
+ */
+void SX126xSetBroadcastAddress(uint8_t broadcastAddress);
 
 /*!
  * \brief Sets the Sync Word given by index used in GFSK
