@@ -34,8 +34,15 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   uint8_t isDispayOn=0;
 #endif
 
-/*loraWan default Dr for ADR when adr disabled*/
-int8_t default_DR = 5;
+/*loraWan default Dr when adr disabled*/
+#ifdef REGION_US915
+int8_t defaultDrForNoAdr = 3;
+#else
+int8_t defaultDrForNoAdr = 5;
+#endif
+
+/*loraWan current Dr when adr disabled*/
+int8_t currentDrForNoAdr;
 
 /*!
  * User application data size
@@ -94,10 +101,11 @@ bool SendFrame( void )
 	if( LoRaMacQueryTxPossible( appDataSize, &txInfo ) != LORAMAC_STATUS_OK )
 	{
 		// Send empty frame in order to flush MAC commands
+		printf("payload length error ...\r\n");
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
-		mcpsReq.Req.Unconfirmed.Datarate = default_DR;
+		mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
 	}
 	else
 	{
@@ -108,7 +116,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Unconfirmed.fPort = appPort;
 			mcpsReq.Req.Unconfirmed.fBuffer = appData;
 			mcpsReq.Req.Unconfirmed.fBufferSize = appDataSize;
-			mcpsReq.Req.Unconfirmed.Datarate = default_DR;
+			mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
 		}
 		else
 		{
@@ -118,7 +126,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.fBuffer = appData;
 			mcpsReq.Req.Confirmed.fBufferSize = appDataSize;
 			mcpsReq.Req.Confirmed.NbTrials = confirmedNbTrials;
-			mcpsReq.Req.Confirmed.Datarate = default_DR;
+			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		}
 	}
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
@@ -657,7 +665,7 @@ void LoRaWanClass::sleep()
 }
 void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
 {
-	default_DR = dataRate;
+	defaultDrForNoAdr = dataRate;
 }
 
 void LoRaWanClass::ifskipjoin()

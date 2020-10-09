@@ -1891,7 +1891,8 @@ static bool ValidatePayloadLength( uint8_t lenN, int8_t datarate, uint8_t fOptsL
     payloadSize = ( lenN + fOptsLen );
 
     // Validation of the application payload size
-    if ( ((( payloadSize > maxN ) && (fOptsLen != 0) && (fOptsLen <= maxN)) || ( payloadSize <= maxN )) && ( payloadSize <= LORAMAC_PHY_MAXPAYLOAD ) ) {
+    //if ( ((( payloadSize > maxN ) && (fOptsLen != 0) && (fOptsLen <= maxN)) || ( payloadSize <= maxN )) && ( payloadSize <= LORAMAC_PHY_MAXPAYLOAD ) ) {
+    if ( ((( payloadSize > maxN ) && (fOptsLen != 0) && (lenN <= maxN) && (fOptsLen <= maxN)) || ( payloadSize <= maxN )) && ( payloadSize <= LORAMAC_PHY_MAXPAYLOAD ) ) {
         return true;
     }
     return false;
@@ -2497,10 +2498,13 @@ static LoRaMacStatus_t ScheduleTx( void )
     while ( RegionNextChannel( LoRaMacRegion, &nextChan, &Channel, &dutyCycleTimeOff, &AggregatedTimeOff ) == false ) {
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
-        LoRaMacParams.ChannelsDatarate --;
         if(LoRaMacParams.ChannelsDatarate == minDatarate)
         {
             LoRaMacParams.ChannelsDatarate = maxDatarate;
+        }
+        else
+        {
+            LoRaMacParams.ChannelsDatarate --;
         }
         // Update datarate in the function parameters
         nextChan.Datarate = LoRaMacParams.ChannelsDatarate;
@@ -3088,25 +3092,41 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
 
     return LORAMAC_STATUS_OK;
 }
+extern int8_t defaultDrForNoAdr;
+extern int8_t currentDrForNoAdr;
 
 LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
 {
     AdrNextParams_t adrNext;
     GetPhyParams_t getPhy;
     PhyParam_t phyParam;
-    int8_t datarate = LoRaMacParamsDefaults.ChannelsDatarate;
+    int8_t datarate;
     int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
+    currentDrForNoAdr = defaultDrForNoAdr;
+    if(AdrCtrlOn)
+    {
+        datarate = LoRaMacParams.ChannelsDatarate;
+    }
+    else
+    {
+        datarate=currentDrForNoAdr;
+    }
     uint8_t fOptLen = MacCommandsBufferIndex + MacCommandsBufferToRepeatIndex;
 
     if ( txInfo == NULL ) {
         return LORAMAC_STATUS_PARAMETER_INVALID;
     }
 
+	getPhy.Attribute = PHY_MAX_TX_DR;
+	phyParam = RegionGetPhyParam( LoRaMacRegion, &getPhy );
+	int8_t maxDatarate = phyParam.Value;
+
     // Setup ADR request
     adrNext.UpdateChanMask = false;
     adrNext.AdrEnabled = AdrCtrlOn;
     adrNext.AdrAckCounter = AdrAckCounter;
-    adrNext.Datarate = LoRaMacParams.ChannelsDatarate;
+    //adrNext.Datarate = LoRaMacParams.ChannelsDatarate;
+    adrNext.Datarate = datarate;
     adrNext.TxPower = LoRaMacParams.ChannelsTxPower;
     adrNext.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
 
@@ -3114,6 +3134,7 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
     // apply the datarate, the tx power and the ADR ack counter.
     RegionAdrNext( LoRaMacRegion, &adrNext, &datarate, &txPower, &AdrAckCounter );
 
+/*
     // Setup PHY request
     getPhy.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
     getPhy.Datarate = datarate;
@@ -3137,10 +3158,34 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
         MacCommandsBufferIndex = 0;
         MacCommandsBufferToRepeatIndex = 0;
     }
-
+*/
     // Verify if the fOpts and the payload fit into the maximum payload
-    if ( ValidatePayloadLength( size, datarate, fOptLen ) == false ) {
-        return LORAMAC_STATUS_LENGTH_ERROR;
+    while ( ValidatePayloadLength( size, datarate, fOptLen ) == false ) {
+		getPhy.UplinkDwellTime = LoRaMacParams.UplinkDwellTime;
+		getPhy.Datarate = datarate;
+		getPhy.Attribute = PHY_MAX_PAYLOAD;
+		
+		// Change request in case repeater is supported
+		if( LoRaMacParams.RepeaterSupport == true ) {
+			getPhy.Attribute = PHY_MAX_PAYLOAD_REPEATER;
+		}
+		phyParam = RegionGetPhyParam( LoRaMacRegion, &getPhy );
+		uint8_t maxN = phyParam.Value;
+        if(AdrCtrlOn)
+        {
+            if(LoRaMacParams.ChannelsDatarate == maxDatarate)
+                return LORAMAC_STATUS_LENGTH_ERROR;
+            LoRaMacParams.ChannelsDatarate ++;
+            datarate=LoRaMacParams.ChannelsDatarate;
+        }
+        else
+        {
+            if(currentDrForNoAdr == maxDatarate)
+                return LORAMAC_STATUS_LENGTH_ERROR;
+            currentDrForNoAdr++;
+            datarate=currentDrForNoAdr;
+        }
+		printf("Payload length(%d) and fOptLen(%d) exceed max size(%d for current datarate DR %d), set datarate to Dr %d\r\n",size,fOptLen,maxN,datarate-1,datarate);
     }
     return LORAMAC_STATUS_OK;
 }
