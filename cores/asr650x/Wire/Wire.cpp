@@ -150,38 +150,44 @@ size_t TwoWire::getClock()
  */
 i2c_err_t TwoWire::writeTransmission(uint16_t address, uint8_t *buff, uint16_t size, bool sendStop)
 {
-	 uint8_t Status=0;
-	 uint16_t i;
-	 if(_i2c_num == I2C_NUM_0)
-	 {
-		 flush();
-		 I2C_I2CMasterClearStatus();                                            //清除I2C状态数据
-	     Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
-	     
-	    if(Status == I2C_I2C_MSTR_NO_ERROR)
-	    {    	
-	    	for(i=0;i<size;i++)
-	    	{
-	    		I2C_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
-	    	}
-	    }
-	    I2C_I2CMasterSendStop(I2CTIMEOUT); 
+	uint8_t Status=0;
+	uint16_t i;
+	flush();
+	if(_i2c_num == I2C_NUM_0)
+	{
+		I2C_I2CMasterClearStatus();                                            //清除I2C状态数据
+		Status =I2C_I2CMasterSendRestart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
+	
+		if(Status == I2C_I2C_MSTR_NOT_READY)
+			Status =I2C_I2CMasterSendStart(address, I2C_I2C_WRITE_XFER_MODE,I2CTIMEOUT);
+
+		if(Status == I2C_I2C_MSTR_NO_ERROR)
+		{
+			for(i=0;i<size;i++)
+			{
+				I2C_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
+			}
+			if(sendStop)
+				I2C_I2CMasterSendStop(I2CTIMEOUT); 
+		}
 	}
 	else
 	{
-		 flush();
-		 I2C_1_I2CMasterClearStatus();                                            //清除I2C状态数据
-	     Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
-	     
-	    if(Status == I2C_1_I2C_MSTR_NO_ERROR)
-	    {    	
-	    	for(i=0;i<size;i++)
-	    	{
-	    		I2C_1_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
-	    	}
-	    }
+		I2C_1_I2CMasterClearStatus();                                            //清除I2C状态数据
+		Status =I2C_1_I2CMasterSendRestart(address, I2C_1_I2C_WRITE_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
 
-	    I2C_1_I2CMasterSendStop(I2CTIMEOUT); 
+		if(Status == I2C_I2C_MSTR_NOT_READY)
+			Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_WRITE_XFER_MODE,I2CTIMEOUT);
+
+		if(Status == I2C_1_I2C_MSTR_NO_ERROR)
+		{
+			for(i=0;i<size;i++)
+			{
+				I2C_1_I2CMasterWriteByte(buff[i],I2CTIMEOUT);
+			}
+			if(sendStop)
+				I2C_1_I2CMasterSendStop(I2CTIMEOUT);
+	    }
 	}
     if(Status==I2C_I2C_MSTR_NO_ERROR)
     {
@@ -202,32 +208,40 @@ i2c_err_t TwoWire::readTransmission(uint16_t address, uint8_t *buff, uint16_t si
 	if(_i2c_num == I2C_NUM_0)
 	{
 		I2C_I2CMasterClearStatus();                                            //清除I2C状态数据
-		Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
+		Status =I2C_I2CMasterSendRestart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
+
+		if(Status == I2C_I2C_MSTR_NOT_READY)
+			Status =I2C_I2CMasterSendStart(address, I2C_I2C_READ_XFER_MODE,I2CTIMEOUT);
 
 		if(Status == I2C_I2C_MSTR_NO_ERROR)
-		{    	
+		{
 			for(i=0;i<size;i++)
 			{
 				I2C_I2CMasterReadByte(I2C_I2C_ACK_DATA,&buff[i],I2CTIMEOUT);
 				(* readCount)++;
 			}
+			if(sendStop)
+				I2C_I2CMasterSendStop(I2CTIMEOUT); 
 		}
-		I2C_I2CMasterSendStop(I2CTIMEOUT); 
 	}
 	else
 	{
 		I2C_1_I2CMasterClearStatus();                                            //清除I2C状态数据
-		Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_READ_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
+		Status =I2C_1_I2CMasterSendRestart(address, I2C_1_I2C_READ_XFER_MODE,I2CTIMEOUT);      //发送读数据命令
+
+		if(Status == I2C_I2C_MSTR_NOT_READY)
+			Status =I2C_1_I2CMasterSendStart(address, I2C_1_I2C_READ_XFER_MODE,I2CTIMEOUT);
 
 		if(Status == I2C_1_I2C_MSTR_NO_ERROR)
-		{    	
+		{
 			for(i=0;i<size;i++)
 			{
 				I2C_1_I2CMasterReadByte(I2C_1_I2C_ACK_DATA,&buff[i],I2CTIMEOUT);
 				(* readCount)++;
 			}
+			if(sendStop)
+				I2C_1_I2CMasterSendStop(I2CTIMEOUT); 
 		}
-		I2C_1_I2CMasterSendStop(I2CTIMEOUT); 
 	}
 	
 	if(Status==I2C_I2C_MSTR_NO_ERROR)
