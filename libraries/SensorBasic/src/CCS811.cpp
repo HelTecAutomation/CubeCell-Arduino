@@ -30,7 +30,7 @@ bool CCS811::begin(uint8_t addr)
 	disableInterrupt();
 
 	//default to read every second
-	setDriveMode(CCS811_DRIVE_MODE_1SEC);
+	setDriveMode(CCS811_DRIVE_MODE_250MS);
 
 	return true;
 }
