@@ -191,6 +191,31 @@ int HardwareSerial::read(void)
 	return (uint32)(-1);
 }
 
+int HardwareSerial::read(uint8_t* buff, uint32_t timeout)
+{
+    uint32_t timestart = millis();
+    while(available()==0)
+    {
+      if( (millis()-timestart) > timeout )
+      {
+        return 0;
+      }
+    }
+    int serialBuffer_index=0;
+    while(available())
+    {
+      buff[serialBuffer_index++]=read();
+      for(uint32_t i=0;i<(23040000/SerialBaud);i++)
+      {
+		if(available())
+			break;
+      }
+    }
+    return serialBuffer_index;
+      //Serial.write(serialBuffer,serialBuffer_index);
+}
+
+
 void HardwareSerial::flush()
 {
 	if( _uart_num == UART_NUM_0)
