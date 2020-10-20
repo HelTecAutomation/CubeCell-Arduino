@@ -16,6 +16,8 @@ CubeCell series LoRaWAN-Node stack is migration form [LoRaMac-node](https://gith
 
 For more details, please refer to **[CubeCell Documents Page](https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/index.html).**
 
+We have made an e-ink adaptation for cubecell, currently only supports 2.9 inch ink screen, we will update it later:https://github.com/HelTecAutomation/e-ink/blob/master/examples/DEPG0290BxS75AFxX_BW/DEPG0290BxS75AFxX_BW.ino
+
 &nbsp;
 
 ## Instructions
@@ -82,7 +84,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 | ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cuapsule](https://heltec.org/project/htcc-ac01/) |
 | ASR6502 |                         Coming soon                          |
 
-
+我们对cubecell进行了电子墨水改编，目前仅支持2.9英寸墨水屏，我们会在后面陆续更新：https://github.com/HelTecAutomation/e-ink/blob/master/examples/DEPG0290BxS75AFxX_BW/DEPG0290BxS75AFxX_BW.ino
 
 ## 安装指南
 
