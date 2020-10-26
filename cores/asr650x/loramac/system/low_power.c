@@ -73,10 +73,9 @@ extern bool wakeByUart;
  */
 void LowPower_Disable( e_LOW_POWER_State_Id_t state )
 {
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
+    uint8_t InterruptState = CyEnterCriticalSection( );
     LowPower_State |= state;
-    RHINO_CPU_INTRPT_ENABLE();
+    CyExitCriticalSection( InterruptState );
 }
 
 /**
@@ -86,10 +85,9 @@ void LowPower_Disable( e_LOW_POWER_State_Id_t state )
  */
 void LowPower_Enable( e_LOW_POWER_State_Id_t state )
 {
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
+    uint8_t InterruptState = CyEnterCriticalSection( );
     LowPower_State &= ~state;
-    RHINO_CPU_INTRPT_ENABLE();
+    CyExitCriticalSection( InterruptState );
 }
 
 /**
@@ -109,27 +107,23 @@ uint32_t LowPower_GetState( void )
  * @retval None
  */
 extern uint32_t systime;
-extern void systemTimer();
 
 void lowPowerHandler( void )
 {
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
     if (LowPower_State == 0 && wakeByUart == false) {
         DBG_PRINTF_CRITICAL("dz\n\r");
         pinMode(P4_1,ANALOG);// SPI0  MISO;
-        aos_lrwan_chg_mode.enter_stop_mode();
-        /* mcu dependent. to be implemented by user*/
-        aos_lrwan_chg_mode.exit_stop_mode();
-        aos_lrwan_time_itf.set_uc_wakeup_time();
-        CySysTickSetCallback(4,systemTimer);
+        if (UART_1_GET_CTRL_ENABLED) UART_1_Sleep;
+        if (UART_2_GET_CTRL_ENABLED) UART_2_Sleep;
+        CySysPmDeepSleep( );
+        if (UART_1_GET_CTRL_ENABLED) UART_1_Wakeup;
+        if (UART_2_GET_CTRL_ENABLED) UART_2_Wakeup;
         systime = (uint32_t)TimerGetCurrentTime();
         pinMode(P4_1,INPUT);
     } else {
         //DBG_PRINTF_CRITICAL("z\n\r");
-        aos_lrwan_chg_mode.enter_sleep_mode();
+        CySysPmSleep( );
     }
-    RHINO_CPU_INTRPT_ENABLE();
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
