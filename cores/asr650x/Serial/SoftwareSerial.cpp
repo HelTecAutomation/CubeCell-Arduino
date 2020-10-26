@@ -1,7 +1,7 @@
 #include "SoftwareSerial.h"
 
 uint8_t SoftwareSerial::s_currentRx = ~0;
-uint8_t SoftwareSerial::s_timeDelay = 0;
+uint16_t SoftwareSerial::s_timeDelay = 0;
 RingBuffer<uint8_t, 64> SoftwareSerial::s_rxDataBuffer = RingBuffer<uint8_t, 64>();
 bool SoftwareSerial::s_overflow = false;
 
