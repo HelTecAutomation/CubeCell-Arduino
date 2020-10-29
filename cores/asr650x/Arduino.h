@@ -77,6 +77,7 @@
 #define _max(a,b) ((a)>(b)?(a):(b))
 #define noInterrupts() CyGlobalIntDisable
 #define interrupts()   CyGlobalIntEnable
+#define digitalPinToInterrupt(p) ( p )
 
 #define clockCyclesPerMicrosecond() ( 48L ) // clock cycle 48 MHz
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
