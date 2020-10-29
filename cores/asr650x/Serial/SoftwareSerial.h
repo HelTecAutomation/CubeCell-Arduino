@@ -49,7 +49,7 @@ private:
 
     static uint8_t s_currentRx;
     static RingBuffer<uint8_t, 64> s_rxDataBuffer;
-    static uint8_t s_timeDelay;
+    static uint16_t s_timeDelay;
     static bool s_overflow;
 
     uint8_t _rxpin;
