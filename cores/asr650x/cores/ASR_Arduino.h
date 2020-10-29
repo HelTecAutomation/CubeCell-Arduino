@@ -40,10 +40,11 @@ typedef enum
 
 typedef enum
 {
-    NONE,
-    RISING,
-    FALLING,
-    BOTH,
+    NONE=0,
+    RISING=1,
+    FALLING=2,
+    BOTH=3,
+    CHANGE=3
 }IrqModes;
 
 #define DRIVE_MODE_BITS        (3)
