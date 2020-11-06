@@ -55,5 +55,5 @@ void loop() {
     }
   }
   digitalWrite(GPIO0,HIGH);
-  delay(500);
+  delay(5000);
 }
