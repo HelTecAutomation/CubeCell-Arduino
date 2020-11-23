@@ -8,7 +8,8 @@
  *
  * this project also realess in GitHub:
  * https://github.com/HelTecAutomation/ASR650x-Arduino
- * 
+ 
+ * Use interrupt function to achieve
  */
 
 #define trigPin GPIO1
