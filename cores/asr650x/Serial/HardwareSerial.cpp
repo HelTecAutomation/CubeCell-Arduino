@@ -155,16 +155,22 @@ int HardwareSerial::available(void)
 	//}
 	return 0;
 }
+
 void HardwareSerial::delayByte(void)
 {
 	delayMicroseconds(11000000/SerialBaud);
 }
 
-
 int HardwareSerial::availableForWrite(void)
 {
-   // return uartAvailableForWrite(_uart);
-   return 0;
+	if( _uart_num == UART_NUM_0)
+	{
+		return (int) (UART_1_TX_BUFFER_SIZE - UART_1_SpiUartGetTxBufferSize());
+	}
+	else
+	{
+		return (int) (UART_2_TX_BUFFER_SIZE - UART_2_SpiUartGetTxBufferSize());
+	}
 }
 
 int HardwareSerial::peek(void)
