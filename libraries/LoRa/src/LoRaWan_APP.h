@@ -56,7 +56,7 @@ class LoRaWanClass{
 public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
-  void send();
+  bool send();
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);
@@ -71,6 +71,8 @@ public:
   void displayMcuInit();
 #endif
 };
+
+void OnTxNextPacketTimerEvent( void );
 
 extern "C" uint16_t getBatteryVoltage(void);
 extern "C" bool SendFrame( void );

@@ -36,7 +36,8 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include "debug.h"
 #include "LoRaMacTest.h"
 #include "LoRaMacConfirmQueue.h"
-#include "AT_Command.h"
+//#include "AT_Command.h"
+#include "ASR_Arduino.h"
 
 #ifdef CONFIG_LORA_VERIFY
 extern bool g_lora_debug;
@@ -297,19 +298,6 @@ static TimerTime_t LoRaMacInitializationTime = 0;
 
 static TimerSysTime_t LastTxSysTime = { 0 };
 
-/*!
- * LoRaMac internal states
- */
-enum eLoRaMacState {
-    LORAMAC_IDLE          = 0x00000000,
-    LORAMAC_TX_RUNNING    = 0x00000001,
-    LORAMAC_RX            = 0x00000002,
-    LORAMAC_ACK_REQ       = 0x00000004,
-    LORAMAC_ACK_RETRY     = 0x00000008,
-    LORAMAC_TX_DELAYED    = 0x00000010,
-    LORAMAC_TX_CONFIG     = 0x00000020,
-    LORAMAC_RX_ABORT      = 0x00000040,
-};
 
 /*!
  * LoRaMac internal state
@@ -1556,6 +1544,7 @@ static void OnMacStateCheckTimerEvent( void )
                         #ifdef CONFIG_LORA_VERIFY
                         if (g_lora_debug)
                             PRINTF_RAW("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
+printf("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);                            
                         #endif
                     }
                 }
@@ -1573,6 +1562,7 @@ static void OnMacStateCheckTimerEvent( void )
                     #ifdef CONFIG_LORA_VERIFY
                     if (g_lora_debug)
                         PRINTF_RAW("Confirmed data exceed retry times, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
+printf("Confirmed data exceed retry times, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
                     #endif
                 }
             }
@@ -2498,7 +2488,8 @@ static LoRaMacStatus_t ScheduleTx( void )
     while ( RegionNextChannel( LoRaMacRegion, &nextChan, &Channel, &dutyCycleTimeOff, &AggregatedTimeOff ) == false ) {
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
-        if(LoRaMacParams.ChannelsDatarate == minDatarate)
+        if(LoRaMacParams.ChannelsDatarate == minDatarate)
+
         {
             LoRaMacParams.ChannelsDatarate = maxDatarate;
         }
@@ -3092,7 +3083,7 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
 
     return LORAMAC_STATUS_OK;
 }
-extern int8_t defaultDrForNoAdr;
+
 extern int8_t currentDrForNoAdr;
 
 LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
@@ -3102,7 +3093,7 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
     PhyParam_t phyParam;
     int8_t datarate;
     int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
-    currentDrForNoAdr = defaultDrForNoAdr;
+    int8_t currentDrForNoAdr;
     if(AdrCtrlOn)
     {
         datarate = LoRaMacParams.ChannelsDatarate;

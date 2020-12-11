@@ -14,7 +14,14 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #include "RegionAS923.h"
 #endif
 
-#ifdef CubeCell_BoardPlus
+#if defined(CubeCell_GPS)
+#include <Wire.h>  
+#include "cubecell_SSD1306Wire.h"
+  SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , resolution , rst
+
+  uint8_t ifDisplayAck=0;
+  uint8_t isDispayOn=0;
+#elif defined(CubeCell_BoardPlus)
 #include <Wire.h>  
 #include "cubecell_SH1107Wire.h"
 
@@ -24,15 +31,6 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   uint8_t isDispayOn=0;
 #endif
 
-#ifdef CubeCell_GPS
-#include <Wire.h>  
-#include "cubecell_SSD1306Wire.h"
-
-  SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , resolution , rst
-
-  uint8_t ifDisplayAck=0;
-  uint8_t isDispayOn=0;
-#endif
 
 /*loraWan default Dr when adr disabled*/
 #ifdef REGION_US915
@@ -80,11 +78,11 @@ bool modeLoraWan = true;
 /*!
  * Indicates if a new packet can be sent
  */
-static bool nextTx = true;
+bool nextTx = true;
 
 
 enum eDeviceState_LoraWan deviceState;
-
+extern uint32_t LoRaMacState;
 
 /*!
  * \brief   Prepares the payload of the frame
@@ -93,6 +91,8 @@ enum eDeviceState_LoraWan deviceState;
  */
 bool SendFrame( void )
 {
+	while (LoRaMacState!=LORAMAC_IDLE);
+
 	lwan_dev_params_update();
 	
 	McpsReq_t mcpsReq;
@@ -129,9 +129,16 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		}
 	}
-	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
+	uint32_t status=LoRaMacMcpsRequest( &mcpsReq );
+	if( status != LORAMAC_STATUS_OK )
 	{
+		printf("SendFrame - bad status, couldn't send %d %d", status, LoRaMacState);
 		return false;
+	}
+
+	while (LoRaMacState!=LORAMAC_IDLE) {
+      printf("state=%d\n", LoRaMacState);
+	  delay(100);
 	}
 	return true;
 }
@@ -139,7 +146,7 @@ bool SendFrame( void )
 /*!
  * \brief Function executed on TxNextPacket Timeout event
  */
-static void OnTxNextPacketTimerEvent( void )
+void OnTxNextPacketTimerEvent( void )
 {
 	MibRequestConfirm_t mibReq;
 	LoRaMacStatus_t status;
@@ -155,6 +162,7 @@ static void OnTxNextPacketTimerEvent( void )
 		{
 			deviceState = DEVICE_STATE_SEND;
 			nextTx = true;
+			printf("OnTxNextPacketTimerEvent joined and okay to send");
 		}
 		else
 		{
@@ -175,6 +183,8 @@ static void OnTxNextPacketTimerEvent( void )
 				deviceState = DEVICE_STATE_CYCLE;
 			}
 		}
+	} else {
+		printf("OnTxNextPacketTimerEvent status=%d", status);
 	}
 }
 
@@ -202,6 +212,11 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
 				// Check TxPower
 				// Check AckReceived
 				// Check NbTrials
+				if (mcpsConfirm->AckReceived) {
+					printf("ACK was received");
+				} else {
+printf("ACK was NOT received");
+				}
 				break;
 			}
 			case MCPS_PROPRIETARY:
@@ -332,6 +347,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		// The server signals that it has pending data to be sent.
 		// We schedule an uplink as soon as possible to flush the server.
+		printf("Data is pending - sending again");
 		OnTxNextPacketTimerEvent( );
 	}
 	// Check Buffer
@@ -428,6 +444,7 @@ static void MlmeIndication( MlmeIndication_t *mlmeIndication )
 	{
 		case MLME_SCHEDULE_UPLINK:
 		{// The MAC signals that we shall provide an uplink as soon as possible
+printf("MlmeIndication schedule ASAP");
 			OnTxNextPacketTimerEvent( );
 			break;
 		}
@@ -633,10 +650,14 @@ void LoRaWanClass::join()
 	}
 }
 
-void LoRaWanClass::send()
+void wakeUpDummy() {}
+
+bool LoRaWanClass::send()
 {
-	if( nextTx == true )
-	{
+//	TimerStop( &TxNextPacketTimer );
+//	while (LoRaMacState!=LORAMAC_IDLE) delay(10);		
+//Radio.IrqProcess( );
+
 		MibRequestConfirm_t mibReq;
 		mibReq.Type = MIB_DEVICE_CLASS;
 		LoRaMacMibGetRequestConfirm( &mibReq );
@@ -646,10 +667,73 @@ void LoRaWanClass::send()
 			mibReq.Param.Class = loraWanClass;
 			LoRaMacMibSetRequestConfirm( &mibReq );
 		}
-		
-		nextTx = SendFrame( );
+	
+
+	lwan_dev_params_update();
+	
+	McpsReq_t mcpsReq;
+	LoRaMacTxInfo_t txInfo;
+
+	if( LoRaMacQueryTxPossible( appDataSize, &txInfo ) != LORAMAC_STATUS_OK )
+	{
+		// Send empty frame in order to flush MAC commands
+		printf("payload length error ...\r\n");
+		mcpsReq.Type = MCPS_UNCONFIRMED;
+		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
+		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
+		mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
 	}
+	else
+	{
+		if( isTxConfirmed == false )
+		{
+			printf("unconfirmed uplink sending ...\r\n");
+			mcpsReq.Type = MCPS_UNCONFIRMED;
+			mcpsReq.Req.Unconfirmed.fPort = appPort;
+			mcpsReq.Req.Unconfirmed.fBuffer = appData;
+			mcpsReq.Req.Unconfirmed.fBufferSize = appDataSize;
+			mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
+		}
+		else
+		{
+			printf("confirmed uplink sending ...\r\n");
+			mcpsReq.Type = MCPS_CONFIRMED;
+			mcpsReq.Req.Confirmed.fPort = appPort;
+			mcpsReq.Req.Confirmed.fBuffer = appData;
+			mcpsReq.Req.Confirmed.fBufferSize = appDataSize;
+			mcpsReq.Req.Confirmed.NbTrials = confirmedNbTrials;
+			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
+		}
+	}
+	uint32_t status=LoRaMacMcpsRequest( &mcpsReq );
+	if( status != LORAMAC_STATUS_OK )
+	{
+		printf("SendFrame - bad status, couldn't send %d %d", status, LoRaMacState);
+		return false;
+	}
+
+TimerEvent_t pollStateTimer;
+TimerInit( &pollStateTimer, wakeUpDummy );
+TimerSetValue( &pollStateTimer, 100 );
+	//TimerStart( &pollStateTimer );
+	while (LoRaMacState!=LORAMAC_IDLE) {
+      //printf("state=%d\n", LoRaMacState);
+	  TimerStart( &pollStateTimer );
+	lowPowerHandler( );
+	TimerStop( &pollStateTimer );
+	// Process Radio IRQ
+	Radio.IrqProcess( );
+
+//	  delay(500);
+	}
+	//TimerStop( &pollStateTimer );
+
+	//}
+	return true;		
 }
+
+
+
 
 void LoRaWanClass::cycle(uint32_t dutyCycle)
 {
@@ -754,12 +838,12 @@ void LoRaWanClass::displayAck()
     ifDisplayAck--;
 	display.clear();
 	display.drawString(64, 22, "ACK RECEIVED");
-	if(loraWanClass==CLASS_A)
+	/*if(loraWanClass==CLASS_A)
 	{
 		display.setFont(ArialMT_Plain_10);
 		display.setTextAlignment(TEXT_ALIGN_LEFT);
 		display.drawString(28, 50, "Into deep sleep in 2S");
-	}
+	}*/
 	display.display();
 	if(loraWanClass==CLASS_A)
 	{

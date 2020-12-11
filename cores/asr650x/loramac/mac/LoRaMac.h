@@ -2423,6 +2423,21 @@ LoRaMacStatus_t LoRaMacMibSetRequestConfirm( MibRequestConfirm_t *mibSet );
 LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest );
 
 /*!
+ * LoRaMac internal states
+ */
+enum eLoRaMacState {
+    LORAMAC_IDLE          = 0x00000000,
+    LORAMAC_TX_RUNNING    = 0x00000001,
+    LORAMAC_RX            = 0x00000002,
+    LORAMAC_ACK_REQ       = 0x00000004,
+    LORAMAC_ACK_RETRY     = 0x00000008,
+    LORAMAC_TX_DELAYED    = 0x00000010,
+    LORAMAC_TX_CONFIG     = 0x00000020,
+    LORAMAC_RX_ABORT      = 0x00000040,
+};
+
+
+/*!
  * \brief   LoRaMAC MCPS-Request
  *
  * \details The Mac Common Part Sublayer handles data services. The following
