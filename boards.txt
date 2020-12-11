@@ -23,8 +23,10 @@ CubeCell-Board.build.variant=CubeCell-Board
 
 CubeCell-Board.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
 CubeCell-Board.menu.LORAWAN_REGION.0.build.band=REGION_AS923_AS1
-CubeCell-Board.menu.LORAWAN_REGION.1=REGION_AU915
-CubeCell-Board.menu.LORAWAN_REGION.1.build.band=REGION_AU915
+CubeCell-Board.menu.LORAWAN_REGION.1=REGION_AS923(AS2)
+CubeCell-Board.menu.LORAWAN_REGION.1.build.band=REGION_AS923_AS2
+CubeCell-Board.menu.LORAWAN_REGION.2=REGION_AU915
+CubeCell-Board.menu.LORAWAN_REGION.2.build.band=REGION_AU915
 CubeCell-Board.menu.LORAWAN_REGION.3=REGION_CN470
 CubeCell-Board.menu.LORAWAN_REGION.3.build.band=REGION_CN470
 CubeCell-Board.menu.LORAWAN_REGION.4=REGION_CN779
@@ -273,8 +275,10 @@ CubeCell-BoardPlus.build.variant=CubeCell-BoardPlus
 
 CubeCell-BoardPlus.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
 CubeCell-BoardPlus.menu.LORAWAN_REGION.0.build.band=REGION_AS923_AS1
-CubeCell-BoardPlus.menu.LORAWAN_REGION.1=REGION_AU915
-CubeCell-BoardPlus.menu.LORAWAN_REGION.1.build.band=REGION_AU915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.1=REGION_AS923(AS2)
+CubeCell-BoardPlus.menu.LORAWAN_REGION.1.build.band=REGION_AS923_AS2
+CubeCell-BoardPlus.menu.LORAWAN_REGION.2=REGION_AU915
+CubeCell-BoardPlus.menu.LORAWAN_REGION.2.build.band=REGION_AU915
 CubeCell-BoardPlus.menu.LORAWAN_REGION.3=REGION_CN470
 CubeCell-BoardPlus.menu.LORAWAN_REGION.3.build.band=REGION_CN470
 CubeCell-BoardPlus.menu.LORAWAN_REGION.4=REGION_CN779
