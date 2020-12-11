@@ -19,6 +19,10 @@ typedef enum
     NC = (int)0xFFFFFFFF    
 }PinNames;    
 
+#define SS P4_3
+#define MOSI P4_0
+#define MISO P4_1
+#define SCK P4_2
 #define UART_RX P3_0
 #define UART_TX P3_1
 #define UART_RX1 UART_RX
