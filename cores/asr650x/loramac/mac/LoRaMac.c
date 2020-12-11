@@ -1544,7 +1544,6 @@ static void OnMacStateCheckTimerEvent( void )
                         #ifdef CONFIG_LORA_VERIFY
                         if (g_lora_debug)
                             PRINTF_RAW("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
-printf("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);                            
                         #endif
                     }
                 }
@@ -1562,7 +1561,6 @@ printf("Confirmed data can't send after decrease DR, UpLinkCounter:%u\r\n", (uns
                     #ifdef CONFIG_LORA_VERIFY
                     if (g_lora_debug)
                         PRINTF_RAW("Confirmed data exceed retry times, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
-printf("Confirmed data exceed retry times, UpLinkCounter:%u\r\n", (unsigned int)UpLinkCounter);
                     #endif
                 }
             }
