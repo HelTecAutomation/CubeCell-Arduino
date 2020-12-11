@@ -7,10 +7,6 @@
 #include "Region.h"
 #include "low_power.h"
 #include "sx126x.h"
-//#include "board-config.h"
-//#include "hw_conf.h"
-//#include <uart_port.h>
-//#include <HardwareSerial.h>
 
 extern uint16_t userChannelsMask[6];
 
