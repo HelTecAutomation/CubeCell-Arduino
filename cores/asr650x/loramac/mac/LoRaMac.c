@@ -2486,7 +2486,6 @@ static LoRaMacStatus_t ScheduleTx( void )
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
         if(LoRaMacParams.ChannelsDatarate == minDatarate)
-
         {
             LoRaMacParams.ChannelsDatarate = maxDatarate;
         }
