@@ -36,7 +36,6 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include "debug.h"
 #include "LoRaMacTest.h"
 #include "LoRaMacConfirmQueue.h"
-//#include "AT_Command.h"
 #include "ASR_Arduino.h"
 
 #ifdef CONFIG_LORA_VERIFY
