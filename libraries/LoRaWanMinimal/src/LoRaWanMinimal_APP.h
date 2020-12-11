@@ -1,23 +1,16 @@
 #ifndef LoRaWanMinimal_APP_H
 #define LoRaWanMinimal_APP_H
 
-#include <stdio.h>
-#include "utilities.h"
-#include "board.h"
-//#include "gpio.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
 #include "hw.h"
 #include "Region.h"
 #include "low_power.h"
-#include "spi-board.h"
-#include "rtc-board.h"
-#include "asr_timer.h"
 #include "sx126x.h"
-#include "board-config.h"
-#include "hw_conf.h"
-#include <uart_port.h>
-#include <HardwareSerial.h>
+//#include "board-config.h"
+//#include "hw_conf.h"
+//#include <uart_port.h>
+//#include <HardwareSerial.h>
 
 extern uint16_t userChannelsMask[6];
 
@@ -54,7 +47,6 @@ private:
 extern "C" uint16_t getBatteryVoltage(void);
 extern "C" void turnOnRGB(uint32_t color,uint32_t time);
 extern "C" void turnOffRGB(void);
-//extern "C" bool checkUserAt(char * cmd, char * content);
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);
 extern "C" void lwan_dev_params_update( void );
 extern "C" void dev_time_updated( void );
