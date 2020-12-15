@@ -37,6 +37,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include "LoRaMacTest.h"
 #include "LoRaMacConfirmQueue.h"
 #include "ASR_Arduino.h"
+#include "AT_Command.h"
 
 #ifdef CONFIG_LORA_VERIFY
 extern bool g_lora_debug;
@@ -3080,6 +3081,7 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     return LORAMAC_STATUS_OK;
 }
 
+extern int8_t defaultDrForNoAdr;
 extern int8_t currentDrForNoAdr;
 
 LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
@@ -3089,7 +3091,7 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
     PhyParam_t phyParam;
     int8_t datarate;
     int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
-    int8_t currentDrForNoAdr;
+    currentDrForNoAdr = defaultDrForNoAdr;
     if(AdrCtrlOn)
     {
         datarate = LoRaMacParams.ChannelsDatarate;
