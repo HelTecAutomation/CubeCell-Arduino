@@ -23,7 +23,7 @@ typedef enum
 class Air530Class:public TinyGPSPlus{
 public:
 	Air530Class(int8_t powerCtl);
-	void begin();
+	void begin(uint32_t baud = 9600);
 	void reset();
 	void setmode(GPSMODE mode);
 	void setPPS(uint8_t mode, uint16_t pulse_width = 500);
@@ -46,6 +46,7 @@ public:
 
 private:
 	uint8_t _powerCtl;
+	uint32_t _baud;
 };
 
 extern Air530Class Air530;

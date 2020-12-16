@@ -13,6 +13,7 @@ double transformLon(double x, double y);
 double transformLat(double x, double y);
 double outOfChina(double lat, double lon);
 
+uint32_t bauds[]={9600,19200,38400,57600,115200,256000,921600};
 
 double transformLon(double x, double y) {
 	double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * sqrt(abs(x));
@@ -55,12 +56,60 @@ Air530Class::Air530Class(int8_t powerCtl)
 	:_powerCtl(powerCtl) 
 	{}
 
-void Air530Class::begin()
+void Air530Class::begin(uint32_t baud)
 {
 	pinMode(_powerCtl,OUTPUT);
 	digitalWrite(_powerCtl, LOW);
-	GPSSerial.begin(9600);
-	delay(1000);
+
+	int i = 0;
+	//String cmd="$PGKC147,"+(String)baud;
+	
+	String cmd="$PGKC149,0,"+(String)baud;
+
+	cmd = calchecksum(cmd);
+	
+	GPSSerial.begin(bauds[i]);
+	String temp = "";
+
+	Serial.println("Current GPS baudrate detecting...");
+	while(getNMEA() == "0" )
+	{
+		i++;
+		if( i== (sizeof(bauds)/sizeof(bauds[0])) )
+		{
+			i=0;
+		}
+		//Serial.println(bauds[i]);
+		GPSSerial.updateBaudRate(bauds[i]);
+		delay(50);
+		GPSSerial.flush();
+		temp = getNMEA();
+	}
+	Serial.print("GPS baudrate detected:");
+	Serial.println(bauds[i]);
+
+	sendcmd(cmd);
+	GPSSerial.updateBaudRate(baud);
+	delay(50);
+	GPSSerial.flush();
+
+	Serial.println("GPS baudrate updating... ");
+	
+	while(getNMEA() =="0")
+	{
+		GPSSerial.updateBaudRate(bauds[i]);
+		delay(50);
+		sendcmd(cmd);
+		delay(50);
+		GPSSerial.updateBaudRate(baud);
+		delay(50);
+		GPSSerial.flush();
+	}
+
+	Serial.print("GPS baudrate updated to ");
+	Serial.println(baud);
+
+	_baud = baud;
 }
 
 
@@ -176,7 +225,7 @@ void Air530Class::sendcmd(String cmd)
 
 	while(GPSSerial.available())//wait for gps serial idel
 	{
-		GPSSerial.readStringUntil('\n');
+		GPSSerial.readStringUntil('\r');
 	}
 	GPSSerial.print(cmd);
 }
@@ -185,6 +234,8 @@ String Air530Class::getNMEA()
 {
 	uint32_t starttime = millis();
 	String nmea = "";
+	char buff[128]; 
+	int index = 0;
 	while(millis() - starttime <1000)
 	{
 		if(GPSSerial.available())
@@ -193,7 +244,12 @@ String Air530Class::getNMEA()
 			if(c=='$')
 			{
 				nmea += c;
-				nmea += GPSSerial.readStringUntil('\n');
+				index = GPSSerial.readBytesUntil('\r',buff,127);
+				buff[index]=0;
+				if(buff[index-3]!='*')
+					return "0";
+
+				nmea += (String)buff;
 				return nmea;
 			}
 		}
@@ -212,7 +268,7 @@ String Air530Class::getRMC()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'R' && nmea[3] == 'M' && nmea[4] == 'C')
 				{
 					nmea = c + nmea;
@@ -236,7 +292,7 @@ String Air530Class::getGGA()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'G' && nmea[4] == 'A')
 				{
 					nmea = c + nmea;
@@ -259,7 +315,7 @@ String Air530Class::getVTG()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'V' && nmea[3] == 'T' && nmea[4] == 'G')
 				{
 					nmea = c + nmea;
@@ -282,7 +338,7 @@ String Air530Class::getGSA()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'A')
 				{
 					nmea = c + nmea;
@@ -306,7 +362,7 @@ String Air530Class::getGSV()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'V')
 				{
 					nmea = c + nmea;
@@ -329,7 +385,7 @@ String Air530Class::getGLL()
 			char c = GPSSerial.read();
 			if(c=='$')
 			{
-				nmea = GPSSerial.readStringUntil('\n');
+				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'L' && nmea[4] == 'L')
 				{
 					nmea = c + nmea;
