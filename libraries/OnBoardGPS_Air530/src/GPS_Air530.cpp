@@ -13,7 +13,7 @@ double transformLon(double x, double y);
 double transformLat(double x, double y);
 double outOfChina(double lat, double lon);
 
-uint32_t bauds[]={9600,19200,38400,57600,115200,256000,921600};
+uint32_t bauds[]={9600,19200,38400,57600,115200,256000,460800,921600};
 
 double transformLon(double x, double y) {
 	double ret = 300.0 + x + 2.0 * y + 0.1 * x * x + 0.1 * x * y + 0.1 * sqrt(abs(x));

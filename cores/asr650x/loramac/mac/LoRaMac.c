@@ -61,7 +61,7 @@ TimerTime_t mcps_start_time;
 /*!
  * LoRaMac region.
  */
-static LoRaMacRegion_t LoRaMacRegion;
+LoRaMacRegion_t LoRaMacRegion;
 
 /*!
  * LoRaMac duty cycle for the back-off procedure during the first hour.
@@ -3091,6 +3091,18 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
     PhyParam_t phyParam;
     int8_t datarate;
     int8_t txPower = LoRaMacParamsDefaults.ChannelsTxPower;
+    
+    // Get the minimum possible datarate
+    getPhy.Attribute = PHY_MIN_TX_DR;
+    phyParam = RegionGetPhyParam( LoRaMacRegion, &getPhy );
+    defaultDrForNoAdr = MAX( defaultDrForNoAdr, phyParam.Value );
+
+    // Get the mac possible datarate
+    getPhy.Attribute = PHY_MAX_TX_DR;
+    phyParam = RegionGetPhyParam( LoRaMacRegion, &getPhy );
+    int8_t maxDatarate = phyParam.Value;
+    defaultDrForNoAdr = MIN( defaultDrForNoAdr, phyParam.Value );
+
     currentDrForNoAdr = defaultDrForNoAdr;
     if(AdrCtrlOn)
     {
@@ -3106,9 +3118,7 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
         return LORAMAC_STATUS_PARAMETER_INVALID;
     }
 
-	getPhy.Attribute = PHY_MAX_TX_DR;
-	phyParam = RegionGetPhyParam( LoRaMacRegion, &getPhy );
-	int8_t maxDatarate = phyParam.Value;
+
 
     // Setup ADR request
     adrNext.UpdateChanMask = false;
@@ -3162,14 +3172,14 @@ LoRaMacStatus_t LoRaMacQueryTxPossible( uint8_t size, LoRaMacTxInfo_t *txInfo )
 		uint8_t maxN = phyParam.Value;
         if(AdrCtrlOn)
         {
-            if(LoRaMacParams.ChannelsDatarate == maxDatarate)
+            if(LoRaMacParams.ChannelsDatarate >= maxDatarate)
                 return LORAMAC_STATUS_LENGTH_ERROR;
             LoRaMacParams.ChannelsDatarate ++;
             datarate=LoRaMacParams.ChannelsDatarate;
         }
         else
         {
-            if(currentDrForNoAdr == maxDatarate)
+            if(currentDrForNoAdr >= maxDatarate)
                 return LORAMAC_STATUS_LENGTH_ERROR;
             currentDrForNoAdr++;
             datarate=currentDrForNoAdr;
