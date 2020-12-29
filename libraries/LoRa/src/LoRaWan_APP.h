@@ -3,22 +3,25 @@
 
 #include <stdio.h>
 #include "utilities.h"
-#include "board.h"
-#include "gpio.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
-#include "hw.h"
 #include "Region.h"
+#include "sx126x.h"
+#include "HardwareSerial.h"
+#include "Arduino.h"
+#include "AT_Command.h"
+#if defined(__ASR6501__)
+#include "board.h"
+#include "gpio.h"
+#include "hw.h"
 #include "low_power.h"
 #include "spi-board.h"
 #include "rtc-board.h"
 #include "asr_timer.h"
-#include "sx126x.h"
 #include "board-config.h"
 #include "hw_conf.h"
 #include <uart_port.h>
-#include "AT_Command.h"
-#include <HardwareSerial.h>
+#endif
 
 extern uint8_t devEui[];
 extern uint8_t appEui[];

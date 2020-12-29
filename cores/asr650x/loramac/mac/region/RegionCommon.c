@@ -27,8 +27,12 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include <stdint.h>
 #include <math.h>
 
-//#include "timer.h"
+#if defined(__ASR6501__)
 #include "timeServer.h"
+#else
+#include "timer.h"
+#endif
+
 #include "utilities.h"
 #include "LoRaMac.h"
 #include "RegionCommon.h"
