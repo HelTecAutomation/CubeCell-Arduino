@@ -103,7 +103,6 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 }
 
 void setup() {
-	boardInitMcu();
 	Serial.begin(115200);
 #if(AT_SUPPORT)
 	enableAt();

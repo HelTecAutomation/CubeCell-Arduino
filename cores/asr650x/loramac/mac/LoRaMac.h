@@ -54,7 +54,11 @@
 #include <stdbool.h>
 #include "timer.h"
 #include "radio.h"
+#if defined(__ASR6501__)
 #include "timeServer.h"
+#else
+#include "timer.h"
+#endif
 
 
 #ifdef __cplusplus

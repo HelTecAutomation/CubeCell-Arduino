@@ -28,8 +28,11 @@
 /*!
  * User application data buffer size
  */
+#if defined(__ASR6601__)
+#define LORAWAN_APP_DATA_MAX_SIZE                   256 //if use AT mode, don't modify this value or may run dead
+#else
 #define LORAWAN_APP_DATA_MAX_SIZE                   128 //if use AT mode, don't modify this value or may run dead
-
+#endif
 /*!
  * Indicates if the end-device is to be connected to a private or public network
  */

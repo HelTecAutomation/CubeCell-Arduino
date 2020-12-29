@@ -3,21 +3,23 @@
 
 #include <stdio.h>
 #include "utilities.h"
-#include "board.h"
-#include "gpio.h"
 #include "LoRaMac.h"
 #include "Commissioning.h"
+#include "sx126x.h"
+#include "Arduino.h"
+#include "AT_Command.h"
+#if defined(__ASR6501__)
+#include "board.h"
+#include "gpio.h"
 #include "hw.h"
 #include "low_power.h"
 #include "spi-board.h"
 #include "rtc-board.h"
 #include "asr_timer.h"
-#include "sx126x.h"
 #include "board-config.h"
 #include "hw_conf.h"
 #include <uart_port.h>
-#include "AT_Command.h"
-#include "Arduino.h"
+#endif
 
 extern enum eDeviceState_Lora deviceState_lora;
 extern uint8_t Lora_TXPW;

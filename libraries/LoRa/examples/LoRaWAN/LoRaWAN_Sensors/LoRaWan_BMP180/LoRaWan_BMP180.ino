@@ -137,7 +137,6 @@ static void prepareTxFrame( uint8_t port )
 
 
 void setup() {
-	boardInitMcu();
 	Serial.begin(115200);
 #if(AT_SUPPORT)
 	enableAt();

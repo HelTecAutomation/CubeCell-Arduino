@@ -214,7 +214,6 @@ void gpsUpdate(uint32_t timeout, uint32_t continuetime)
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  boardInitMcu();
 
   TimerInit( &autoGPS, onAutoGPS );
 

@@ -100,7 +100,6 @@ void accelWakeup()
 }
 
 void setup() {
-  boardInitMcu();
   Serial.begin(115200);
 #if(AT_SUPPORT)
   enableAt();

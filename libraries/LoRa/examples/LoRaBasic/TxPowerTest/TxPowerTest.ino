@@ -12,7 +12,6 @@ void OnRadioTxTimeout( void )
     Radio.SetTxContinuousWave( RF_FREQUENCY, TX_OUTPUT_POWER, TX_TIMEOUT );
 }
 void setup() {
-  boardInitMcu();
   // put your setup code here, to run once:
   RadioEvents.TxTimeout = OnRadioTxTimeout;
   Radio.Init( &RadioEvents );

@@ -108,7 +108,6 @@ bool checkUserAt(char * cmd, char * content)
 }
 
 void setup() {
-	boardInitMcu();
 	Serial.begin(115200);
 #if(AT_SUPPORT)
 	enableAt();

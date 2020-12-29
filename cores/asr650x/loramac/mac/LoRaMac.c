@@ -25,19 +25,20 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include <string.h>
 #include <stdint.h>
 #include "radio.h"
-#include "timeServer.h"
 #include "LoRaMac.h"
 #include "region/Region.h"
 #include "LoRaMacClassB.h"
 #include "LoRaMacCrypto.h"
-#ifdef CONFIG_LWAN
-#include "lwan_config.h"    
-#endif    
 #include "debug.h"
 #include "LoRaMacTest.h"
 #include "LoRaMacConfirmQueue.h"
 #include "ASR_Arduino.h"
 #include "AT_Command.h"
+#if defined(__ASR6501__)
+#include "timeServer.h"
+#else
+#include "timer.h"
+#endif
 
 #ifdef CONFIG_LORA_VERIFY
 extern bool g_lora_debug;

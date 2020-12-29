@@ -279,6 +279,7 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 		printf("%02X",mcpsIndication->Buffer[i]);
 	}
 	printf("\r\n");
+	delay(10);
 }
 
 /*!
@@ -296,33 +297,37 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 #if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
 	ifDisplayAck=1;
 #endif
-	printf( "receive data: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 #if (LoraWan_RGB==1)
 	turnOnRGB(COLOR_RECEIVED, 200);
 	turnOffRGB();
 #endif
-
+	printf( "received ");
 	switch( mcpsIndication->McpsIndication )
 	{
 		case MCPS_UNCONFIRMED:
 		{
+			printf( "unconfirmed ");
 			break;
 		}
 		case MCPS_CONFIRMED:
 		{
+			printf( "confirmed ");
 			break;
 		}
 		case MCPS_PROPRIETARY:
 		{
+			printf( "proprietary ");
 			break;
 		}
 		case MCPS_MULTICAST:
 		{
+			printf( "multicast ");
 			break;
 		}
 		default:
 			break;
 	}
+	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 
 	// Check Multicast
 	// Check Port
@@ -343,6 +348,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		downLinkDataHandle(mcpsIndication);
 	}
+	delay(100);
 }
 
 
@@ -542,6 +548,8 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 		case LORAMAC_REGION_US915_HYBRID:
 			Serial.print("US915_HYBRID ");
 			break;
+		default:
+			break;
 	}
 	Serial.printf(" Class %X start!\r\n\r\n",loraWanClass+10);
 
@@ -659,7 +667,12 @@ void LoRaWanClass::cycle(uint32_t dutyCycle)
 
 void LoRaWanClass::sleep()
 {
+#if defined(__ASR6601__)
+	TimerLowPowerHandler( );
+#else
 	lowPowerHandler( );
+#endif
+
 	// Process Radio IRQ
 	Radio.IrqProcess( );
 }
@@ -677,21 +690,21 @@ void LoRaWanClass::ifskipjoin()
 		{
 			Serial.println("Wait 3s for user key to rejoin network");
 			uint16_t i=0;
-			pinMode(GPIO7,INPUT);
+			pinMode(USER_KEY,INPUT);
 			while(i<=3000)
 			{
-				if(digitalRead(GPIO7)==LOW)//if user key down, rejoin network;
+				if(digitalRead(USER_KEY)==LOW)//if user key down, rejoin network;
 				{
 					netInfoDisable();
-					pinMode(GPIO7,OUTPUT);
-					digitalWrite(GPIO7,HIGH);
+					pinMode(USER_KEY,OUTPUT);
+					digitalWrite(USER_KEY,HIGH);
 					return;
 				}
 				delay(1);
 				i++;
 			}
-			pinMode(GPIO7,OUTPUT);
-			digitalWrite(GPIO7,HIGH);
+			pinMode(USER_KEY,OUTPUT);
+			digitalWrite(USER_KEY,HIGH);
 		}
 #if(AT_SUPPORT)
 		getDevParam();

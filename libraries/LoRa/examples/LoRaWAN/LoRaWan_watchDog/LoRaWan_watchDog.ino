@@ -86,7 +86,6 @@ static void prepareTxFrame( uint8_t port )
 }
 
 void setup() {
-	boardInitMcu();
 	Serial.begin(115200);
 	
 	/* Enable the WDT, autofeed	*/
