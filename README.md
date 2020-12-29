@@ -82,9 +82,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 |   MCU   |                       Relative boards                        |
 | :-----: | :----------------------------------------------------------: |
 | ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cuapsule](https://heltec.org/project/htcc-ac01/) |
-| ASR6502 |                         Coming soon                          |
-
-我们对cubecell进行了电子墨水改编，目前仅支持2.9英寸墨水屏，我们会在后面陆续更新：https://github.com/HelTecAutomation/e-ink/blob/master/examples/DEPG0290BxS75AFxX_BW/DEPG0290BxS75AFxX_BW.ino
+| ASR6502 | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/)  |
 
 ## 安装指南
 
