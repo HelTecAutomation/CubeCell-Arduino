@@ -42,7 +42,7 @@ int8_t defaultDrForNoAdr = 5;
 #endif
 
 /*loraWan current Dr when adr disabled*/
-int8_t currentDrForNoAdr;
+int8_t currentDrForNoAdr=defaultDrForNoAdr;
 
 /*!
  * User application data size
@@ -665,7 +665,7 @@ void LoRaWanClass::sleep()
 }
 void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
 {
-	defaultDrForNoAdr = dataRate;
+	currentDrForNoAdr = dataRate;
 }
 
 void LoRaWanClass::ifskipjoin()
