@@ -47,6 +47,20 @@ typedef enum
     CHANGE=3
 }IrqModes;
 
+typedef enum {
+    PWM_CLK_FREQ_48M = 1,
+    PWM_CLK_FREQ_24M = 2,
+    PWM_CLK_FREQ_16M = 3,
+    PWM_CLK_FREQ_12M = 4,
+    PWM_CLK_FREQ_8M = 5,
+    PWM_CLK_FREQ_6M = 7,
+    PWM_CLK_FREQ_4M = 11,
+    PWM_CLK_FREQ_3M = 15,
+    PWM_CLK_FREQ_2M = 23,
+    PWM_CLK_FREQ_1M = 47
+} clock_pwm_t;
+
+
 #define DRIVE_MODE_BITS        (3)
 #define DRIVE_MODE_IND_MASK    (0xFFFFFFFFu >> (32 - DRIVE_MODE_BITS))
 
@@ -70,6 +84,10 @@ uint32_t millis(void);
 uint32_t micros(void);
 uint64_t getID(void);
 int cubecell_random(int r);
+void setPWM_Frequency(clock_pwm_t freq);
+void setPWM_ComparePeriod(uint16_t period);
+
+
 #ifdef __cplusplus 
 }
 #endif
