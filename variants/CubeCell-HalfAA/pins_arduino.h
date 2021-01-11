@@ -19,6 +19,7 @@ typedef enum
     NC = (int)0xFFFFFFFF    
 }PinNames;    
 
+#define LED P0_6 
 #define SS P4_3
 #define MOSI P4_0
 #define MISO P4_1
