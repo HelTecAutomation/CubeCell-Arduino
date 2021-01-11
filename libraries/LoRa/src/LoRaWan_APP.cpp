@@ -41,6 +41,9 @@ int8_t defaultDrForNoAdr = 3;
 int8_t defaultDrForNoAdr = 5;
 #endif
 
+/*AT mode, auto into low power mode*/
+bool autoLPM = true;
+
 /*loraWan current Dr when adr disabled*/
 int8_t currentDrForNoAdr;
 

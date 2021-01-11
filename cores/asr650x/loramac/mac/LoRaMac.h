@@ -66,6 +66,11 @@ extern "C" {
 #endif
 
 /*!
+ * LoRaMac internal state
+ */
+extern uint32_t LoRaMacState;
+
+/*!
  * Check the Mac layer state every MAC_STATE_CHECK_TIMEOUT in ms
  */
 #define MAC_STATE_CHECK_TIMEOUT                     1000

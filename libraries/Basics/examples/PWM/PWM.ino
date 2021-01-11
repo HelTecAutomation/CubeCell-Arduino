@@ -21,6 +21,7 @@ void setup() {
 
   //pwm period can be 0xFF~0xFFFF, default is 0xFFFF
   setPWM_ComparePeriod(0xFFFF);
+  
   pinMode(PWM1,OUTPUT);
   pinMode(PWM2,OUTPUT);
 }
