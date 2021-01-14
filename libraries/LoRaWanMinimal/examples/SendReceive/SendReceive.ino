@@ -5,6 +5,8 @@
  * 
  * The example will upload a counter value periodically, and will print any downlink messages.
  * 
+ * please disable AT_SUPPORT in tools menu
+ *
  * David Brodrick.
  */
 #include "LoRaWanMinimal_APP.h"
