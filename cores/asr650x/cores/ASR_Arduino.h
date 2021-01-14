@@ -76,7 +76,7 @@ void pinToggle(uint8_t pin_name);
 void ClearPinInterrupt(uint8_t pin_name);
 void attachInterrupt(uint8_t pin_name, GpioIrqHandler GpioIrqHandlerCallback, IrqModes interrupt_mode);
 void detachInterrupt(uint8_t pin_name);
-int16 analogRead(uint8_t pin);//the value returned is in mV units, max value can be read is 3300 mV.
+int16 analogRead(uint8_t pin);//the value returned is in mV units, max value can be read is 2400 mV.
 void analogWrite(uint8_t pin, uint16_t value);
 void delay(uint32_t milliseconds);
 void delayMicroseconds(uint16 microseconds);
