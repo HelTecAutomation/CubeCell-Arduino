@@ -4,10 +4,28 @@
 #error "The LoRaWanMinimal library is configured for LORAWAN_AT_SUPPORT=OFF. Please disable."
 #endif
 
+#if defined( REGION_EU868 )
+#include "RegionEU868.h"
+#elif defined( REGION_EU433 )
+#include "RegionEU433.h"
+#elif defined( REGION_KR920 )
+#include "RegionKR920.h"
+#elif defined( REGION_AS923) || defined( REGION_AS923_AS1) || defined( REGION_AS923_AS2)
+#include "RegionAS923.h"
+#endif
+
+
 #if(LoraWan_RGB==1)
 #include "CubeCell_NeoPixel.h"
 CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
+
+/*loraWan default Dr when adr disabled*/
+int8_t defaultDrForNoAdr;
+
+/*loraWan current Dr when adr disabled*/
+int8_t currentDrForNoAdr;
+
 
 //Callback definitions
 static void MlmeIndication( MlmeIndication_t *mlmeIndication );
@@ -179,14 +197,15 @@ bool LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool con
 	
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
-
+	defaultDrForNoAdr=itsDRForNoAdr;
+	
 	if ( LoRaMacQueryTxPossible( datalen, &txInfo ) != LORAMAC_STATUS_OK ) {
 		// Send empty frame in order to flush MAC commands
 		printf("payload length error ...\r\n");
 		mcpsReq.Type = MCPS_UNCONFIRMED;
 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
-		mcpsReq.Req.Unconfirmed.Datarate = itsDRForNoAdr;
+		mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
 	} else {
 		if (confirmed)	{
 			mcpsReq.Type = MCPS_CONFIRMED;
@@ -194,13 +213,13 @@ bool LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool con
 			mcpsReq.Req.Confirmed.fBuffer = data;
 			mcpsReq.Req.Confirmed.fBufferSize = datalen;
 			mcpsReq.Req.Confirmed.NbTrials = itsNumRetries;
-			mcpsReq.Req.Confirmed.Datarate = itsDRForNoAdr;
+			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		} else {
 			mcpsReq.Type = MCPS_UNCONFIRMED;
 			mcpsReq.Req.Unconfirmed.fPort = port;
 			mcpsReq.Req.Unconfirmed.fBuffer = data;
 			mcpsReq.Req.Unconfirmed.fBufferSize = datalen;
-			mcpsReq.Req.Unconfirmed.Datarate = itsDRForNoAdr;
+			mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
 		}
 	}
 	uint32_t status=LoRaMacMcpsRequest( &mcpsReq );

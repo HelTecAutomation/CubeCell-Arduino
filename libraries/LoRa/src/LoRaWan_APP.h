@@ -46,7 +46,6 @@ extern bool keepNet;
 extern bool IsLoRaMacNetworkJoined;
 extern uint16_t userChannelsMask[6];
 
-
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
  * value in [ms].
