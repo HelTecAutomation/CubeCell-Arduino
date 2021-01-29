@@ -1,25 +1,40 @@
 #include "Arduino.h"
-#include "GPS_Air530.h"
+#include "GPS_Ublox_M8M.h"
 
-static String calchecksum(String cmd)
+static void calchecksum(uint8_t * cmd,int size)
 {
-	uint8_t checksum=cmd[1];
-	char temp[5];
-	for(int i=2;i<cmd.length();i++)
+	uint8_t checksumA=0;
+	uint8_t checksumB=0;
+
+	for(int i=0;i<(size-2);i++)
 	{
-		checksum^=cmd[i];
+		checksumA = checksumA + cmd[i];
+		checksumB = checksumB + checksumA;
 	}
-	memset(temp,0,5);
-	sprintf(temp, "*%02X\r\n", checksum);
-	cmd += temp;
-	return cmd;
+	cmd[size-2]=checksumA;
+	cmd[size-1]=checksumB;
 }
 
-Air530Class::Air530Class(int8_t powerCtl) 
+static bool checkcmdback(uint8_t * cmd)
+{
+	uint8_t checksumA=0;
+	uint8_t checksumB=0;
+
+	for(int i=0;i<(8-2);i++)
+	{
+		checksumA = checksumA + cmd[i];
+		checksumB = checksumB + checksumA;
+	}
+	if(checksumA==cmd[8-2] && checksumB==cmd[8-1])
+		return true;
+	return false;
+}
+
+M8MClass::M8MClass(int8_t powerCtl) 
 	:_powerCtl(powerCtl) 
 	{}
 
-void Air530Class::begin(uint32_t baud)
+void M8MClass::begin(uint32_t baud)
 {
 	pinMode(_powerCtl,OUTPUT);
 	digitalWrite(_powerCtl, LOW);
@@ -27,12 +42,7 @@ void Air530Class::begin(uint32_t baud)
 	int i = 0;
 	//String cmd="$PGKC147,"+(String)baud;
 	
-	String cmd="$PGKC149,0,"+(String)baud;
-
-	cmd = calchecksum(cmd);
-	
 	GPSSerial.begin(bauds[i]);
-	String temp = "";
 
 	Serial.println("Current GPS baudrate detecting...");
 	while(getNMEA() == "0" )
@@ -46,14 +56,20 @@ void Air530Class::begin(uint32_t baud)
 		GPSSerial.updateBaudRate(bauds[i]);
 		delay(50);
 		GPSSerial.flush();
-		temp = getNMEA();
 	}
 	Serial.print("GPS baudrate detected:");
 	Serial.println(bauds[i]);
+	setVersion();
+	setmode(MODE_GPS_GALILEO_BEIDOU);
+	//update GPS serial baudrate;
+	uint8_t cmd[] = {0x06, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0xD0, 0x08, 0x00, 0x00, 0x80, \
+					0x25, 0x00, 0x00, 0x07, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 0x0a};
 
-	sendcmd(cmd);
+	*(uint32_t *)&cmd[12] = baud;
+	calchecksum(cmd,sizeof(cmd));
+
+	sendcmd(cmd,sizeof(cmd));
 	GPSSerial.updateBaudRate(baud);
-	delay(50);
 	GPSSerial.flush();
 
 	Serial.println("GPS baudrate updating... ");
@@ -62,7 +78,7 @@ void Air530Class::begin(uint32_t baud)
 	{
 		GPSSerial.updateBaudRate(bauds[i]);
 		delay(50);
-		sendcmd(cmd);
+		sendcmd(cmd,sizeof(cmd));
 		delay(50);
 		GPSSerial.updateBaudRate(baud);
 		delay(50);
@@ -73,131 +89,152 @@ void Air530Class::begin(uint32_t baud)
 	Serial.println(baud);
 
 	_baud = baud;
+	
 }
 
-
-void Air530Class::setmode(GPSMODE mode)
+bool CmdBackOK()
 {
-	String cmd="";
+	uint8_t cmdback[8];
+	int size = 0;
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
+	{
+		if ( GPSSerial.available())
+		{
+			uint8_t c = GPSSerial.read();
+			if(c==0x05)
+			{
+				cmdback[size++]=c;
+				while(size<8)
+				{
+					if ( GPSSerial.available())
+						cmdback[size++]=GPSSerial.read();
+				}
+/*
+				Serial.printf("cmd back size : %d ",size);
+				for(int i = 0;i<size;i++)
+				{
+					Serial.printf("%02X ",cmdback[i]);
+				}
+				Serial.println();
+*/
+				if(checkcmdback(cmdback)&&cmdback[1]==0x01)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+void M8MClass::setVersion()
+{
+	uint8_t cmd[]={0x06,0x17,0x14,0x00,0x00,0x41,0x00,0x02,0x00,0x00,0x00,0x00,0x00,\
+					0x00,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x75,0x57};
+	sendcmd(cmd,sizeof(cmd));
+	while(CmdBackOK()==false)
+	{
+		sendcmd(cmd,sizeof(cmd));
+	}
+}
+void M8MClass::setmode(GPSMODE mode)
+{
+	uint8_t cmd[]={0x06, 0x3E, 0x3C, 0x00, 0x00, 0x00, 0x20, 0x07, 0x00, 0x08, 0x10, 0x00, 0x01,0x00, 0x01, 0x01, 0x01, 0x01,\
+					0x03, 0x00, 0x00, 0x00, 0x01, 0x01, 0x02, 0x04, 0x08, 0x00, 0x01, 0x00, 0x01, 0x01, 0x03, 0x08, 0x10, 0x00,\
+					0x00, 0x00, 0x01, 0x01, 0x04, 0x00, 0x08, 0x00, 0x00, 0x00, 0x01, 0x01, 0x05, 0x00, 0x03, 0x00, 0x00, 0x00,\
+					0x01, 0x01, 0x06, 0x08, 0x0E, 0x00, 0x01, 0x00, 0x01, 0x01, 0x2E, 0x75};
 	switch(mode)
 	{
-		case MODE_GPS:
-			cmd += "$PGKC115,1,0,0,0";
+		case MODE_GPS_GALILEO_BEIDOU:
+			cmd[36]=1;
+			cmd[60]=0;
 			break;
-		case MODE_GPS_BEIDOU:
-			cmd += "$PGKC115,1,0,1,0";
-			break;
-		case MODE_GPS_GLONASS:
-			cmd += "$PGKC115,1,1,0,0";
-			break;
-		case MODE_BEIDOU:
-			cmd += "$PGKC115,0,0,1,0";
+		case MODE_GPS_GALILEO_GLONASS:
+			cmd[36]=0;
+			cmd[60]=1;
 			break;
 		default:
 			break;
 	}
-	cmd = calchecksum(cmd);
-	sendcmd(cmd);
+	calchecksum(cmd,sizeof(cmd));
+	sendcmd(cmd,sizeof(cmd));
+	while(CmdBackOK()==false)
+	{
+		sendcmd(cmd,sizeof(cmd));
+	}
 }
 
-void Air530Class::setNMEA(uint8_t nmeamode)
+void M8MClass::setNMEA(uint8_t nmeamode)
 {
-	String cmd = "$PGKC242,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
-	if(nmeamode & NMEA_GLL)
+	uint8_t cmd[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00 , 0x00, 0x00, 0x00, 0x00};
+	for(int i = 0;i < 6;i++)
 	{
-		cmd[9] = '1';
+		if(nmeamode & (0x01<<i))
+		{
+			cmd[5] = i;
+			cmd[7] = 0x01;
+		}
+		else
+		{
+			cmd[5] = i;
+			cmd[7] = 0x00;
+		}
+		
+		calchecksum(cmd,sizeof(cmd));
+		sendcmd(cmd,sizeof(cmd));
+		while(CmdBackOK()==false)
+		{
+			sendcmd(cmd,sizeof(cmd));
+		}
 	}
-	if(nmeamode & NMEA_RMC)
-	{
-		cmd[11] = '1';
-	}
-	if(nmeamode & NMEA_VTG)
-	{
-		cmd[13] = '1';
-	}
-	if(nmeamode & NMEA_GGA)
-	{
-		cmd[15] = '1';
-	}
-	if(nmeamode & NMEA_GSA)
-	{
-		cmd[17] = '1';
-	}
-	if(nmeamode & NMEA_GSV)
-	{
-		cmd[19] = '1';
-	}
-	if(nmeamode & NMEA_GRS)
-	{
-		cmd[21] = '1';
-	}
-	if(nmeamode & NMEA_GST)
-	{
-		cmd[23] = '1';
-	}
-
-	cmd = calchecksum(cmd);
-	
-	sendcmd(cmd);
 }
 
-void Air530Class::reset()
+void M8MClass::reset()
 {
-	String cmd = "$PGKC030,3,1*2E\r\n";
-	sendcmd(cmd);
+	//String cmd = "$PGKC030,3,1*2E\r\n";
+	//sendcmd(cmd);
 }
 
-int Air530Class::available(void)
+int M8MClass::available(void)
 {
 	return GPSSerial.available();
 }
 
-int Air530Class::read(void)
+int M8MClass::read(void)
 {
 	return GPSSerial.read();
 }
 
-void Air530Class::clear()
+void M8MClass::clear()
 {
 	String cmd = "$PGKC040*2B\r\n";
-	sendcmd(cmd);
+	//sendcmd(cmd);
 }
 
-void Air530Class::setPPS(uint8_t mode, uint16_t pulse_width)
+void M8MClass::setPPS(uint8_t mode, uint16_t pulse_width)
 {
 
-	String cmd = "$PGKC161,";
-	char temp[15];
-
-	if(pulse_width>=999)
-	{
-		pulse_width = 998;
-	}
-	memset(temp,0,15);
-	sprintf(temp, "%d,%d,%d", mode,pulse_width,1000);
-	cmd += temp;
-
-	cmd = calchecksum(cmd);
-	sendcmd(cmd);
 }
 
-void Air530Class::end()
+void M8MClass::end()
 {
 	digitalWrite(_powerCtl, HIGH);
 	GPSSerial.end();
 }
 
-void Air530Class::sendcmd(String cmd)
+void M8MClass::sendcmd(uint8_t * cmd,int size)
 {
 
 	while(GPSSerial.available())//wait for gps serial idel
 	{
 		GPSSerial.readStringUntil('\r');
 	}
-	GPSSerial.print(cmd);
+	GPSSerial.write(0xB5);
+	GPSSerial.write(0x62);
+	GPSSerial.write(cmd,size);
 }
 
-String Air530Class::getNMEA()
+String M8MClass::getNMEA()
 {
 	uint32_t starttime = millis();
 	String nmea = "";
@@ -224,7 +261,7 @@ String Air530Class::getNMEA()
 	return "0";
 }
 
-String Air530Class::getRMC()
+String M8MClass::getRMC()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -248,7 +285,7 @@ String Air530Class::getRMC()
 }
 
 
-String Air530Class::getGGA()
+String M8MClass::getGGA()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -271,7 +308,7 @@ String Air530Class::getGGA()
 	return "0";
 }
 
-String Air530Class::getVTG()
+String M8MClass::getVTG()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -294,7 +331,7 @@ String Air530Class::getVTG()
 	return "0";
 }
 
-String Air530Class::getGSA()
+String M8MClass::getGSA()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -318,7 +355,7 @@ String Air530Class::getGSA()
 }
 
 
-String Air530Class::getGSV()
+String M8MClass::getGSV()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -341,7 +378,7 @@ String Air530Class::getGSV()
 	return "0";
 }
 
-String Air530Class::getGLL()
+String M8MClass::getGLL()
 {
 	String nmea = "";
 	uint32_t starttime = millis();
@@ -364,7 +401,31 @@ String Air530Class::getGLL()
 	return "0";
 }
 
-
+String M8MClass::getAll()
+{
+	String nmea = "";
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
+	{
+		if ( GPSSerial.available())
+		{
+			while(GPSSerial.available())
+			{
+				nmea+=(char)GPSSerial.read();
+				int n = 0;
+				while(n<=1000)
+				{
+					if(GPSSerial.available())
+						break;
+					delayMicroseconds(1);
+					n++;
+				}
+			}
+			return nmea;
+		}
+	}
+	return "0";
+}
 /*    
  * WGS-84: international standard GPS coordinate£¨Google Earth¡¢ GPS module¡¢Tian Map£©
  * GCJ-02: China coordinate migration standard, Google Map¡¢Gaode Map¡¢Tencent map
@@ -373,7 +434,7 @@ String Air530Class::getGLL()
 
 //WGS-84 to GCJ-02
 /*
-gps_status_t Air530Class::WGSToGCJ(gps_status_t status) {
+gps_status_t M8MClass::WGSToGCJ(gps_status_t status) {
 	if (outOfChina(status.latitude, status.longitude)) {
 		return status;
 	}
@@ -392,7 +453,7 @@ gps_status_t Air530Class::WGSToGCJ(gps_status_t status) {
 	return status;
 };
 
-gps_status_t Air530Class::GCJToBD(gps_status_t status){
+gps_status_t M8MClass::GCJToBD(gps_status_t status){
 	double x = status.longitude;
 	double y = status.latitude;
 	double z = sqrt(x * x + y * y) + 0.00002 * sin(y * gps_x_pi);
@@ -404,7 +465,7 @@ gps_status_t Air530Class::GCJToBD(gps_status_t status){
 	return status;
 };
 
-gps_status_t Air530Class::WGSToBD(gps_status_t status)
+gps_status_t M8MClass::WGSToBD(gps_status_t status)
 {
 	status = WGSToGCJ(status);
 	status = GCJToBD(status);
@@ -412,7 +473,8 @@ gps_status_t Air530Class::WGSToBD(gps_status_t status)
 }
 */
 
-//Air530Class GPS(GPIO14);
-Air530Class Air530(GPIO14);
+
+//M8MClass GPS(GPIO14);
+M8MClass M8M(GPIO14);
 
 

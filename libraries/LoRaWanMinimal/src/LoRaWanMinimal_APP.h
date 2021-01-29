@@ -7,6 +7,7 @@
 #include "Region.h"
 #include "low_power.h"
 #include "sx126x.h"
+#include "Arduino.h"
 
 extern uint16_t userChannelsMask[6];
 
