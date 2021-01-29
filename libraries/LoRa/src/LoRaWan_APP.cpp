@@ -505,10 +505,14 @@ LoRaMacCallback_t LoRaMacCallback;
 
 void LoRaWanClass::generateDeveuiByChipID()
 {
-	uint64_t chipID=getID();
-	for(int i=7;i>=0;i--)
+	uint32 uniqueId[2];
+	CyGetUniqueId(uniqueId);
+	for(int i=0;i<8;i++)
 	{
-		devEui[i] = (chipID>>(8*(7-i)))&0xFF;
+		if(i<4)
+			devEui[i] = (uniqueId[1]>>(8*(3-i)))&0xFF;
+		else
+			devEui[i] = (uniqueId[0]>>(8*(7-i)))&0xFF;
 	}
 }
 
