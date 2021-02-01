@@ -23,12 +23,14 @@ typedef enum
 {
   ANALOG = 0,              /**< \brief High Impedance Analog   */
   INPUT,                   /**< \brief High Impedance Digital  */
-  OUTPUT_PULLUP ,          /**< \brief Resistive Pull Up       */
-  OUTPUT_PULLDOWN ,        /**< \brief Resistive Pull Down     */
+  OUTPUT_PULLUP,          /**< \brief output with resistive Pull Up       */
+  OUTPUT_PULLDOWN ,        /**< \brief output with resistive Pull Down     */
   OD_LO ,                  /**< \brief Open Drain, Drives Low  */
   OD_HI ,                  /**< \brief Open Drain, Drives High */
   OUTPUT ,                 /**< \brief Strong Drive            */
-  OUTPUT_PULLUP_PULLDOWN , /**< \brief Resistive Pull Up/Down  */
+  OUTPUT_PULLUP_PULLDOWN,  /**< \brief Resistive Pull Up/Down  */
+  INPUT_PULLUP,            /**< \brief input with resistive Pull Up       */
+  INPUT_PULLDOWN,          /**< \brief input with resistive Pull Down       */
 }PINMODE;
 
 
