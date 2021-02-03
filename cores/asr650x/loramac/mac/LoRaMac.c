@@ -1209,6 +1209,14 @@ static void OnRadioTxTimeout( void )
 #endif
     DIO_PRINTF("Event : Tx Timeout\r\n");
 
+    Radio.Init( &RadioEvents );
+    // Random seed initialization
+    srand1( Radio.Random( ) );
+
+    PublicNetwork = true;
+    Radio.SetPublicNetwork(true);
+    Radio.Sleep( );
+
     if( LoRaMacDeviceClass != CLASS_C )
     {
         Radio.Sleep( );

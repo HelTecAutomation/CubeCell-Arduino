@@ -1120,12 +1120,11 @@ void RadioOnCadTimeoutIrq( void )
 }
 
 extern void enableUart(void);
-extern uint8_t   dio1_ClearInterrupt(void);
 void RadioOnDioIrq( void )
 {
-    IrqFired = true;
-    //dio1_ClearInterrupt();
-    //RadioIrqProcess();
+	pinMode(P4_1,INPUT);
+	IrqFired = true;
+	RadioIrqProcess();
 }
 
 void RadioIrqProcess( void )

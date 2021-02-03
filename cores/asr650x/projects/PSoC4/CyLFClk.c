@@ -18,7 +18,7 @@
 
 #include "CyLFClk.h"
 #include "CyLib.h"
-
+#include "ASR_Arduino.h"
 
 
 #if (CY_IP_WCO && CY_IP_SRSSV2)
@@ -2863,7 +2863,6 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
         }
     }
 
-
     /*******************************************************************************
     * Function Name: CySysTimerIsr
     ****************************************************************************//**
@@ -2891,6 +2890,7 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
                 disableTimerServicedIsr  &= ~CY_SYS_TIMER0_INT;
                 if(cySysTimerCallback[CY_SYS_TIMER0] != (void *) 0)
                 {
+                     pinMode(P4_1,INPUT);
                     (void)(cySysTimerCallback[CY_SYS_TIMER0])();
                 }
             }
@@ -2905,6 +2905,7 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
                 disableTimerServicedIsr  &= ~CY_SYS_TIMER1_INT;
                 if(cySysTimerCallback[CY_SYS_TIMER1] != (void *) 0)
                 {
+                     pinMode(P4_1,INPUT);
                     (void)(cySysTimerCallback[CY_SYS_TIMER1])();
                 }
             }
@@ -2917,6 +2918,7 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
             {
                 if(cySysTimerCallback[CY_SYS_TIMER2] != (void *) 0)
                 {
+                     pinMode(P4_1,INPUT);
                     (void)(cySysTimerCallback[CY_SYS_TIMER2])();
                 }
             }
