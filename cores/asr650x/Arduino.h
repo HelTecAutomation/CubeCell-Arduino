@@ -57,7 +57,7 @@
 #define  bit(b)   (1 << (b))
 #define  _BV(b)   (1UL << (b))
 #define nullptr NULL
-#define yield() 
+#define yield()
 
 //#ifdef __cplusplus
 //#include <algorithm>
@@ -115,10 +115,6 @@ uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
 
 long random(long howbig);
-
-// Include Atmel headers
-
-void yield( void ) ;
 
 /* system functions */
 int main( void );
