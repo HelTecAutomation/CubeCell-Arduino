@@ -1,6 +1,14 @@
 #include "Arduino.h"
 
-
+/*  for example:
+ *
+ *	setPWM_Frequency(a);
+ * 	setPWM_ComparePeriod(b);
+ *	analogWrite(PWM1,c);
+ *
+ *	the PWM frequency is a/b. 
+ *  c used for set dutycycle, it's value can be 0-b;
+ */
 void setup() {
   // put your setup code here, to run once:
 
