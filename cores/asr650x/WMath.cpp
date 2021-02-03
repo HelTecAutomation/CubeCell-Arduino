@@ -25,7 +25,6 @@
 
 extern "C" {
 #include <stdlib.h>
-//#include "esp_system.h"
 #include <ASR_Arduino.h>
 }
 
