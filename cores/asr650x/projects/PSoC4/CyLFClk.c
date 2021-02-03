@@ -2863,6 +2863,8 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
         }
     }
 
+extern uint8 UART_1_initVar;
+
     /*******************************************************************************
     * Function Name: CySysTimerIsr
     ****************************************************************************//**
@@ -2891,6 +2893,8 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
                 if(cySysTimerCallback[CY_SYS_TIMER0] != (void *) 0)
                 {
                      pinMode(P4_1,INPUT);
+                     if(UART_1_initVar)
+                         pinMode(P3_1, OUTPUT_PULLUP);
                     (void)(cySysTimerCallback[CY_SYS_TIMER0])();
                 }
             }
@@ -2906,6 +2910,8 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
                 if(cySysTimerCallback[CY_SYS_TIMER1] != (void *) 0)
                 {
                      pinMode(P4_1,INPUT);
+                     if(UART_1_initVar)
+                         pinMode(P3_1, OUTPUT_PULLUP);
                     (void)(cySysTimerCallback[CY_SYS_TIMER1])();
                 }
             }
@@ -2919,6 +2925,8 @@ cystatus CySysClkIloRestoreFactoryTrim(void)
                 if(cySysTimerCallback[CY_SYS_TIMER2] != (void *) 0)
                 {
                      pinMode(P4_1,INPUT);
+                     if(UART_1_initVar)
+                         pinMode(P3_1, OUTPUT_PULLUP);
                     (void)(cySysTimerCallback[CY_SYS_TIMER2])();
                 }
             }

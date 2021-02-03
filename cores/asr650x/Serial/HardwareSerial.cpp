@@ -61,8 +61,8 @@ void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num
 	
 	if( _uart_num == UART_NUM_0) 
 	{
-		if(digitalRead(UART_RX)==UART_RX_LEVEL)//uart start when uart chip powered
-		{
+		//if(digitalRead(UART_RX)==UART_RX_LEVEL)//uart start when uart chip powered
+		//{
 			uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ/SerialBaud/UART_1_UART_OVS_FACTOR + 0.5 - 1;
 			UART_1_Start();
 			UART_1_SCBCLK_DIV_REG = div<<8;
@@ -70,7 +70,7 @@ void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num
 			UART_1_RX_CTRL_REG =rx_ctrl1;
 			UART_1_UART_TX_CTRL_REG =tx_ctrl0;
 			UART_1_TX_CTRL_REG = tx_ctrl1;
-		}
+		//}
 	}
 	else
 	{
