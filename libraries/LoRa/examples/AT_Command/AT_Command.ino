@@ -91,11 +91,15 @@ void setup() {
 	Serial.begin(115200);
 	passthroughMode = true;
 	enableAt(); 
+#if(LORAWAN_DEVEUI_AUTO)
+	LoRaWAN.generateDeveuiByChipID();
+#endif
 	getDevParam();
 	printDevParam();
 	deviceState = DEVICE_STATE_SLEEP;
 	LoRaWAN.ifskipjoin();
 	deviceState_lora = LORA_INIT;
+	delay(5);
 }
 
 void loop()
