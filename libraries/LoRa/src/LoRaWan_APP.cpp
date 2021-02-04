@@ -351,7 +351,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		downLinkDataHandle(mcpsIndication);
 	}
-	delay(100);
+	delay(10);
 }
 
 
@@ -681,7 +681,7 @@ void LoRaWanClass::sleep()
 #endif
 
 	// Process Radio IRQ
-	//Radio.IrqProcess( );
+	Radio.IrqProcess( );
 }
 void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
 {

@@ -1126,7 +1126,7 @@ void RadioOnDioIrq( void )
 	if(UART_1_initVar)
 		pinMode(P3_1,OUTPUT_PULLUP);
 	IrqFired = true;
-	RadioIrqProcess();
+	//RadioIrqProcess();
 }
 
 void RadioIrqProcess( void )
