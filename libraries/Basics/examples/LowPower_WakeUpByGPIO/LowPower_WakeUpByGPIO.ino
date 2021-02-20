@@ -9,6 +9,7 @@ uint8_t lowpower=1;
 void onSleep()
 {
   Serial.printf("Going into lowpower mode. Press user key to wake up\r\n");
+  delay(5);
   lowpower=1;
 }
 void onWakeUp()
@@ -31,6 +32,7 @@ void setup() {
   attachInterrupt(INT_GPIO,onWakeUp,FALLING);
   TimerInit( &sleep, onSleep );
   Serial.printf("Going into lowpower mode. Press user key to wake up\r\n");
+  delay(5);
 }
 
 void loop() {

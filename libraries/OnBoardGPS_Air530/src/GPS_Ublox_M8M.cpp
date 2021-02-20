@@ -264,6 +264,7 @@ String M8MClass::getNMEA()
 String M8MClass::getRMC()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -275,12 +276,13 @@ String M8MClass::getRMC()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'R' && nmea[3] == 'M' && nmea[4] == 'C')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
@@ -288,6 +290,7 @@ String M8MClass::getRMC()
 String M8MClass::getGGA()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -299,18 +302,20 @@ String M8MClass::getGGA()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'G' && nmea[4] == 'A')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String M8MClass::getVTG()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -322,18 +327,20 @@ String M8MClass::getVTG()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'V' && nmea[3] == 'T' && nmea[4] == 'G')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String M8MClass::getGSA()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -345,12 +352,13 @@ String M8MClass::getGSA()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'A')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
@@ -358,6 +366,7 @@ String M8MClass::getGSA()
 String M8MClass::getGSV()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -369,18 +378,20 @@ String M8MClass::getGSV()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'V')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String M8MClass::getGLL()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -392,12 +403,13 @@ String M8MClass::getGLL()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'L' && nmea[4] == 'L')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 

@@ -1118,15 +1118,11 @@ void RadioOnCadTimeoutIrq( void )
         RadioEvents->CadDone( 0 );
     }
 }
-extern uint8 UART_1_initVar;
-extern void enableUart(void);
+
 void RadioOnDioIrq( void )
 {
-	pinMode(P4_1,INPUT);
-	if(UART_1_initVar)
-		pinMode(P3_1,OUTPUT_PULLUP);
 	IrqFired = true;
-	//RadioIrqProcess();
+	RadioIrqProcess();
 }
 
 void RadioIrqProcess( void )
