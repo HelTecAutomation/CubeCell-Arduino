@@ -1379,7 +1379,10 @@ void LoRaMacClassBDeviceTimeAns( TimerTime_t currentTime )
             LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_OK, MLME_DEVICE_TIME );
         }
     }
-#endif // LORAMAC_CLASSB_ENABLED
+#else // LORAMAC_CLASSB_ENABLED
+    if( LoRaMacConfirmQueueIsCmdActive( MLME_DEVICE_TIME ) == true )
+        LoRaMacConfirmQueueSetStatus( LORAMAC_EVENT_INFO_STATUS_OK, MLME_DEVICE_TIME );
+#endif
 }
 
 bool LoRaMacClassBBeaconFreqReq( uint32_t frequency )
