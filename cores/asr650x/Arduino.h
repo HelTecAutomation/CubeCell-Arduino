@@ -81,7 +81,7 @@
 #define interrupts()   CyGlobalIntEnable
 #define digitalPinToInterrupt(p) ( p )
 
-#define clockCyclesPerMicrosecond() ( 48L ) // clock cycle 48 MHz
+#define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 

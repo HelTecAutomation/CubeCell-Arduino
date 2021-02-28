@@ -19,6 +19,8 @@ CubeCell-Board.upload.wait_for_upload_port=true
 
 CubeCell-Board.build.board=CubeCell_Board
 CubeCell-Board.build.core=asr650x
+CubeCell-Board.build.mcu=ASR6501
+CubeCell-Board.build.f_cpu=48000000L
 CubeCell-Board.build.variant=CubeCell-Board
 
 CubeCell-Board.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -103,6 +105,8 @@ CubeCell-Capsule.upload.wait_for_upload_port=true
 
 CubeCell-Capsule.build.board=CubeCell_Capsule
 CubeCell-Capsule.build.core=asr650x
+CubeCell-Capsule.build.mcu=ASR6501
+CubeCell-Capsule.build.f_cpu=48000000L
 CubeCell-Capsule.build.variant=CubeCell-Capsule
 
 CubeCell-Capsule.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -188,6 +192,8 @@ CubeCell-Module.upload.wait_for_upload_port=true
 
 CubeCell-Module.build.board=CubeCell_Module
 CubeCell-Module.build.core=asr650x
+CubeCell-Module.build.mcu=ASR6501
+CubeCell-Module.build.f_cpu=48000000L
 CubeCell-Module.build.variant=CubeCell-Module
 
 CubeCell-Module.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -271,6 +277,8 @@ CubeCell-BoardPlus.upload.wait_for_upload_port=true
 
 CubeCell-BoardPlus.build.board=CubeCell_BoardPlus
 CubeCell-BoardPlus.build.core=asr650x
+CubeCell-BoardPlus.build.mcu=ASR6502
+CubeCell-BoardPlus.build.f_cpu=48000000L
 CubeCell-BoardPlus.build.variant=CubeCell-BoardPlus
 
 CubeCell-BoardPlus.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -355,6 +363,8 @@ CubeCell-GPS.upload.wait_for_upload_port=true
 
 CubeCell-GPS.build.board=CubeCell_GPS
 CubeCell-GPS.build.core=asr650x
+CubeCell-GPS.build.mcu=ASR6502
+CubeCell-GPS.build.f_cpu=48000000L
 CubeCell-GPS.build.variant=CubeCell-GPS
 
 CubeCell-GPS.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -440,6 +450,8 @@ CubeCell-ModulePlus.upload.wait_for_upload_port=true
 
 CubeCell-ModulePlus.build.board=CubeCell_ModulePlus
 CubeCell-ModulePlus.build.core=asr650x
+CubeCell-ModulePlus.build.mcu=ASR6502
+CubeCell-ModulePlus.build.f_cpu=48000000L
 CubeCell-ModulePlus.build.variant=CubeCell-ModulePlus
 
 CubeCell-ModulePlus.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
@@ -521,6 +533,8 @@ CubeCell-1/2AA.upload.wait_for_upload_port=true
 
 CubeCell-1/2AA.build.board=CubeCell_HalfAA
 CubeCell-1/2AA.build.core=asr650x
+CubeCell-1/2AA.build.mcu=ASR6502
+CubeCell-1/2AA.build.f_cpu=48000000L
 CubeCell-1/2AA.build.variant=CubeCell-HalfAA
 
 CubeCell-1/2AA.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
