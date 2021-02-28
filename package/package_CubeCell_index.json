@@ -324,7 +324,7 @@
         },
         {
           "category": "CubeCell",
-          "name": "CubeCell Development Framework",
+          "name": "CubeCell Development Framework (ASR650x)",
           "url": "https://resource.heltec.cn/download/ASR650x-Arduino-1.2.0-BoardManager.zip",
           "checksum": "SHA-256:7d0aedd38ded4f331fd23bea46298be118615eff1a5787114d71f52d64ee8d5b",
           "help": {
