@@ -25,7 +25,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include <string.h>
 #include <stdint.h>
 #include "LoRaMac.h"
-#if defined(__ASR6501__)
+#if defined(__asr650x__)
 #include "timeServer.h"
 #else
 #include "timer.h"
