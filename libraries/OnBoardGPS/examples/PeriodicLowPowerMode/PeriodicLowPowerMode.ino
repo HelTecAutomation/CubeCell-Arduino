@@ -1,8 +1,15 @@
 #include "Arduino.h"
 #include "GPS_Air530.h"
+#include "GPS_Air530Z.h"
 #include "cubecell_SSD1306Wire.h"
 
- SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , ratio , rst
+SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , ratio , rst
+
+//if GPS module is Air530, use this
+//Air530Class GPS;
+
+//if GPS module is Air530Z, use this
+Air530ZClass GPS;
 
 typedef enum
 {
@@ -47,16 +54,16 @@ void displayGPSInof()
   char str[30];
   display.clear();
   display.setFont(ArialMT_Plain_10);
-  int index = sprintf(str,"%02d-%02d-%02d",Air530.date.year(),Air530.date.day(),Air530.date.month());
+  int index = sprintf(str,"%02d-%02d-%02d",GPS.date.year(),GPS.date.day(),GPS.date.month());
   str[index] = 0;
   display.setTextAlignment(TEXT_ALIGN_LEFT);
   display.drawString(0, 0, str);
   
-  index = sprintf(str,"%02d:%02d:%02d",Air530.time.hour(),Air530.time.minute(),Air530.time.second(),Air530.time.centisecond());
+  index = sprintf(str,"%02d:%02d:%02d",GPS.time.hour(),GPS.time.minute(),GPS.time.second(),GPS.time.centisecond());
   str[index] = 0;
   display.drawString(60, 0, str);
 
-  if( Air530.location.age() < 1000 )
+  if( GPS.location.age() < 1000 )
   {
     display.drawString(120, 0, "A");
   }
@@ -65,23 +72,23 @@ void displayGPSInof()
     display.drawString(120, 0, "V");
   }
   
-  index = sprintf(str,"alt: %d.%d",(int)Air530.altitude.meters(),fracPart(Air530.altitude.meters(),2));
+  index = sprintf(str,"alt: %d.%d",(int)GPS.altitude.meters(),fracPart(GPS.altitude.meters(),2));
   str[index] = 0;
   display.drawString(0, 16, str);
    
-  index = sprintf(str,"hdop: %d.%d",(int)Air530.hdop.hdop(),fracPart(Air530.hdop.hdop(),2));
+  index = sprintf(str,"hdop: %d.%d",(int)GPS.hdop.hdop(),fracPart(GPS.hdop.hdop(),2));
   str[index] = 0;
   display.drawString(0, 32, str); 
  
-  index = sprintf(str,"lat :  %d.%d",(int)Air530.location.lat(),fracPart(Air530.location.lat(),4));
+  index = sprintf(str,"lat :  %d.%d",(int)GPS.location.lat(),fracPart(GPS.location.lat(),4));
   str[index] = 0;
   display.drawString(60, 16, str);   
   
-  index = sprintf(str,"lon:%d.%d",(int)Air530.location.lng(),fracPart(Air530.location.lng(),4));
+  index = sprintf(str,"lon:%d.%d",(int)GPS.location.lng(),fracPart(GPS.location.lng(),4));
   str[index] = 0;
   display.drawString(60, 32, str);
 
-  index = sprintf(str,"speed: %d.%d km/h",(int)Air530.speed.kmph(),fracPart(Air530.speed.kmph(),3));
+  index = sprintf(str,"speed: %d.%d km/h",(int)GPS.speed.kmph(),fracPart(GPS.speed.kmph(),3));
   str[index] = 0;
   display.drawString(0, 48, str);
   display.display();
@@ -90,18 +97,18 @@ void displayGPSInof()
 void printGPSInof()
 {
   Serial.print("Date/Time: ");
-  if (Air530.date.isValid())
+  if (GPS.date.isValid())
   {
-    Serial.printf("%d/%02d/%02d",Air530.date.year(),Air530.date.day(),Air530.date.month());
+    Serial.printf("%d/%02d/%02d",GPS.date.year(),GPS.date.day(),GPS.date.month());
   }
   else
   {
     Serial.print("INVALID");
   }
 
-  if (Air530.time.isValid())
+  if (GPS.time.isValid())
   {
-    Serial.printf(" %02d:%02d:%02d.%02d",Air530.time.hour(),Air530.time.minute(),Air530.time.second(),Air530.time.centisecond());
+    Serial.printf(" %02d:%02d:%02d.%02d",GPS.time.hour(),GPS.time.minute(),GPS.time.second(),GPS.time.centisecond());
   }
   else
   {
@@ -110,24 +117,24 @@ void printGPSInof()
   Serial.println();
   
   Serial.print("LAT: ");
-  Serial.print(Air530.location.lat(),6);
+  Serial.print(GPS.location.lat(),6);
   Serial.print(", LON: ");
-  Serial.print(Air530.location.lng(),6);
+  Serial.print(GPS.location.lng(),6);
   Serial.print(", ALT: ");
-  Serial.print(Air530.altitude.meters());
+  Serial.print(GPS.altitude.meters());
 
   Serial.println(); 
   
   Serial.print("SATS: ");
-  Serial.print(Air530.satellites.value());
+  Serial.print(GPS.satellites.value());
   Serial.print(", HDOP: ");
-  Serial.print(Air530.hdop.hdop());
+  Serial.print(GPS.hdop.hdop());
   Serial.print(", AGE: ");
-  Serial.print(Air530.location.age());
+  Serial.print(GPS.location.age());
   Serial.print(", COURSE: ");
-  Serial.print(Air530.course.deg());
+  Serial.print(GPS.course.deg());
   Serial.print(", SPEED: ");
-  Serial.println(Air530.speed.kmph());
+  Serial.println(GPS.speed.kmph());
   Serial.println();
 }
 
@@ -151,32 +158,32 @@ void gpsUpdate(uint32_t timeout, uint32_t continuetime)
   Serial.println("GPS Searching...");
   display.display();
       
-  Air530.begin();
+  GPS.begin();
   starttime = millis();
   while( (millis()-starttime) < timeout )
   {
-    while (Air530.available() > 0)
+    while (GPS.available() > 0)
     {
-      Air530.encode(Air530.read());
+      GPS.encode(GPS.read());
     }
 
    // gps fixed in a second
-    if( Air530.location.age() < 1000 )
+    if( GPS.location.age() < 1000 )
     {
       break;
     }
   }
 
   //if gps fixed update gps and print gps info every 1 second
-  if(Air530.location.age() < 1000)
+  if(GPS.location.age() < 1000)
   {
     starttime = millis();
     uint32_t printinfo = 0;
     while( (millis()-starttime) < continuetime )
     {
-      while (Air530.available() > 0)
+      while (GPS.available() > 0)
       {
-        Air530.encode(Air530.read());
+        GPS.encode(GPS.read());
       }
 
       if( (millis()-starttime) > printinfo )
@@ -195,7 +202,7 @@ void gpsUpdate(uint32_t timeout, uint32_t continuetime)
     Serial.println("GPS search timeout.");
     delay(2000);  
   }
-  Air530.end();  
+  GPS.end();  
   display.clear(); 
   display.setTextAlignment(TEXT_ALIGN_CENTER);
   display.setFont(ArialMT_Plain_16);

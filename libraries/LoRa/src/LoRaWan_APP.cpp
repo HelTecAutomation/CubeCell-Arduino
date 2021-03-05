@@ -255,23 +255,53 @@ void turnOffRGB(void)
 /*  get the BatteryVoltage in mV. */
 uint16_t getBatteryVoltage(void)
 {
+/*
 #if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
 	pinMode(VBAT_ADC_CTL,OUTPUT);
 	digitalWrite(VBAT_ADC_CTL,LOW);
 	uint16_t volt=analogRead(ADC)*2;
-
-	/*
-	 * Board, BoardPlus, Capsule, GPS and HalfAA variants
-	 * have external 10K VDD pullup resistor
-	 * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
-	 */
 	pinMode(VBAT_ADC_CTL, INPUT);
 #else
 	uint16_t volt=analogRead(ADC)*2;
 #endif
 	return volt;
+*/
+	uint32_t temp = 0;
+	uint16_t volt;
+	uint8_t pin;
+#if defined(__ASR6601__)
+	pin = ADC1;
+#else
+	pin = ADC;
+#endif
+
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
+	/*
+	* Board, BoardPlus, Capsule, GPS and HalfAA variants
+	* have external 10K VDD pullup resistor
+	* connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
+	*/
+	
+	pinMode(VBAT_ADC_CTL,OUTPUT);
+	digitalWrite(VBAT_ADC_CTL,LOW);
+#endif
+	
+	analogRead(ADC);//pass the first 5 read
+	
+	for(int i=0;i<10;i++)//read 10 times and get average
+		temp+=analogRead(ADC)*2;
+	volt = temp / 10;
+	
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
+	pinMode(VBAT_ADC_CTL, INPUT);
+#endif
+	return volt;
 }
 
+void __attribute__((weak)) downLinkAckHandle()
+{
+	//printf("ack received\r\n");
+}
 
 void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
@@ -282,7 +312,6 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
 		printf("%02X",mcpsIndication->Buffer[i]);
 	}
 	printf("\r\n");
-	delay(10);
 }
 
 /*!
@@ -332,6 +361,16 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	}
 	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
 
+	if(mcpsIndication->AckReceived)
+	{
+		downLinkAckHandle();
+	}
+
+	if( mcpsIndication->RxData == true )
+	{
+		downLinkDataHandle(mcpsIndication);
+	}
+
 	// Check Multicast
 	// Check Port
 	// Check Datarate
@@ -347,10 +386,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	// Check Rssi
 	// Check Snr
 	// Check RxSlot
-	if( mcpsIndication->RxData == true )
-	{
-		downLinkDataHandle(mcpsIndication);
-	}
+
 	delay(10);
 }
 

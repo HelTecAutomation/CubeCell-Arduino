@@ -7,7 +7,7 @@
 #include "GPS_Air530Z.h"
 #include "cubecell_SSD1306Wire.h"
 
-Air530Class GPS;
+Air530ZClass GPS;
 extern SSD1306Wire  display; 
 
 //when gps waked, if in GPS_UPDATE_TIMEOUT, gps not fixed then into low power mode

@@ -15,7 +15,7 @@ static String calchecksum(String cmd)
 	return cmd;
 }
 
-Air530Class::Air530Class(int8_t powerCtl) 
+Air530Class::Air530Class(uint8_t powerCtl) 
 	:_powerCtl(powerCtl) 
 	{}
 
@@ -34,7 +34,7 @@ void Air530Class::begin(uint32_t baud)
 	GPSSerial.begin(bauds[i]);
 	String temp = "";
 
-	Serial.println("Current GPS baudrate detecting...");
+	Serial.println("GPS current baudrate detecting...");
 	while(getNMEA() == "0" )
 	{
 		i++;
@@ -48,7 +48,7 @@ void Air530Class::begin(uint32_t baud)
 		GPSSerial.flush();
 		temp = getNMEA();
 	}
-	Serial.print("GPS baudrate detected:");
+	Serial.print("GPS current baudrate detected:");
 	Serial.println(bauds[i]);
 
 	sendcmd(cmd);
@@ -197,6 +197,32 @@ void Air530Class::sendcmd(String cmd)
 	GPSSerial.print(cmd);
 }
 
+String Air530Class::getAll()
+{
+	String nmea = "";
+	uint32_t starttime = millis();
+	while(millis() - starttime <1000)
+	{
+		if ( GPSSerial.available())
+		{
+			while(GPSSerial.available())
+			{
+				nmea+=(char)GPSSerial.read();
+				int n = 0;
+				while(n<=1000)
+				{
+					if(GPSSerial.available())
+						break;
+					delayMicroseconds(1);
+					n++;
+				}
+			}
+			return nmea;
+		}
+	}
+	return "0";
+}
+
 String Air530Class::getNMEA()
 {
 	uint32_t starttime = millis();
@@ -227,6 +253,7 @@ String Air530Class::getNMEA()
 String Air530Class::getRMC()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -238,12 +265,13 @@ String Air530Class::getRMC()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'R' && nmea[3] == 'M' && nmea[4] == 'C')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
@@ -251,6 +279,7 @@ String Air530Class::getRMC()
 String Air530Class::getGGA()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -262,18 +291,20 @@ String Air530Class::getGGA()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'G' && nmea[4] == 'A')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String Air530Class::getVTG()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -285,18 +316,20 @@ String Air530Class::getVTG()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'V' && nmea[3] == 'T' && nmea[4] == 'G')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String Air530Class::getGSA()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -308,12 +341,13 @@ String Air530Class::getGSA()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'A')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
@@ -321,6 +355,7 @@ String Air530Class::getGSA()
 String Air530Class::getGSV()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -332,18 +367,20 @@ String Air530Class::getGSV()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'S' && nmea[4] == 'V')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
 String Air530Class::getGLL()
 {
 	String nmea = "";
+	String res="";
 	uint32_t starttime = millis();
 	while(millis() - starttime <1000)
 	{
@@ -355,12 +392,13 @@ String Air530Class::getGLL()
 				nmea = GPSSerial.readStringUntil('\r');
 				if(nmea[2] == 'G' && nmea[3] == 'L' && nmea[4] == 'L')
 				{
-					nmea = c + nmea;
-					return nmea;
+					res = res + c + nmea + "\r\n";
 				}
 			}
 		}
 	}
+	if(res!="")
+		return res;
 	return "0";
 }
 
@@ -412,7 +450,6 @@ gps_status_t Air530Class::WGSToBD(gps_status_t status)
 }
 */
 
-//Air530Class GPS(GPIO14);
-Air530Class Air530(GPIO14);
+//Air530Class Air530(GPIO14);
 
 

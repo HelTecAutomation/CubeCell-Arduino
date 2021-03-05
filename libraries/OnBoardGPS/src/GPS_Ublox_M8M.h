@@ -5,11 +5,6 @@
 #include <CubeCell_TinyGPS++.h>
 #include "GPS_Trans.h"
 
-typedef enum
-{
-	MODE_GPS_GALILEO_BEIDOU=0,
-	MODE_GPS_GALILEO_GLONASS
-}GPSMODE;
 
 #define NMEA_GGA 0x01
 #define NMEA_GLL 0x02
