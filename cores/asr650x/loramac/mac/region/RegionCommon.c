@@ -27,7 +27,7 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 #include <stdint.h>
 #include <math.h>
 
-#if defined(__ASR6501__)
+#if defined(__asr650x__)
 #include "timeServer.h"
 #else
 #include "timer.h"

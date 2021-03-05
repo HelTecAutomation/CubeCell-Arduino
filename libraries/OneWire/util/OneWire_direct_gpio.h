@@ -250,7 +250,7 @@ void directModeOutput(IO_REG_TYPE pin)
 #define DIRECT_WRITE_LOW(base, mask)    ((*((base)+5)) = (mask))
 #define DIRECT_WRITE_HIGH(base, mask)   ((*((base)+6)) = (mask))
 
-#elif defined(__ASR6501__)
+#elif defined(__asr650x__)
 #define PIN_IN_PORT(pin)    (pin % PIN_NUMBER_IN_PORT)
 #define PORT_FROM_PIN(pin)  (pin / PIN_NUMBER_IN_PORT)
 #define PORT_OFFSET(port)   (PORT_REG_SHFIT * port)

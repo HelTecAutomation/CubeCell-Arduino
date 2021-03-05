@@ -8,7 +8,7 @@
 #include "sx126x.h"
 #include "Arduino.h"
 #include "AT_Command.h"
-#if defined(__ASR6501__)
+#if defined(__asr650x__)
 #include "board.h"
 #include "gpio.h"
 #include "hw.h"
