@@ -285,12 +285,10 @@ uint16_t getBatteryVoltage(void)
 	pinMode(VBAT_ADC_CTL,OUTPUT);
 	digitalWrite(VBAT_ADC_CTL,LOW);
 #endif
-	
-	analogRead(ADC);//pass the first 5 read
-	
-	for(int i=0;i<10;i++)//read 10 times and get average
-		temp+=analogRead(ADC)*2;
-	volt = temp / 10;
+	delay(1);
+	for(int i=0;i<50;i++)//read 50 times and get average
+		temp+=analogRead(pin)*2;
+	volt = temp / 50;
 	
 #if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
 	pinMode(VBAT_ADC_CTL, INPUT);
@@ -344,6 +342,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 		case MCPS_CONFIRMED:
 		{
 			printf( "confirmed ");
+			OnTxNextPacketTimerEvent( );
 			break;
 		}
 		case MCPS_PROPRIETARY:

@@ -695,15 +695,6 @@ static void OnRadioTxDone( void )
     TimerTime_t curTime = TimerGetCurrentTime( );
     LastTxSysTime = TimerGetSysTime( );
 
-    if( LoRaMacDeviceClass != CLASS_C )
-    {
-        Radio.Sleep( );
-    }
-    else
-    {
-        OpenContinuousRx2Window( );
-    }
-
     // Setup timers
     if ( IsRxWindowsEnabled == true ) {
         TimerSetValue( &RxWindowTimer1, RxWindow1Delay );
@@ -726,6 +717,15 @@ static void OnRadioTxDone( void )
             LoRaMacFlags.Bits.McpsReq = 1;
         }
         LoRaMacFlags.Bits.MacDone = 1;
+    }
+
+    if( LoRaMacDeviceClass != CLASS_C )
+    {
+        Radio.Sleep( );
+    }
+    else
+    {
+        OpenContinuousRx2Window( );
     }
 
     // Verify if the last uplink was a join request
@@ -1204,9 +1204,6 @@ void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 
 static void OnRadioTxTimeout( void )
 {
-#if (LoraWan_RGB==1)
-    turnOffRGB();
-#endif
     DIO_PRINTF("Event : Tx Timeout\r\n");
 
     Radio.Init( &RadioEvents );
@@ -1232,6 +1229,10 @@ static void OnRadioTxTimeout( void )
 #ifdef CONFIG_LWAN
     lwan_dev_status_set(DEVICE_STATUS_SEND_FAIL);
 #endif
+#if (LoraWan_RGB==1)
+			turnOffRGB();
+#endif
+
 }
 
 static void OnRadioRxError( void )
@@ -1304,13 +1305,14 @@ static void OnRadioRxError( void )
     {
         OpenContinuousRx2Window( );
     }
+#if (LoraWan_RGB==1)
+        turnOffRGB();
+#endif
+
 }
 
 static void OnRadioRxTimeout( void )
 {
-#if (LoraWan_RGB==1)
-	turnOffRGB();
-#endif
     DIO_PRINTF("Event : Rx Timeout\r\n");
 
     bool classBRx = false;
@@ -1380,6 +1382,9 @@ static void OnRadioRxTimeout( void )
     {
         OpenContinuousRx2Window( );
     }
+#if(LoraWan_RGB==1)
+			turnOffRGB();
+#endif
 }
 
 #ifdef CONFIG_LORA_CAD
@@ -1831,7 +1836,6 @@ static LoRaMacStatus_t SwitchClass( DeviceClass_t deviceClass )
                                                  LoRaMacParams.SystemMaxRxError,
                                                  &RxWindow2Config );
                 OpenContinuousRx2Window( );
-
 
                 status = LORAMAC_STATUS_OK;
             }
