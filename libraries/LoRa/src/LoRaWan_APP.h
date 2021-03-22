@@ -58,7 +58,7 @@ class LoRaWanClass{
 public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
-  void send();
+  bool send();
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);

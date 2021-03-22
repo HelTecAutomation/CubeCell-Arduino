@@ -683,7 +683,7 @@ void LoRaWanClass::join()
 	}
 }
 
-void LoRaWanClass::send()
+bool LoRaWanClass::send()
 {
 	if( nextTx == true )
 	{
@@ -698,7 +698,9 @@ void LoRaWanClass::send()
 		}
 		
 		nextTx = SendFrame( );
+		return true;
 	}
+	return false;
 }
 
 void LoRaWanClass::cycle(uint32_t dutyCycle)
