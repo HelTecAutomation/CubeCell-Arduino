@@ -2,9 +2,9 @@
 
 English | [简体中文](#简体中文) &nbsp;&nbsp; [![Build Status](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino.png?branch=master)](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino "Build Status")
 
-This project makes ASR650x (ASR6501, ASR6502) series fully Arduino-Compatible. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
+This project makes ASR650x (ASR6501, ASR6502) and ASR6601 (ASR6601SE, ASR6601CB) series fully Arduino-Compatible. For [Heltec](https://heltec.org/) [CubeCell](https://heltec.org/proudct_center/lora/cubecell/) series.
 
-Based on the ASR650x series of chips, we have done a lot of migration and development, made it perfectly support **Arduino<sup>®</sup>**, can run the LoRaWAN-Node protocol stably, and can easily connect lithium batteries and solar panels… This is the CubeCell series.
+Based on the ASR6x0x series of SiP, we have done a lot of migration and development, made it perfectly support **Arduino<sup>®</sup>**, can run the LoRaWAN-Node protocol stably, and can easily connect lithium batteries and solar panels… This is the CubeCell series.
 
 Cube — Means modular design and easy assembly;
 
@@ -16,18 +16,18 @@ CubeCell series LoRaWAN-Node stack is migration form [LoRaMac-node](https://gith
 
 For more details, please refer to **[CubeCell Documents Page](https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/index.html).**
 
-We have made an e-ink adaptation for cubecell, currently only supports 2.9 inch ink screen, we will update it later:https://github.com/HelTecAutomation/e-ink/blob/master/examples/DEPG0290BxS75AFxX_BW/DEPG0290BxS75AFxX_BW.ino
-
 &nbsp;
 
 ## Instructions
 
 The currently supported ASR650x chip product models are:
 
-|   MCU   |                       Relative boards                        |
-| :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Capsule](https://heltec.org/project/htcc-ac01/) |
-| ASR6502 | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/)  |
+|    MCU    |                       Relative boards                        |
+| :-------: | :----------------------------------------------------------: |
+|  ASR6501  | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Capsule](https://heltec.org/project/htcc-ac01/) |
+|  ASR6502  | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/) |
+| ASR6601SE |                                                              |
+| ASR6601CB |                                                              |
 
 &nbsp;
 
