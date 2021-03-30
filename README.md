@@ -1,4 +1,4 @@
-# Heltec ASR650x Series Arduino Development Environment
+# Heltec Cubecell Series Arduino Development Environment
 
 English | [简体中文](#简体中文) &nbsp;&nbsp; [![Build Status](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino.png?branch=master)](https://travis-ci.org/HelTecAutomation/ASR650x-Arduino "Build Status")
 
@@ -28,6 +28,19 @@ The currently supported ASR650x chip product models are:
 |  ASR6502  | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/) |
 | ASR6601SE |                                                              |
 | ASR6601CB |                                                              |
+
+## Major update in 3-30-2021
+
+- Convert ASR650x series to a new branch;
+- Add ASR6601 series support and makes it as master branch;
+- Added and fixed some function to Arduino format, such as:
+  - `int analogRead(pin)` -- return adc level 0 ~ 4096;
+  - `float analogReadmV(pin)` -- return adc voltage in mV;
+    - *The ASR650x series ADC input pin range is 0 ~ 2400 mV*;
+    - *The ASR6601 series ADC input pin range is 100 ~ 1100 mV.*
+  - `SPI.begin(sck,miso,mosi,ss)` -- SPI begin;
+  - `wire.begin(sda, scl, frequency)` -- I2C begin;
+  - `Serial.begin(baud, config, rxPin, txPin)` -- UART begin.
 
 &nbsp;
 
@@ -73,16 +86,18 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 本项目由成都惠利特自动化科技有限公司开发。
 
-* 本项目旨在为ASR650x系列芯片提供Arduino便利的开发环境与例程库，方便用户完成对ASR650x系列芯片的快速部署与开发。
+* 本项目旨在为ASR650x、ASR6601系列芯片提供Arduino开发环境与例程库，方便用户完成对ASR650x、ASR6601系列芯片的快速部署与开发。
 
 
 ## 说明
 产品型号列表：
 
-|   MCU   |                       Relative boards                        |
-| :-----: | :----------------------------------------------------------: |
-| ASR6501 | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cuapsule](https://heltec.org/project/htcc-ac01/) |
-| ASR6502 | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/)  |
+|    MCU    |                       Relative boards                        |
+| :-------: | :----------------------------------------------------------: |
+|  ASR6501  | [CubeCell-Board](https://heltec.org/project/htcc-ab01/), [CubeCell-Module](https://heltec.org/project/htcc-am01/), [CubeCell-Cuapsule](https://heltec.org/project/htcc-ac01/) |
+|  ASR6502  | [CubeCell-Board Plus](https://heltec.org/project/htcc-ab02/), [CubeCell GPS-6502](https://heltec.org/project/htcc-ab02s/), [CubeCell 1/2AA Node](https://heltec.org/project/htcc-ab02a/), [CubeCell-Module Plus](https://heltec.org/project/htcc-am02/), [CubeCell-Capsule Solar Sensor](https://heltec.org/project/htcc-ac02/) |
+| ASR6601SE |                                                              |
+| ASR6601CB |                                                              |
 
 ## 安装指南
 
