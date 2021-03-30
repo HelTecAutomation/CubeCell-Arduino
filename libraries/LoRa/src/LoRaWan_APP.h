@@ -3,10 +3,7 @@
 
 #include <stdio.h>
 #include "utilities.h"
-#include "LoRaMac.h"
-#include "Commissioning.h"
-#include "Region.h"
-#include "sx126x.h"
+#include "LoRaWan.h"
 #include "HardwareSerial.h"
 #include "Arduino.h"
 #include "AT_Command.h"
@@ -58,7 +55,7 @@ class LoRaWanClass{
 public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
-  bool send();
+  void send();
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);
@@ -74,11 +71,10 @@ public:
 #endif
 };
 
-extern "C" uint16_t getBatteryVoltage(void);
+
 extern "C" bool SendFrame( void );
 extern "C" void turnOnRGB(uint32_t color,uint32_t time);
 extern "C" void turnOffRGB(void);
-extern "C" uint16_t getBatteryVoltage(void);
 extern "C" bool checkUserAt(char * cmd, char * content);
 extern "C" void downLinkAckHandle();
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);

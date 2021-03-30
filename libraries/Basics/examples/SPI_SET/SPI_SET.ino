@@ -1,24 +1,22 @@
 #include "SPI.h"
 
+//for asr6502, there are two i2c(Wire and Wire1). 
+//for asr6501, only one i2c(Wire).
+//for asr6601, there are three i2c(Wire,Wire1,Wire2).
+
 //for asr6502, there are two spi(SPI and SPI1).
 //for asr6501, only one spi(SPI).
+//for asr6601, there are two spi(SPI, SPI1, SPI2).
 
 void setup() {
   //spi begin with GPIO1 as nss, default frequency is 6000000;
-  SPI.begin(GPIO1);//or SPI1.begin(GPIO1);
+  //SPI.begin() use default pin SCK,MISO,MOSI, nss is not setted, use software nss.
+  SPI.begin(SCK,MISO,MOSI,GPIO1);// sck, miso, mosi, nss
 
   //update frequency to 10000000;
-  SPI.setFrequency(1000000);//or SPI1.setFrequency(1000000);
+  SPI.setFrequency(1000000);
 
   SPI.end();
-
-  //spi begin with GPIO1 as nss, and set frequency to 1000000;
-  SPI.begin(GPIO1,1000000);
-
-  /*for asr6502, SPI also can be set to SPI1 as follow:
-   * SPI.begin(GPIO1,1000000,1)      
-   * in this case, SPI == SPI1;
-   */
 }
 
 void loop() {

@@ -10,7 +10,6 @@
  * David Brodrick.
  */
 #include "LoRaWanMinimal_APP.h"
-#include "loramac/system/timeServer.h"
 #include "Arduino.h"
 
 /*
@@ -56,7 +55,6 @@ static void lowPowerSleep(uint32_t sleeptime)
 
 ///////////////////////////////////////////////////
 void setup() {
-	boardInitMcu();
 	Serial.begin(115200);
 
   if (ACTIVE_REGION==LORAMAC_REGION_AU915) {

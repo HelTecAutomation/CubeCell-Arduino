@@ -57,7 +57,9 @@ class TwoWire: public Stream
 {
 protected:
     int8_t _i2c_num;
-	uint32_t _freq;
+    int8_t _sda;
+    int8_t _scl;
+    uint32_t _freq;
     uint8_t rxBuffer[I2C_BUFFER_LENGTH];
     uint16_t rxIndex;
     uint16_t rxLength;
@@ -82,7 +84,7 @@ protected:
 public:
     TwoWire(int8_t bus_num);
     ~TwoWire();
-    bool begin(uint32_t frequency = 100000 , int8_t bus_num = -1); // returns true, if successful init of i2c bus
+    bool begin(int sda=-1, int scl=-1, uint32_t frequency=100000); // returns true, if successful init of i2c bus
       // calling will attemp to recover hung bus
     void end();
     void setClock(uint32_t frequency); // change bus clock without initing hardware

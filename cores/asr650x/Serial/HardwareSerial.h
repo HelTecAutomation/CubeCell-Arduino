@@ -58,7 +58,7 @@ class HardwareSerial: public Stream
 public:
     HardwareSerial(int8_t uart_nr);
 
-    void begin(unsigned long baud = 115200, uint32_t config=SERIAL_8N1, int8_t uart_num =-1, bool invert=false, unsigned long timeout_ms = 20000UL);
+    bool begin(uint32_t baud=115200, uint32_t config=SERIAL_8N1, int rxPin=-1, int txPin=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
     void end();
     void updateBaudRate(unsigned long baud);
     int available(void);
@@ -99,8 +99,10 @@ public:
     void setDebugOutput(bool);
 
 protected:
-    uint8_t _uart_num;
+    int8_t _uart_num;
     uint32_t SerialBaud;
+    int8_t _rx;
+    int8_t _tx;
     //uart_t* _uart;
 };
 

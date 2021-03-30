@@ -113,6 +113,8 @@ uint16_t makeWord(byte h, byte l);
 uint32_t pulseIn(uint8_t pin_name,uint8_t mode,uint32_t timeout = 1000000);
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);
+uint16_t getBatteryVoltage(void);
+uint8_t BoardGetBatteryLevel(void); 
 
 long random(long howbig);
 void randomSeed(unsigned long seed);

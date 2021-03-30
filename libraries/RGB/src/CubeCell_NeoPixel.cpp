@@ -1,6 +1,7 @@
 #include "CubeCell_NeoPixel.h"
+#ifdef __asr650x__
 #include "project.h"
-
+#endif
 /*!
   @brief   NeoPixel constructor when length, pin and pixel type are known
            at compile-time.
@@ -155,12 +156,13 @@ void CubeCell_NeoPixel::show(void) {
   // state, computes 'pin high' and 'pin low' values, and writes these back
   // to the PORT register as needed.
 
-
+#ifdef __asr650x__
   noInterrupts();
-  
+#endif
   ASR_NeoPixelShow(pin, pixels, numBytes, is800KHz);
-	
+#ifdef __asr650x__
   interrupts();
+#endif
 }
 
 /*!

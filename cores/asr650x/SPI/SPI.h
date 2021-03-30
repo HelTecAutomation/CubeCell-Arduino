@@ -53,16 +53,19 @@ public:
 class SPIClass
 {
 private:
-	int8_t _ss;
-	int8_t _spi_num;
-	uint32_t _freq;
-	bool _inTransaction;
-	uint8_t  _bitOrder;
-	uint8_t  _dataMode;
+    int8_t _spi_num;
+    int8_t _sck;
+    int8_t _miso;
+    int8_t _mosi;
+    int8_t _ss;
+    uint32_t _freq;
+    uint8_t  _bitOrder;
+    uint8_t  _dataMode;
+    bool _inTransaction;
 
 public:
-    SPIClass(int8_t ss,int8_t spiNum);
-    void begin(int8_t ss = -1, uint32_t freq = 6000000, int8_t spiNum = -1);
+    SPIClass(uint8_t spi_bus);
+    bool begin(int8_t sck=-1, int8_t miso=-1, int8_t mosi=-1, int8_t ss=-1);
     void end();
     void setFrequency(uint32_t freq);
     void beginTransaction(SPISettings settings);

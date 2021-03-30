@@ -54,4 +54,9 @@ typedef enum
 #define GPIO14 P0_7
 #define GPIO15 P3_2
 #define GPIO16 P3_3
+#define MOSI1  GPIO1
+#define MISO1  GPIO2
+#define SCK1   GPIO3
+#define SDA1   GPIO9
+#define SCL1   GPIO8
 #endif /* Pins_Arduino_h */

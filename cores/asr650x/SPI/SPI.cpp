@@ -26,42 +26,54 @@
 #define spi_TIMEOUT	500
 
 
-SPIClass::SPIClass(int8_t ss, int8_t spiNum)
-	:_freq(6000000),
-	_spi_num(spiNum),
-	_inTransaction(false),
-	_bitOrder(SPI_MSBFIRST),
-	_dataMode(SPI_MODE0)
-	{}
+SPIClass::SPIClass(uint8_t spi_bus)
+    :_spi_num(spi_bus)
+    ,_sck(-1)
+    ,_miso(-1)
+    ,_mosi(-1)
+    ,_ss(-1)
+    ,_freq(1000000)
+    ,_inTransaction(false)
+{}
 
 
-void SPIClass::begin(int8_t ss, uint32_t freq, int8_t spiNum)
+bool SPIClass::begin(int8_t sck, int8_t miso, int8_t mosi, int8_t ss)
 {
-	if(ss!=-1)
+	if(_spi_num == 0 &&sck < 0 && miso < 0 && mosi < 0) {
+		sck = SCK;
+		mosi = MOSI;
+		miso = MISO;
+	}
+	else if(sck == SCK && miso == MISO && mosi ==MOSI)
 	{
-		_ss = ss;
+		_spi_num = 0;
+	}
+#ifdef __ASR6502__
+	else if(_spi_num == 1 &&sck < 0 && miso < 0 && mosi < 0) {
+		sck = SCK1;
+		mosi = MOSI1;
+		miso = MISO1;
+	}
+	else if(sck == SCK1 && miso == MISO1 && mosi ==MOSI1)
+	{
+		_spi_num = 1;
+	}
+#endif
+	else
+	{
+		return false;
 	}
 	
-	if(spiNum != -1)
-	{
-		if(spiNum == 1)
-		{
-			_spi_num = spiNum;
-		}
-		else
-		{
-			_spi_num = 0;
-		}
-	}
-	
-	_freq = freq;
-	
-	if(_freq > 6000000)
-	{
-		_freq = 6000000;
-	}
+	_sck = sck;
+	_mosi = mosi;
+	_miso = miso;
+	_ss = ss;
 
-	pinMode(_ss,OUTPUT);
+	if(_ss>=0)
+	{
+		pinMode(_ss,OUTPUT);
+		digitalWrite(_ss,HIGH);
+	}
 	
 	if(_spi_num == 0)
 	{
@@ -75,6 +87,7 @@ void SPIClass::begin(int8_t ss, uint32_t freq, int8_t spiNum)
 		SPI_2_SCBCLK_DIV_REG = div << 8 ;
 		SPI_2_Start();
 	}
+	return true;
 }
 
 void SPIClass::end()
@@ -156,7 +169,6 @@ void SPIClass:: beginTransaction(SPISettings settings)
 		}
 	}
 	_inTransaction = true;
-	digitalWrite(_ss,LOW);
 }
 
 void SPIClass::endTransaction()
@@ -164,7 +176,6 @@ void SPIClass::endTransaction()
     if(_inTransaction){
         _inTransaction = false;
     }
-    digitalWrite(_ss,HIGH);
 }
 
 
@@ -274,6 +285,6 @@ void SPIClass::transferBytes(uint8_t * data, uint8_t * out, uint32_t size)
 	}
 }
 
-SPIClass SPI(-1,SPI_NUM_0);
-SPIClass SPI1(-1,SPI_NUM_1);
+SPIClass SPI(SPI_NUM_0);
+SPIClass SPI1(SPI_NUM_1);
 

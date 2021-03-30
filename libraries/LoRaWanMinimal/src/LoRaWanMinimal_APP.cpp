@@ -5,14 +5,15 @@
 #endif
 
 #if defined( REGION_EU868 )
-#include "RegionEU868.h"
+#include "loramac/region/RegionEU868.h"
 #elif defined( REGION_EU433 )
-#include "RegionEU433.h"
+#include "loramac/region/RegionEU433.h"
 #elif defined( REGION_KR920 )
-#include "RegionKR920.h"
+#include "loramac/region/RegionKR920.h"
 #elif defined( REGION_AS923) || defined( REGION_AS923_AS1) || defined( REGION_AS923_AS2)
-#include "RegionAS923.h"
+#include "loramac/region/RegionAS923.h"
 #endif
+
 
 
 #if(LoraWan_RGB==1)

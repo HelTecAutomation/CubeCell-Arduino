@@ -968,9 +968,12 @@ void RadioSetRxDutyCycle( uint32_t rxTime, uint32_t sleepTime )
     SX126xSetRxDutyCycle( rxTime, sleepTime );
 }
 
+uint8_t cadDetPeak_500[]={21,22,22,23,25,29};
+uint8_t cadDetPeak_125[]={22,22,24,25,26,30};
+uint8_t cadSymbol_500[]={4,4,4,4,4,8};
 void RadioStartCad( uint8_t symbols )
 {
-    uint8_t cadDetPeak = SX126x.ModulationParams.Params.LoRa.SpreadingFactor + 13;
+    uint8_t cadDetPeak = SX126x.ModulationParams.Params.LoRa.SpreadingFactor + 18;
     uint8_t cadDetMin = 10;
     RadioLoRaCadSymbols_t cadSymbolNum = LORA_CAD_16_SYMBOL;
     

@@ -32,6 +32,8 @@
 void SpiInit( )
 {
 	SPI_1_Start();
+	uint32_t div = (float)CYDEV_BCLK__HFCLK__HZ / SPI_1_SPI_OVS_FACTOR / 6000000 - 1;
+	SPI_1_SCBCLK_DIV_REG = div << 8 ;
 }
 
 void SpiDeInit( Spi_t *obj )

@@ -72,7 +72,6 @@ int16_t rssi,rxSize;
 uint16_t voltage;
 
 void setup() {
-    boardInitMcu( );
     Serial.begin(115200);
 
     voltage = 0;

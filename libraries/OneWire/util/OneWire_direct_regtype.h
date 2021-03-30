@@ -39,6 +39,9 @@
 #elif defined(__asr650x__)
 #define IO_REG_TYPE uint32_t
 
+#elif defined(__asr6601__)
+#define IO_REG_TYPE uint32_t
+
 #elif defined(RBL_NRF51822)
 #define IO_REG_TYPE uint32_t
 

@@ -40,9 +40,13 @@
 #ifndef DEBUGV
 #define DEBUGV(...) do { (void)0; } while (0)
 #endif
-
+#ifdef __asr650x__
 #define _EEPROM_SIZE              (CY_FLASH_SIZEOF_ROW * 3)
-
+#define _EEPROM_BASE              CY_SFLASH_USERBASE
+#else
+#define #define _EEPROM_SIZE      0xC00
+#define _EEPROM_BASE              FLASH_BASE+0x7400
+#else
 EEPROMClass::EEPROMClass(uint32_t baddr)
 : _baddr(baddr)
 , _data(0)

@@ -5,7 +5,7 @@
 #include "Arduino.h"
 #include "GPS_Air530.h"
 #include "GPS_Air530Z.h"
-#include "cubecell_SSD1306Wire.h"
+#include "HT_SSD1306Wire.h"
 
 Air530ZClass GPS;
 extern SSD1306Wire  display; 
@@ -332,7 +332,6 @@ static void prepareTxFrame( uint8_t port )
 
 
 void setup() {
-  boardInitMcu();
   Serial.begin(115200);
 
 #if(AT_SUPPORT)

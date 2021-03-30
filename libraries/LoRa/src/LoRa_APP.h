@@ -3,9 +3,7 @@
 
 #include <stdio.h>
 #include "utilities.h"
-#include "LoRaMac.h"
-#include "Commissioning.h"
-#include "sx126x.h"
+#include "LoRaWan.h"
 #include "Arduino.h"
 #include "AT_Command.h"
 #if defined(__asr650x__)

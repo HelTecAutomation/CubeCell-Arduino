@@ -53,7 +53,6 @@ int16_t rssi,rxSize;
 
 
 void setup() {
-    boardInitMcu( );
     Serial.begin(115200);
 
     txNumber=0;

@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "GPS_Air530.h"
 #include "GPS_Air530Z.h"
-#include "cubecell_SSD1306Wire.h"
+#include "HT_SSD1306Wire.h"
 
 SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , ratio , rst
 

@@ -53,7 +53,6 @@ int16_t rssi,rxSize;
 void  DoubleToString( char *str, double double_num,unsigned int len);
 
 void setup() {
-    boardInitMcu( );
     Serial.begin(115200);
 
     txNumber=0;

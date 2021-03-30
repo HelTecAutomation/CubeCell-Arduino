@@ -42,6 +42,11 @@
               "packager": "CubeCell",
               "version": "0.0.1",
               "name": "CubeCellflash"
+            },
+            {
+              "packager": "CubeCell",
+              "version": "0.0.1",
+              "name": "flash6601"
             }
           ],
           "size": "3079304"
@@ -99,6 +104,33 @@
               "host": "x86_64-pc-linux-gnu",
               "archiveFileName": "CubeCellflash-0.0.1-linux.tar.gz",
               "size": "10703597"
+            }
+          ]
+        },
+        {
+          "version": "0.0.1",
+          "name": "flash6601",
+          "systems": [
+            {
+              "url": "https://resource.heltec.cn/download/flash6601-0.0.1-windows.zip",
+              "checksum": "SHA-256:ad7809288880aca02c162b9fcdbc2c69a9744ceb5ee373a5932ffb66b1ac3f31",
+              "host": "i686-mingw32",
+              "archiveFileName": "flash6601-0.0.1-windows.zip",
+              "size": "6032531"
+            },
+            {
+              "url": "https://resource.heltec.cn/download/flash6601-0.0.1-macos.tar.gz",
+              "checksum": "SHA-256:4655e664cdd07e92fac63b279412d95cca57e4e0d1ddcaad14eac6c28fab46bc",
+              "host": "x86_64-apple-darwin",
+              "archiveFileName": "flash6601-0.0.1-macos.tar.gz",
+              "size": "5083136"
+            },
+            {
+              "url": "https://resource.heltec.cn/download/flash6601-0.0.1-linux.tar.gz",
+              "checksum": "SHA-256:89209c4c3be3f99e81daa1f908ccdaea4dfd0b3b40818fbcd339b15cdef87849",
+              "host": "x86_64-pc-linux-gnu",
+              "archiveFileName": "flash6601-0.0.1-linux.tar.gz",
+              "size": "10342435"
             }
           ]
         },

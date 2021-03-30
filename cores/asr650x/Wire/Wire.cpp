@@ -39,6 +39,8 @@ extern "C" {
 TwoWire::TwoWire(int8_t bus_num)
     :_i2c_num(bus_num)
     ,_freq(100000)
+    ,_sda(-1)
+    ,_scl(-1)
     ,rxIndex(0)
     ,rxLength(0)
     ,rxQueued(0)
@@ -55,20 +57,31 @@ TwoWire::~TwoWire()
 {
 }
 
-bool TwoWire::begin(uint32_t frequency , int8_t bus_num)
+bool TwoWire::begin(int sda, int scl, uint32_t frequency)
 {
-	if(bus_num != -1)
-	{
-		if(bus_num == 1)
-		{
-			_i2c_num = bus_num;
-		}
-		else
-		{
-			_i2c_num = 0;
-		}
-	}
 
+	if(_i2c_num == 0 && sda < 0 && scl < 0) {
+		_sda = SDA;
+		_scl = SCL;
+	}
+	else if(sda == SDA && scl == SCL)
+	{
+		_i2c_num = 0;
+	}
+#ifdef __ASR6502__
+	else if(_i2c_num == 1 && sda < 0 && scl < 0) {
+		_sda = SDA1;
+		_scl = SCL1;
+	}
+	else if(sda == SDA1 && scl == SCL1)
+	{
+		_i2c_num = 1;
+	}
+#endif
+	else
+	{
+		return false;
+	}
 	_freq = frequency;
 
 	if(_freq > 1000000)
@@ -138,12 +151,12 @@ uint16_t TwoWire::getTimeOut()
 
 void TwoWire::setClock(uint32_t frequency)
 {
-//    i2cSetFrequency(i2c, frequency);
+    setFrequency(frequency);
 }
 
 size_t TwoWire::getClock()
 {
-//    return i2cGetFrequency(i2c);
+    return _freq;
 }
 
 /* stickBreaker Nov 2017 ISR, and bigblock 64k-1

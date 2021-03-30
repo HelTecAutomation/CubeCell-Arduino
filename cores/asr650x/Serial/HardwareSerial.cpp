@@ -13,10 +13,35 @@ HardwareSerial Serial1(UART_NUM_1);
 
 HardwareSerial::HardwareSerial(int8_t uart_num) 
 	:_uart_num(uart_num) 
+	,_rx(-1)
+	,_tx(-1)
 	{}
 
-void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num, bool invert, unsigned long timeout_ms)
+bool HardwareSerial::begin(uint32_t baud, uint32_t config, int rxPin, int txPin, bool invert, unsigned long timeout_ms)
 {
+	if(_uart_num == 0 && rxPin < 0 && txPin < 0) { 
+		rxPin = UART_RX;
+		txPin = UART_TX;
+	}
+	else if(rxPin == UART_RX && txPin == UART_TX) {
+		_uart_num = 0;
+	}
+#ifdef __ASR6502__
+	else if(_uart_num == 1 && rxPin < 0 && txPin < 0) {
+		rxPin = UART_RX2;
+		txPin = UART_TX2;
+	}
+	else if(rxPin == UART_RX2 && txPin == UART_TX2) {
+		_uart_num = 1;
+	}
+#endif
+	else
+	{
+		return false;
+	}
+
+	_rx = rxPin;
+	_tx = txPin;
 	uint32_t stop_bits,parity_ctrl,data_bits,parity;
 
 	stop_bits = config & 0x0F;
@@ -45,17 +70,6 @@ void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num
 
 	uint32_t tx_ctrl1 = (UART_1_GET_TX_CTRL_DATA_WIDTH(data_bits) | \
 							 UART_1_GET_UART_TX_CTRL_ENABLED(UART_1_UART_DIRECTION));
-	if(uart_num!=-1)
-	{
-		if(uart_num == 1)
-		{
-			_uart_num = uart_num;
-		}
-		else
-		{
-			_uart_num = 0;
-		}
-	}
 
 	SerialBaud=baud;
 	
@@ -82,6 +96,7 @@ void HardwareSerial::begin(unsigned long baud , uint32_t config, int8_t uart_num
 		UART_2_UART_TX_CTRL_REG =tx_ctrl0;
 		UART_2_TX_CTRL_REG = tx_ctrl1;
 	}
+	return true;
 /*
 	printf("config %d\r\n",config);
 	printf("stop_bits %d\r\n",stop_bits);
@@ -211,10 +226,14 @@ int HardwareSerial::read(uint8_t* buff, uint32_t timeout)
     while(available())
     {
       buff[serialBuffer_index++]=read();
-      for(uint32_t i=0;i<(23040000/SerialBaud);i++)
+
+      int i = 0;
+      while(i<1000)
       {
-		if(available())
-			break;
+          if(available())
+              break;
+          delayMicroseconds(1);
+          i++;
       }
     }
     return serialBuffer_index;

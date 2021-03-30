@@ -1,13 +1,24 @@
 #ifndef LoRaWanMinimal_APP_H
 #define LoRaWanMinimal_APP_H
 
-#include "LoRaMac.h"
-#include "Commissioning.h"
-#include "hw.h"
-#include "Region.h"
-#include "low_power.h"
-#include "sx126x.h"
+#include <stdio.h>
+#include "utilities.h"
+#include "LoRaWan.h"
+#include "HardwareSerial.h"
 #include "Arduino.h"
+#if defined(__asr650x__)
+#include "board.h"
+#include "gpio.h"
+#include "hw.h"
+#include "low_power.h"
+#include "spi-board.h"
+#include "rtc-board.h"
+#include "asr_timer.h"
+#include "board-config.h"
+#include "hw_conf.h"
+#include <uart_port.h>
+#endif
+
 
 extern uint16_t userChannelsMask[6];
 

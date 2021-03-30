@@ -753,9 +753,9 @@ void ADC_SAR_Seq_SetGain(uint32 chan, int32 adcGain)
     *   to mVolts.
     *
     *******************************************************************************/
-    int16 ADC_SAR_Seq_CountsTo_mVolts(uint32 chan, int16 adcCounts)
+    float ADC_SAR_Seq_CountsTo_mVolts(uint32 chan, int16 adcCounts)
     {
-        int16 mVolts;
+        float mVolts;
 
         /* Halt CPU in debug mode if channel is out of valid range */
         CYASSERT(chan < ADC_SAR_Seq_TOTAL_CHANNELS_NUM);
@@ -771,8 +771,8 @@ void ADC_SAR_Seq_SetGain(uint32 chan, int32 adcGain)
         /* Subtract ADC offset */
         adcCounts -= ADC_SAR_Seq_offset[chan];
 
-        mVolts = (int16)((((int32)adcCounts * ADC_SAR_Seq_10MV_COUNTS) + ( (adcCounts > 0) ?
-                 (ADC_SAR_Seq_countsPer10Volt[chan] / 2) : (-(ADC_SAR_Seq_countsPer10Volt[chan] / 2)) ))
+        mVolts = (float)((((float)adcCounts * ADC_SAR_Seq_10MV_COUNTS) + ( (adcCounts > 0) ?
+                 ((float)ADC_SAR_Seq_countsPer10Volt[chan] / 2) : (-(float)(ADC_SAR_Seq_countsPer10Volt[chan] / 2)) ))
                  / ADC_SAR_Seq_countsPer10Volt[chan]);
         //DebugPrintf("ADC_SAR_Seq_countsPer10Volt[chan]:%d\r\n",ADC_SAR_Seq_countsPer10Volt[chan]);
         return( mVolts );

@@ -110,16 +110,6 @@ uint8_t BoardGetPotiLevel( void );
  */
 uint32_t BoardGetBatteryVoltage( void );
 
-/*!
- * \brief Get the current battery level
- *
- * \retval value  battery level [  0: USB,
- *                                 1: Min level,
- *                                 x: level
- *                               254: fully charged,
- *                               255: Error]
- */
-uint8_t BoardGetBatteryLevel( void );
 
 /*!
  * Returns a pseudo random seed generated using the MCU Unique ID

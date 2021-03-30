@@ -4,15 +4,18 @@
 #include "cytypes.h"
 #include "pins_arduino.h"
 #include "stdbool.h"
+#include <math.h>
+
 #ifdef __cplusplus 
 		extern "C" {
 #endif
- 
+
 #define COLOR_SEND 0x500000   //color red, light 0x10
 #define COLOR_JOINED 0x500050 //color Violet, light 0x10
 #define COLOR_RXWINDOW1 0x000050 //color blue, light 0x10
 #define COLOR_RXWINDOW2 0x505000 //color yellow, light 0x10
 #define COLOR_RECEIVED 0x005000 //color green, light 0x10
+#define COLOR_RXWINDOW3 0x005050 //
 
 #define UART_RX_LEVEL 1 //the of  external uartchip tx PIN when it is powered
 
@@ -50,10 +53,10 @@ typedef enum
 }IrqModes;
 
 typedef enum {
-    PWM_CLK_FREQ_48M = 1,
-    PWM_CLK_FREQ_24M = 2,
-    PWM_CLK_FREQ_16M = 3,
-    PWM_CLK_FREQ_12M = 4,
+    PWM_CLK_FREQ_48M = 0,
+    PWM_CLK_FREQ_24M = 1,
+    PWM_CLK_FREQ_16M = 2,
+    PWM_CLK_FREQ_12M = 3,
     PWM_CLK_FREQ_8M = 5,
     PWM_CLK_FREQ_6M = 7,
     PWM_CLK_FREQ_4M = 11,
@@ -78,7 +81,8 @@ void pinToggle(uint8_t pin_name);
 void ClearPinInterrupt(uint8_t pin_name);
 void attachInterrupt(uint8_t pin_name, GpioIrqHandler GpioIrqHandlerCallback, IrqModes interrupt_mode);
 void detachInterrupt(uint8_t pin_name);
-int16 analogRead(uint8_t pin);//the value returned is in mV units, max value can be read is 2400 mV.
+int analogRead(uint8_t pin);
+float analogReadmV(uint8_t pin_name);
 void analogWrite(uint8_t pin, uint16_t value);
 void delay(uint32_t milliseconds);
 void delayMicroseconds(uint16 microseconds);

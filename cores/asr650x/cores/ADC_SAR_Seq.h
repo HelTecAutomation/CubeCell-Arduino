@@ -260,7 +260,7 @@ void ADC_SAR_Seq_SetGain(uint32 chan, int32 adcGain);
     void ADC_SAR_Seq_EnableInjection(void);
 #endif /* ADC_SAR_Seq_INJ_CHANNEL_ENABLED */
 #if(ADC_SAR_Seq_DEFAULT_JUSTIFICATION_SEL == ADC_SAR_Seq__RIGHT)
-    int16 ADC_SAR_Seq_CountsTo_mVolts(uint32 chan, int16 adcCounts);
+    float ADC_SAR_Seq_CountsTo_mVolts(uint32 chan, int16 adcCounts);
     int32 ADC_SAR_Seq_CountsTo_uVolts(uint32 chan, int16 adcCounts);
     float32 ADC_SAR_Seq_CountsTo_Volts(uint32 chan, int16 adcCounts);
 #endif /* End ADC_SAR_Seq_DEFAULT_JUSTIFICATION_SEL == ADC_SAR_Seq__RIGHT */

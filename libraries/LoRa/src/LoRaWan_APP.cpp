@@ -1,24 +1,26 @@
 #include <LoRaWan_APP.h>
+#include <Arduino.h>
+
 #if(LoraWan_RGB==1)
 #include "CubeCell_NeoPixel.h"
 CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 #if defined( REGION_EU868 )
-#include "RegionEU868.h"
+#include "loramac/region/RegionEU868.h"
 #elif defined( REGION_EU433 )
-#include "RegionEU433.h"
+#include "loramac/region/RegionEU433.h"
 #elif defined( REGION_KR920 )
-#include "RegionKR920.h"
+#include "loramac/region/RegionKR920.h"
 #elif defined( REGION_AS923) || defined( REGION_AS923_AS1) || defined( REGION_AS923_AS2)
-#include "RegionAS923.h"
+#include "loramac/region/RegionAS923.h"
 #endif
 
 #ifdef CubeCell_BoardPlus
 #include <Wire.h>  
-#include "cubecell_SH1107Wire.h"
+#include "HT_SH1107Wire.h"
 
-  SH1107Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10); // addr , freq , i2c group , resolution , rst
+  SH1107Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
 
   uint8_t ifDisplayAck=0;
   uint8_t isDispayOn=0;
@@ -26,9 +28,9 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 
 #ifdef CubeCell_GPS
 #include <Wire.h>  
-#include "cubecell_SSD1306Wire.h"
+#include "HT_SSD1306Wire.h"
 
-  SSD1306Wire  display(0x3c, 500000, I2C_NUM_0,GEOMETRY_128_64,GPIO10 ); // addr , freq , i2c group , resolution , rst
+  SSD1306Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);; // addr , freq , i2c group , resolution , rst
 
   uint8_t ifDisplayAck=0;
   uint8_t isDispayOn=0;
@@ -252,49 +254,7 @@ void turnOffRGB(void)
 }
 #endif
 
-/*  get the BatteryVoltage in mV. */
-uint16_t getBatteryVoltage(void)
-{
-/*
-#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
-	pinMode(VBAT_ADC_CTL,OUTPUT);
-	digitalWrite(VBAT_ADC_CTL,LOW);
-	uint16_t volt=analogRead(ADC)*2;
-	pinMode(VBAT_ADC_CTL, INPUT);
-#else
-	uint16_t volt=analogRead(ADC)*2;
-#endif
-	return volt;
-*/
-	uint32_t temp = 0;
-	uint16_t volt;
-	uint8_t pin;
-#if defined(__ASR6601__)
-	pin = ADC1;
-#else
-	pin = ADC;
-#endif
 
-#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
-	/*
-	* Board, BoardPlus, Capsule, GPS and HalfAA variants
-	* have external 10K VDD pullup resistor
-	* connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
-	*/
-	
-	pinMode(VBAT_ADC_CTL,OUTPUT);
-	digitalWrite(VBAT_ADC_CTL,LOW);
-#endif
-	delay(1);
-	for(int i=0;i<50;i++)//read 50 times and get average
-		temp+=analogRead(pin)*2;
-	volt = temp / 50;
-	
-#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
-	pinMode(VBAT_ADC_CTL, INPUT);
-#endif
-	return volt;
-}
 
 void __attribute__((weak)) downLinkAckHandle()
 {
@@ -358,7 +318,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 		default:
 			break;
 	}
-	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
+	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDoneDatarate);
 
 	if(mcpsIndication->AckReceived)
 	{
@@ -433,6 +393,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 			{
 				uint32_t rejoin_delay = 30000;
 				printf("join failed, join again at 30s later\r\n");
+				delay(5);
 				TimerSetValue( &TxNextPacketTimer, rejoin_delay );
 				TimerStart( &TxNextPacketTimer );
 			}
@@ -521,27 +482,19 @@ void lwan_dev_params_update( void )
 	LoRaMacMibSetRequestConfirm(&mibReq);
 }
 
-uint8_t BoardGetBatteryLevel()
-{
-	// 5.5 End-Device Status (DevStatusReq, DevStatusAns)
-	// 0      The end-device is connected to an external power source.
-	// 1..254 The battery level, 1 being at minimum and 254 being at maximum
-	// 255    The end-device was not able to measure the battery level.
-	const double maxBattery = 4.212;
-	const double minBattery = 3.7;
-	const double batVoltage = fmax(minBattery, fmin(maxBattery, getBatteryVoltage() / 1000.0));
-	const uint8_t batlevel = BAT_LEVEL_EMPTY + ((batVoltage - minBattery) / (maxBattery - minBattery)) * (BAT_LEVEL_FULL - BAT_LEVEL_EMPTY);
-	//printf("battery level (1-254): %u\n", batlevel);
-	return batlevel;
-}
+
 
 LoRaMacPrimitives_t LoRaMacPrimitive;
 LoRaMacCallback_t LoRaMacCallback;
 
 void LoRaWanClass::generateDeveuiByChipID()
 {
-	uint32 uniqueId[2];
-	CyGetUniqueId(uniqueId);
+	uint32_t uniqueId[2];
+#if defined(__asr6601__)
+		system_get_chip_id(uniqueId);
+#else
+		CyGetUniqueId(uniqueId);
+#endif
 	for(int i=0;i<8;i++)
 	{
 		if(i<4)
@@ -593,6 +546,7 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 		default:
 			break;
 	}
+
 	Serial.printf(" Class %X start!\r\n\r\n",loraWanClass+10);
 
 	if(region == LORAMAC_REGION_AS923_AS1 || region == LORAMAC_REGION_AS923_AS2)
@@ -683,8 +637,16 @@ void LoRaWanClass::join()
 	}
 }
 
-bool LoRaWanClass::send()
+void LoRaWanClass::send()
 {
+#ifdef CLASS_HT
+      class_HT_CadEnable = false;
+      TimerStop(&class_HT_CadTimer);
+      class_HT_CadTimerStarted = false;
+      class_HT_CadStarted = false;
+      Radio.Sleep();
+#endif
+
 	if( nextTx == true )
 	{
 		MibRequestConfirm_t mibReq;
@@ -696,11 +658,8 @@ bool LoRaWanClass::send()
 			mibReq.Param.Class = loraWanClass;
 			LoRaMacMibSetRequestConfirm( &mibReq );
 		}
-		
 		nextTx = SendFrame( );
-		return true;
 	}
-	return false;
 }
 
 void LoRaWanClass::cycle(uint32_t dutyCycle)
@@ -711,6 +670,24 @@ void LoRaWanClass::cycle(uint32_t dutyCycle)
 
 void LoRaWanClass::sleep()
 {
+#ifdef CLASS_HT
+      if(LoRaMacState==LORAMAC_IDLE &&IsLoRaMacNetworkJoined)
+      {
+        if(class_HT_CadTimerStarted == false && class_HT_CadStarted == false && class_HT_CadEnable)
+        {
+          TimerSetValue(&class_HT_CadTimer,1);
+          TimerStart(&class_HT_CadTimer);
+          class_HT_CadTimerStarted = true;
+        }
+      }
+      else
+      {
+        TimerStop(&class_HT_CadTimer);
+        class_HT_CadTimerStarted = false;
+        class_HT_CadStarted = false;
+      }
+#endif
+
 #if defined(__ASR6601__)
 	TimerLowPowerHandler( );
 #else

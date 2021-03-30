@@ -156,6 +156,4 @@ if __name__ == '__main__':
     mkdir_p(dist_dir)
     for tool in tools_to_download:
         get_tool(tool)
-    platform_dir=os.path.abspath(os.path.join(os.getcwd(), ".."))
-    shutil.copy("platform.txt",platform_dir)
     print('Done')

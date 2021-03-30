@@ -9,6 +9,10 @@ tools.CubeCellelftool.cmd.windows={runtime.platform.path}/tools/CubeCellelftool/
 tools.CubeCellelftool.cmd.linux={runtime.platform.path}/tools/CubeCellelftool/CubeCellelftool
 tools.CubeCellelftool.cmd.macosx={runtime.platform.path}/tools/CubeCellelftool/CubeCellelftool
 
+tools.flash6601.cmd.windows={runtime.platform.path}/tools/flash6601/flash6601.exe
+tools.flash6601.cmd.linux={runtime.platform.path}/tools/flash6601/flash6601
+tools.flash6601.cmd.macosx={runtime.platform.path}/tools/flash6601/flash6601
+
 compiler.warning_flags=-w
 compiler.warning_flags.none=-w
 compiler.warning_flags.default=
@@ -16,32 +20,67 @@ compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
 compiler.path={runtime.platform.path}/tools/gcc-arm-none-eabi/bin/
+compiler.include.path={runtime.platform.path}/tools/gcc-arm-none-eabi/arm-none-eabi
 
-compiler.sdk.path={runtime.platform.path}/cores/asr650x
-compiler.cpreprocessor.flags=-D{build.band} -D{build.board} -DARDUINO={runtime.ide.version} -DACTIVE_REGION=LORAMAC_{build.band} -DLORAWAN_DEVEUI_AUTO={build.LORAWAN_DEVEUI_AUTO} -DLORAWAN_CLASS={build.LORAWAN_CLASS} -DLORAWAN_NETMODE={build.LORAWAN_NETMODE} -DLORAWAN_ADR={build.LORAWAN_ADR} -DLORAWAN_UPLINKMODE={build.LORAWAN_UPLINKMODE} -DLORAWAN_NET_RESERVE={build.LORAWAN_Net_Reserve} -DAT_SUPPORT={build.LORAWAN_AT_SUPPORT} -DLoraWan_RGB={build.RGB} -DLoRaWAN_DEBUG_LEVEL={build.LORAWAN_DebugLevel} -DCY_CORE_ID=0 -DCONFIG_LORA_USE_TCXO -DCONFIG_MANUFACTURER="ASR" -DCONFIG_DEVICE_MODEL="6501" -DCONFIG_VERSION="v4.0" -DARDUINO_ARCH_ASR650X -D__{build.core}__ -D__{build.mcu}__ -DF_CPU={build.f_cpu} "-I{compiler.sdk.path}/board/"  "-I{compiler.sdk.path}/board/src/" "-I{compiler.sdk.path}/board/inc/"  "-I{compiler.sdk.path}/device/asr6501_lrwan/" "-I{compiler.sdk.path}/device/sx126x/" "-I{compiler.sdk.path}/loramac/mac/" "-I{compiler.sdk.path}/loramac/mac/region/" "-I{compiler.sdk.path}/loramac/system/" "-I{compiler.sdk.path}/loramac/system/crypto/" "-I{compiler.sdk.path}/port/" "-I{compiler.sdk.path}/port/include/"  "-I{compiler.sdk.path}/projects/" "-I{compiler.sdk.path}/projects/PSoC4/"  "-I{compiler.sdk.path}/cores/" "-I{compiler.sdk.path}/Serial/"  "-I{compiler.sdk.path}/Wire/" "-I{compiler.sdk.path}/SPI/"
+compiler.sdk.path={runtime.platform.path}/cores/{build.core}
 
-compiler.c.cmd=arm-none-eabi-gcc
-compiler.c.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -fdata-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c
 
-compiler.cpp.cmd=arm-none-eabi-g++
-compiler.cpp.flags=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -fdata-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c   -fno-exceptions   -fexceptions  -fno-rtti
+#
+# asr650x Support Start
+#
+compiler.c.cmd.asr650x=arm-none-eabi-gcc
+compiler.cpp.cmd.asr650x=arm-none-eabi-g++
+compiler.S.cmd.asr650x=arm-none-eabi-gcc
+compiler.c.elf.cmd.asr650x=arm-none-eabi-gcc
+compiler.as.cmd.asr650x=arm-none-eabi-as
+compiler.ar.cmd.asr650x=arm-none-eabi-ar
+compiler.objcopy.cmd.asr650x=arm-none-eabi-objcopy
+compiler.size.cmd.asr650x=arm-none-eabi-size
+compiler.cpreprocessor.flags.asr650x=-D{build.band} -D{build.board} -DARDUINO={runtime.ide.version} -DACTIVE_REGION=LORAMAC_{build.band} -DLORAWAN_DEVEUI_AUTO={build.LORAWAN_DEVEUI_AUTO} -DLORAWAN_CLASS={build.LORAWAN_CLASS} -DLORAWAN_NETMODE={build.LORAWAN_NETMODE} -DLORAWAN_ADR={build.LORAWAN_ADR} -DLORAWAN_UPLINKMODE={build.LORAWAN_UPLINKMODE} -DLORAWAN_NET_RESERVE={build.LORAWAN_Net_Reserve} -DAT_SUPPORT={build.LORAWAN_AT_SUPPORT} -DLoraWan_RGB={build.RGB} -DLoRaWAN_DEBUG_LEVEL={build.LORAWAN_DebugLevel} -DCY_CORE_ID=0 -DCONFIG_LORA_USE_TCXO -DCONFIG_MANUFACTURER="ASR" -DCONFIG_DEVICE_MODEL="6501" -DCONFIG_VERSION="v4.0" -DARDUINO_ARCH_ASR650X -D__{build.core}__ -D__{build.mcu}__ -DF_CPU={build.f_cpu} "-I{compiler.sdk.path}/board/"  "-I{compiler.sdk.path}/board/src/" "-I{compiler.sdk.path}/board/inc/"  "-I{compiler.sdk.path}/device/asr6501_lrwan/" "-I{compiler.sdk.path}/device/sx126x/" "-I{runtime.platform.path}/cores/loramac" "-I{runtime.platform.path}/cores/loramac/region/" "-I{compiler.sdk.path}/lora/" "-I{compiler.sdk.path}/lora/system/" "-I{compiler.sdk.path}/lora/system/crypto/" "-I{compiler.sdk.path}/port/" "-I{compiler.sdk.path}/port/include/"  "-I{compiler.sdk.path}/projects/" "-I{compiler.sdk.path}/projects/PSoC4/"  "-I{compiler.sdk.path}/cores/" "-I{compiler.sdk.path}/Serial/"  "-I{compiler.sdk.path}/Wire/" "-I{compiler.sdk.path}/SPI/"
+compiler.c.flags.asr650x=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -fdata-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c
+compiler.cpp.flags.asr650x=-mcpu=cortex-m0plus -mthumb -g -gdwarf-2 -MMD -w -Os -mapcs-frame -mthumb-interwork -Wall -ffunction-sections -fdata-sections -ffat-lto-objects -Os -fno-common -fno-builtin-printf -fno-builtin-fflush -fno-builtin-sprintf -fno-builtin-snprintf -Wno-strict-aliasing -c   -fno-exceptions   -fexceptions  -fno-rtti
+compiler.S.flags.asr650x=-mcpu=cortex-m0plus -mthumb -c -x assembler-with-cpp -g -w -gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
+compiler.c.elf.flags.asr650x=-mcpu=cortex-m0plus -mthumb "-L{compiler.sdk.path}/projects/Generated_Source/PSoC4" "{compiler.sdk.path}/projects/AsrLib.a"   "-T{compiler.sdk.path}/projects/Generated_Source\PSoC4\cm0plusgcc.ld" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects
+compiler.ar.flags.asr650x=-rcs
+recipe.c.combine.flags.asr650x=-Wl,--start-group "-L{build.path}" -mcpu=cortex-m0plus -mthumb -mthumb-interwork "-L{compiler.sdk.path}/projects/PSoC4"  {compiler.c.elf.extra_flags} "-T{compiler.sdk.path}/projects/PSoC4/cm0plusgcc.ld" -lstdc++ -lm "{compiler.sdk.path}/projects/CubeCellLib.a" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files}  -lm "{build.path}/{archive_file}" -Wl,--end-group
+recipe.objcopy.hex.flags.asr650x="{tools.CubeCellelftool.cmd}" "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.cyacd"
+#
+# asr650x Support End
+#
 
-compiler.S.cmd=arm-none-eabi-gcc
-compiler.S.flags=-mcpu=cortex-m0plus -mthumb -c -x assembler-with-cpp -g -w -gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
-#compiler.S.cmd=arm-none-eabi-as
-#compiler.S.flags=-mcpu=cortex-m0plus -mthumb  -g -w --gdwarf-2 "-I{compiler.sdk.path}/projects/PSoC4"
+#
+# asr6601 Support Start
+#
+compiler.c.cmd.asr6601=arm-none-eabi-gcc
+compiler.cpp.cmd.asr6601=arm-none-eabi-g++
+compiler.S.cmd.asr6601=arm-none-eabi-gcc
+compiler.c.elf.cmd.asr6601=arm-none-eabi-g++
+compiler.as.cmd.asr6601=arm-none-eabi-as
+compiler.ar.cmd.asr6601=arm-none-eabi-ar
+compiler.objcopy.cmd.asr6601=arm-none-eabi-objcopy
+compiler.size.cmd.asr6601=arm-none-eabi-size
+compiler.cpreprocessor.flags.asr6601=-D{build.band}  -D{build.board} -DARDUINO={runtime.ide.version}  -DACTIVE_REGION=LORAMAC_{build.band}  -DLORAWAN_DEVEUI_AUTO={build.LORAWAN_DEVEUI_AUTO} -DLORAWAN_CLASS={build.LORAWAN_CLASS} -DLORAWAN_NETMODE={build.LORAWAN_NETMODE} -DLORAWAN_ADR={build.LORAWAN_ADR}   -DLORAWAN_UPLINKMODE={build.LORAWAN_UPLINKMODE}  -DLORAWAN_NET_RESERVE={build.LORAWAN_Net_Reserve}  -DAT_SUPPORT={build.LORAWAN_AT_SUPPORT} -DLoraWan_RGB={build.RGB} -DLoRaWAN_DEBUG_LEVEL={build.LORAWAN_DebugLevel} -DARDUINO_ARCH_ASR6601 -D__{build.core}__ -D__{build.mcu}__ "-I{compiler.sdk.path}/drivers/peripheral/inc/"  "-I{compiler.sdk.path}/drivers/crypto/inc/" "-I{compiler.sdk.path}/platform/CMSIS/"  "-I{compiler.sdk.path}/platform/system/" "-I{compiler.sdk.path}/lora/driver/" "-I{compiler.sdk.path}/lora/radio/" "-I{compiler.sdk.path}/lora/"  "-I{compiler.sdk.path}/lora/radio/sx126x/" "-I{compiler.sdk.path}/lora/system/" "-I{compiler.sdk.path}/lora/system/crypto" "-I{compiler.sdk.path}/base/" "-I{compiler.sdk.path}/" "-I{compiler.sdk.path}/peripheral/" 
+compiler.c.flags.asr6601=-c -mcpu=cortex-m4 -mthumb -w -Wall -g -gdwarf-2 -MMD -Os -mapcs-frame -fno-common -ffat-lto-objects -ffunction-sections -fdata-sections -std=gnu99 -fno-builtin-printf -fno-builtin-sprintf -fno-builtin-snprintf  
+compiler.cpp.flags.asr6601=-c -mcpu=cortex-m4 -mthumb -w -Wall -g -gdwarf-2 -MMD -Os -mapcs-frame -fno-common -ffat-lto-objects -ffunction-sections -fdata-sections  -fno-builtin-printf -fno-builtin-sprintf -fno-builtin-snprintf -fno-builtin-fflush  -Wno-strict-aliasing -fno-exceptions -fno-rtti 
+compiler.S.flags.asr6601=-c -mcpu=cortex-m4 -mthumb
+compiler.c.elf.flags.asr6601=-Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=sprintf -Wl,--wrap=snprintf -specs=nosys.specs -specs=nano.specs  
+compiler.ar.flags.asr6601=rcs 
+recipe.c.combine.flags.asr6601=-Wl,--start-group -mcpu=cortex-m4 -mthumb -mthumb-interwork {compiler.c.elf.flags} "-Wl,-Map,{build.path}/{build.project_name}.map" -lstdc++ -lm "{compiler.sdk.path}/asr6601.a" "-T{compiler.sdk.path}/gcc.ld" {archive_file_path} {object_files} -lm -Wl,--end-group -o "{build.path}/{build.project_name}.elf" 
+recipe.objcopy.hex.flags.asr6601="{compiler.path}{compiler.objcopy.cmd}" -O binary "{build.path}/{build.project_name}.elf" "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.bin"
+ 
+#
+# asr6601 Support End
+#
 
-compiler.c.elf.cmd=arm-none-eabi-gcc
-compiler.c.elf.flags=-mcpu=cortex-m0plus -mthumb "-L{compiler.sdk.path}/projects/Generated_Source/PSoC4" "{compiler.sdk.path}/projects/AsrLib.a"   "-T{compiler.sdk.path}/projects/Generated_Source\PSoC4\cm0plusgcc.ld" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects
-
-compiler.as.cmd=arm-none-eabi-as
-
-compiler.ar.cmd=arm-none-eabi-ar
-compiler.ar.flags=-rcs
-
-compiler.objcopy.cmd=arm-none-eabi-objcopy
-
-compiler.size.cmd=arm-none-eabi-size
+# Compilers
+compiler.c.cmd={compiler.c.cmd.{build.core}}
+compiler.cpp.cmd={compiler.cpp.cmd.{build.core}}
+compiler.S.cmd={compiler.S.cmd.{build.core}}
+compiler.c.elf.cmd={compiler.c.elf.cmd.{build.core}}
+compiler.as.cmd={compiler.as.cmd.{build.core}}
+compiler.ar.cmd={compiler.ar.cmd.{build.core}}
+compiler.size.cmd={compiler.size.cmd.{build.core}}
+compiler.objcopy.cmd={compiler.objcopy.cmd.{build.core}}
 
 
 # These can be overridden in platform.local.txt
@@ -54,9 +93,18 @@ compiler.objcopy.eep.extra_flags=
 compiler.elf2hex.extra_flags=
 compiler.ldflags=
 
+compiler.cpreprocessor.flags={compiler.cpreprocessor.flags.{build.core}}
+compiler.c.flags={compiler.c.flags.{build.core}}
+compiler.cpp.flags={compiler.cpp.flags.{build.core}}
+compiler.S.flags={compiler.S.flags.{build.core}}
+compiler.c.elf.flags={compiler.c.elf.flags.{build.core}}
+compiler.c.elf.libs={compiler.c.elf.libs.{build.core}}
+compiler.ar.flags={compiler.ar.flags.{build.core}}
+recipe.c.combine.flags={recipe.c.combine.flags.{build.core}}
+recipe.objcopy.hex.flags={recipe.objcopy.hex.flags.{build.core}}
+
 ## Compile c files
 recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}"  {compiler.cpreprocessor.flags}  {compiler.c.flags}  {compiler.c.extra_flags}  {includes} "{source_file}" -o "{object_file}"
-
 
 ## Compile c++ files
 recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}"  {compiler.cpreprocessor.flags} {compiler.cpp.flags} {compiler.cpp.extra_flags}  {includes} "{source_file}" -o "{object_file}"
@@ -68,16 +116,19 @@ recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags}  "{sourc
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
 
 ## Combine gc-sections, archives, and objects
-recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" -Wl,--start-group "-L{build.path}" -mcpu=cortex-m0plus -mthumb -mthumb-interwork "-L{compiler.sdk.path}/projects/PSoC4"  {compiler.c.elf.extra_flags} "-T{compiler.sdk.path}/projects/PSoC4/cm0plusgcc.ld" -lstdc++ -lm "{compiler.sdk.path}/projects/CubeCellLib.a" "-Wl,-Map,{build.path}/{build.project_name}.map" -specs=nano.specs -Wl,--gc-sections -Wl,--wrap=printf -Wl,--wrap=fflush -Wl,--wrap=sprintf -Wl,--wrap=snprintf -g -ffunction-sections -Os -ffat-lto-objects {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files}  -lm "{build.path}/{archive_file}" -Wl,--end-group
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {recipe.c.combine.flags}
 
-recipe.objcopy.hex.pattern="{tools.CubeCellelftool.cmd}" "{compiler.path}{compiler.objcopy.cmd}" "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"  "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.cyacd"
+recipe.objcopy.hex.pattern={recipe.objcopy.hex.flags}
 
-#recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.hex"
-#recipe.size.regex=Total\s+([0-9]+).*
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
-recipe.size.regex=(\.text|\.cybootloader)\s+([0-9]+).*
+recipe.size.regex=(\.text|\.isr_vector|\.rodata|\.ARM\.extab|\.ARM|\.data|\.cybootloader)\s+([0-9]+).*
 
 tools.CubeCellflash.upload.protocol=
 tools.CubeCellflash.upload.params.verbose=
 tools.CubeCellflash.upload.params.quiet=
 tools.CubeCellflash.upload.pattern="{cmd}" -serial "{serial.port}" "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.cyacd"
+
+tools.flash6601.upload.protocol=
+tools.flash6601.upload.params.verbose=
+tools.flash6601.upload.params.quiet=
+tools.flash6601.upload.pattern="{cmd}" -p "{serial.port}" flash "{build.path}/{build.board}_{build.band}_RGB_{build.RGB}.bin"
