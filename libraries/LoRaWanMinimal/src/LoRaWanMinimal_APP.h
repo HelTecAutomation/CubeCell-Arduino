@@ -52,7 +52,6 @@ private:
   LoRaMacRegion_t itsRegion;
 };
 
-extern "C" uint16_t getBatteryVoltage(void);
 extern "C" void turnOnRGB(uint32_t color,uint32_t time);
 extern "C" void turnOffRGB(void);
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);

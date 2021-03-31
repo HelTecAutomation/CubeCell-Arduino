@@ -1,4 +1,5 @@
 .git
+tools/flash6601
 tools/CubeCellelftool
 tools/dist
 tools/CubeCellflash
