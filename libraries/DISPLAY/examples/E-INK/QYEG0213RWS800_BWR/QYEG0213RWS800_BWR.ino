@@ -12,7 +12,7 @@ typedef void (*Demo)(void);
  * ANGLE_180_DEGREE
  * ANGLE_270_DEGREE
  */
-#define DIRECTION ANGLE_180_DEGREE
+#define DIRECTION ANGLE_0_DEGREE
 
 int width,height;
 int demoMode = 0;

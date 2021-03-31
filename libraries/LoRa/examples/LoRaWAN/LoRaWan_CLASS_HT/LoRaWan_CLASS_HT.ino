@@ -136,6 +136,23 @@ void loop()
     }
     case DEVICE_STATE_SLEEP:
     {
+    #ifdef CLASS_HT
+      if(LoRaMacState==LORAMAC_IDLE &&IsLoRaMacNetworkJoined)
+      {
+        if(class_HT_CadTimerStarted == false && class_HT_CadStarted == false && class_HT_CadEnable)
+        {
+          TimerSetValue(&class_HT_CadTimer,1);
+          TimerStart(&class_HT_CadTimer);
+          class_HT_CadTimerStarted = true;
+        }
+      }
+      else
+      {
+        TimerStop(&class_HT_CadTimer);
+        class_HT_CadTimerStarted = false;
+        class_HT_CadStarted = false;
+      }
+#endif
       LoRaWAN.sleep();
       break;
     }

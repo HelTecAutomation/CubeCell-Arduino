@@ -775,6 +775,8 @@ void ADC_SAR_Seq_SetGain(uint32 chan, int32 adcGain)
                  ((float)ADC_SAR_Seq_countsPer10Volt[chan] / 2) : (-(float)(ADC_SAR_Seq_countsPer10Volt[chan] / 2)) ))
                  / ADC_SAR_Seq_countsPer10Volt[chan]);
         //DebugPrintf("ADC_SAR_Seq_countsPer10Volt[chan]:%d\r\n",ADC_SAR_Seq_countsPer10Volt[chan]);
+        if(mVolts<0)
+            mVolts = 0;
         return( mVolts );
     }
 
