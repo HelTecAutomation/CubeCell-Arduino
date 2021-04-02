@@ -26,7 +26,6 @@
 #include "tremo_pwr.h"
 #include "utilities.h"
 #include "timer.h"
-#include "radio.h"
 #include "rtc-board.h"
 
 /*!
@@ -244,7 +243,7 @@ void lowPowerHandler( void )
         iomux(UART0_TX,0);
     //iomux(UART0_RX,0);
     pwr_deepsleep_wfi(PWR_LP_MODE_STOP3);
-    systime = (uint32_t)TimerGetCurrentTime();
+    systime = (uint32_t)RtcGetTimerValue();
 }
 
 void RtcRecoverMcuStatus( void )

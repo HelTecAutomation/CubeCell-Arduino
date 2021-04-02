@@ -6,6 +6,10 @@ extern "C" {
 #define BAT_LEVEL_EMPTY  0x01
 #define BAT_LEVEL_FULL   0xFE
 
+#define         ID1                                 ( 0x1FF80050 )
+#define         ID2                                 ( 0x1FF80054 )
+#define         ID3                                 ( 0x1FF80064 )
+
 /*  get the BatteryVoltage in mV. */
 uint16_t getBatteryVoltage(void)
 {
@@ -48,4 +52,9 @@ uint8_t BoardGetBatteryLevel(void)
 	return batlevel;
 }
 
+
+uint32_t BoardGetRandomSeed( void )
+{
+    return ( ( *( uint32_t* )ID1 ) ^ ( *( uint32_t* )ID2 ) ^ ( *( uint32_t* )ID3 ) );
+}
 

@@ -147,6 +147,35 @@ TimerSysTime_t TimerGetSysTime( void )
     return sysTime;
 }
 
+
+TimerSysTime_t SysTimeGetMcuTime( void )
+{
+    TimerTime_t curTime = RtcGetTimerValue( );
+    TimerSysTime_t mcuTime = { 0 };
+    mcuTime.Seconds = (uint32_t)(curTime/1000);
+    mcuTime.SubSeconds = (uint16_t)(curTime%1000);
+    return mcuTime;
+}
+
+uint32_t SysTimeToMs( TimerSysTime_t sysTime )
+{
+    TimerTime_t sysTimer = (TimerTime_t)sysTime.Seconds*1000 + sysTime.SubSeconds;
+    return sysTimer - g_systime_ref;
+}
+
+TimerSysTime_t SysTimeFromMs( uint32_t timeMs )
+{
+    TimerSysTime_t sysTime = { 0 };
+    TimerTime_t curTime = (TimerTime_t)timeMs - g_systime_ref;
+
+    sysTime.Seconds = (uint32_t)(curTime/1000);
+    sysTime.SubSeconds = (uint16_t)(curTime%1000);
+
+    return sysTime;
+}
+
+
+
 static void TimeStampsUpdate()
 {    
     TimerTime_t old =  RtcGetTimerContext(); 
@@ -253,13 +282,6 @@ void TimerIrqHandler( void )
 
     //update timer context for callbacks
     TimeStampsUpdate();
-    /* execute imediately the alarm callback */
-    /*
-    if ( TimerListHead != NULL ) {
-        cur = TimerListHead;
-        TimerListHead = TimerListHead->Next;
-        exec_cb( cur->Callback );
-    }*/
 
     // remove all the expired object from the list
     while( ( TimerListHead != NULL ) && ( (TimerListHead->Timestamp < RtcGetElapsedTime(  )) || TimerListHead->Timestamp==0  ))
@@ -268,15 +290,10 @@ void TimerIrqHandler( void )
         TimerListHead = TimerListHead->Next;
         exec_cb( cur->Callback );
         cur->IsRunning = false;
+        //update timestamps after callbacks
+        TimeStampsUpdate();
     }
-    
-    //update timestamps after callbacks
-    TimeStampsUpdate();
-   
-    /* start the next TimerListHead if it exists AND NOT running */
-    //if(( TimerListHead != NULL ) && (TimerListHead->IsRunning == false)) {
-    //    TimerSetTimeout( TimerListHead );
-    //}
+
     if( TimerListHead != NULL )
     {
         if( TimerListHead->IsRunning != true )
@@ -416,18 +433,15 @@ TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
 
 void TimerLowPowerHandler( void )
 {
-    //if( ( TimerListHead != NULL ) && ( TimerListHead->IsRunning == true ) )
-    {
-        if( HasLoopedThroughMain < 5 )
-        {
-            HasLoopedThroughMain++;
-        }
-        else
-        {
-            HasLoopedThroughMain = 0;
-            lowPowerHandler( );
-        }
-    }
+	if( HasLoopedThroughMain < 5 )
+	{
+	    HasLoopedThroughMain++;
+	}
+	else
+	{
+	    HasLoopedThroughMain = 0;
+	    lowPowerHandler( );
+	}
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

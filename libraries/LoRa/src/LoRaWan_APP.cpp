@@ -670,14 +670,7 @@ void LoRaWanClass::cycle(uint32_t dutyCycle)
 
 void LoRaWanClass::sleep()
 {
-#if defined(__ASR6601__)
 	TimerLowPowerHandler( );
-#else
-	lowPowerHandler( );
-#endif
-
-	// Process Radio IRQ
-	//Radio.IrqProcess( );
 }
 void LoRaWanClass::setDataRateForNoADR(int8_t dataRate)
 {

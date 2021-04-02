@@ -31,7 +31,7 @@ void boardInitMcu( void )
     systime = (uint32_t)TimerGetCurrentTime();
     srand(analogRead(11)+analogRead(4)+analogRead(5)+analogRead(8)+analogRead(47));
     SX126xInit();
-    RadioSleep();
+    sx126xSleep();
 }
 
 

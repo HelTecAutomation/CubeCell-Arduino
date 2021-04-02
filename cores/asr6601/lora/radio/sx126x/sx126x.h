@@ -35,9 +35,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
-//#include "gpio.h"
-//#include "spi.h"
-#include "radio.h"
+
 
 #define SX1261                                      1
 #define SX1262                                      2
@@ -142,6 +140,36 @@ extern "C" {
  * Set the current max value in the over current protection
  */
 #define REG_OCP                                     0x08E7
+
+/*!
+ * \brief WORKAROUND - Modulation Quality with 500 kHz LoRa Bandwidth, see DS_SX1261-2_V1.2 datasheet chapter 15.1
+ */
+#define REG_TX_MODULATION                           0x0889
+
+/*!
+ * \brief WORKAROUND - Optimizing the Inverted IQ Operation, see DS_SX1261-2_V1.2 datasheet chapter 15.4
+ */
+#define REG_IQ_POLARITY                             0x0736
+
+/*!
+ * \brief Base address of the register retention list
+ */
+#define REG_RETENTION_LIST_BASE_ADDRESS             0x029F
+
+/*!
+ * \brief Maximum number of register that can be added to the retention list
+ */
+#define MAX_NB_REG_IN_RETENTION                     4
+
+/*!
+ * \brief RTC control
+ */
+#define REG_RTC_CTRL                                0x0902
+
+/*!
+ * \brief Event clear
+ */
+#define REG_EVT_CLR                                 0x0944
 
 /*!
  * \brief Structure describing the radio status
@@ -1122,6 +1150,8 @@ void SX126xClearIrqStatus( uint16_t irq );
 
 /*! \} defgroup LORA_SX126X */
 /*! \} addtogroup LORA */
+
+void sx126xSleep( void );
 
 #ifdef __cplusplus
 }

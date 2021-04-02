@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "utilities.h"
-#include "LoRaWan.h"
+#include "LoRaWan_102.h"
 #include "HardwareSerial.h"
 #include "Arduino.h"
 #include "AT_Command.h"

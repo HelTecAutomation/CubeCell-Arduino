@@ -138,6 +138,33 @@ void TimerSetSysTime( TimerSysTime_t sysTime );
   */
 TimerSysTime_t TimerGetSysTime( void );
 
+
+/*!
+ * \brief Gets current MCU system time
+ *
+ * \retval sysTime    Current seconds/sub-seconds since Mcu started
+ */
+TimerSysTime_t SysTimeGetMcuTime( void );
+
+/*!
+ * Converts the given SysTime to the equivalent RTC value in milliseconds
+ *
+ * \param [IN] sysTime System time to be converted
+ * 
+ * \retval timeMs The RTC converted time value in ms
+ */
+uint32_t SysTimeToMs( TimerSysTime_t sysTime );
+
+/*!
+ * Converts the given RTC value in milliseconds to the equivalent SysTime
+ *
+ * \param [IN] timeMs The RTC time value in ms to be converted
+ * 
+ * \retval sysTime Converted system time
+ */
+TimerSysTime_t SysTimeFromMs( uint32_t timeMs );
+
+
 /*!
  * \brief Initializes the timer object
  *

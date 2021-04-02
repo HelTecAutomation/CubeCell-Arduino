@@ -22,10 +22,11 @@
  */
 #include <string.h>
 #include "timer.h"
-#include "radio.h"
 #include "sx126x.h"
 #include "sx126x-board.h"
 #include "lora_config.h"
+
+SX126x_t SX126x;
 
 /*!
  * \brief Radio registers definition
@@ -230,6 +231,16 @@ void SX126xSetSleep( SleepParams_t sleepConfig )
 
     SX126xWriteCommand( RADIO_SET_SLEEP, &sleepConfig.Value, 1 );
     OperatingMode = MODE_SLEEP;
+}
+
+void sx126xSleep( void )
+{
+    SleepParams_t params = { 0 };
+
+    params.Fields.WarmStart = 1;
+    SX126xSetSleep( params );
+
+    delay( 2 );
 }
 
 void SX126xSetStandby( RadioStandbyModes_t standbyConfig )

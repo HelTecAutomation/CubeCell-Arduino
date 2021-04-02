@@ -89,6 +89,9 @@ typedef enum {
 #define FLASH_START_ADDR              FLASH_BASE
 #define FLASH_END_ADDR                FLASH_BASE+0x1000*64
 
+#define FLASH_EEPROM_BASE             FLASH_BASE+0x1000*64-512-1024
+#define FLASH_EEPROM_END              FLASH_BASE+0x1000*64-513
+
 typedef void (*timer_callback_func)();
 
 typedef void( *GpioIrqHandler )( void );

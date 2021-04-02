@@ -40,6 +40,8 @@
 extern "C" {
 #endif
 
+#define TIMERTIME_T_MAX                             ( ( uint32_t )~0 )
+
 /*!
  * \brief Returns the minimum value between a and b
  *
@@ -122,6 +124,103 @@ void memset1( uint8_t *dst, uint8_t value, uint16_t size );
  * \retval hexChar Converted hexadecimal character
  */
 int8_t Nibble2HexChar( uint8_t a );
+
+char * strtok_l (char *s, const char *delim);
+
+/*!
+ * LMN (LoRaMac-node) status
+ */
+typedef enum LmnStatus_e
+{
+  LMN_STATUS_ERROR = 0, 
+  LMN_STATUS_OK = !LMN_STATUS_ERROR
+} LmnStatus_t;
+
+
+/*!
+ * Version
+ */
+typedef union Version_u
+{
+    struct Version_s
+    {
+        uint8_t Revision;
+        uint8_t Patch;
+        uint8_t Minor;
+        uint8_t Major;
+    }Fields;
+    uint32_t Value;
+}Version_t;
+
+
+/*!
+ * \brief Computes a CCITT 32 bits CRC
+ *
+ * \param [IN] buffer	Data buffer used to compute the CRC
+ * \param [IN] length	Data buffer length
+ *
+ * \retval crc			The computed buffer of length CRC
+ */
+uint32_t Crc32( uint8_t *buffer, uint16_t length );
+
+/*!
+ * \brief Computes the initial value of the CCITT 32 bits CRC. This function
+ *		  can be used with functions \ref Crc32Update and \ref Crc32Finalize.
+ *
+ * \retval crc			Initial crc value.
+ */
+uint32_t Crc32Init( void );
+
+/*!
+ * \brief Updates the value of the crc value.
+ *
+ * \param [IN] crcInit	Previous or initial crc value.
+ * \param [IN] buffer	Data pointer.
+ * \param [IN] length	Length of the data.
+ *
+ * \retval crc			Updated crc value.
+ */
+uint32_t Crc32Update( uint32_t crcInit, uint8_t *buffer, uint16_t length );
+
+/*!
+ * \brief Finalizes the crc value after the calls to \ref Crc32Update.
+ *
+ * \param [IN] crc		Recent crc value.
+ *
+ * \retval crc			Updated crc value.
+ */
+uint32_t Crc32Finalize( uint32_t crc );
+
+/*!
+ * Begins critical section
+ */
+#define CRITICAL_SECTION_BEGIN( ) 
+
+/*!
+ * Ends critical section
+ */
+#define CRITICAL_SECTION_END( ) 
+
+/*
+ * ============================================================================
+ * Following functions must be implemented inside the specific platform
+ * board.c file.
+ * ============================================================================
+ */
+/*!
+ * Disable interrupts, begins critical section
+ *
+ * \param [IN] mask Pointer to a variable where to store the CPU IRQ mask
+ */
+void BoardCriticalSectionBegin( uint32_t *mask );
+
+/*!
+ * Ends critical section
+ *
+ * \param [IN] mask Pointer to a variable where the CPU IRQ mask was stored
+ */
+void BoardCriticalSectionEnd( uint32_t *mask );
+
 
 #ifdef __cplusplus
 }

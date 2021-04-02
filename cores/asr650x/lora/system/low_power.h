@@ -52,42 +52,13 @@
  extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* External variables --------------------------------------------------------*/
-/* Exported macros -----------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */ 
-
-/*!
- * @brief API to set flag allowing power mode
- *
- * @param [IN] enum e_LOW_POWER_State_Id_t
- */
-void LowPower_Disable( e_LOW_POWER_State_Id_t state );
-
-/*!
- * @brief API to reset flag allowing power mode
- *
- * @param [IN] enum e_LOW_POWER_State_Id_t 
- */
-
-void LowPower_Enable( e_LOW_POWER_State_Id_t state );
-
-/*!
- * @brief API to get flag allowing power mode
- * @note When flag is 0, low power mode is allowed
- * @param [IN] non
- * @retval flag state 
- */
-uint32_t LowPower_GetState( void );
-
 /*!
  * @brief Manages the entry into ARM cortex deep-sleep mode
  * @param none
  * @retval none
  */
 void lowPowerHandler( void );
+void TimerLowPowerHandler( void );
 
 #ifdef __cplusplus
 }

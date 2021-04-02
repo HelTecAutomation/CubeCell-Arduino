@@ -148,6 +148,32 @@ inline TimerSysTime_t TimerSubSysTime( TimerSysTime_t a, TimerSysTime_t b )
 }
 
 /*!
+ * \brief Gets current MCU system time
+ *
+ * \retval sysTime    Current seconds/sub-seconds since Mcu started
+ */
+TimerSysTime_t SysTimeGetMcuTime( void );
+
+/*!
+ * Converts the given SysTime to the equivalent RTC value in milliseconds
+ *
+ * \param [IN] sysTime System time to be converted
+ * 
+ * \retval timeMs The RTC converted time value in ms
+ */
+uint32_t SysTimeToMs( TimerSysTime_t sysTime );
+
+/*!
+ * Converts the given RTC value in milliseconds to the equivalent SysTime
+ *
+ * \param [IN] timeMs The RTC time value in ms to be converted
+ * 
+ * \retval sysTime Converted system time
+ */
+TimerSysTime_t SysTimeFromMs( uint32_t timeMs );
+
+
+/*!
  * \brief Sets the system time with the number of sconds elapsed since epoch
  *
  * \param [IN] sysTime Structure provideing the number of seconds and 
@@ -219,6 +245,13 @@ void TimerSetValue( TimerEvent_t *obj, uint32_t value );
  * \retval returns current time in ms
  */
 TimerTime_t TimerGetCurrentTime( void );
+
+/*!
+ * \brief Read the RTC time
+ *
+ * \retval returns RTC time in ms
+ */
+TimerTime_t RtcGetTimerValue( void );
 
 /*!
  * \brief Return the Time elapsed since a fix moment in Time

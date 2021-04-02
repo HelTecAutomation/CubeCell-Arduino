@@ -27,10 +27,15 @@
 #include "board-config.h"
 #include "board.h"
 #include "delay.h"
-#include "radio.h"
 #include "timer.h"
 #include "sx126x-board.h"
 #include "debug.h"
+
+SX126x_t SX126x;
+
+#define         ID1                                 ( 0x1FF80050 )
+#define         ID2                                 ( 0x1FF80054 )
+#define         ID3                                 ( 0x1FF80064 )
 
 /*!
  * Antenna switch GPIO pins objects
@@ -317,144 +322,11 @@ char * strtok_l (char *s, const char *delim)
 static const double huge = 1.0e300;
 #define __HI(x) *(1+(int*)&x)
 #define __LO(x) *(int*)&x
-//double floor(double x)
-//{
-//	int i0,i1,j0;
-//	unsigned i,j;
-//	i0 =  __HI(x);
-//	i1 =  __LO(x);
-//	j0 = ((i0>>20)&0x7ff)-0x3ff;
-//	if(j0<20) {
-//	    if(j0<0) { 	/* raise inexact if x != 0 */
-//		if(huge+x>0.0) {/* return 0*sign(x) if |x|<1 */
-//		    if(i0>=0) {i0=i1=0;} 
-//		    else if(((i0&0x7fffffff)|i1)!=0)
-//			{ i0=0xbff00000;i1=0;}
-//		}
-//	    } else {
-//		i = (0x000fffff)>>j0;
-//		if(((i0&i)|i1)==0) return x; /* x is integral */
-//		if(huge+x>0.0) {	/* raise inexact flag */
-//		    if(i0<0) i0 += (0x00100000)>>j0;
-//		    i0 &= (~i); i1=0;
-//		}
-//	    }
-//	} else if (j0>51) {
-//	    if(j0==0x400) return x+x;	/* inf or NaN */
-//	    else return x;		/* x is integral */
-//	} else {
-//	    i = ((unsigned)(0xffffffff))>>(j0-20);
-//	    if((i1&i)==0) return x;	/* x is integral */
-//	    if(huge+x>0.0) { 		/* raise inexact flag */
-//		if(i0<0) {
-//		    if(j0==20) i0+=1; 
-//		    else {
-//			j = i1+(1<<(52-j0));
-//			if(j<i1) i0 +=1 ; 	/* got a carry */
-//			i1=j;
-//		    }
-//		}
-//		i1 &= (~i);
-//	    }
-//	}
-//	__HI(x) = i0;
-//	__LO(x) = i1;
-//	return x;
-//}
-
-//double ceil(double x)
-//{
-//	int i0,i1,j0;
-//	unsigned i,j;
-//	i0 =  __HI(x);
-//	i1 =  __LO(x);
-//	j0 = ((i0>>20)&0x7ff)-0x3ff;
-//	if(j0<20) {
-//	    if(j0<0) { 	/* raise inexact if x != 0 */
-//		if(huge+x>0.0) {/* return 0*sign(x) if |x|<1 */
-//		    if(i0<0) {i0=0x80000000;i1=0;}
-//		    else if((i0|i1)!=0) { i0=0x3ff00000;i1=0;}
-//		}
-//	    } else {
-//		i = (0x000fffff)>>j0;
-//		if(((i0&i)|i1)==0) return x; /* x is integral */
-//		if(huge+x>0.0) {	/* raise inexact flag */
-//		    if(i0>0) i0 += (0x00100000)>>j0;
-//		    i0 &= (~i); i1=0;
-//		}
-//	    }
-//	} else if (j0>51) {
-//	    if(j0==0x400) return x+x;	/* inf or NaN */
-//	    else return x;		/* x is integral */
-//	} else {
-//	    i = ((unsigned)(0xffffffff))>>(j0-20);
-//	    if((i1&i)==0) return x;	/* x is integral */
-//	    if(huge+x>0.0) { 		/* raise inexact flag */
-//		if(i0>0) {
-//		    if(j0==20) i0+=1;
-//		    else {
-//			j = i1 + (1<<(52-j0));
-//			if(j<i1) i0+=1;	/* got a carry */
-//			i1 = j;
-//		    }
-//		}
-//		i1 &= (~i);
-//	    }
-//	}
-//	__HI(x) = i0;
-//	__LO(x) = i1;
-//	return x;
-//}
 
 static const double TWO52[2]={
   4.50359962737049600000e+15, /* 0x43300000, 0x00000000 */
  -4.50359962737049600000e+15, /* 0xC3300000, 0x00000000 */
 };
-
-// double rint(double x)
-// {
-// 	int i0,j0,sx;
-// 	unsigned i,i1;
-// 	double w,t;
-// 	i0 =  __HI(x);
-// 	sx = (i0>>31)&1;
-// 	i1 =  __LO(x);
-// 	j0 = ((i0>>20)&0x7ff)-0x3ff;
-// 	if(j0<20) {
-// 	    if(j0<0) { 	
-// 		if(((i0&0x7fffffff)|i1)==0) return x;
-// 		i1 |= (i0&0x0fffff);
-// 		i0 &= 0xfffe0000;
-// 		i0 |= ((i1|-i1)>>12)&0x80000;
-// 		__HI(x)=i0;
-// 	        w = TWO52[sx]+x;
-// 	        t =  w-TWO52[sx];
-// 	        i0 = __HI(t);
-// 	        __HI(t) = (i0&0x7fffffff)|(sx<<31);
-// 	        return t;
-// 	    } else {
-// 		i = (0x000fffff)>>j0;
-// 		if(((i0&i)|i1)==0) return x; /* x is integral */
-// 		i>>=1;
-// 		if(((i0&i)|i1)!=0) {
-// 		    if(j0==19) i1 = 0x40000000; else
-// 		    i0 = (i0&(~i))|((0x20000)>>j0);
-// 		}
-// 	    }
-// 	} else if (j0>51) {
-// 	    if(j0==0x400) return x+x;	/* inf or NaN */
-// 	    else return x;		/* x is integral */
-// 	} else {
-// 	    i = ((unsigned)(0xffffffff))>>(j0-20);
-// 	    if((i1&i)==0) return x;	/* x is integral */
-// 	    i>>=1;
-// 	    if((i1&i)!=0) i1 = (i1&(~i))|((0x40000000)>>(j0-20));
-// 	}
-// 	__HI(x) = i0;
-// 	__LO(x) = i1;
-// 	w = TWO52[sx]+x;
-// 	return w-TWO52[sx];
-// }
 
 extern uint32_t systime;
 
@@ -480,7 +352,7 @@ void boardInitMcu( void )
     delay(10);
     SX126xReset();
     delay(10);
-    RadioSleep();
+    sx126xSleep();
 }
 
 void DBG_LogLevelSet(int level)
@@ -539,3 +411,11 @@ void HW_Reset(int mode)
         Bootloadable_1_Load();
     } 
 }
+
+uint32_t BoardGetRandomSeed( void )
+{
+    return ( ( *( uint32_t* )ID1 ) ^ ( *( uint32_t* )ID2 ) ^ ( *( uint32_t* )ID3 ) );
+}
+
+
+

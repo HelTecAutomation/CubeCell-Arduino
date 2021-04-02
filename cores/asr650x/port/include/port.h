@@ -4,7 +4,12 @@
 
 #ifndef PORT_H
 #define PORT_H
-    
+
+#include <string.h>
+#include <stdio.h>
+#include <k_api.h>
+#include "utilities.h"
+
 size_t cpu_intrpt_save(void);
 void   cpu_intrpt_restore(size_t cpsr);
 void   cpu_intrpt_switch(void);
@@ -15,7 +20,7 @@ void   cpu_first_task_start(void);
 RHINO_INLINE uint8_t cpu_cur_get(void)
 {
     return 0;
-}
+} 
 
 #define CPSR_ALLOC() size_t cpsr
 

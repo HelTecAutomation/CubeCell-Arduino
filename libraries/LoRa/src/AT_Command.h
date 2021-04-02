@@ -4,7 +4,6 @@
 #ifdef __asr650x__
 #include "hw.h"
 #include "low_power.h"
-#include "lorawan_port.h"
 #endif
 
 #ifdef __cplusplus

@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "sx126x.h"
+#include "ASR_Arduino.h"
 
 #ifdef __cplusplus 
 		extern "C" {

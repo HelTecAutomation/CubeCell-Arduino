@@ -4,11 +4,15 @@
 #include "cytypes.h"
 #include "pins_arduino.h"
 #include "stdbool.h"
+#include "CyFlash.h"
 #include <math.h>
 
 #ifdef __cplusplus 
 		extern "C" {
 #endif
+
+#define FLASH_EEPROM_BASE             (CY_FLASH_NUMBER_ROWS-4)*CY_FLASH_SIZEOF_ROW
+#define FLASH_EEPROM_END              (CY_FLASH_NUMBER_ROWS-2)*CY_FLASH_SIZEOF_ROW-1
 
 #define COLOR_SEND 0x500000   //color red, light 0x10
 #define COLOR_JOINED 0x500050 //color Violet, light 0x10
@@ -93,6 +97,7 @@ int cubecell_random(int r);
 void setPWM_Frequency(clock_pwm_t freq);
 void setPWM_ComparePeriod(uint16_t period);
 
+#define assert_param(x) ((void)0)
 
 #ifdef __cplusplus 
 }

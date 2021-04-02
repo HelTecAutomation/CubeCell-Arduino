@@ -47,94 +47,40 @@
 /* Includes ------------------------------------------------------------------*/
 #include "hw.h"
 #include "low_power.h"
-#include "lorawan_port.h"
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-
-/**
- * \brief Flag to indicate if MCU can go to low power mode
- *        When 0, MCU is authorized to go in low power mode
- */
-static uint32_t LowPower_State = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 extern bool wakeByUart;
-
-
-/* Exported functions ---------------------------------------------------------*/
-
-/**
- * \brief API to set flag allowing power mode
- *
- * \param [IN] enum e_LOW_POWER_State_Id_t  
- */
-void LowPower_Disable( e_LOW_POWER_State_Id_t state )
-{
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    LowPower_State |= state;
-    RHINO_CPU_INTRPT_ENABLE();
-}
-
-/**
- * \brief API to reset flag allowing power mode
- *
- * \param [IN] enum e_LOW_POWER_State_Id_t 
- */
-void LowPower_Enable( e_LOW_POWER_State_Id_t state )
-{
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    LowPower_State &= ~state;
-    RHINO_CPU_INTRPT_ENABLE();
-}
-
-/**
- * \brief API to get flag allowing power mode
- * \note When flag is 0, low power mode is allowed
- * \param [IN] state
- * \retval flag state 
- */
-uint32_t LowPower_GetState( void )
-{
-  return LowPower_State;
-}
-
-/**
- * @brief  Handle Low Power
- * @param  None
- * @retval None
- */
 extern uint32_t systime;
-extern void systemTimer();
 extern uint8 UART_1_initVar;
+uint8_t HasLoopedThroughMain = 0;
+
+
+void TimerLowPowerHandler( void )
+{
+	if( HasLoopedThroughMain < 5 )
+	{
+	    HasLoopedThroughMain++;
+	}
+	else
+	{
+	    HasLoopedThroughMain = 0;
+	    lowPowerHandler( );
+	}
+}
 
 void lowPowerHandler( void )
 {
-    CPSR_ALLOC();
-    RHINO_CPU_INTRPT_DISABLE();
-    if (LowPower_State == 0 && wakeByUart == false) {
-        DBG_PRINTF_CRITICAL("dz\n\r");
-        pinMode(P4_1,ANALOG);// SPI0  MISO;
-        if(UART_1_initVar)
-            pinMode(P3_1,ANALOG);
-        aos_lrwan_chg_mode.enter_stop_mode();
-        /* mcu dependent. to be implemented by user*/
-        aos_lrwan_chg_mode.exit_stop_mode();
-        aos_lrwan_time_itf.set_uc_wakeup_time();
-        CySysTickSetCallback(4,systemTimer);
-        systime = (uint32_t)TimerGetCurrentTime();
-        pinMode(P4_1,INPUT);
-        if(UART_1_initVar)
-            pinMode(P3_1,OUTPUT_PULLUP);
-    } else {
-        //DBG_PRINTF_CRITICAL("z\n\r");
-        aos_lrwan_chg_mode.enter_sleep_mode();
-    }
-    RHINO_CPU_INTRPT_ENABLE();
+	if ( wakeByUart == false)
+	{
+		pinMode(P4_1,ANALOG);// SPI0  MISO;
+		if(UART_1_initVar)
+			pinMode(P3_1,ANALOG);//UART_TX
+		CySysPmDeepSleep();
+		systime = (uint32_t)RtcGetTimerValue();
+		pinMode(P4_1,INPUT);
+		if(UART_1_initVar)
+			pinMode(P3_1,OUTPUT_PULLUP);
+	}
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

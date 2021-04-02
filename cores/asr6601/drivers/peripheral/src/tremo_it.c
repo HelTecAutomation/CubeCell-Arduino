@@ -127,7 +127,10 @@ void TIMER0_IRQHandler(void)
 }
 
 */
-
+void __attribute__((weak)) RadioOnDioIrq()
+{
+	printf("RadioOnDioIrq");
+}
 extern bool uart0started;
 
 void DMA1_IRQHandler(void)

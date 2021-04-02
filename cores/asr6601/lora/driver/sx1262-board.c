@@ -24,7 +24,6 @@
 #include "tremo_gpio.h"
 #include "tremo_regs.h"
 #include "tremo_delay.h"
-#include "radio.h"
 #include "lora_config.h"
 #include "sx126x-board.h"
 #include "sx126x.h"

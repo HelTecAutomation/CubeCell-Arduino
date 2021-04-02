@@ -30,6 +30,9 @@ extern "C"{
 #include <stdint.h>
 #include <stdbool.h>
 #include "timer.h"
+#include "ASR_Arduino.h"
+
+
 /*!
  * \brief Timer time variable definition
  */

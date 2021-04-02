@@ -1,4 +1,5 @@
 .git
+/libraries/LoraWan104
 tools/flash6601
 tools/CubeCellelftool
 tools/dist

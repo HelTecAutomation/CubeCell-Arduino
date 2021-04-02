@@ -29,7 +29,6 @@
 #include <ASR_Arduino.h>
 #include <HardwareSerial.h>
 #include <CyLib.h>
-#include "radio.h"
 #include "board.h"
 #include "timer.h"
 #include "rtc-board.h"
@@ -127,6 +126,5 @@ void init( void );
 /* sketch */
 void setup( void ) ;
 void loop( void ) ;
-
 
 #endif // Arduino_h
