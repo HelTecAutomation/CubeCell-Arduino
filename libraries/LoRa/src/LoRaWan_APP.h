@@ -68,6 +68,8 @@ public:
   void displaySending();
   void displayAck();
   void displayMcuInit();
+  void displayText(String text1, String text2);
+  void displayGPSInfo(String lat, String lon, String alt);
 #endif
 };
 

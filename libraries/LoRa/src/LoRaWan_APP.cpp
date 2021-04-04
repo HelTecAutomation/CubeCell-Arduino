@@ -17,7 +17,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 #ifdef CubeCell_BoardPlus
-#include <Wire.h>  
+#include <Wire.h>
 #include "HT_SH1107Wire.h"
 
   SH1107Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
@@ -27,7 +27,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 #ifdef CubeCell_GPS
-#include <Wire.h>  
+#include <Wire.h>
 #include "HT_SSD1306Wire.h"
 
   SSD1306Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);; // addr , freq , i2c group , resolution , rst
@@ -71,13 +71,13 @@ uint32_t txDutyCycleTime ;
 static TimerEvent_t TxNextPacketTimer;
 
 /*!
- * PassthroughMode mode enable/disable. don't modify it here. 
- * when use PassthroughMode, set it true in app.ino , Reference the example PassthroughMode.ino 
+ * PassthroughMode mode enable/disable. don't modify it here.
+ * when use PassthroughMode, set it true in app.ino , Reference the example PassthroughMode.ino
  */
 bool passthroughMode = false;
 
 /*!
- * when use PassthroughMode, Mode_LoraWan to set use lora or lorawan mode . don't modify it here. 
+ * when use PassthroughMode, Mode_LoraWan to set use lora or lorawan mode . don't modify it here.
  * it is used to set mode lora/lorawan in PassthroughMode.
  */
 bool modeLoraWan = true;
@@ -99,7 +99,7 @@ enum eDeviceState_LoraWan deviceState;
 bool SendFrame( void )
 {
 	lwan_dev_params_update();
-	
+
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
 
@@ -381,7 +381,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 				}
 #endif
 				printf("joined\r\n");
-				
+
 				//in PassthroughMode,do nothing while joined
 				if(passthroughMode == false)
 				{
@@ -575,7 +575,7 @@ void LoRaWanClass::init(DeviceClass_t lorawanClass,LoRaMacRegion_t region)
 
 	mibReq.Type = MIB_DEVICE_CLASS;
 	LoRaMacMibGetRequestConfirm( &mibReq );
-	
+
 	if(loraWanClass != mibReq.Param.Class)
 	{
 		mibReq.Param.Class = loraWanClass;
@@ -592,7 +592,7 @@ void LoRaWanClass::join()
 	{
 		Serial.print("joining...");
 		MlmeReq_t mlmeReq;
-		
+
 		mlmeReq.Type = MLME_JOIN;
 
 		mlmeReq.Req.Join.DevEui = devEui;
@@ -632,7 +632,7 @@ void LoRaWanClass::join()
 		mibReq.Type = MIB_NETWORK_JOINED;
 		mibReq.Param.IsNetworkJoined = true;
 		LoRaMacMibSetRequestConfirm( &mibReq );
-		
+
 		deviceState = DEVICE_STATE_SEND;
 	}
 }
@@ -790,6 +790,33 @@ void LoRaWanClass::displayMcuInit()
 	display.drawString(64, 33, "STARTING");
 	display.display();
 	delay(2000);
+}
+
+void LoRaWanClass::displayText(String text1, String text2)
+{
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+	display.drawString(00, 11, text1);
+    display.drawString(00, 33, text2);
+	display.display();
+}
+
+void LoRaWanClass::displayGPSInfo(String lat, String lon, String alt)
+{
+    String latitude("lat: ");
+    latitude += lat;
+    String longitude("lon: ");
+    longitude += lon;
+    String altitude("alt: ");
+    altitude += alt;
+
+    display.clear();
+    display.setTextAlignment(TEXT_ALIGN_LEFT);
+	display.drawString(00, 10, latitude);
+    display.drawString(00, 25, longitude);
+    display.drawString(00, 40, altitude);
+	display.display();
+    delay(3000);
 }
 #endif
 
