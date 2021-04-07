@@ -6,6 +6,7 @@ tools/dist
 tools/CubeCellflash
 tools/gcc-arm-none-eabi
 tools/._gcc-arm-none-eabi
+tools/LoRaWan_CLASS_HT
 .DS_Store
 .development
 .vscode
