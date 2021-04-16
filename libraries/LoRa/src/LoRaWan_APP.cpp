@@ -134,6 +134,7 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		}
 	}
+	delay(2);
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
 	{
 		return false;
