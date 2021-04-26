@@ -79,7 +79,7 @@ LoRaMacRegion_t LoRaMacRegion;
 #ifdef CONFIG_LORA_CAD
 #define LORA_CAD_CNT_MAX 8    //send frame after LORA_CAD_CNT_MAX times CAD
 #define LORA_CAD_SYMBOLS 8   //CAD symbols 
-#define LORA_CAD_DELAY  1   //delay 1ms after CAD
+#define LORA_CAD_DELAY  1000   //delay 1s after CAD
 #endif 
 #ifdef CLASS_HT
 bool class_HT_CadStarted = false;

@@ -35,7 +35,6 @@ void setup() {
 
 void loop() {
   if(lowpower){
-    //note that lowPowerHandler() runs six times before the mcu goes into lowpower mode;
     lowPowerHandler();
   }
   // put your main code here, to run repeatedly:
