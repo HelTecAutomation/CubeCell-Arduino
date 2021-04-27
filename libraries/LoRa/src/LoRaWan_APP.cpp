@@ -642,7 +642,6 @@ void LoRaWanClass::join()
 
 void LoRaWanClass::send()
 {
-	stopWotaCad();
 	if( nextTx == true )
 	{
 		MibRequestConfirm_t mibReq;

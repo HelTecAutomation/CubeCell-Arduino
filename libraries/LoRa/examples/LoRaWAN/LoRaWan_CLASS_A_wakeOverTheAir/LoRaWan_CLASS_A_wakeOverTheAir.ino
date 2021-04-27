@@ -9,7 +9,7 @@
 #define WOTA_CAD_CYCLE_TIME 1000;
 #define WOTA_MAX_RX_TIME 2000;
 #define WOTA_FREQ 505300000
-#define WOTA_DR   DR_0
+#define WOTA_DR   DR_5
 /*
  * set LoraWan_RGB to Active,the RGB active in loraWan
  * RGB red means sending;
@@ -144,6 +144,7 @@ void loop()
     case DEVICE_STATE_SEND:
     {
       prepareTxFrame( appPort );
+      stopWotaCad();
       LoRaWAN.send();
       deviceState = DEVICE_STATE_CYCLE;
       break;
