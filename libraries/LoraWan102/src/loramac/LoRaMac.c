@@ -81,10 +81,14 @@ LoRaMacRegion_t LoRaMacRegion;
 #define LORA_CAD_SYMBOLS 8   //CAD symbols 
 #define LORA_CAD_DELAY  1000   //delay 1s after CAD
 #endif 
-#ifdef CLASS_HT
-bool class_HT_CadStarted = false;
-bool class_HT_CadTimerStarted = false;
-bool class_HT_CadEnable = false;
+#ifdef CLASS_A_WOTA
+bool wota_CadStarted = false;
+bool wota_CadTimerStarted = false;
+bool wota_CadEnable = false;
+uint32_t wota_cycle_time = 1000;
+uint32_t wota_max_rxtime = 2000;
+int8_t wota_dr = DR_0;
+uint32_t wota_freq = 505300000;
 #endif
 
 /*!
@@ -337,8 +341,8 @@ static TimerEvent_t TxImmediateTimer;
 static uint8_t g_lora_cad_cnt = 1;    
 #endif
 
-#ifdef CLASS_HT
-TimerEvent_t class_HT_CadTimer;
+#ifdef CLASS_A_WOTA
+TimerEvent_t wota_CadTimer;
 #endif
 /*!
  * LoRaMac reception windows timers
@@ -359,7 +363,7 @@ static uint32_t RxWindow2Delay;
  */
 static RxConfigParams_t RxWindow1Config;
 static RxConfigParams_t RxWindow2Config;
-#ifdef CLASS_HT
+#ifdef CLASS_A_WOTA
 static RxConfigParams_t RxWindow3Config;
 #endif
 /*!
@@ -467,8 +471,8 @@ static void OnRadioCadDone( bool channelActivityDetected );
 static void beforeTxCadDone( bool channelActivityDetected );
 static void OnTxImmediateTimerEvent( void );
 #endif 
-#ifdef CLASS_HT
-static void class_HT_CadDone( bool channelActivityDetected );
+#ifdef CLASS_A_WOTA
+static void wota_CadDone( bool channelActivityDetected );
 #endif
 
 /*!
@@ -798,9 +802,9 @@ static void PrepareRxDoneAbort( void )
 void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	DIO_PRINTF("Event : Rx Done\r\n");
-#ifdef CLASS_HT
-	if(class_HT_CadStarted)
-		class_HT_CadStarted = false;
+#ifdef CLASS_A_WOTA
+	if(wota_CadStarted)
+		wota_CadStarted = false;
 #endif
 	uint8_t * temp = payload;
     LoRaMacHeader_t macHdr;
@@ -1255,9 +1259,9 @@ static void OnRadioTxTimeout( void )
 static void OnRadioRxError( void )
 {
 	DIO_PRINTF("Event : Rx Error\r\n");
-#ifdef CLASS_HT
-	if(class_HT_CadStarted)
-		class_HT_CadStarted = false;
+#ifdef CLASS_A_WOTA
+	if(wota_CadStarted)
+		wota_CadStarted = false;
 #endif
     bool classBRx = false;
 
@@ -1336,9 +1340,9 @@ static void OnRadioRxTimeout( void )
 {
     DIO_PRINTF("Event : Rx Timeout\r\n");
 
-#ifdef CLASS_HT
-	if(class_HT_CadStarted)
-		class_HT_CadStarted = false;
+#ifdef CLASS_A_WOTA
+	if(wota_CadStarted)
+		wota_CadStarted = false;
 #endif
 
     bool classBRx = false;
@@ -1416,10 +1420,10 @@ static void OnRadioRxTimeout( void )
 static void OnRadioCadDone( bool channelActivityDetected )
 {
 	LoRaMacState &= ~LORAMAC_CAD_RUNNING;
-#ifdef CLASS_HT
-	if(class_HT_CadStarted)
+#ifdef CLASS_A_WOTA
+	if(wota_CadStarted)
 	{
-		class_HT_CadDone( channelActivityDetected );
+		wota_CadDone( channelActivityDetected );
 		return;
 	}
 #endif
@@ -1437,8 +1441,8 @@ static void OnMacStateCheckTimerEvent( void )
     TimerStop( &MacStateCheckTimer );
 
     if ( LoRaMacFlags.Bits.MacDone == 1 ) {
-#ifdef CLASS_HT
-		class_HT_CadEnable = true;
+#ifdef CLASS_A_WOTA
+		wota_CadEnable = true;
 #endif
         if ( ( LoRaMacState & LORAMAC_RX_ABORT ) == LORAMAC_RX_ABORT ) {
             LoRaMacState &= ~LORAMAC_RX_ABORT;
@@ -2436,6 +2440,10 @@ static bool StartCAD( uint8_t channel )
     txConfig.PktLen = LoRaMacBufferPktLen;
 
     bool ret = RegionTxConfig( LoRaMacRegion, &txConfig, &txPower, &txTime );
+#ifdef __asr6601__
+		delay(2);
+#endif
+
     Radio.StartCad(LORA_CAD_SYMBOLS);
     LoRaMacState |= LORAMAC_CAD_RUNNING;
     return ret;
@@ -2461,37 +2469,65 @@ static void beforeTxCadDone( bool channelActivityDetected )
 
 #endif
 
-#ifdef CLASS_HT
+#ifdef CLASS_A_WOTA
 uint32_t testtime;
-bool Onclass_HT_CadTimer()
+void stopWotaCad()
 {
-	//printf("%d\r\n",testtime);
-	//testtime=(uint32_t)TimerGetCurrentTime();
-	//TimerStop(&class_HT_CadTimer);
-	class_HT_CadTimerStarted = false;
-	if(LoRaMacState==LORAMAC_IDLE)
+	wota_CadEnable = false;
+	TimerStop(&wota_CadTimer);
+	wota_CadTimerStarted = false;
+	wota_CadStarted = false;
+	Radio.Sleep();
+}
+void wotaCadProcess()
+{
+	if(LoRaMacState==LORAMAC_IDLE &&IsLoRaMacNetworkJoined)
 	{
-		class_HT_CadStarted = true;
-		RxWindow3Config.RxContinuous = true;
-		RxWindow3Config.Datarate = LoRaMacParams.Rx2Channel.Datarate;
-		RxWindow3Config.Frequency = LoRaMacParams.Rx2Channel.Frequency;
-		RxWindow3Config.RxSlot = RX_SLOT_WIN_CLASS_C;
-		
-		RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate );
-		Radio.StartCad(CLASS_HT_CAD_SYMBOLS);
-		TimerSetValue(&class_HT_CadTimer,class_HT_cycle_time);
-		TimerStart(&class_HT_CadTimer);
-		class_HT_CadTimerStarted = true;
+		if(wota_CadTimerStarted == false && wota_CadStarted == false && wota_CadEnable)
+		{
+			TimerSetValue(&wota_CadTimer,1);
+			TimerStart(&wota_CadTimer);
+			wota_CadTimerStarted = true;
+		}
+	}
+	else
+	{
+		TimerStop(&wota_CadTimer);
+		wota_CadTimerStarted = false;
+		wota_CadStarted = false;
 	}
 }
 
-static void class_HT_CadDone( bool channelActivityDetected )
+bool Onwota_CadTimer()
+{
+	//printf("%d\r\n",testtime);
+	//testtime=(uint32_t)TimerGetCurrentTime();
+	//TimerStop(&wota_CadTimer);
+	wota_CadTimerStarted = false;
+	if(LoRaMacState==LORAMAC_IDLE)
+	{
+		wota_CadStarted = true;
+		RxWindow3Config.RxContinuous = true;
+		RxWindow3Config.Datarate = wota_dr;
+		RxWindow3Config.Frequency = wota_freq;
+		RxWindow3Config.RxSlot = RX_SLOT_WIN_CLASS_C;
+		
+		RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate );
+		Radio.StartCad(CLASS_A_WOTA_CAD_SYMBOLS);
+		TimerSetValue(&wota_CadTimer,wota_cycle_time-10);
+		TimerStart(&wota_CadTimer);
+		wota_CadTimerStarted = true;
+	}
+}
+
+static void wota_CadDone( bool channelActivityDetected )
 {
 	if(channelActivityDetected) {
-		Radio.Sleep();
-		class_HT_CadTimerStarted=false;
+		//Radio.Sleep();
+		TimerStop(&wota_CadTimer);
+		wota_CadTimerStarted=false;
 		if ( RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate ) == true ) {
-			RxWindowSetup( false, class_HT_max_rxtime );
+			RxWindowSetup( false, wota_max_rxtime );
 			RxSlot = RX_SLOT_WIN_CLASS_C;;
 		}
 #if(LoraWan_RGB==1)
@@ -2501,7 +2537,7 @@ static void class_HT_CadDone( bool channelActivityDetected )
     else
     {
         Radio.Sleep( );
-        class_HT_CadStarted = false;
+        wota_CadStarted = false;
     }
     //testtime=(uint32_t)TimerGetCurrentTime()-testtime;
 }
@@ -3141,8 +3177,8 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     TimerInit( &TxImmediateTimer, OnTxImmediateTimerEvent );
 #endif
 
-#ifdef CLASS_HT
-	TimerInit( &class_HT_CadTimer, Onclass_HT_CadTimer );
+#ifdef CLASS_A_WOTA
+	TimerInit( &wota_CadTimer, Onwota_CadTimer );
 #endif
 
     // Store the current initialization time
@@ -3154,7 +3190,7 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     RadioEvents.RxError = OnRadioRxError;
     RadioEvents.TxTimeout = OnRadioTxTimeout;
     RadioEvents.RxTimeout = OnRadioRxTimeout;
-#if defined(CONFIG_LORA_CAD) || defined(CLASS_HT)
+#if defined(CONFIG_LORA_CAD) || defined(CLASS_A_WOTA)
     RadioEvents.CadDone = OnRadioCadDone;
 #endif
     Radio.Init( &RadioEvents );
@@ -4157,6 +4193,8 @@ void LoRaMacTestSetChannel( uint8_t channel )
 {
     Channel = channel;
 }
+
+
 
 #if 0
 static void SetPublicNetwork( bool enable )

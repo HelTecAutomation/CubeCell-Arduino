@@ -63,16 +63,20 @@ extern "C" {
 #endif
 
 
-//#define CLASS_HT
+#define CLASS_A_WOTA
 
-#ifdef CLASS_HT
-#define CLASS_HT_CAD_SYMBOLS 2   //CAD symbols 
-extern TimerEvent_t class_HT_CadTimer;
-extern bool class_HT_CadStarted;
-extern bool class_HT_CadTimerStarted;
-extern bool class_HT_CadEnable;
-extern uint32_t class_HT_cycle_time;
-extern uint32_t class_HT_max_rxtime;
+#ifdef CLASS_A_WOTA
+#define CLASS_A_WOTA_CAD_SYMBOLS 2   //CAD symbols 
+extern TimerEvent_t wota_CadTimer;
+extern bool wota_CadStarted;
+extern bool wota_CadTimerStarted;
+extern bool wota_CadEnable;
+extern uint32_t wota_cycle_time;
+extern uint32_t wota_max_rxtime;
+extern int8_t wota_dr;
+extern uint32_t wota_freq;
+void wotaCadProcess();
+void stopWotaCad();
 #endif
 /*!
  * LoRaMac internal state

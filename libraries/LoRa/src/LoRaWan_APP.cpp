@@ -134,7 +134,9 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		}
 	}
-	delay(2);
+#ifdef __asr6601__
+		delay(5);
+#endif
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
 	{
 		return false;
@@ -640,14 +642,7 @@ void LoRaWanClass::join()
 
 void LoRaWanClass::send()
 {
-#ifdef CLASS_HT
-      class_HT_CadEnable = false;
-      TimerStop(&class_HT_CadTimer);
-      class_HT_CadTimerStarted = false;
-      class_HT_CadStarted = false;
-      Radio.Sleep();
-#endif
-
+	stopWotaCad();
 	if( nextTx == true )
 	{
 		MibRequestConfirm_t mibReq;

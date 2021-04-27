@@ -518,11 +518,11 @@ bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 
     Radio.SetChannel( frequency );
     // Radio configuration
-#ifdef CLASS_HT
+    //Radio.SetRxConfig( MODEM_LORA, rxConfig->Bandwidth, phyDr, 1, 0, 8, rxConfig->WindowTimeout, false, 0, false, 0, 0, true, rxConfig->RxContinuous );
+#ifdef CLASS_A_WOTA
 	uint16_t preamble = 8;
 	if(rxConfig->RxSlot == RX_SLOT_WIN_CLASS_C)
 	{
-		double symboltime = RegionCommonComputeSymbolTimeLoRa(DataratesCN470[dr],BandwidthsCN470[dr]);
 		preamble = pow(2,15-DataratesCN470[dr]);
 	}
 	Radio.SetRxConfig( MODEM_LORA, rxConfig->Bandwidth, phyDr, 1, 0, preamble, rxConfig->WindowTimeout, false, 0, false, 0, 0, true, rxConfig->RxContinuous );

@@ -116,12 +116,7 @@ void LoRaClass::receive()
 
 void LoRaClass::lowpower()
 {
-#if defined(__ASR6601__)
 	TimerLowPowerHandler( );
-#else
-	lowPowerHandler( );
-#endif
-	// Process Radio IRQ
 	Radio.IrqProcess( );
 }
 
