@@ -96,6 +96,7 @@ void SX126xLoracInit()
     //NVIC_SetPriority(LORAC_IRQn, 2);
     pinMode(CONFIG_LORA_RFSW_VDD_PIN,OUTPUT);
     digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,0);
+    iomux(CONFIG_LORA_RFSW_CTRL_PIN, 3);
 }
 
 

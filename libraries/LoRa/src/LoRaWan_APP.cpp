@@ -281,6 +281,7 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
  * \param   [IN] mcpsIndication - Pointer to the indication structure,
  *               containing indication attributes.
  */
+int revrssi;
 static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
 	if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
@@ -289,6 +290,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	}
 #if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
 	ifDisplayAck=1;
+	revrssi=mcpsIndication->Rssi;
 #endif
 #if (LoraWan_RGB==1)
 	turnOnRGB(COLOR_RECEIVED, 200);
@@ -758,6 +760,11 @@ void LoRaWanClass::displayAck()
     ifDisplayAck--;
 	display.clear();
 	display.drawString(64, 22, "ACK RECEIVED");
+	char temp[10];
+	sprintf(temp,"rssi: %d ",revrssi);
+	display.setFont(ArialMT_Plain_10);
+	display.setTextAlignment(TEXT_ALIGN_RIGHT);
+	display.drawString(128, 0, temp);
 	if(loraWanClass==CLASS_A)
 	{
 		display.setFont(ArialMT_Plain_10);
