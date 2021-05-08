@@ -55,6 +55,7 @@
 #include "timer.h"
 #include "../radio/radio.h"
 #include "timer.h"
+#include "LoRaMacCrypto.h"
 
 
 
@@ -284,6 +285,8 @@ typedef enum eLoRaMacRxSlot
      * LoRaMAC class b multicast slot window
      */
     RX_SLOT_WIN_MULTICAST_SLOT,
+    
+    RX_SLOT_WOTA,
 }LoRaMacRxSlot_t;
 
 /*!

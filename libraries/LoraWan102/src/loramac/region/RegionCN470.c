@@ -495,6 +495,7 @@ void RegionCN470ComputeRxWindowParameters( int8_t datarate, uint8_t minRxSymbols
     RegionCommonComputeRxWindowParameters( tSymbol, minRxSymbols, rxError, radioWakeUpTime, &rxConfigParams->WindowTimeout, &rxConfigParams->WindowOffset );
 }
 
+
 bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
 {
     int8_t dr = rxConfig->Datarate;
@@ -521,9 +522,10 @@ bool RegionCN470RxConfig( RxConfigParams_t* rxConfig, int8_t* datarate )
     //Radio.SetRxConfig( MODEM_LORA, rxConfig->Bandwidth, phyDr, 1, 0, 8, rxConfig->WindowTimeout, false, 0, false, 0, 0, true, rxConfig->RxContinuous );
 #ifdef CLASS_A_WOTA
 	uint16_t preamble = 8;
-	if(rxConfig->RxSlot == RX_SLOT_WIN_CLASS_C)
+	if(rxConfig->RxSlot == RX_SLOT_WOTA)
 	{
-		preamble = pow(2,15-DataratesCN470[dr]);
+		double symboltime = ( ( double )( 1 << phyDr ) / ( double )(125000*pow(2,phyDr))) * 1000 + 1;
+		preamble = wota_cycle_time / symboltime;
 	}
 	Radio.SetRxConfig( MODEM_LORA, rxConfig->Bandwidth, phyDr, 1, 0, preamble, rxConfig->WindowTimeout, false, 0, false, 0, 0, true, rxConfig->RxContinuous );
 #else

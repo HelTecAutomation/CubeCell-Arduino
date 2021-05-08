@@ -2510,11 +2510,11 @@ bool Onwota_CadTimer()
 		RxWindow3Config.RxContinuous = true;
 		RxWindow3Config.Datarate = wota_dr;
 		RxWindow3Config.Frequency = wota_freq;
-		RxWindow3Config.RxSlot = RX_SLOT_WIN_CLASS_C;
+		RxWindow3Config.RxSlot = RX_SLOT_WOTA;
 		
 		RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate );
 		Radio.StartCad(CLASS_A_WOTA_CAD_SYMBOLS);
-		TimerSetValue(&wota_CadTimer,wota_cycle_time-10);
+		TimerSetValue(&wota_CadTimer,wota_cycle_time-20);
 		TimerStart(&wota_CadTimer);
 		wota_CadTimerStarted = true;
 	}
@@ -2524,12 +2524,12 @@ static void wota_CadDone( bool channelActivityDetected )
 {
 	if(channelActivityDetected) {
 		//Radio.Sleep();
-		TimerStop(&wota_CadTimer);
-		wota_CadTimerStarted=false;
 		if ( RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate ) == true ) {
 			RxWindowSetup( false, wota_max_rxtime );
 			RxSlot = RX_SLOT_WIN_CLASS_C;;
 		}
+		wota_CadTimerStarted=false;
+		TimerStop(&wota_CadTimer);
 #if(LoraWan_RGB==1)
 		turnOnRGB(COLOR_RXWINDOW3,0);
 #endif
