@@ -2462,6 +2462,7 @@ static void beforeTxCadDone( bool channelActivityDetected )
     }else {
         // Try to send now
         g_lora_cad_cnt = 1;
+        LoRaMacState |= LORAMAC_TX_RUNNING;
         TimerSetValue( &TxImmediateTimer, 1 );
         TimerStart( &TxImmediateTimer );
     }
