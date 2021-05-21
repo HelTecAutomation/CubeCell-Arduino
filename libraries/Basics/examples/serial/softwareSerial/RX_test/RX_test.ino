@@ -6,7 +6,10 @@
  * - software read data from a UART device and print received data via normal serial prot
  * - baudrate defined in softwareSerial.begin(9600);
  * |-- Supported baudrate
- * |-- 14400 (Not statble)
+ * |-- 57600
+ * |-- 38400
+ * |-- 19200
+ * |-- 14400
  * |-- 9600
  * |-- 4800
  * |-- 2400

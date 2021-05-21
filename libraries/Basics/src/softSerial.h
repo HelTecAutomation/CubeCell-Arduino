@@ -4,9 +4,9 @@
 #include "Arduino.h"
 #include <stdlib.h>
 
-class softSerial
+class softSerial:public Stream
 {
-private:
+protected:
 uint8_t pbuffer;
 
 public:
@@ -21,9 +21,32 @@ public:
 
     int available(void);
     static void receiverBegin(void);
-    static void receiver(void);
     int read(void);
     void flush();
+    int peek(void);
+    size_t write(uint8_t);
+    size_t write(const uint8_t *buffer, size_t size);
+
+    inline size_t write(const char * s)
+    {
+        return write((uint8_t*) s, strlen(s));
+    }
+    inline size_t write(unsigned long n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(long n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(unsigned int n)
+    {
+        return write((uint8_t) n);
+    }
+    inline size_t write(int n)
+    {
+        return write((uint8_t) n);
+    }
 };
 
 // io_usart::io_usart(/* args */)

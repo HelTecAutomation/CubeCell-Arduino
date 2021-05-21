@@ -6,7 +6,10 @@
  * - date print example via software serial port;
  * - baudrate defined in softwareSerial.begin(9600);
  * |-- Supported baudrate
- * |-- 14400 (Not statble)
+ * |-- 57600
+ * |-- 38400
+ * |-- 19200
+ * |-- 14400
  * |-- 9600
  * |-- 4800
  * |-- 2400
@@ -42,10 +45,10 @@ void loop()
 	while(1)
 	{
 		Serial.println("send...");
-		softwareSerial.softwarePrintf("Aaron is a very handsome guy! hahahaha\r\n");
-		softwareSerial.softwarePrintf("a = %s\r\n", a);
-		softwareSerial.softwarePrintf("b = %d\r\n", b);
-		softwareSerial.softwarePrintf("b in hex format = %X\r\n", b);
+		softwareSerial.println("Aaron is a very handsome guy! hahahaha");
+		softwareSerial.printf("a = %s\r\n", a);
+		softwareSerial.printf("b = %d\r\n", b);
+		softwareSerial.printf("b in hex format = %X\r\n", b);
 		delay(3000);
 	}
 }

@@ -256,16 +256,16 @@ void directModeOutput(IO_REG_TYPE pin)
 #define PORT_OFFSET(port)   (PORT_REG_SHFIT * port)
 #define PORT_ADDRESS(pin)   (CYDEV_GPIO_BASE + PORT_OFFSET(PORT_FROM_PIN(pin)))
 
-#define PIN_TO_BASEREG(pin)             (0)
-#define PIN_TO_BITMASK(pin)             (pin)
+#define PIN_TO_BASEREG(pin)             (uint32_t *)PORT_ADDRESS(pin)
+#define PIN_TO_BITMASK(pin)             PIN_IN_PORT(pin)
 #define IO_REG_TYPE uint32_t
 #define IO_REG_BASE_ATTR
 #define IO_REG_MASK_ATTR
-#define DIRECT_READ(base, pin)          CY_SYS_PINS_READ_PIN(PORT_ADDRESS(pin)+4, PIN_IN_PORT(pin))
-#define DIRECT_WRITE_LOW(base, pin)     CY_SYS_PINS_CLEAR_PIN(PORT_ADDRESS(pin), PIN_IN_PORT(pin))
-#define DIRECT_WRITE_HIGH(base, pin)    CY_SYS_PINS_SET_PIN(PORT_ADDRESS(pin), PIN_IN_PORT(pin))
-#define DIRECT_MODE_INPUT(base, pin)    CY_SYS_PINS_SET_DRIVE_MODE(PORT_ADDRESS(pin)+8, PIN_IN_PORT(pin), CY_SYS_PINS_DM_DIG_HIZ)
-#define DIRECT_MODE_OUTPUT(base, pin)   CY_SYS_PINS_SET_DRIVE_MODE(PORT_ADDRESS(pin)+8, PIN_IN_PORT(pin), CY_SYS_PINS_DM_STRONG)
+#define DIRECT_READ(base, pin)          CY_SYS_PINS_READ_PIN((uint32_t)base+4, pin)
+#define DIRECT_WRITE_LOW(base, pin)     CY_SYS_PINS_CLEAR_PIN((uint32_t)base, pin)
+#define DIRECT_WRITE_HIGH(base, pin)    CY_SYS_PINS_SET_PIN((uint32_t)base, pin)
+#define DIRECT_MODE_INPUT(base, pin)    CY_SYS_PINS_SET_DRIVE_MODE((uint32_t)base+8, pin, CY_SYS_PINS_DM_DIG_HIZ)
+#define DIRECT_MODE_OUTPUT(base, pin)   CY_SYS_PINS_SET_DRIVE_MODE((uint32_t)base+8, pin, CY_SYS_PINS_DM_STRONG)
 
 #elif defined(__asr6601__)
 #define PIN_IN_PORT(pin)    (pin % PIN_NUMBER_IN_PORT)
@@ -273,16 +273,16 @@ void directModeOutput(IO_REG_TYPE pin)
 #define PORT_OFFSET(port)   (PORT_REG_SHFIT * port)
 #define PORT_ADDRESS(pin)   (0x4001F000 + PORT_OFFSET(PORT_FROM_PIN(pin)))
 
-#define PIN_TO_BASEREG(pin)             (0)
-#define PIN_TO_BITMASK(pin)             (pin)
+#define PIN_TO_BASEREG(pin)             (uint32_t *)PORT_ADDRESS(pin)
+#define PIN_TO_BITMASK(pin)             PIN_IN_PORT(pin)
 #define IO_REG_TYPE uint32_t
 #define IO_REG_BASE_ATTR
 #define IO_REG_MASK_ATTR
-#define DIRECT_READ(base, pin)          gpio_read((gpio_t*)PORT_ADDRESS(pin), PIN_IN_PORT(pin))
-#define DIRECT_WRITE_LOW(base, pin)     gpio_write((gpio_t*)PORT_ADDRESS(pin), PIN_IN_PORT(pin),GPIO_LEVEL_LOW)
-#define DIRECT_WRITE_HIGH(base, pin)    gpio_write((gpio_t*)PORT_ADDRESS(pin), PIN_IN_PORT(pin),GPIO_LEVEL_HIGH)
-#define DIRECT_MODE_INPUT(base, pin)    gpio_init((gpio_t*)PORT_ADDRESS(pin), PIN_IN_PORT(pin), GPIO_MODE_INPUT_FLOATING)
-#define DIRECT_MODE_OUTPUT(base, pin)   gpio_init((gpio_t*)PORT_ADDRESS(pin), PIN_IN_PORT(pin), GPIO_MODE_OUTPUT_PP_LOW)
+#define DIRECT_READ(base, pin)          gpio_read((gpio_t*)base, pin)
+#define DIRECT_WRITE_LOW(base, pin)     gpio_write((gpio_t*)base, pin,GPIO_LEVEL_LOW)
+#define DIRECT_WRITE_HIGH(base, pin)    gpio_write((gpio_t*)base, pin,GPIO_LEVEL_HIGH)
+#define DIRECT_MODE_INPUT(base, pin)    gpio_init((gpio_t*)base, pin, GPIO_MODE_INPUT_FLOATING)
+#define DIRECT_MODE_OUTPUT(base, pin)   gpio_init((gpio_t*)base, pin, GPIO_MODE_OUTPUT_PP_LOW)
 
 #elif defined(RBL_NRF51822)
 #define PIN_TO_BASEREG(pin)             (0)

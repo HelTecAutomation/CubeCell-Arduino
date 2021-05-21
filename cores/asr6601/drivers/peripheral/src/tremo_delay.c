@@ -68,5 +68,5 @@ void delayMicroseconds(uint32_t nus)
  */
 void delay(uint32_t nms)
 {
-    delayMicroseconds((uint32_t)(nms * 1000)-1);//sys irq占用1
+    delayMicroseconds((uint32_t)(nms * 1000));//sys irq占用1
 }
