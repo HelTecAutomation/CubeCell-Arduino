@@ -30,6 +30,7 @@ void rtc_check_syn(void)
         if(n>=10000)
         {
             printf("rtc_check_syn timeout\r\n");
+            system_reset();
         }
     }
 }

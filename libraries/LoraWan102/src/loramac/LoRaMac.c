@@ -1830,6 +1830,9 @@ static void RxWindowSetup( bool rxContinuous, uint32_t maxRxWindow )
     } else {
         Radio.Rx( 0 ); // Continuous mode
     }
+#ifdef __asr6601__
+    delay(2);
+#endif
 }
 
 static LoRaMacStatus_t SwitchClass( DeviceClass_t deviceClass )
@@ -2440,12 +2443,12 @@ static bool StartCAD( uint8_t channel )
     txConfig.PktLen = LoRaMacBufferPktLen;
 
     bool ret = RegionTxConfig( LoRaMacRegion, &txConfig, &txPower, &txTime );
-#ifdef __asr6601__
-		delay(2);
-#endif
 
     Radio.StartCad(LORA_CAD_SYMBOLS);
     LoRaMacState |= LORAMAC_CAD_RUNNING;
+#ifdef __asr6601__
+    delay(2);
+#endif
     return ret;
 }
 
@@ -3005,7 +3008,9 @@ LoRaMacStatus_t SendFrameOnChannel( uint8_t channel )
     Radio.Send( LoRaMacBuffer, LoRaMacBufferPktLen );
 
     LoRaMacState |= LORAMAC_TX_RUNNING;
-
+#ifdef __asr6601__
+    delay(2);
+#endif
     return LORAMAC_STATUS_OK;
 }
 
