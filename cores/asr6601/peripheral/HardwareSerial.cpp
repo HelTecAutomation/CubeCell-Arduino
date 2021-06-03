@@ -48,6 +48,7 @@ bool HardwareSerial::begin(uint32_t baud, uint32_t config, int rxPin, int txPin,
 
 void HardwareSerial::updateBaudRate(unsigned long baud)
 {
+	_baud = baud;
 	uartStart(baud,_config,_rxPin,_txPin);
 }
 
@@ -120,8 +121,8 @@ size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 
 uint32_t  HardwareSerial::baudRate()
 {
-	//return _baud;
-	return uartGetBaudRate(_uart);
+	return _baud;
+	//return uartGetBaudRate(_uart);
 }
 HardwareSerial::operator bool() const
 {
