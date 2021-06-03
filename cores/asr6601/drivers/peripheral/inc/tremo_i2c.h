@@ -84,6 +84,7 @@ typedef enum {
     I2C_FLAG_RFIFO_EMPTY = 0,  /*!< Receive FIFO is empty */
     I2C_FLAG_UNIT_BUSY   = 15, /*!< I2C unit is busy */
     I2C_FLAG_BUS_BUSY    = 16, /*!< I2C bus is empty */
+	I2C_FLAG_ERR_LB_NAK = 14,  /*!< I2C Last Byte Naked: MASTER_I2C_NACK                 */
 
     I2C_FLAG_ARBITRATION_LOSS = 18, /*!< Arbitration loss */
     I2C_FLAG_TRANS_EMPTY      = 19, /*!< Transmit data empty */
