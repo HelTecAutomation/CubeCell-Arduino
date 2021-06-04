@@ -5,6 +5,7 @@
 #include "tremo_pwr.h"
 #include "rtc-board.h"
 #include "ASR_Arduino.h"
+#include "uart.h"
 
 void boardInitMcu( void )
 {
@@ -21,14 +22,15 @@ void boardInitMcu( void )
     rcc_enable_peripheral_clk(RCC_PERIPHERAL_RTC, true);
     rcc_enable_peripheral_clk(RCC_PERIPHERAL_SAC, true);
     rcc_enable_peripheral_clk(RCC_PERIPHERAL_LORA, true);
-    delay(100);
+    delay(200);
     pinMode(Vext,OUTPUT);
     digitalWrite(Vext,HIGH);
     pinMode(VBAT_ADC_CTL, OUTPUT);
     digitalWrite(VBAT_ADC_CTL,HIGH);
     pwr_xo32k_lpm_cmd(true);
     RtcInit();
-    systime = (uint32_t)TimerGetCurrentTime();
+    delay(100);
+    systime = (uint32_t)RtcGetTimerValue();
     srand(analogRead(11)+analogRead(4)+analogRead(5)+analogRead(8)+analogRead(47));
     SX126xInit();
     sx126xSleep();
