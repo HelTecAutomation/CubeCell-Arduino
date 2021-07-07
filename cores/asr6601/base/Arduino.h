@@ -88,6 +88,7 @@ uint32_t BoardGetRandomSeed( void );
 long random(long howbig);
 void randomSeed(unsigned long seed);
 long random(long howsmall, long howbig);
+long map(long, long, long, long, long);
 
 typedef bool boolean;
 typedef uint8_t byte;
