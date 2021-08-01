@@ -2530,7 +2530,7 @@ static void wota_CadDone( bool channelActivityDetected )
 		//Radio.Sleep();
 		if ( RegionRxConfig( LoRaMacRegion, &RxWindow3Config, ( int8_t * )&McpsIndication.RxDatarate ) == true ) {
 			RxWindowSetup( false, wota_max_rxtime );
-			RxSlot = RX_SLOT_WIN_CLASS_C;;
+			RxSlot = RX_SLOT_WOTA;;
 		}
 		wota_CadTimerStarted=false;
 		TimerStop(&wota_CadTimer);
@@ -2631,16 +2631,17 @@ static LoRaMacStatus_t ScheduleTx( void )
     while ( RegionNextChannel( LoRaMacRegion, &nextChan, &Channel, &dutyCycleTimeOff, &AggregatedTimeOff ) == false ) {
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
-        if(LoRaMacParams.ChannelsDatarate == minDatarate)
+        int8_t dr_temp = LoRaMacParams.ChannelsDatarate;
+        if(dr_temp == minDatarate)
         {
-            LoRaMacParams.ChannelsDatarate = maxDatarate;
+            dr_temp = maxDatarate;
         }
         else
         {
-            LoRaMacParams.ChannelsDatarate --;
+            dr_temp --;
         }
         // Update datarate in the function parameters
-        nextChan.Datarate = LoRaMacParams.ChannelsDatarate;
+        nextChan.Datarate = dr_temp;
     }
 
 
@@ -3933,6 +3934,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
             LoRaMacParams.update_freqband = true;
 #endif
             LoRaMacParams.ChannelsDatarate = RegionAlternateDr( LoRaMacRegion, &altDr );
+            printf("%d\r\n",LoRaMacParams.ChannelsDatarate);
 #ifdef CONFIG_LORA_VERIFY
             if (g_lora_debug == true)
                 PRINTF_RAW("MacHdr major:%d rfu:%d mtype:%d\r\n", macHdr.Bits.Major, macHdr.Bits.RFU, macHdr.Bits.MType);

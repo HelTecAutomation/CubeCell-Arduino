@@ -134,9 +134,9 @@ bool SendFrame( void )
 			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
 		}
 	}
-#ifdef __asr6601__
+//#ifdef __asr6601__
 		delay(5);
-#endif
+//#endif
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
 	{
 		return false;
