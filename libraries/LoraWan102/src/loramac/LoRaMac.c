@@ -3934,7 +3934,7 @@ LoRaMacStatus_t LoRaMacMlmeRequest( MlmeReq_t *mlmeRequest )
             LoRaMacParams.update_freqband = true;
 #endif
             LoRaMacParams.ChannelsDatarate = RegionAlternateDr( LoRaMacRegion, &altDr );
-            printf("%d\r\n",LoRaMacParams.ChannelsDatarate);
+
 #ifdef CONFIG_LORA_VERIFY
             if (g_lora_debug == true)
                 PRINTF_RAW("MacHdr major:%d rfu:%d mtype:%d\r\n", macHdr.Bits.Major, macHdr.Bits.RFU, macHdr.Bits.MType);
