@@ -96,7 +96,8 @@ uint64_t getID(void);
 int cubecell_random(int r);
 void setPWM_Frequency(clock_pwm_t freq);
 void setPWM_ComparePeriod(uint16_t period);
-
+uint32 PWM1_ReadCompare(void);
+uint32 PWM2_ReadCompare(void);
 #define assert_param(x) ((void)0)
 
 #ifdef __cplusplus 
