@@ -2631,17 +2631,16 @@ static LoRaMacStatus_t ScheduleTx( void )
     while ( RegionNextChannel( LoRaMacRegion, &nextChan, &Channel, &dutyCycleTimeOff, &AggregatedTimeOff ) == false ) {
         // Set the default datarate
         //LoRaMacParams.ChannelsDatarate = LoRaMacParamsDefaults.ChannelsDatarate;
-        int8_t dr_temp = LoRaMacParams.ChannelsDatarate;
-        if(dr_temp == minDatarate)
+        if(LoRaMacParams.ChannelsDatarate == minDatarate)
         {
-            dr_temp = maxDatarate;
+            LoRaMacParams.ChannelsDatarate = maxDatarate;
         }
         else
         {
-            dr_temp --;
+            LoRaMacParams.ChannelsDatarate --;
         }
         // Update datarate in the function parameters
-        nextChan.Datarate = dr_temp;
+        nextChan.Datarate = LoRaMacParams.ChannelsDatarate;
     }
 
 
