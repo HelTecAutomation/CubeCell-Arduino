@@ -46,7 +46,7 @@
 #else
 #define #define _EEPROM_SIZE      0xC00
 #define _EEPROM_BASE              FLASH_BASE+0x7400
-#else
+#endif
 EEPROMClass::EEPROMClass(uint32_t baddr)
 : _baddr(baddr)
 , _data(0)
