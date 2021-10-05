@@ -423,6 +423,97 @@ void ScreenDisplay::drawXbm(int16_t xMove, int16_t yMove, int16_t width, int16_t
   }
 }
 
+void ScreenDisplay::drawXbmRotateDegCenter(int x, int y, int width, int height, int angleDeg, const int *xbm) {
+    int16_t widthInXbm = (width + 7) >> 3;
+    uint8_t data = 0;
+    uint16_t offsetX = width/2;
+    uint16_t offsetY = height/2;
+
+    float degrees = (angleDeg + 90) * 0.017453; //convert to radians
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
+            if (x & 7) {
+                data >>= 1; // Move a bit
+            } else {  // Read new data every 8 bit
+                data = pgm_read_byte(xbm + (x >> 3) + y * widthInXbm);
+            }
+            // if there is a bit draw it
+            if (data & 0x01) {
+                int16_t new_x = (x - offsetX) * cos(degrees) - (y - offsetY) * sin(degrees);
+                int16_t new_y = (x - offsetX) * sin(degrees) + (y - offsetY) * cos(degrees);
+                setPixel(xMove + new_x, yMove + new_y);
+            }
+        }
+    }
+}
+
+void ScreenDisplay::drawXbmRotateRadCenter(int x, int y, int width, int height, float angleRad, const int *xbm) {
+    int16_t widthInXbm = (width + 7) >> 3;
+    uint8_t data = 0;
+    uint16_t offsetX = width/2;
+    uint16_t offsetY = height/2;
+
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
+            if (x & 7) {
+                data >>= 1; // Move a bit
+            } else {  // Read new data every 8 bit
+                data = pgm_read_byte(xbm + (x >> 3) + y * widthInXbm);
+            }
+            // if there is a bit draw it
+            if (data & 0x01) {
+                int16_t new_x = (x - offsetX) * cos(angleRad) - (y - offsetY) * sin(angleRad);
+                int16_t new_y = (x - offsetX) * sin(angleRad) + (y - offsetY) * cos(angleRad);
+                setPixel(xMove + new_x, yMove + new_y);
+            }
+        }
+    }
+}
+
+void ScreenDisplay::drawXbmRotateRadOffset(int x, int y, int width, int height, float angleRad, int offsetX,
+                                           int offsetY, const int *xbm) {
+    int16_t widthInXbm = (width + 7) >> 3;
+    uint8_t data = 0;
+
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
+            if (x & 7) {
+                data >>= 1; // Move a bit
+            } else {  // Read new data every 8 bit
+                data = pgm_read_byte(xbm + (x >> 3) + y * widthInXbm);
+            }
+            // if there is a bit draw it
+            if (data & 0x01) {
+                int16_t new_x = (x - offsetX) * cos(angleRad) - (y - offsetY) * sin(angleRad);
+                int16_t new_y = (x - offsetX) * sin(angleRad) + (y - offsetY) * cos(angleRad);
+                setPixel(xMove + new_x, yMove + new_y);
+            }
+        }
+    }
+}
+
+void ScreenDisplay::drawXbmRotateDegOffset(int x, int y, int width, int height, float angleRad, int offsetX,
+                                           int offsetY, const int *xbm) {
+    int16_t widthInXbm = (width + 7) >> 3;
+    uint8_t data = 0;
+    float degrees = (angleDeg + 90) * 0.017453; //convert to radians
+    for (int16_t y = 0; y < height; y++) {
+        for (int16_t x = 0; x < width; x++) {
+            if (x & 7) {
+                data >>= 1; // Move a bit
+            } else {  // Read new data every 8 bit
+                data = pgm_read_byte(xbm + (x >> 3) + y * widthInXbm);
+            }
+            // if there is a bit draw it
+            if (data & 0x01) {
+                int16_t new_x = (x - offsetX) * cos(degrees) - (y - offsetY) * sin(degrees);
+                int16_t new_y = (x - offsetX) * sin(degrees) + (y - offsetY) * cos(degrees);
+                setPixel(xMove + new_x, yMove + new_y);
+            }
+        }
+    }
+}
+
 void ScreenDisplay::drawIco16x16(int16_t xMove, int16_t yMove, const char *ico, bool inverse) {
   uint16_t data;
 

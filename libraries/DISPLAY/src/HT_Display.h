@@ -176,6 +176,19 @@ class ScreenDisplay : public Print  {
     // Draw a XBM
     void drawXbm(int16_t x, int16_t y, int16_t width, int16_t height, const uint8_t *xbm);
 
+
+    // Draw a XBM in a given rotation around a center
+    void drawXbmRotateDegCenter(int16_t x, int16_t y, int16_t width, int16_t height,int16_t angleDeg, const uint8_t *xbm);
+
+    // Draw a XBM in a given rotation around a center
+    void drawXbmRotateRadCenter(int16_t x, int16_t y, int16_t width, int16_t height,float angleRad, const uint8_t *xbm);
+
+    // Draw a XBM in a given rotation around a offset
+    void drawXbmRotateDegOffset(int16_t x, int16_t y, int16_t width, int16_t height,int16_t angleDeg,int16_t offsetX,int16_t offsetY, const uint8_t *xbm);
+
+    // Draw a XBM in a given rotation around a offset
+    void drawXbmRotateRadOffset(int16_t x, int16_t y, int16_t width, int16_t height,float angleRad,int16_t offsetX,int16_t offsetY, const uint8_t *xbm);
+
     // Draw icon 16x16 xbm format
     void drawIco16x16(int16_t x, int16_t y, const char *ico, bool inverse = false);
 
