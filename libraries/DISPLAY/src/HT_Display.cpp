@@ -423,7 +423,7 @@ void ScreenDisplay::drawXbm(int16_t xMove, int16_t yMove, int16_t width, int16_t
   }
 }
 
-void ScreenDisplay::drawXbmRotateDegCenter(int x, int y, int width, int height, int angleDeg, const int *xbm) {
+void ScreenDisplay::drawXbmRotateDegCenter(int16_t x, int16_t y, int16_t width, int16_t height, float angleDeg, const uint8_t *xbm) {
     int16_t widthInXbm = (width + 7) >> 3;
     uint8_t data = 0;
     uint16_t offsetX = width/2;
@@ -441,13 +441,13 @@ void ScreenDisplay::drawXbmRotateDegCenter(int x, int y, int width, int height, 
             if (data & 0x01) {
                 int16_t new_x = (x - offsetX) * cos(degrees) - (y - offsetY) * sin(degrees);
                 int16_t new_y = (x - offsetX) * sin(degrees) + (y - offsetY) * cos(degrees);
-                setPixel(xMove + new_x, yMove + new_y);
+                setPixel(x + new_x, y + new_y);
             }
         }
     }
 }
 
-void ScreenDisplay::drawXbmRotateRadCenter(int x, int y, int width, int height, float angleRad, const int *xbm) {
+void ScreenDisplay::drawXbmRotateRadCenter(int16_t x, int16_t y, int16_t width, int16_t height, float angleRad, const uint8_t *xbm) {
     int16_t widthInXbm = (width + 7) >> 3;
     uint8_t data = 0;
     uint16_t offsetX = width/2;
@@ -464,14 +464,13 @@ void ScreenDisplay::drawXbmRotateRadCenter(int x, int y, int width, int height, 
             if (data & 0x01) {
                 int16_t new_x = (x - offsetX) * cos(angleRad) - (y - offsetY) * sin(angleRad);
                 int16_t new_y = (x - offsetX) * sin(angleRad) + (y - offsetY) * cos(angleRad);
-                setPixel(xMove + new_x, yMove + new_y);
+                setPixel(x + new_x, y + new_y);
             }
         }
     }
 }
 
-void ScreenDisplay::drawXbmRotateRadOffset(int x, int y, int width, int height, float angleRad, int offsetX,
-                                           int offsetY, const int *xbm) {
+void ScreenDisplay::drawXbmRotateRadOffset(int16_t x, int16_t y, int16_t width, int16_t height, float angleRad, int16_t offsetX, int16_t offsetY, const uint8_t *xbm) {
     int16_t widthInXbm = (width + 7) >> 3;
     uint8_t data = 0;
 
@@ -486,14 +485,13 @@ void ScreenDisplay::drawXbmRotateRadOffset(int x, int y, int width, int height, 
             if (data & 0x01) {
                 int16_t new_x = (x - offsetX) * cos(angleRad) - (y - offsetY) * sin(angleRad);
                 int16_t new_y = (x - offsetX) * sin(angleRad) + (y - offsetY) * cos(angleRad);
-                setPixel(xMove + new_x, yMove + new_y);
+                setPixel(x + new_x, y + new_y);
             }
         }
     }
 }
 
-void ScreenDisplay::drawXbmRotateDegOffset(int x, int y, int width, int height, float angleRad, int offsetX,
-                                           int offsetY, const int *xbm) {
+void ScreenDisplay::drawXbmRotateDegOffset(int16_t x, int16_t y, int16_t width, int16_t height, float angleDeg, int16_t offsetX, int16_t offsetY, const uint8_t *xbm) {
     int16_t widthInXbm = (width + 7) >> 3;
     uint8_t data = 0;
     float degrees = (angleDeg + 90) * 0.017453; //convert to radians
@@ -508,7 +506,7 @@ void ScreenDisplay::drawXbmRotateDegOffset(int x, int y, int width, int height, 
             if (data & 0x01) {
                 int16_t new_x = (x - offsetX) * cos(degrees) - (y - offsetY) * sin(degrees);
                 int16_t new_y = (x - offsetX) * sin(degrees) + (y - offsetY) * cos(degrees);
-                setPixel(xMove + new_x, yMove + new_y);
+                setPixel(x + new_x, y + new_y);
             }
         }
     }
