@@ -12,6 +12,11 @@
 * disclaimers, and limitations in the end user license agreement accompanying 
 * the software package with which this file was provided.
 *******************************************************************************/
+
+#ifdef __cplusplus 
+extern "C" {
+#endif
+
 #if !defined(CY_ISR_UART_2_SCB_IRQ_H)
 #define CY_ISR_UART_2_SCB_IRQ_H
 
@@ -66,6 +71,10 @@ void UART_2_SCB_IRQ_ClearPending(void);
 
 
 #endif /* CY_ISR_UART_2_SCB_IRQ_H */
+
+#ifdef __cplusplus 
+}
+#endif
 
 
 /* [] END OF FILE */

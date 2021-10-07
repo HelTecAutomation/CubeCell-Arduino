@@ -49,15 +49,27 @@
 #include <project.h>
 #include "Stream.h"
 #include "cytypes.h"
+#include <UART_1_SCB_IRQ.h>
+#include <UART_2_SCB_IRQ.h>
+
 
 #define UART_NUM_0     0
 #define UART_NUM_1     1
+
+#define UART_BUFF_SIZE 255
+#define UART_RX_SIZE (UART_BUFF_SIZE+1)
+
+typedef struct {
+    uint8_t * rx_buf;
+    uint16_t rx_w;
+    uint16_t rx_r;
+} uart_rxbuff_t;
 
 class HardwareSerial: public Stream
 {
 public:
     HardwareSerial(int8_t uart_nr);
-
+    
     bool begin(uint32_t baud=115200, uint32_t config=SERIAL_8N1, int rxPin=-1, int txPin=-1, bool invert=false, unsigned long timeout_ms = 20000UL);
     void end();
     void updateBaudRate(unsigned long baud);
