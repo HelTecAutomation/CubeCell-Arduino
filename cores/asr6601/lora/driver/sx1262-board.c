@@ -95,7 +95,7 @@ void SX126xLoracInit()
     TREMO_REG_WR(0x40001804,TREMO_REG_RD(0x40001804)|0x80);
     //NVIC_SetPriority(LORAC_IRQn, 2);
     pinMode(CONFIG_LORA_RFSW_VDD_PIN,OUTPUT);
-    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,0);
+    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,ANT_SW_POWER_OFF);
     iomux(CONFIG_LORA_RFSW_CTRL_PIN, 3);
 }
 
@@ -310,12 +310,12 @@ uint8_t SX126xGetPaSelect( uint32_t channel )
 
 void SX126xAntSwOn( void )
 {
-    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,HIGH);
+    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,ANT_SW_POWER_ON);
 }
 
 void SX126xAntSwOff( void )
 {
-    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,LOW);
+    digitalWrite(CONFIG_LORA_RFSW_VDD_PIN,ANT_SW_POWER_OFF);
 }
 
 bool SX126xCheckRfFrequency( uint32_t frequency )
