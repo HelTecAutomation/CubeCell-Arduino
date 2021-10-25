@@ -3,6 +3,7 @@
 #include "util/OneWire_direct_gpio.h"
 
 #define SOFTSERIAL_BUFF_SIZE  255
+#define SOFTSERIAL_RX_TIMEOUT  3000
 static float timedelay = 0;
 static uint8_t Recev[8]  ={0};
 static uint8_t temp_bin  = 0;
@@ -78,7 +79,7 @@ pbuffer(0)
 
 }
 
-//IO模拟串口初始�?
+//IO模拟串口初始�?
 void softSerial::begin(uint16_t Baudrate)
 {
 	timedelay = 1000000/Baudrate;
@@ -119,8 +120,8 @@ void softSerial::receiverBegin(void)
 	delayTiker((uint32_t)(timedelay * tikerInUs)-tcnt);
 
 	uint8_t data = 0;
-	while(1)
-	{
+	auto start = millis();
+    do {
 		for( uint8_t count = 0; count < 8; count++){
 			data |= DIRECT_READ(_rxbaseReg, _rxbitmask)<<count;
 			delayus(timedelay);
@@ -151,7 +152,7 @@ void softSerial::receiverBegin(void)
 		};
 		delayus(timedelay);
 		data=0;
-	}
+	} while (millis() - start < SOFTSERIAL_RX_TIMEOUT);
 }
 
 int softSerial::read(void)
