@@ -55,7 +55,7 @@ class LoRaWanClass{
 public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
-  void send();
+  bool send();
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);
@@ -72,7 +72,7 @@ public:
 };
 
 
-extern "C" bool SendFrame( void );
+extern "C" uint8_t SendFrame( void );
 extern "C" void turnOnRGB(uint32_t color,uint32_t time);
 extern "C" void turnOffRGB(void);
 extern "C" bool checkUserAt(char * cmd, char * content);
