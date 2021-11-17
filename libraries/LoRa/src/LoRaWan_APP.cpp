@@ -96,7 +96,7 @@ enum eDeviceState_LoraWan deviceState;
  *
  * \retval  [0: frame could be send, 1: error]
  */
-bool SendFrame( void )
+uint8_t SendFrame( void )
 {
 	lwan_dev_params_update();
 	
@@ -139,9 +139,9 @@ bool SendFrame( void )
 //#endif
 	if( LoRaMacMcpsRequest( &mcpsReq ) == LORAMAC_STATUS_OK )
 	{
-		return false;
+		return 0;
 	}
-	return true;
+	return 1;
 }
 
 /*!
@@ -642,7 +642,7 @@ void LoRaWanClass::join()
 	}
 }
 
-void LoRaWanClass::send()
+bool LoRaWanClass::send()
 {
 	if( nextTx == true )
 	{
@@ -655,8 +655,9 @@ void LoRaWanClass::send()
 			mibReq.Param.Class = loraWanClass;
 			LoRaMacMibSetRequestConfirm( &mibReq );
 		}
-		nextTx = SendFrame( );
+		nextTx = SendFrame( ) == 0;
 	}
+	return nextTx;
 }
 
 void LoRaWanClass::cycle(uint32_t dutyCycle)
