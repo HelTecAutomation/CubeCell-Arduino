@@ -44,7 +44,7 @@
 #define _EEPROM_SIZE              (CY_FLASH_SIZEOF_ROW * 3)
 #define _EEPROM_BASE              CY_SFLASH_USERBASE
 #else
-#define #define _EEPROM_SIZE      0xC00
+#define _EEPROM_SIZE              0xC00
 #define _EEPROM_BASE              FLASH_BASE+0x7400
 #endif
 EEPROMClass::EEPROMClass(uint32_t baddr)
@@ -56,7 +56,7 @@ EEPROMClass::EEPROMClass(uint32_t baddr)
 }
 
 EEPROMClass::EEPROMClass(void)
-: _baddr(CY_SFLASH_USERBASE)
+: _baddr(_EEPROM_BASE)
 , _data(0)
 , _size(0)
 , _dirty(false)

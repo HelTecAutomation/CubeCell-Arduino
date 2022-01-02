@@ -25,6 +25,8 @@
 
 #include "Arduino.h"
 
+#define SPI_HAS_TRANSACTION 1
+
 class SPISettings
 {
 public:

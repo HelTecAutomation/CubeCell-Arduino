@@ -177,11 +177,15 @@ void HardwareSerial::end()
 {
 	if( _uart_num == UART_NUM_0)
 	{
+		UART_1_SCB_IRQ_Stop();
 		UART_1_Stop();
+		if (_rxbuff[UART_NUM_0].rx_buf) { free(_rxbuff[UART_NUM_0].rx_buf); }
 	}
 	else
 	{
+		UART_2_SCB_IRQ_Stop();
 		UART_2_Stop();
+		if (_rxbuff[UART_NUM_1].rx_buf) { free(_rxbuff[UART_NUM_1].rx_buf); }
 	}
 }
 
