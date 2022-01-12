@@ -287,5 +287,5 @@ void showGpsInfo()
 }
 int fracPart(double val, int n)
 {
-  return (int)((val - (int)(val))*pow(10,n));
+  return (int)abs((val - (int)(val))*pow(10,n));
 }

@@ -35,7 +35,7 @@ uint32_t starttime;
 
 int32_t fracPart(double val, int n)
 {
-  return (int32_t)((val - (int32_t)(val))*pow(10,n));
+  return (int32_t)abs((val - (int32_t)(val))*pow(10,n));
 }
 
 void VextON(void)
