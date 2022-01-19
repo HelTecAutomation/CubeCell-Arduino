@@ -12,6 +12,8 @@ typedef void (*Demo)(void);
 int demoMode = 0;
 int counter = 1;
 
+void VextON();
+
 void setup() {
   Serial.begin(115200);
   Serial.println();
