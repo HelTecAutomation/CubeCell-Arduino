@@ -7,6 +7,7 @@ menu.LORAWAN_UPLINKMODE=LORAWAN_UPLINKMODE
 menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
 menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
 menu.LORAWAN_RGB=LORAWAN_RGB
+menu.LORAWAN_PREAMBLE_LENGTH=LORAWAN_PREAMBLE_LENGTH
 menu.LORAWAN_DebugLevel=LoRaWan Debug Level
 ##############################################################
 
@@ -87,6 +88,11 @@ CubeCell-Board.menu.LORAWAN_RGB.1=ACTIVE
 CubeCell-Board.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Board.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Board.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-Board.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-Board.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-Board.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-Board.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-Board.menu.LORAWAN_DebugLevel.0=None
 CubeCell-Board.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
@@ -174,6 +180,10 @@ CubeCell-Capsule.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Capsule.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Capsule.menu.LORAWAN_RGB.0.build.RGB=0
 
+CubeCell-Capsule.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-Capsule.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-Capsule.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-Capsule.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-Capsule.menu.LORAWAN_DebugLevel.0=None
 CubeCell-Capsule.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
@@ -258,6 +268,11 @@ CubeCell-Module.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
 CubeCell-Module.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Module.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-Module.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-Module.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-Module.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-Module.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-Module.menu.LORAWAN_DebugLevel.0=None
 CubeCell-Module.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
@@ -346,6 +361,11 @@ CubeCell-BoardPlus.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-BoardPlus.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-BoardPlus.menu.LORAWAN_RGB.0.build.RGB=0
 
+CubeCell-BoardPlus.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-BoardPlus.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-BoardPlus.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-BoardPlus.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
+
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.0=None
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.1=Freq
@@ -432,6 +452,10 @@ CubeCell-GPS.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-GPS.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-GPS.menu.LORAWAN_RGB.0.build.RGB=0
 
+CubeCell-GPS.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-GPS.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-GPS.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-GPS.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-GPS.menu.LORAWAN_DebugLevel.0=None
 CubeCell-GPS.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
@@ -517,6 +541,12 @@ CubeCell-ModulePlus.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 CubeCell-ModulePlus.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-ModulePlus.menu.LORAWAN_RGB.0.build.RGB=0
 
+CubeCell-ModulePlus.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-ModulePlus.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-ModulePlus.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-ModulePlus.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
+
+
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.0=None
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1=Freq
@@ -599,6 +629,11 @@ CubeCell-1/2AA.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
 
 CubeCell-1/2AA.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-1/2AA.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-1/2AA.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-1/2AA.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-1/2AA.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-1/2AA.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-1/2AA.menu.LORAWAN_DebugLevel.0=None
 CubeCell-1/2AA.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
@@ -686,6 +721,11 @@ CubeCell-Board-PRO.menu.LORAWAN_RGB.1=ACTIVE
 CubeCell-Board-PRO.menu.LORAWAN_RGB.1.build.RGB=1
 CubeCell-Board-PRO.menu.LORAWAN_RGB.0=DEACTIVE
 CubeCell-Board-PRO.menu.LORAWAN_RGB.0.build.RGB=0
+
+CubeCell-Board-PRO.menu.LORAWAN_PREAMBLE_LENGTH.0=8(default)
+CubeCell-Board-PRO.menu.LORAWAN_PREAMBLE_LENGTH.0.build.LORAWAN_PREAMBLE_LENGTH=8
+CubeCell-Board-PRO.menu.LORAWAN_PREAMBLE_LENGTH.1=16(For M00 and M00L)
+CubeCell-Board-PRO.menu.LORAWAN_PREAMBLE_LENGTH.1.build.LORAWAN_PREAMBLE_LENGTH=16
 
 CubeCell-Board-PRO.menu.LORAWAN_DebugLevel.0=None
 CubeCell-Board-PRO.menu.LORAWAN_DebugLevel.0.build.LORAWAN_DebugLevel=0
