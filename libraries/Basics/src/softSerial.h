@@ -14,6 +14,7 @@ public:
     ~softSerial() {}
 
     void begin(uint16_t Baudrate);
+    void end();
     
     void sendByte(uint8_t value);
     void sendStr(uint8_t *st, uint16_t len);

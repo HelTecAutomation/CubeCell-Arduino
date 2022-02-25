@@ -95,6 +95,12 @@ void softSerial::begin(uint16_t Baudrate)
 	digitalWrite(TX_GPIO,HIGH);
 }
 
+void softSerial::end()
+{
+    digitalWrite(TX_GPIO, LOW);
+    detachInterrupt(RX_GPIO);
+}
+
 int softSerial::available(void)
 {
 	if(IRREC_RX_CNT){
