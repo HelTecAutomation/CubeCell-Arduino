@@ -22,7 +22,7 @@
     "type": "git",
     "url": "https://github.com/HelTecAutomation/platform-asrmicro650x.git"
   },
-  "version": "1.2.0",
+  "version": "1.4.0",
   "frameworks": {
     "arduino": {
       "package": "framework-arduinoasrmicro650x",
@@ -38,7 +38,7 @@
     "framework-arduinoasrmicro650x": {
       "type": "framework",
       "owner": "heltecautomation",
-      "version": "~1.2.0",
+      "version": "~1.4.0",
       "optional": true
     },
     "tool-cubecellelftool": {
