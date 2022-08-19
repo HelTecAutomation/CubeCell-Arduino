@@ -60,7 +60,7 @@
 #define UART_RX_SIZE (UART_BUFF_SIZE+1)
 
 typedef struct {
-    uint8_t * rx_buf;
+    uint8_t rx_buf[UART_RX_SIZE];
     uint16_t rx_w;
     uint16_t rx_r;
 } uart_rxbuff_t;
