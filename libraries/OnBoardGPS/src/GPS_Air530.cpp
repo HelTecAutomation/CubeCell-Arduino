@@ -37,13 +37,13 @@ void Air530Class::begin(uint32_t baud)
 	Serial.println("GPS current baudrate detecting...");
 	while(getNMEA() == "0" )
 	{
+		//Serial.println(bauds[i]);
+		GPSSerial.updateBaudRate(bauds[i]);
 		i++;
 		if( i== bauds_array )
 		{
 			i=0;
 		}
-		//Serial.println(bauds[i]);
-		GPSSerial.updateBaudRate(bauds[i]);
 		delay(50);
 		GPSSerial.flush();
 		temp = getNMEA();
@@ -404,8 +404,8 @@ String Air530Class::getGLL()
 
 
 /*    
- * WGS-84: international standard GPS coordinate£¨Google Earth¡¢ GPS module¡¢Tian Map£©
- * GCJ-02: China coordinate migration standard, Google Map¡¢Gaode Map¡¢Tencent map
+ * WGS-84: international standard GPS coordinateï¿½ï¿½Google Earthï¿½ï¿½ GPS moduleï¿½ï¿½Tian Mapï¿½ï¿½
+ * GCJ-02: China coordinate migration standard, Google Mapï¿½ï¿½Gaode Mapï¿½ï¿½Tencent map
  * BD-09:  Baidu coordinate offset standard, Baidu Map
 */
 

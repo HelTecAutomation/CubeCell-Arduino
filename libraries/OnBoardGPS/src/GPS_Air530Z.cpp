@@ -31,13 +31,13 @@ void Air530ZClass::begin(uint32_t baud)
 	Serial.println("GPS Current baudrate detecting...");
 	while(getNMEA() == "0" )
 	{
+		//Serial.println(bauds[i]);
+		GPSSerial.updateBaudRate(bauds[i]);
 		i++;
 		if( i== bauds_array )
 		{
 			i=0;
 		}
-		//Serial.println(bauds[i]);
-		GPSSerial.updateBaudRate(bauds[i]);
 		delay(50);
 		GPSSerial.flush();
 		temp = getNMEA();
