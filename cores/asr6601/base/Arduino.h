@@ -75,6 +75,7 @@
 uint16_t makeWord(uint16_t w);
 uint16_t makeWord(byte h, byte l);
 
+#define nullptr NULL
 #define word(...) makeWord(__VA_ARGS__)
 
 uint32_t pulseIn(uint8_t pin_name,uint8_t mode,uint32_t timeout = 1000000);

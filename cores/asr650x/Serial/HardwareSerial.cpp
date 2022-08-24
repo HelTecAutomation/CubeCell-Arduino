@@ -26,7 +26,7 @@ void writeRxToBuff0()
 	{
 		if( ((_rxbuff[uart_num].rx_w + 1) % UART_RX_SIZE) != _rxbuff[uart_num].rx_r )
 		{
-			_rxbuff[uart_num].rx_buf[_rxbuff[uart_num].rx_w ++] = UART_1_UartGetByte();;
+			_rxbuff[uart_num].rx_buf[_rxbuff[uart_num].rx_w ++] = UART_1_UartGetByte();
 			_rxbuff[uart_num].rx_w = _rxbuff[uart_num].rx_w % UART_RX_SIZE;
 		}
 		else
@@ -44,7 +44,7 @@ void writeRxToBuff1()
 	{
 		if( ((_rxbuff[uart_num].rx_w + 1) % UART_RX_SIZE) != _rxbuff[uart_num].rx_r )
 		{
-			_rxbuff[uart_num].rx_buf[_rxbuff[uart_num].rx_w ++] = UART_2_UartGetByte();;
+			_rxbuff[uart_num].rx_buf[_rxbuff[uart_num].rx_w ++] = UART_2_UartGetByte();
 			_rxbuff[uart_num].rx_w = _rxbuff[uart_num].rx_w % UART_RX_SIZE;
 		}
 		else
@@ -142,7 +142,8 @@ bool HardwareSerial::begin(uint32_t baud, uint32_t config, int rxPin, int txPin,
 	if( _uart_num == UART_NUM_0) 
 	{
 		UART_1_SCB_IRQ_StartEx(writeRxToBuff0);
-	}
+	
+}
 	else
 	{
 		UART_2_SCB_IRQ_StartEx(writeRxToBuff1);
@@ -175,6 +176,7 @@ void HardwareSerial::updateBaudRate(unsigned long baud)
 
 void HardwareSerial::end()
 {
+  free(_rxbuff[_uart_num].rx_buf);
 	if( _uart_num == UART_NUM_0)
 	{
 		UART_1_Stop();

@@ -3157,7 +3157,7 @@ LoRaMacStatus_t LoRaMacInitialization( LoRaMacPrimitives_t *primitives, LoRaMacC
     // Init parameters which are not set in function ResetMacParameters
     LoRaMacParams.RepeaterSupport = false;
     LoRaMacParamsDefaults.ChannelsNbRep = 1;
-    LoRaMacParamsDefaults.SystemMaxRxError = 10;
+    LoRaMacParamsDefaults.SystemMaxRxError = 20;
     LoRaMacParamsDefaults.MinRxSymbols = 6;
 
     LoRaMacParams.SystemMaxRxError = LoRaMacParamsDefaults.SystemMaxRxError;
