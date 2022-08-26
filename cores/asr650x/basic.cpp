@@ -14,7 +14,11 @@ uint16_t getBatteryVoltage(void)
 	uint8_t pin;
 	pin = ADC;
 
-#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
+#if defined(CubeCell_Board_V2)
+	pin = ADC_VBAT;
+#endif
+
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)||defined(CubeCell_Board_V2)
 	/*
 	* have external 10K VDD pullup resistor
 	* connected to VBAT_ADC_CTL pin
@@ -27,7 +31,7 @@ uint16_t getBatteryVoltage(void)
 		temp+=analogReadmV(pin);
 	volt = temp / 50;
 	
-#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)
+#if defined(CubeCell_Board)||defined(CubeCell_Capsule)||defined(CubeCell_BoardPlus)||defined(CubeCell_BoardPRO)||defined(CubeCell_GPS)||defined(CubeCell_HalfAA)||defined(CubeCell_Board_V2)
 	pinMode(VBAT_ADC_CTL, INPUT);
 #endif
 
