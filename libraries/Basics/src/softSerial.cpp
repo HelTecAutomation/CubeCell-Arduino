@@ -79,7 +79,7 @@ pbuffer(0)
 
 }
 
-//IO模拟串口初始�?
+
 void softSerial::begin(uint16_t Baudrate)
 {
 	timedelay = 1000000/Baudrate;
@@ -126,7 +126,7 @@ void softSerial::receiverBegin(void)
 	delayTiker((uint32_t)(timedelay * tikerInUs)-tcnt);
 
 	uint8_t data = 0;
-	auto start = millis();
+	uint32_t start = millis();
     do {
 		for( uint8_t count = 0; count < 8; count++){
 			data |= DIRECT_READ(_rxbaseReg, _rxbitmask)<<count;
