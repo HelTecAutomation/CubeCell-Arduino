@@ -47,56 +47,52 @@ char rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 
-double txNumber;
-
-int16_t rssi,rxSize;
-void  DoubleToString( char *str, double double_num,unsigned int len);
+float txNumber;
+bool lora_idle=true;
 
 void setup() {
     Serial.begin(115200);
 
     txNumber=0;
-    rssi=0;
 
+    RadioEvents.TxDone = OnTxDone;
+    RadioEvents.TxTimeout = OnTxTimeout;
     Radio.Init( &RadioEvents );
     Radio.SetChannel( RF_FREQUENCY );
     Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
                                    LORA_SPREADING_FACTOR, LORA_CODINGRATE,
                                    LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
                                    true, 0, 0, LORA_IQ_INVERSION_ON, 3000 ); 
-   }
+}
 
 
 
 void loop()
 {
-	delay(1000);
-	txNumber += 0.01;
-	sprintf(txpacket,"%s","Hello world number");  //start a package
-//	sprintf(txpacket+strlen(txpacket),"%d",txNumber); //add to the end of package
-	
-	DoubleToString(txpacket,txNumber,3);	   //add to the end of package
-	
-	turnOnRGB(COLOR_SEND,0); //change rgb color
-
-	Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
-
-	Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out	
-}
-
-/**
-  * @brief  Double To String
-  * @param  str: Array or pointer for storing strings
-  * @param  double_num: Number to be converted
-  * @param  len: Fractional length to keep
-  * @retval None
-  */
-void  DoubleToString( char *str, double double_num,unsigned int len) { 
-  double fractpart, intpart;
-  fractpart = modf(double_num, &intpart);
-  fractpart = fractpart * (pow(10,len));
-  sprintf(str + strlen(str),"%d", (int)(intpart)); //Integer part
-  sprintf(str + strlen(str), ".%d", (int)(fractpart)); //Decimal part
+  if(lora_idle == true)
+  {
+    delay(1000);
+    txNumber += 0.01;
+    sprintf(txpacket,"Hello world number %0.2f",txNumber);  //start a package
+    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
+    turnOnRGB(COLOR_SEND,0); //change rgb color
+    Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out 
+    lora_idle = false;
+  }
 }
 
 
+void OnTxDone( void )
+{
+  turnOffRGB();
+  Serial.println("TX done......");
+  lora_idle = true;
+}
+
+void OnTxTimeout( void )
+{
+  turnOffRGB();
+  Radio.Sleep( );
+  Serial.println("TX Timeout......");
+  lora_idle = true;
+}

@@ -321,6 +321,17 @@ void turnOffRGB(void)
     //Leave overall management of Vext to the user
 	//digitalWrite(Vext,HIGH);
 }
+#else
+void turnOnRGB(uint32_t color,uint32_t time)
+{
+	return;
+}
+
+void turnOffRGB(void)
+{
+	return;
+}
+
 #endif
 
 

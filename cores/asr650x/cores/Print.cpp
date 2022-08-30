@@ -44,6 +44,17 @@ size_t Print::write(const uint8_t *buffer, size_t size)
     return n;
 }
 
+typedef void (*out_fct_type)(char character, void* buffer, size_t idx, size_t maxlen);
+
+// internal buffer output
+static inline void _out_buffer(char character, void* buffer, size_t idx, size_t maxlen)
+{
+  if (idx < maxlen) {
+    ((char*)buffer)[idx] = character;
+  }
+}
+
+extern "C" int _vsnprintf(out_fct_type out,char* buffer, const size_t maxlen, const char* format, va_list va);
 size_t Print::printf(const char *format, ...)
 {
     char loc_buf[64];
@@ -52,7 +63,7 @@ size_t Print::printf(const char *format, ...)
     va_list copy;
     va_start(arg, format);
     va_copy(copy, arg);
-    size_t len = vsnprintf(NULL, 0, format, arg);
+    size_t len = _vsnprintf(_out_buffer,NULL, 0, format, arg);
     va_end(copy);
     if(len >= sizeof(loc_buf)){
         temp = new char[len+1];
@@ -60,7 +71,7 @@ size_t Print::printf(const char *format, ...)
             return 0;
         }
     }
-    len = vsnprintf(temp, len+1, format, arg);
+    len = _vsnprintf(_out_buffer,temp, len+1, format, arg);
     write((uint8_t*)temp, len);
     va_end(arg);
     if(len >= sizeof(loc_buf)){

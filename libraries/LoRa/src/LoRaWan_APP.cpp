@@ -255,6 +255,17 @@ void turnOffRGB(void)
 	digitalWrite(Vext,HIGH);
 #endif
 }
+#else
+void turnOnRGB(uint32_t color,uint32_t time)
+{
+	return;
+}
+
+void turnOffRGB(void)
+{
+	return;
+}
+
 #endif
 
 
