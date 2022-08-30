@@ -13,7 +13,7 @@ License: Revised BSD License, see LICENSE.TXT file include in the project
 Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
 */
 /******************************************************************************
-  * @file    timer.c
+  * @file    timeserver.c
   * @author  MCD Application Team
   * @version V1.1.1
   * @date    01-June-2017
@@ -60,10 +60,9 @@ Maintainer: Miguel Luis, Gregory Cristian and Wael Guibene
 
 /* Includes ------------------------------------------------------------------*/
 #include <time.h>
-#include "sx126x-board.h"
-#include "timer.h"
-#include "rtc-board.h"
-#include "ASR_Arduino.h"
+#include "hw.h"
+#include "timeServer.h"
+#include "port.h"
 
 /*!
  * safely execute call back
@@ -81,9 +80,20 @@ do                              \
     }                           \
 } while(0);                   
 
+#define ROUND_TO_IDLE_AFTER_RTC   5000
+#define ROUND_TO_IDLE_AFTER_UART  50000
+/* MCU Wake Up Time */
+#define MIN_ALARM_DELAY               3 /* in ticks */
+#define MIN_ALARM_DELAY_TIME			(MIN_ALARM_DELAY)  /* in ms*/
 
-uint8_t HasLoopedThroughMain = 0;
+#define RTC_MS_PER_SEC 1000/32768
+#define RTC_COUNTS_OVERFLOW_VAL 4294967296
+
+static uint32 RTC_last_count = 0;
+static uint64_t RTC_counts = 0;
 static TimerTime_t g_systime_ref = 0;
+static TimerTime_t RtcTimerContext;
+static TimerTime_t timerContext;
 
 /*!
  * Timers list head pointer
@@ -128,52 +138,13 @@ static void TimerSetTimeout( TimerEvent_t *obj );
 static bool TimerExists( TimerEvent_t *obj );
 
 
-void TimerSetSysTime( TimerSysTime_t sysTime )
-{
-    TimerTime_t cur_time = RtcGetTimerValue( );
-    TimerTime_t set_time = (TimerTime_t)sysTime.Seconds*1000 + sysTime.SubSeconds;
-    
-    g_systime_ref = set_time - cur_time;
-}
-
-TimerSysTime_t TimerGetSysTime( void )
-{
-    TimerSysTime_t sysTime = { 0 };
-    TimerTime_t curTime = TimerGetCurrentTime();
-
-    sysTime.Seconds = (uint32_t)(curTime/1000);
-    sysTime.SubSeconds = (uint16_t)(curTime%1000);
-
-    return sysTime;
-}
-
-
-TimerSysTime_t SysTimeGetMcuTime( void )
-{
-    TimerTime_t curTime = RtcGetTimerValue( );
-    TimerSysTime_t mcuTime = { 0 };
-    mcuTime.Seconds = (uint32_t)(curTime/1000);
-    mcuTime.SubSeconds = (uint16_t)(curTime%1000);
-    return mcuTime;
-}
-
-uint32_t SysTimeToMs( TimerSysTime_t sysTime )
-{
-    TimerTime_t sysTimer = (TimerTime_t)sysTime.Seconds*1000 + sysTime.SubSeconds;
-    return sysTimer - g_systime_ref;
-}
-
-TimerSysTime_t SysTimeFromMs( uint32_t timeMs )
-{
-    TimerSysTime_t sysTime = { 0 };
-    TimerTime_t curTime = (TimerTime_t)timeMs - g_systime_ref;
-
-    sysTime.Seconds = (uint32_t)(curTime/1000);
-    sysTime.SubSeconds = (uint16_t)(curTime%1000);
-
-    return sysTime;
-}
-
+static void RtcSetTimeout(TimerEvent_t *obj);
+static void TimerSetTimeout( TimerEvent_t *obj );
+static void RtcStartWakeUpAlarm(uint32_t timeout);
+static void RtcStopTimeout();
+static TimerTime_t RtcGetTimerContext( void );
+static TimerTime_t RtcSetTimerContext( void );
+static TimerTime_t RtcGetElapsedTime( void );
 
 
 static void TimeStampsUpdate()
@@ -204,14 +175,14 @@ void TimerInit( TimerEvent_t *obj, void ( *callback )( void ) )
 void TimerStart( TimerEvent_t *obj )
 {
     uint32_t elapsedTime = 0;
-    bool tempIrq = BoardDisableIrq();
+    CPSR_ALLOC();
+    RHINO_CPU_INTRPT_DISABLE();
 
     if( ( obj == NULL ) || ( TimerExists( obj ) == true ) )
     {
-        BoardEnableIrq(tempIrq);
+        RHINO_CPU_INTRPT_ENABLE();;
         return;
     }
-
     obj->Timestamp = obj->ReloadValue;
     obj->IsRunning = false;
 
@@ -235,7 +206,7 @@ void TimerStart( TimerEvent_t *obj )
             TimerInsertTimer( obj);
         }
     }
-    BoardEnableIrq(tempIrq);
+    RHINO_CPU_INTRPT_ENABLE();
 }
 
 static void TimerInsertTimer( TimerEvent_t *obj)
@@ -279,8 +250,8 @@ static void TimerInsertNewHeadTimer( TimerEvent_t *obj )
 void TimerIrqHandler( void )
 {
     TimerEvent_t* cur;
-
     //update timer context for callbacks
+
     TimeStampsUpdate();
 
     int n=0;
@@ -290,7 +261,6 @@ void TimerIrqHandler( void )
         n++;
         cur = TimerListHead;
         TimerListHead = TimerListHead->Next;
-        cur->IsRunning = false;
         exec_cb( cur->Callback );
         //update timestamps after callbacks
         TimeStampsUpdate();
@@ -307,7 +277,8 @@ void TimerIrqHandler( void )
 
 void TimerStop( TimerEvent_t *obj ) 
 {
-    bool tempIrq = BoardDisableIrq();
+    CPSR_ALLOC();
+    RHINO_CPU_INTRPT_DISABLE();
 
     TimerEvent_t* prev = TimerListHead;
     TimerEvent_t* cur = TimerListHead;
@@ -315,7 +286,7 @@ void TimerStop( TimerEvent_t *obj )
     // List is empty or the Obj to stop does not exist 
     if( ( TimerListHead == NULL ) || ( obj == NULL ) )
     {
-        BoardEnableIrq(tempIrq);
+        RHINO_CPU_INTRPT_ENABLE();
         return;
     }
 
@@ -377,7 +348,7 @@ void TimerStop( TimerEvent_t *obj )
     }
 
     obj->IsRunning = false;
-    BoardEnableIrq(tempIrq);
+    RHINO_CPU_INTRPT_ENABLE();
 }  
   
 static bool TimerExists( TimerEvent_t *obj )
@@ -404,11 +375,22 @@ void TimerReset( TimerEvent_t *obj )
 void TimerSetValue( TimerEvent_t *obj, uint32_t value )
 {
     TimerStop( obj );
-    
+    if(value<MIN_ALARM_DELAY_TIME)
+        value=MIN_ALARM_DELAY_TIME;
     obj->Timestamp = value;
     obj->ReloadValue = value;
 }
 
+TimerTime_t RtcGetTimerValue( void )
+{
+    uint8_t state = CyEnterCriticalSection();
+    uint32 current_count = CySysTimerGetCount(2);
+    RTC_counts += (((RTC_COUNTS_OVERFLOW_VAL + current_count - RTC_last_count) % RTC_COUNTS_OVERFLOW_VAL));
+    RTC_last_count = current_count; 
+    CyExitCriticalSection(state);
+    timerContext =  RTC_counts*RTC_MS_PER_SEC;
+    return timerContext;
+}
 TimerTime_t TimerGetCurrentTime( void )
 {
     return RtcGetTimerValue( ) + g_systime_ref;
@@ -420,12 +402,6 @@ TimerTime_t TimerGetElapsedTime( TimerTime_t savedTime )
 }
 
 
-static void TimerSetTimeout( TimerEvent_t *obj )
-{
-    obj->IsRunning = true;
-    RtcSetTimeout(obj->Timestamp);
-}
-
 TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
 {
     (void)temperature;
@@ -433,17 +409,125 @@ TimerTime_t TimerTempCompensation( TimerTime_t period, float temperature )
     return period;
 }
 
-void TimerLowPowerHandler( void )
+
+
+void TimerSetSysTime( TimerSysTime_t sysTime )
 {
-	if( HasLoopedThroughMain < 5 )
-	{
-	    HasLoopedThroughMain++;
-	}
-	else
-	{
-	    HasLoopedThroughMain = 0;
-	    lowPowerHandler( );
-	}
+    TimerTime_t cur_time = RtcGetTimerValue( );
+    TimerTime_t set_time = (TimerTime_t)sysTime.Seconds*1000 + sysTime.SubSeconds;
+    
+    g_systime_ref = set_time - cur_time;
+}
+
+TimerSysTime_t TimerGetSysTime( void )
+{
+    TimerSysTime_t sysTime = { 0 };
+    TimerTime_t curTime = TimerGetCurrentTime();
+
+    sysTime.Seconds = (uint32_t)(curTime/1000);
+    sysTime.SubSeconds = (uint16_t)(curTime%1000);
+
+    return sysTime;
+}
+
+TimerSysTime_t SysTimeGetMcuTime( void )
+{
+    TimerTime_t curTime = RtcGetTimerValue( );
+    TimerSysTime_t mcuTime = { 0 };
+    mcuTime.Seconds = (uint32_t)(curTime/1000);
+    mcuTime.SubSeconds = (uint16_t)(curTime%1000);
+    return mcuTime;
+}
+
+uint32_t SysTimeToMs( TimerSysTime_t sysTime )
+{
+    TimerTime_t sysTimer = (TimerTime_t)sysTime.Seconds*1000 + sysTime.SubSeconds;
+    return sysTimer - g_systime_ref;
+}
+
+TimerSysTime_t SysTimeFromMs( uint32_t timeMs )
+{
+    TimerSysTime_t sysTime = { 0 };
+    TimerTime_t curTime = (TimerTime_t)timeMs - g_systime_ref;
+
+    sysTime.Seconds = (uint32_t)(curTime/1000);
+    sysTime.SubSeconds = (uint16_t)(curTime%1000);
+
+    return sysTime;
+}
+
+
+
+
+//RTC functions
+static void RtcSetTimeout(TimerEvent_t *obj)
+{
+    obj->IsRunning = true;
+    if ( obj->Timestamp < (RtcGetElapsedTime()+MIN_ALARM_DELAY) )
+    {
+        obj->Timestamp = RtcGetElapsedTime()+MIN_ALARM_DELAY;
+    };
+    RtcStartWakeUpAlarm(obj->Timestamp);
+}
+
+static void TimerSetTimeout( TimerEvent_t *obj )
+{
+    obj->IsRunning = true;
+    obj->IsRunning = true;
+    if ( obj->Timestamp < (RtcGetElapsedTime()+MIN_ALARM_DELAY) )
+    {
+        obj->Timestamp = RtcGetElapsedTime()+MIN_ALARM_DELAY;
+    }
+    RtcStartWakeUpAlarm(obj->Timestamp);
+}
+
+static void RtcStartWakeUpAlarm(uint32_t timeout)
+{
+    Asr_Timer_RegisterAlarmCallback(TimerIrqHandler);
+    if (timeout <= MIN_ALARM_DELAY_TIME)
+        timeout = MIN_ALARM_DELAY_TIME;
+    Asr_SetTimeout(timeout);
+}
+
+static void RtcStopTimeout()
+{
+    Asr_Timer_Disable();
+}
+
+static TimerTime_t RtcGetTimerContext( void )
+{
+    return RtcTimerContext;
+}
+
+static TimerTime_t RtcSetTimerContext( void )
+{
+    RtcTimerContext = RtcGetTimerValue();
+    
+    return RtcTimerContext;
+}
+
+static TimerTime_t RtcGetElapsedTime( void )
+{
+    return (RtcGetTimerValue() - RtcTimerContext); 
+}
+
+
+static void RTC_Update_ASR(void)
+{
+    uint32 current_count = CySysTimerGetCount(2);
+    RTC_counts += (RTC_COUNTS_OVERFLOW_VAL + current_count - RTC_last_count) % RTC_COUNTS_OVERFLOW_VAL;
+    RTC_last_count = current_count;  
+}
+
+void RtcInit( void )
+{
+    CySysTimerDisable(CY_SYS_TIMER2_MASK);
+    CySysTimerResetCounters(CY_SYS_TIMER2_RESET);
+    CySysTimerSetToggleBit(31);//0~31
+    CySysTimerSetInterruptCallback(2, RTC_Update_ASR);
+    CySysTimerEnableIsr(2);
+    CySysTimerSetMode(2, CY_SYS_TIMER_MODE_INT);
+    CySysTimerEnable(CY_SYS_TIMER2_MASK);
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
