@@ -24,7 +24,7 @@ void Air530Class::begin(uint32_t baud)
 	pinMode(_powerCtl,OUTPUT);
 	digitalWrite(_powerCtl, LOW);
 
-	int i = 0;
+	int i = bauds_array - 1;
 	//String cmd="$PGKC147,"+(String)baud;
 	
 	String cmd="$PGKC149,0,"+(String)baud;
@@ -404,8 +404,8 @@ String Air530Class::getGLL()
 
 
 /*    
- * WGS-84: international standard GPS coordinate£¨Google Earth¡¢ GPS module¡¢Tian Map£©
- * GCJ-02: China coordinate migration standard, Google Map¡¢Gaode Map¡¢Tencent map
+ * WGS-84: international standard GPS coordinateï¿½ï¿½Google Earthï¿½ï¿½ GPS moduleï¿½ï¿½Tian Mapï¿½ï¿½
+ * GCJ-02: China coordinate migration standard, Google Mapï¿½ï¿½Gaode Mapï¿½ï¿½Tencent map
  * BD-09:  Baidu coordinate offset standard, Baidu Map
 */
 

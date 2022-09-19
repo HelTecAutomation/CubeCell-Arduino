@@ -24,7 +24,7 @@ void Air530ZClass::begin(uint32_t baud)
 	pinMode(_powerCtl,OUTPUT);
 	digitalWrite(_powerCtl, LOW);
 
-	int i = 0;
+	int i = bauds_array - 1;
 	GPSSerial.begin(bauds[i]);
 	String temp = "";
 
