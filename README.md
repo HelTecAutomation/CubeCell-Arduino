@@ -14,7 +14,7 @@ CubeCell series LoRaWAN-Node stack is migration form [LoRaMac-node](https://gith
 
 &nbsp;
 
-For more details, please refer to **[CubeCell Documents Page](https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/index.html).**
+For more details, please refer to **[CubeCell Documents Page](https://docs.heltec.org/en/node/cubecell/index.html).**
 
 &nbsp;
 
