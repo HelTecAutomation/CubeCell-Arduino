@@ -290,7 +290,6 @@ void TimerIrqHandler( void )
         n++;
         cur = TimerListHead;
         TimerListHead = TimerListHead->Next;
-        cur->IsRunning = false;
         exec_cb( cur->Callback );
         //update timestamps after callbacks
         TimeStampsUpdate();

@@ -21,6 +21,7 @@ public:
     int read(uint8_t* buff, uint32_t timeout);
     void flush(void);
     void flush( bool txOnly);
+    void delayByte();
     size_t write(uint8_t c);
     size_t write(const uint8_t *buffer, size_t size);
     bool busy(void);
@@ -55,6 +56,7 @@ protected:
     int _rxPin=-1;
     int _txPin=-1;
     uint32_t _config;
+    uint32_t _uartSymbolTime;
 };
 
 extern HardwareSerial Serial;

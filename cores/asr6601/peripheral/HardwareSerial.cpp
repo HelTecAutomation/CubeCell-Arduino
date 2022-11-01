@@ -40,6 +40,8 @@ bool HardwareSerial::begin(uint32_t baud, uint32_t config, int rxPin, int txPin,
 	_txPin = txPin;
 	
 	_uart = uartStart(baud,config,_rxPin,_txPin);
+	_uartSymbolTime=1000000/_baud*11;
+	
 	if(_uart<0)
 		return false;
 	else
@@ -50,6 +52,7 @@ void HardwareSerial::updateBaudRate(unsigned long baud)
 {
 	_baud = baud;
 	uartStart(baud,_config,_rxPin,_txPin);
+	_uartSymbolTime=1000000/_baud*11;
 }
 
 void HardwareSerial::end()
@@ -119,6 +122,11 @@ size_t HardwareSerial::write(const uint8_t *buffer, size_t size)
 #endif
 }
 
+void HardwareSerial::delayByte(void)
+{
+	delayMicroseconds(11000000/_baud);
+}
+
 uint32_t  HardwareSerial::baudRate()
 {
 	return _baud;
@@ -140,18 +148,12 @@ int HardwareSerial::read(uint8_t* buff, uint32_t timeout)
       }
     }
     int serialBuffer_index=0;
+    int i=0;
     while(available())
     {
       buff[serialBuffer_index++]=read();
-
-      int i = 0;
-      while(i<1000)
-      {
-          if(available())
-              break;
-          delayMicroseconds(1);
-          i++;
-      }
+      if(available() == 0)
+        delayByte();//wait for a byte
     }
     return serialBuffer_index;
       //Serial.write(serialBuffer,serialBuffer_index);
