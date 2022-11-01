@@ -42,7 +42,6 @@ void ASR_NeoPixelShow(
   saveLoad = CY_SYS_SYST_RVR_REG;
   CY_SYS_SYST_RVR_REG = period;
   CY_SYS_SYST_CVR_REG = 0u;
-  //pinMode(pin,OUTPUT);
 
 	for(t=time0;;t=time0) {
 		while(CY_SYS_SYST_CVR_REG < period);//wait for bit start
@@ -59,7 +58,7 @@ void ASR_NeoPixelShow(
 	    }
 	}	
   while(CY_SYS_SYST_CVR_REG < period); //wait for the last bit.
- // (* (reg32 *) REG_DR)=pinLow;
+  (* (reg32 *) REG_DR)=pinLow;
   CY_SYS_SYST_RVR_REG = saveLoad; 
   
 }
