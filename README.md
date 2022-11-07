@@ -14,7 +14,7 @@ CubeCell series LoRaWAN-Node stack is migration form [LoRaMac-node](https://gith
 
 &nbsp;
 
-For more details, please refer to **[CubeCell Documents Page](https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/index.html).**
+For more details, please refer to **[CubeCell Documents Page](https://docs.heltec.org/en/node/cubecell/index.html).**
 
 &nbsp;
 
@@ -48,13 +48,13 @@ The currently supported ASR650x chip product models are:
 
 Make sure you have the latest Arduino IDE installed on your computer. If not installed, please refer to this documents:
 
-- [How to Install Git and Arduino](https://heltec-automation-docs.readthedocs.io/en/latest/general/how_to_install_git_and_arduino.html)
-- [Establish Serial Connection](https://heltec-automation-docs.readthedocs.io/en/latest/general/establish_serial_connection.html)
+- [How to Install Git and Arduino](https://docs.heltec.org/general/how_to_install_git_and_arduino.html)
+- [Establish Serial Connection](https://docs.heltec.org/general/establish_serial_connection.html#establish-serial-connection)
 
 &nbsp;
 
 - **Via Arduino IDE Boards Manager (Recommend)**
-  - [Install ASR650x-Arduino(CubeCell) via Arduino Boards Manager](https://heltec-automation-docs.readthedocs.io/en/latest/cubecell/quick_start.html)
+  - [Install ASR650x-Arduino(CubeCell) via Arduino Boards Manager](https://docs.heltec.org/en/node/cubecell/quick_start.html)
   
 - **Use Git with the development repository**
   + [Instructions for Windows](InstallGuide/windows.md)
