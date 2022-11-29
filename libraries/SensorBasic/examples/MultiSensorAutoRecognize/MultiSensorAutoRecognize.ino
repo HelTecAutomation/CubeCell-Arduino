@@ -99,7 +99,7 @@ void setup()
 
   switch(address)
   {
-    case 0x27:
+    case 0x26:
     {
       da217.da217_init();
       da217.da217_set_odr_rate(DA217_ODR_500HZ);
@@ -170,7 +170,7 @@ void loop()
 {
   switch(address)
   {
-    case 0x27:
+    case 0x26:
     {
       da217.da217_read_xyz_data(&x_data,&y_data,&z_data);
       Serial.printf("x_data=%d  y_data=%d z_data=%d\r\n",x_data,y_data,z_data);

@@ -270,7 +270,7 @@ Macro definitions - Register define for Gsensor asic
 #define DA217_REG_SM_THRESHOLD			0x34
 
 
-#define I2C_ADDRESS 0x27 
+#define I2C_ADDRESS 0x26
 
 typedef enum 
 {
@@ -323,7 +323,7 @@ class DA217
 {
 public:
 	void da217_init( int sda=3,int scl=4 ,uint32_t freq=50000);
-	void da217_start_up_step_detect( bool step_int_en = false,bool sm_int_en = false, uint8_t sm_threshold = 0xFF);
+	void da217_start_up_step_detect(void);
 	void da217_stop_step_detect(void);
 	uint16_t da217_read_steps(void);
 	da217_step_status_t da217_read_step_status(void);

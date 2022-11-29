@@ -20,7 +20,6 @@ void setup()
 	da217.da217_start_xyz_axis(true,true,true);
 }
 
-
 void loop()
 { 
 	da217.da217_read_xyz_data(&x_data,&y_data,&z_data);
