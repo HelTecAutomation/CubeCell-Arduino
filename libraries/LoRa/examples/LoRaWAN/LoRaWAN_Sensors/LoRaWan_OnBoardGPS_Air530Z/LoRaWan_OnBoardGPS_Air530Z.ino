@@ -98,7 +98,7 @@ void VextOFF(void) //Vext default OFF
   pinMode(Vext,OUTPUT);
   digitalWrite(Vext, HIGH);
 }
-void displayGPSInof()
+void displayGPSInfo()
 {
   char str[30];
   display.clear();
@@ -143,7 +143,7 @@ void displayGPSInof()
   display.display();
 }
 
-void printGPSInof()
+void printGPSInfo()
 {
   Serial.print("Date/Time: ");
   if (GPS.date.isValid())
@@ -243,8 +243,8 @@ static void prepareTxFrame( uint8_t port )
       if( (millis()-start) > printinfo )
       {
         printinfo += 1000;
-        printGPSInof();
-        displayGPSInof();
+        printGPSInfo();
+        displayGPSInfo();
       }
     }
   }
