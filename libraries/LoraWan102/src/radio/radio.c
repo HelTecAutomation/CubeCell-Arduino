@@ -1158,6 +1158,7 @@ void RadioIrqProcess( void )
 
         if( ( irqRegs & IRQ_RX_DONE ) == IRQ_RX_DONE )
         {
+            TimerStop( &RxTimeoutTimer );
             if( ( irqRegs & IRQ_CRC_ERROR ) == IRQ_CRC_ERROR )
             {
                 if( ( RadioEvents != NULL ) && ( RadioEvents->RxError ) )
