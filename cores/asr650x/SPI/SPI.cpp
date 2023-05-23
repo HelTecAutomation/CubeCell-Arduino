@@ -223,6 +223,7 @@ uint8_t SPIClass::transfer(uint8_t data)
 
 void SPIClass::transfer(uint8_t * data, uint32_t size) 
 {
+/*
 	for(uint32_t i;i<size;i++)
 	{
 		if(_spi_num == 0)
@@ -235,6 +236,11 @@ void SPIClass::transfer(uint8_t * data, uint32_t size)
 			while(SPI_2_SpiUartGetTxBufferSize() != 0);
 			SPI_2_SpiUartWriteTxData(*data++);
 		}
+	}
+	*/
+	for(int i=0;i<size;i++)
+	{
+		transfer(data[i]);
 	}
 }
 

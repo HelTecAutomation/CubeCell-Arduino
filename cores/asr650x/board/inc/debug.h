@@ -88,6 +88,7 @@ extern "C" {
 #if LoRaWAN_DEBUG_LEVEL >= 2
 	#define FREQ_PRINTF(format, ...)    printf(format, ##__VA_ARGS__)
 	#define DIO_PRINTF(format, ...)     printf(format, ##__VA_ARGS__)
+	#define DBG_PRINTF(format, ...)		printf(format, ##__VA_ARGS__)
 #elif LoRaWAN_DEBUG_LEVEL == 1
 	#define FREQ_PRINTF(format, ...)    printf(format, ##__VA_ARGS__)
 	#define DIO_PRINTF(format, ...)
