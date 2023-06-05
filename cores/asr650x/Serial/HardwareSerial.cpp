@@ -317,13 +317,13 @@ void HardwareSerial::flush()
 	{
 		UART_1_SpiUartClearRxBuffer();
 		while (UART_1_SpiUartGetTxBufferSize());
-		UART_1_SpiUartClearTxBuffer();
+// 		UART_1_SpiUartClearTxBuffer();
 	}
 	else
 	{
 		UART_2_SpiUartClearRxBuffer();
 		while (UART_2_SpiUartGetTxBufferSize());
-		UART_2_SpiUartClearTxBuffer();	
+// 		UART_2_SpiUartClearTxBuffer();	
 	}
 }
 
