@@ -86,7 +86,7 @@ Also you can talk in our forum: [http://community.heltec.cn/](http://community.h
 
 首先，确保你的电脑上已经安装了最新的Arduino IDE。如果没有安装，请参考这篇文档：[https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino](https://docs.heltec.cn/#/zh_CN/user_manual/how_to_install_git_and_arduino)
 - **通过Arduino IDE的开发板理器安装**
-  - [通过开发板管理器安装ASR650x芯片的Arduino开发环境](https://heltec-automation.readthedocs.io/zh_CN/latest/cubecell/quick_start.html#arduino-board-manager)
+  - [通过开发板管理器安装ASR650x芯片的Arduino开发环境](https://docs.heltec.cn/en/node/asr650x/htcc_am02/quick_start.html#use-arduino-board-manager)
 - **通过Git从源码进行安装**
   - [Windows操作系统 -- 安装方法](InstallGuide/windows.md)
   - [MacOS操作系统 -- 安装方法](InstallGuide/mac.md)
