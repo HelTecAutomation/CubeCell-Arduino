@@ -111,7 +111,7 @@ CubeCell-Board-V2.upload.wait_for_upload_port=true
 
 CubeCell-Board-V2.build.board=CubeCell_Board_V2
 CubeCell-Board-V2.build.core=asr650x
-CubeCell-Board-V2.build.mcu=ASR6501
+CubeCell-Board-V2.build.mcu=ASR6502
 CubeCell-Board-V2.build.f_cpu=48000000L
 CubeCell-Board-V2.build.variant=CubeCell-Board-V2
 
@@ -384,7 +384,7 @@ CubeCell-Module-V2.upload.wait_for_upload_port=true
 
 CubeCell-Module-V2.build.board=CubeCell_Module_V2
 CubeCell-Module-V2.build.core=asr650x
-CubeCell-Module-V2.build.mcu=ASR6501
+CubeCell-Module-V2.build.mcu=ASR6502
 CubeCell-Module-V2.build.f_cpu=48000000L
 CubeCell-Module-V2.build.variant=CubeCell-Module-V2
 
