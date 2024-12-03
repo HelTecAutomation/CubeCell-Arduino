@@ -23,7 +23,7 @@
 #include "project.h"
 #include "HardwareSerial.h"
 
-#define spi_TIMEOUT	500
+#define spi_TIMEOUT	4000
 
 
 SPIClass::SPIClass(uint8_t spi_bus)
