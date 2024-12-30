@@ -60,4 +60,8 @@ typedef enum
 #define SCK1   GPIO3
 #define SDA1   GPIO9
 #define SCL1   GPIO8
+
+// Needed for SD library
+#define SDCARD_SPI      SPI1
+
 #endif /* Pins_Arduino_h */
