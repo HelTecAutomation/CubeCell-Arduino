@@ -61,21 +61,6 @@ TimerTime_t mcps_start_time;
  */
 LoRaMacRegion_t LoRaMacRegion;
 
-/*!
- * LoRaMac duty cycle for the back-off procedure during the first hour.
- */
-#define BACKOFF_DC_1_HOUR                           100
-
-/*!
- * LoRaMac duty cycle for the back-off procedure during the next 10 hours.
- */
-#define BACKOFF_DC_10_HOURS                         1000
-
-/*!
- * LoRaMac duty cycle for the back-off procedure during the next 24 hours.
- */
-#define BACKOFF_DC_24_HOURS                         10000
-
 #ifdef CONFIG_LORA_CAD
 #define LORA_CAD_CNT_MAX 8    //send frame after LORA_CAD_CNT_MAX times CAD
 #define LORA_CAD_SYMBOLS 8   //CAD symbols 
