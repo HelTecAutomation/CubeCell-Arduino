@@ -39,9 +39,12 @@ Maintainer: Miguel Luis ( Semtech ), Gregory Cristian ( Semtech ) and Daniel Jae
 
 
 
-#define BACKOFF_DC_1_HOUR       1
-#define BACKOFF_DC_10_HOURS     2
-#define BACKOFF_DC_24_HOURS     3
+#define BACKOFF_DC_1_HOUR       100
+#define BACKOFF_DC_10_HOURS     1000
+#define BACKOFF_DC_24_HOURS     10000
+
+#define BACKOFF_DUTY_CYCLE_1_HOUR_IN_MS     3600000
+#define BACKOFF_DUTY_CYCLE_10_HOURS_IN_MS   ( BACKOFF_DUTY_CYCLE_1_HOUR_IN_MS + (BACKOFF_DUTY_CYCLE_1_HOUR_IN_MS * 10) )
 
 
 
@@ -63,21 +66,21 @@ static uint8_t CountChannels( uint16_t mask, uint8_t nbBits )
 
 uint16_t RegionCommonGetJoinDc( TimerTime_t elapsedTime )
 {
-    uint16_t dutyCycle = 0;
+    uint16_t joinDutyCycle = 0;
 
-    if( elapsedTime < 3600000 )
+    if( elapsedTime < BACKOFF_DUTY_CYCLE_1_HOUR_IN_MS )
     {
-        dutyCycle = BACKOFF_DC_1_HOUR;
+        joinDutyCycle = BACKOFF_DC_1_HOUR;
     }
-    else if( elapsedTime < ( 3600000 + 36000000 ) )
+    else if( elapsedTime < BACKOFF_DUTY_CYCLE_10_HOURS_IN_MS )
     {
-        dutyCycle = BACKOFF_DC_10_HOURS;
+        joinDutyCycle = BACKOFF_DC_10_HOURS;
     }
     else
     {
-        dutyCycle = BACKOFF_DC_24_HOURS;
+        joinDutyCycle = BACKOFF_DC_24_HOURS;
     }
-    return dutyCycle;
+    return joinDutyCycle;
 }
 
 bool RegionCommonChanVerifyDr( uint8_t nbChannels, uint16_t* channelsMask, int8_t dr, int8_t minDr, int8_t maxDr, ChannelParams_t* channels )
