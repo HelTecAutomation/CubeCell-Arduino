@@ -23,7 +23,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   SH1107Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
 
   uint8_t ifDisplayAck=0;
-  uint8_t isDispayOn=0;
+  uint8_t isDisplayOn=0;
 #endif
 
 #ifdef CubeCell_GPS
@@ -33,7 +33,7 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
   SSD1306Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10);; // addr , freq , i2c group , resolution , rst
 
   uint8_t ifDisplayAck=0;
-  uint8_t isDispayOn=0;
+  uint8_t isDisplayOn=0;
 #endif
 
 /*loraWan default Dr when adr disabled*/
@@ -247,7 +247,7 @@ void turnOffRGB(void)
 {
 	turnOnRGB(0,0);
 #if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
-	if(isDispayOn == 0)
+	if(isDisplayOn == 0)
 	{
 		digitalWrite(Vext,HIGH);
 	}
@@ -393,7 +393,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 				turnOffRGB();
 #endif
 #if defined(CubeCell_BoardPlus)||defined(CubeCell_GPS)
-				if(isDispayOn)
+				if(isDisplayOn)
 				{
 					LoRaWAN.displayJoined();
 				}
@@ -754,7 +754,7 @@ void LoRaWanClass::displayJoined()
 }
 void LoRaWanClass::displaySending()
 {
-    isDispayOn = 1;
+    isDisplayOn = 1;
 	digitalWrite(Vext,LOW);
 	display.init();
 	display.setFont(ArialMT_Plain_16);
@@ -788,14 +788,14 @@ void LoRaWanClass::displayAck()
 	if(loraWanClass==CLASS_A)
 	{
 		delay(2000);
-		isDispayOn = 0;
+		isDisplayOn = 0;
 		digitalWrite(Vext,HIGH);
 		display.stop();
 	}
 }
 void LoRaWanClass::displayMcuInit()
 {
-	isDispayOn = 1;
+	isDisplayOn = 1;
 	digitalWrite(Vext,LOW);
 	display.init();
 	display.setFont(ArialMT_Plain_16);

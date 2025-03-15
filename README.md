@@ -34,7 +34,7 @@ The currently supported ASR650x chip product models are:
 - Convert ASR650x series to a new branch;
 - Add ASR6601 series support and makes it as master branch;
 - Added and fixed some function to Arduino format, such as:
-  - `int analogRead(pin)` -- return adc level 0 ~ 4096;
+  - `int analogRead(pin)` -- return adc level 0 ~ 4095;
   - `float analogReadmV(pin)` -- return adc voltage in mV;
     - *The ASR650x series ADC input pin range is 0 ~ 2400 mV*;
     - *The ASR6601 series ADC input pin range is 100 ~ 1100 mV.*
