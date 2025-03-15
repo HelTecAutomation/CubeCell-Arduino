@@ -5,7 +5,7 @@
 #include <Wire.h>  
 #include "HT_SSD1306Wire.h"
 
-SSD1306Wire  display(0x3c, 500000, I2C_NUM_0, GEOMETRY_128_64, GPIO10 ); // addr , freq , i2c group , resolution , rst
+SSD1306Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10 ); // addr , freq , sda, scl, resolution , rst
 
 //if GPS module is Air530, use this
 //Air530Class GPS;
