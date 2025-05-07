@@ -68,7 +68,7 @@ int16_t txNumber;
 States_t state;
 bool sleepMode = false;
 int16_t Rssi,rxSize;
-
+bool gps_started=false;
 void setup() {
     Serial.begin(115200);
     pinMode(Vext, OUTPUT);
@@ -141,6 +141,11 @@ void loop()
 			lowPowerHandler();
 		  break;
     case GPSTEST:
+      if(!gps_started)
+      {
+        gps_started=true;
+        GPS.begin();        
+      }
       showGpsInfo();
       break;
     default:
@@ -215,7 +220,6 @@ void userKey(void)
       detachInterrupt(RADIO_DIO_1);
       Radio.Sleep( );
       turnOnRGB(0,0);
-      GPS.begin();
     }
 	}
 }
