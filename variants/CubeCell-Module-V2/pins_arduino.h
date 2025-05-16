@@ -21,11 +21,16 @@ typedef enum
 
 #define SS P4_3
 #define MOSI P4_0
+#define MOSI1 P4_0
 #define MISO P4_1
+#define MISO1 P4_1
 #define SCK P4_2
+#define SCK1 P4_2
 #define UART_RX P3_0
+#define UART_RX2 P3_0
 #define UART_TX P3_1
-#define USER_KEY P3_3
+#define UART_TX2 P3_1
+#define USER_KEY P3_3 //gpio7
 #define GPIO0 P0_2
 #define GPIO1 P6_1
 #define GPIO2 P6_2 //can be used in PWM mode
@@ -35,7 +40,9 @@ typedef enum
 #define GPIO6 P3_2 
 #define GPIO7 P3_3 
 #define SDA P0_1
+#define SDA1 P0_1
 #define SCL P0_0
+#define SCL1 P0_0
 #define ADC P2_1
 #define PWM1 P6_2 //gpio2
 #define PWM2 P6_4 //gpio3
