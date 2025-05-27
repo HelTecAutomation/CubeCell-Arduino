@@ -6,6 +6,7 @@ menu.LORAWAN_ADR=LORAWAN_ADR
 menu.LORAWAN_UPLINKMODE=LORAWAN_UPLINKMODE
 menu.LORAWAN_Net_Reserve=LORAWAN_Net_Reservation
 menu.LORAWAN_AT_SUPPORT=LORAWAN_AT_SUPPORT
+menu.SCREEN_SELECTION=SCREEN_SELECTION
 menu.LORAWAN_RGB=LORAWAN_RGB
 menu.LORAWAN_PREAMBLE_LENGTH=LORAWAN_PREAMBLE_LENGTH
 menu.LORAWAN_DebugLevel=LoRaWan Debug Level
@@ -552,6 +553,11 @@ CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.1=Freq
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
+
+CubeCell-BoardPlus.menu.SCREEN_SELECTION.1=SSD1312
+CubeCell-BoardPlus.menu.SCREEN_SELECTION.1.build.SCREEN_SELECTION=1
+CubeCell-BoardPlus.menu.SCREEN_SELECTION.0=SSD1107
+CubeCell-BoardPlus.menu.SCREEN_SELECTION.0.build.SCREEN_SELECTION=0
 ##############################################################
 
 CubeCell-GPS.name=CubeCell-GPS（HTCC-AB02S）

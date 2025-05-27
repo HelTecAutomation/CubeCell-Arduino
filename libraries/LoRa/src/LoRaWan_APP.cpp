@@ -17,13 +17,18 @@ CubeCell_NeoPixel pixels(1, RGB, NEO_GRB + NEO_KHZ800);
 #endif
 
 #ifdef CubeCell_BoardPlus
-#include <Wire.h>  
+
+#include <Wire.h>
 #include "HT_SH1107Wire.h"
+#include "HT_SSD1312Wire.h"
 
-  SH1107Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
-
-  uint8_t ifDisplayAck=0;
-  uint8_t isDisplayOn=0;
+#if(SCREEN_SELECTION==0)
+	SH1107Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
+#else
+	SSD1312Wire  display(0x3c, 500000, SDA, SCL, GEOMETRY_128_64, GPIO10); // addr , freq , i2c group , resolution , rst
+#endif
+	uint8_t ifDisplayAck=0;
+	uint8_t isDisplayOn=0;
 #endif
 
 #ifdef CubeCell_GPS
