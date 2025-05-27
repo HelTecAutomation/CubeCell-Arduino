@@ -1,6 +1,7 @@
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
 #include "HT_SH1107Wire.h"
+#include "HT_SSD1312Wire.h"
 
 /*
  * set LoraWan_RGB to 1,the RGB active
@@ -11,7 +12,11 @@
 #define LoraWan_RGB 0
 #endif
 
-extern SH1107Wire  display; 
+#if(SCREEN_SELECTION==0)
+    extern SH1107Wire  display; 
+#else
+    extern SSD1312Wire  display; 
+#endif
 
 #define RF_FREQUENCY                                868000000 // Hz
 
