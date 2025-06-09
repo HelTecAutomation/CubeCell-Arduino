@@ -1,5 +1,5 @@
 name=CubeCell
-version=1.0.0
+version=1.7.0
 
 tools.CubeCellflash.cmd.windows={runtime.platform.path}/tools/CubeCellflash/CubeCellflash.exe
 tools.CubeCellflash.cmd.linux={runtime.platform.path}/tools/CubeCellflash/CubeCellflash
