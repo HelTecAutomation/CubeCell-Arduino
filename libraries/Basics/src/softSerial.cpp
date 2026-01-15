@@ -123,7 +123,10 @@ void softSerial::receiverBegin(void)
 	else
 		tcnt += GET_MCU_RELOAD - timetemp + intTime;
 
-	delayTiker((uint32_t)(timedelay * tikerInUs)-tcnt);
+	//delayTiker((uint32_t)(timedelay * tikerInUs)-tcnt);
+	delayTiker((uint32_t)((timedelay/3) * tikerInUs)-tcnt);   // move to the center of start bit start bit	
+	if(DIRECT_READ(_rxbaseReg, _rxbitmask)==1) return ;        // center of startbit not 0 , bye bye glitch trigger
+    delayus(timedelay);											// delay to center of first bit
 
 	uint8_t data = 0;
 	uint32_t start = millis();
@@ -156,6 +159,9 @@ void softSerial::receiverBegin(void)
 			if (tcnt >= ticks)
 				return;
 		};
+		delayus(timedelay/2);         								// delay to center of new start bit
+	    if(DIRECT_READ(_rxbaseReg, _rxbitmask)==1) return  ;       // center of startbit not 0 , bye bye
+
 		delayus(timedelay);
 		data=0;
 	} while (millis() - start < SOFTSERIAL_RX_TIMEOUT);
@@ -266,3 +272,4 @@ void  softSerial::softwarePrintf(char *p_fmt, ...)
         delete[] temp;
     }
 }
+
